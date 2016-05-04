@@ -116,11 +116,11 @@ function factory(chai, MarcRecord, validator_factory)
             }))).to.eql([{
               type: 'warning',
               message: 'foo: Remove almost duplicate',
-              fields: [{
+              field: {
                 tag: 'foo',
                 ind1: ' ',
                 value: 'bar'
-              }]
+              }
             }]);
           });
 
@@ -147,14 +147,14 @@ function factory(chai, MarcRecord, validator_factory)
             }))).to.eql([{
               type: 'warning',
               message: 'foo: Remove almost duplicate',
-              fields: [{
+              field: {
                 tag: 'foo',
                 ind1: ' ',
                 subfields: [{
                   code: 'a',
                   value: 'fubar'
                 }]
-              }]
+              }
             }]);
           });
           

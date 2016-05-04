@@ -111,7 +111,7 @@ function factory(chai, MarcRecord, validator_factory)
             expect(validator_factory.factory().validate(record)).to.eql([{
               type: 'warning',
               message: 'Invalid function term in 100$e',
-              fields: record.fields
+              field: record.fields[0]
             }]);
             
         });
