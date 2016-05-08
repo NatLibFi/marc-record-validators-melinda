@@ -34,12 +34,14 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'chai/chai',
+      'chai-as-promised',
       'marc-record-js',
       '../../lib/validators/ind1-uniq'
     ], factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory(
       require('chai'),
+      require('chai-as-promised'),
       require('marc-record-js'),
       require('../../lib/validators/ind1-uniq')
     );
@@ -47,12 +49,14 @@
 
 }(this, factory));
 
-function factory(chai, MarcRecord, validator_factory)
+function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 {
 
   'use strict';
 
   var expect = chai.expect;
+
+  chai.use(chaiAsPromised);
 
   describe('ind1-uniq', function() {
     
@@ -78,12 +82,12 @@ function factory(chai, MarcRecord, validator_factory)
         
         describe('#validate', function() {
           
-          it('Should return an array', function() {
-            expect(validator_factory.factory('foo').validate(new MarcRecord())).to.eql([]);
+          it('Should resolve with an array', function() {
+            return expect(validator_factory.factory('foo').validate(new MarcRecord())).to.eventually.eql([]);
           });
 
-          it('Should not return a warning because of ind1', function() {
-            expect(validator_factory.factory('foo').validate(new MarcRecord({
+          it('Should not resolve with a warning because of ind1', function() {
+            return expect(validator_factory.factory('foo').validate(new MarcRecord({
               fields: [
                 {
                   tag: 'foo',
@@ -96,11 +100,11 @@ function factory(chai, MarcRecord, validator_factory)
                   value: 'bar'
                 }
               ]
-            }))).to.eql([]);
+            }))).to.eventually.eql([]);
           });
 
-          it('Should return a warning message (Control fields)', function() {
-            expect(validator_factory.factory('foo').validate(new MarcRecord({
+          it('Should resolve with a warning message (Control fields)', function() {
+            return expect(validator_factory.factory('foo').validate(new MarcRecord({
               fields: [
                 {
                   tag: 'foo',
@@ -113,7 +117,7 @@ function factory(chai, MarcRecord, validator_factory)
                   value: 'bar'
                 }
               ]
-            }))).to.eql([{
+            }))).to.eventually.eql([{
               type: 'warning',
               message: 'foo: Remove almost duplicate',
               field: {
@@ -124,8 +128,8 @@ function factory(chai, MarcRecord, validator_factory)
             }]);
           });
 
-          it('Should return a warning message (Variable fields)', function() {
-            expect(validator_factory.factory('foo').validate(new MarcRecord({
+          it('Should resolve with a warning message (Variable fields)', function() {
+            return expect(validator_factory.factory('foo').validate(new MarcRecord({
               fields: [
                 {
                   tag: 'foo',
@@ -144,7 +148,7 @@ function factory(chai, MarcRecord, validator_factory)
                   }]
                 }
               ]
-            }))).to.eql([{
+            }))).to.eventually.eql([{
               type: 'warning',
               message: 'foo: Remove almost duplicate',
               field: {
@@ -162,8 +166,8 @@ function factory(chai, MarcRecord, validator_factory)
         
         describe('#fix', function() {
           
-          it('Should return an array', function() {
-            expect(validator_factory.factory('foo').fix(new MarcRecord())).to.be.an('array');
+          it('Should resolve with an array', function() {
+            return expect(validator_factory.factory('foo').fix(new MarcRecord())).to.eventually.be.an('array');
           });
 
           it("Shouldn't fix the record", function() {
@@ -184,8 +188,12 @@ function factory(chai, MarcRecord, validator_factory)
             }),
             record_original = record.toJsonObject();
             
-            expect(validator_factory.factory('foo').fix(record)).to.eql([]);
-            expect(record_original).to.eql(record.toJsonObject());
+            return validator_factory.factory('foo').fix(record).then(function(results) {
+
+              expect(results).to.eql([]);
+              expect(record_original).to.eql(record.toJsonObject());
+
+            });
 
           });
           
@@ -207,16 +215,21 @@ function factory(chai, MarcRecord, validator_factory)
             }),
             record_original = record.toJsonObject();
             
-            expect(validator_factory.factory('foo').fix(record)).to.eql([{
-              type: 'removeField',
-              field: {
-                tag: 'foo',
-                ind1: ' ',
-                value: 'bar'
-              }
-            }]);
-            expect(record_original).to.not.eql(record.toJsonObject());
-            expect(record.fields.length).to.equal(1);
+            validator_factory.factory('foo').fix(record).then(function(results) {
+            
+              expect(results).to.eql([{
+                type: 'removeField',
+                field: {
+                  tag: 'foo',
+                  ind1: ' ',
+                  value: 'bar'
+                }
+              }]);
+              
+              expect(record_original).to.not.eql(record.toJsonObject());
+              expect(record.fields.length).to.equal(1);
+
+            });
 
           });
           

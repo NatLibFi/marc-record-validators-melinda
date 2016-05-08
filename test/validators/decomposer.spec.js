@@ -34,12 +34,14 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'chai/chai',
+      'chai-as-promised',
       'marc-record-js',
       '../../lib/validators/decomposer'
     ], factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory(
       require('chai'),
+      require('chai-as-promised'),
       require('marc-record-js'),
       require('../../lib/validators/decomposer')
     );
@@ -47,12 +49,14 @@
 
 }(this, factory));
 
-function factory(chai, MarcRecord, validator_factory)
+function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 {
 
   'use strict';
 
   var expect = chai.expect;
+
+  chai.use(chaiAsPromised);
 
   describe('decomposer', function() {
     
@@ -74,12 +78,12 @@ function factory(chai, MarcRecord, validator_factory)
         
         describe('#validate', function() {
           
-          it('Should return an array', function() {
-            expect(validator_factory.factory().validate(new MarcRecord())).to.eql([]);
+          it('Should resolve with an array', function() {
+            return expect(validator_factory.factory().validate(new MarcRecord())).to.eventually.eql([]);
           });
 
-          it('Should not return messages', function() {
-            expect(validator_factory.factory().validate(new MarcRecord({
+          it('Should not resolve with messages', function() {
+            return expect(validator_factory.factory().validate(new MarcRecord({
               fields: [
                 {
                   field: '001',
@@ -93,10 +97,10 @@ function factory(chai, MarcRecord, validator_factory)
                   }]
                 }
               ]              
-            }))).to.eql([]);
+            }))).to.eventually.eql([]);
           });
 
-          it('Should return a warning message', function() {
+          it('Should resolve with a warning message', function() {
 
             var record = new MarcRecord({
               fields: [{
@@ -108,7 +112,7 @@ function factory(chai, MarcRecord, validator_factory)
               }]
             });
 
-            expect(validator_factory.factory().validate(record)).to.eql([{
+            return expect(validator_factory.factory().validate(record)).to.eventually.eql([{
               type: 'warning',
               message: 'The following subfields are not properly decomposed: a',
               field: record.fields[0]
@@ -120,10 +124,10 @@ function factory(chai, MarcRecord, validator_factory)
         
         describe('#fix', function() {
           
-          it('Should return an array', function() {
-            expect(validator_factory.factory().fix(new MarcRecord())).to.be.an('array');
+          it('Should resolve with an array', function() {
+            return expect(validator_factory.factory().fix(new MarcRecord())).to.eventually.be.an('array');
           });
-          
+         
           it('Should fix the record', function() {
             
             var record = new MarcRecord({
@@ -156,14 +160,19 @@ function factory(chai, MarcRecord, validator_factory)
             },
             record_original = record.toJsonObject();
 
-            expect(validator_factory.factory().fix(record)).to.eql([{
-              'type': 'modifyField',
-              'old': record_original.fields[0],
-              'new': field_modified
-            }]);
-            expect(record_original).to.not.eql(record.toJsonObject());
-            expect(record.fields).to.eql([field_modified]);
+            return validator_factory.factory().fix(record).then(function(results) {
+
+              expect(results).to.eql([{
+                'type': 'modifyField',
+                'old': record_original.fields[0],
+                'new': field_modified
+              }]);
+              
+              expect(record_original).to.not.eql(record.toJsonObject());
+              expect(record.fields).to.eql([field_modified]);
             
+            });
+
           });
           
         });
@@ -171,7 +180,7 @@ function factory(chai, MarcRecord, validator_factory)
       });
       
     });
-
+    
   });
   
 }
