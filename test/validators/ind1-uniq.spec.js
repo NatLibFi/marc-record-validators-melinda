@@ -113,7 +113,7 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
                 },
                 {
                   tag: 'foo',
-                  ind1: '1',
+                  ind1: '0',
                   value: 'bar'
                 }
               ]
