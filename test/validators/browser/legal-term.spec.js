@@ -26,48 +26,14 @@
  *
  **/
 
-/* istanbul ignore next: umd wrapper */
-(function (root, factory) {
+define([
+  '../legal-term-factory',
+  '../../../lib/validators/browser/legal-term',
+  'http-client-x-mock/lib/browser/main'
+], function(runTests, validator_factory, http_mock) {
 
   'use strict';
 
-  if (typeof define === 'function' && define.amd) {
-    define([
-      'marc-record-validate',
-      './validators/browser/legal-term',
-      './validators/decomposer',
-      './validators/double-commas',
-      './validators/function-terms',
-      './validators/ind1-uniq',
-      './validators/sort-keywords',
-      './validators/sort-tag'
-    ], factory);
-  } else if (typeof module === 'object' && module.exports) {
-    module.exports = factory(
-      require('marc-record-validate'),
-      require('./validators/decomposer'),
-      require('./validators/double-commas'),
-      require('./validators/function-terms'),
-      require('./validators/ind1-uniq'),
-      require('./validators/nodejs/legal-term'),
-      require('./validators/sort-keywords'),
-      require('./validators/sort-tag')
-    );
-  }
+  runTests(validator_factory, http_mock);
 
-}(this, factory));
-
-function factory()
-{
-
-  'use strict';
-
-  var args = [];
-
-  for (var i = 1; i < arguments.length; i++) {
-    args.push(arguments[i]);
-  }
-
-  return arguments[0](args);
-
-}
+});

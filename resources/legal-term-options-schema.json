@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "finto": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "default": {
+        "url": "https://api.finto.fi/rest/v1"
+      }
+    },
+    "useCache": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

@@ -3,9 +3,22 @@ module.exports = function(config) {
     singleRun: true,
     frameworks: ['mocha', 'requirejs'],
     browsers: ['PhantomJS'],
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
     preprocessors: {
+      'lib/*.js': 'coverage',
+      'lib/browser/*.js': 'coverage',
       'test/browser-main.js': 'requirejs'
+    },
+    coverageReporter: {
+      subdir: 'browser',
+      reporters: [
+        {
+          type: 'json'
+        },
+        {
+          type: 'html'
+        }
+      ]
     },
     requirejsPreprocessor: {
       config: {
@@ -14,10 +27,18 @@ module.exports = function(config) {
           text: 'node_modules/requirejs-plugins/lib/text'
         }
       },
-      testRegexp: '^/base/test/validators/.+\.spec\.js$'
+      testRegexp: '^/base/test/validators/(?!nodejs/).+\.spec\.js$'
     },
     files: [
       'test/browser-main.js',
+      {
+        pattern: 'resources/**/*.json',
+        included: false
+      },
+      {
+        pattern: 'node_modules/**/resources/**/*.json',
+        included: false
+      },
       {
         pattern: 'test/**/*.js',
         included: false
