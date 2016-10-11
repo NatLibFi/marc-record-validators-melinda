@@ -69,14 +69,6 @@ function factory(chai, chaiAsPromised, MarcRecord)
       
       describe('#factory', function() {
         
-        it('Should throw because options are invalid', function() {
-          expect(function() {
-            validator_factory.factory({
-              finto: []
-            });
-          }).to.throw(Error, /^Failed validating options: /);
-        });
-
         it('Should return the expected object', function() {        
           expect(validator_factory.factory()).to.be.an('object').and.to
             .respondTo('validate').and.to

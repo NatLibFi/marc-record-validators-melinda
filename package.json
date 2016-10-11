@@ -50,11 +50,8 @@
     "marc-record-js": "^0.1.1",
     "es6-polyfills": "^1.0.1",
     "es6-shims": "^1.1.0",
-    "jjv": "^1.0.2",
-    "jjve": "^0.5.0",
     "skosmos-api-client": "https://github.com/natlibfi/skosmos-api-client",
-    "requirejs-plugins": "^1.0.2",
-    "marc-record-validate": "https://github.com/natlibfi/marc-record-validate"
+    "marc-record-validate": "https://github.com/natlibfi/marc-record-validate#simplify"
   },
   "devDependencies": {
     "chai": "^3.2.0",

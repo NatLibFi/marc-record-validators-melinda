@@ -23,9 +23,6 @@ module.exports = function(config) {
     requirejsPreprocessor: {
       config: {
         baseUrl: '/base',
-        paths: {
-          text: 'node_modules/requirejs-plugins/lib/text'
-        }
       },
       testRegexp: '^/base/test/validators/(?!nodejs/).+\.spec\.js$'
     },
