@@ -50,7 +50,7 @@
     "marc-record-js": "^0.1.1",
     "es6-polyfills": "^1.0.1",
     "es6-shims": "^1.1.0",
-    "skosmos-api-client": "https://github.com/natlibfi/skosmos-api-client",
+    "skosmos-api-client": "https://github.com/natlibfi/skosmos-api-client#simplify",
     "marc-record-validate": "https://github.com/natlibfi/marc-record-validate#simplify"
   },
   "devDependencies": {
