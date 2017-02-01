@@ -28,7 +28,7 @@
     "url": "git@github.com:NatLibFi/marc-record-validators-melinda.git"
   },
   "license": " AGPL-3.0+",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./lib/main",
   "scripts": {
     "lint": "jshint .",
@@ -43,7 +43,7 @@
     "travisci": "npm run check",
     "publish-to-npm": "npm install && npm run check && npm publish",
     "combine-coverage": "istanbul-combine -d coverage/combined -r html -r lcov -r json coverage/nodejs/coverage.json coverage/browser/coverage-final.json",
-    "generate-requirejs-config": "requirejs-configurator --npm --include-dev-deps > test/browser-main.js",
+    "generate-requirejs-config": "requirejs-configurator --npm -D -P > test/browser-main.js"
     "generate-validate-bundle": "generate-validate-bundle -m '(?!^.+-factory\\.js$)(?=^.+\\.js$)' -d lib/validators -h resources/bundle-header.txt --recursive --filter lib/main.js"
   },
   "dependencies": {
@@ -54,22 +54,23 @@
     "marc-record-validate": "https://github.com/natlibfi/marc-record-validate#simplify"
   },
   "devDependencies": {
-    "chai": "^3.2.0",
+    "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
-    "jshint": "^2.8.0",
-    "simple-mock": "^0.7.0",
-    "http-client-x-mock": "^1.0.0",
+    "jshint": "^2.9.4",
+    "mock-fs": "^3.12.1",
+    "simple-mock": "^0.7.3",
     "mocha": "https://github.com/jRiest/mocha#fix_browser_delay_built",
-    "istanbul": "^0.4.2",
+    "istanbul": "^0.4.5",
     "istanbul-combine": "^0.3.0",
-    "karma": "^0.13.19",
-    "karma-mocha": "^0.2.1",
-    "karma-coverage": "^0.5.5",
-    "karma-requirejs": "^0.2.3",
-    "karma-phantomjs-launcher": "^0.2.3",
+    "requirejs": "^2.3.2",
+    "karma": "^1.4.1",
+    "karma-mocha": "^1.3.0",
+    "karma-requirejs": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.2",
     "karma-requirejs-preprocessor": "^0.0.2",
-    "phantomjs-prebuilt": "^2.1.5",
-    "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#dev-deps",
-    "codeclimate-test-reporter": "^0.1.1"
+    "phantomjs-prebuilt": "^2.1.14",
+    "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#peer-deps",
+    "codeclimate-test-reporter": "^0.4.0"   
+    "http-client-x-mock": "^1.0.0"
   }
 }
