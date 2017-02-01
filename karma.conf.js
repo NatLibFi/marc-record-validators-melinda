@@ -5,8 +5,9 @@ module.exports = function(config) {
     browsers: ['PhantomJS'],
     reporters: ['progress', 'coverage'],
     preprocessors: {
+      'lib/validators/*.js': 'coverage',
+      'lib/validators/browser/*.js': 'coverage',
       'lib/*.js': 'coverage',
-      'lib/browser/*.js': 'coverage',
       'test/browser-main.js': 'requirejs'
     },
     coverageReporter: {
