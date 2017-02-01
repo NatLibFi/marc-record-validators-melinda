@@ -1,6 +1,4 @@
-# Melinda-related validators for marc-record-validate [![Build Status](https://travis-ci.org/NatLibFi/marc-record-validators-melinda.svg)](https://travis-ci.org/NatLibFi/marc-record-validators-melinda) [![Test Coverage](https://codeclimate.com/github/NatLibFi/marc-record-validators-melinda/badges/coverage.svg)](https://codeclimate.com/github/NatLibFi/marc-record-validators-melinda/coverage)
-
-**IN DEVELOPMENT**
+# Melinda-related validators for marc-record-validate [![NPM Version](https://img.shields.io/npm/v/marc-record-validators-melinda.svg)](https://npmjs.org/package/marc-record-validators-melinda) [![Build Status](https://travis-ci.org/NatLibFi/marc-record-validators-melinda.svg)](https://travis-ci.org/NatLibFi/marc-record-validators-melinda) [![Test Coverage](https://codeclimate.com/github/NatLibFi/marc-record-validators-melinda/badges/coverage.svg)](https://codeclimate.com/github/NatLibFi/marc-record-validators-melinda/coverage)
 
 This project contains Melinda-related validators for [marc-record-validate](https://github.com/natlibfi/marc-record-validate). [Melinda](https://melinda.kansalliskirjasto.fi) is a union catalogue of Finnish libraries maintained by [The National Library of Finland](https://nationallibrary.fi).
 
