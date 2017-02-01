@@ -239,9 +239,9 @@ function factory(chai, chaiAsPromised, MarcRecord)
               
               return validator_factory.factory({
                 finto: {
-                  url: 'http://foo.bar'
+                  url: 'http://foo.bar',
+                  useCache: false
                 },
-                useCache: false
               }).fix(record).then(function(results) {
 
                 expect(results).to.eql([{
@@ -326,7 +326,7 @@ function factory(chai, chaiAsPromised, MarcRecord)
                   url: 'http://foo.bar'
                 }
               }).fix(record).then(function(results) {
-
+                
                 expect(results).to.eql([
                   {
                     'type': 'addSubfield',
