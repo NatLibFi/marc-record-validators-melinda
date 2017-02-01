@@ -38,20 +38,20 @@
     "cover-browser": "npm run test-browser && istanbul check-coverage coverage/browser/coverage-final.json",
     "cover": "npm run test && npm run combine-coverage && istanbul check-coverage coverage/combined/coverage-final.json",
     "test": "npm run test-nodejs && npm run test-browser",
-    "cover": "npm run test && istanbul check-coverage",
     "check": "npm run lint && npm run cover",
     "travisci": "npm run check",
     "publish-to-npm": "npm install && npm run check && npm publish",
     "combine-coverage": "istanbul-combine -d coverage/combined -r html -r lcov -r json coverage/nodejs/coverage.json coverage/browser/coverage-final.json",
-    "generate-requirejs-config": "requirejs-configurator --npm -D -P > test/browser-main.js"
+    "generate-requirejs-config": "requirejs-configurator --npm -D -P > test/browser-main.js",
     "generate-validate-bundle": "generate-validate-bundle -m '(?!^.+-factory\\.js$)(?=^.+\\.js$)' -d lib/validators -h resources/bundle-header.txt --recursive --filter lib/main.js"
   },
   "dependencies": {
     "marc-record-js": "^0.1.1",
+    "marc-record-validate": "^1.0.1",
     "es6-polyfills": "^1.0.1",
     "es6-shims": "^1.1.0",
-    "skosmos-api-client": "https://github.com/natlibfi/skosmos-api-client#simplify",
-    "marc-record-validate": "https://github.com/natlibfi/marc-record-validate#simplify"
+    "merge": "https://github.com/natlibfi-arlehiko/js.merge#umd",
+    "skosmos-api-client": "https://github.com/natlibfi/skosmos-api-client#simplify"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -65,12 +65,13 @@
     "requirejs": "^2.3.2",
     "karma": "^1.4.1",
     "karma-mocha": "^1.3.0",
+    "karma-coverage": "^1.1.1",
     "karma-requirejs": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-requirejs-preprocessor": "^0.0.2",
     "phantomjs-prebuilt": "^2.1.14",
     "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#peer-deps",
-    "codeclimate-test-reporter": "^0.4.0"   
+    "codeclimate-test-reporter": "^0.4.0",
     "http-client-x-mock": "^1.0.0"
   }
 }
