@@ -29,14 +29,6 @@ module.exports = function(config) {
     files: [
       'test/browser-main.js',
       {
-        pattern: 'resources/**/*.json',
-        included: false
-      },
-      {
-        pattern: 'node_modules/**/resources/**/*.json',
-        included: false
-      },
-      {
         pattern: 'test/**/*.js',
         included: false
       },
