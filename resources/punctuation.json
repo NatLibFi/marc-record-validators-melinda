@@ -1,0 +1,524 @@
+[
+  {
+    "tag": ".00",
+    "subfield": "a",
+    "description": " Personal name (NR)",
+    "type": "NAME",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".10",
+    "subfield": "a",
+    "description": " Corporate name or jurisdiction name as entry element (NR)",
+    "type": "NAME",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".11",
+    "subfield": "a",
+    "description": " Meeting name or jurisdiction name as entry element (NR)",
+    "type": "NAME",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".00",
+    "subfield": "b",
+    "description": " Numeration (NR)",
+    "type": "NAME",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".10",
+    "subfield": "b",
+    "description": " Subordinate unit (R)",
+    "type": "NAME",
+    "precedingRule": [
+      "PERIOD"
+    ]
+  },
+  {
+    "tag": ".00",
+    "subfield": "c",
+    "description": " Titles and words associated with a name (R)",
+    "type": "NAME",
+    "precedingRule": [
+      "COMMA"
+    ]
+  },
+  {
+    "tag": ".(10|11)",
+    "subfield": "c",
+    "description": " Location of meeting (R)",
+    "type": "NAME",
+    "precedingRule": [
+      "COMMA"
+    ],
+    "exceptions": [
+      {
+        "rule": "COLON",
+        "subfields": [
+          "d"
+        ]
+      },
+      {
+        "rule": "SEMICOLON",
+        "subfields": [
+          "c"
+        ]
+      }
+    ]
+  },
+  {
+    "tag": ".00",
+    "subfield": "d",
+    "description": "Dates associated with a name (NR)",
+    "type": "NAME",
+    "precedingRule": [
+      "COMMA"
+    ],
+    "exceptions": [
+      {
+        "rule": "COLON",
+        "subfields": [
+          "n"
+        ]
+      }
+    ]
+  },
+  {
+    "tag": ".11",
+    "subfield": "d",
+    "description": "Date of meeting (NR)",
+    "type": "NAME"
+  },
+  {
+    "tag": ".(00|10)",
+    "subfield": "e",
+    "description": "Relator term (R)",
+    "type": "NAME",
+    "precedingRule": [
+      "COND_COMMA"
+    ]
+  },
+  {
+    "tag": ".11",
+    "subfield": "e",
+    "description": "Subordinate unit (R)",
+    "type": "NAME",
+    "precedingRule": [
+      "PERIOD"
+    ]
+  },
+  {
+    "tag": ".11",
+    "subfield": "j",
+    "description": " Relator term (R)",
+    "type": "NAME",
+    "precedingRule": [
+      "COMMA"
+    ]
+  },
+  {
+    "tag": ".00",
+    "subfield": "j",
+    "description": " Attribution qualifier (R)",
+    "type": "NAME",
+    "precedingRule": [
+      "COMMA"
+    ]
+  },
+  {
+    "tag": ".00",
+    "subfield": "q",
+    "description": " Fuller form of name (NR)",
+    "type": "NAME",
+    "precedingRule": [
+      "COMMA"
+    ]
+  },
+  {
+    "tag": ".11",
+    "subfield": "q",
+    "description": "Name of meeting following jurisdiction name entry element (NR)",
+    "type": "NAME"
+  },
+  {
+    "tag": ".(00|11)",
+    "subfield": "u",
+    "description": " Affiliation (NR)",
+    "type": "NAME",
+    "precedingRule": [
+      "PERIOD"
+    ],
+    "exceptions": [
+      null
+    ]
+  },
+  {
+    "tag": ".10",
+    "subfield": "u",
+    "description": " Affiliation (NR) or Address",
+    "type": "NAME",
+    "precedingRule": [
+      "PERIOD"
+    ],
+    "exceptions": [
+      null
+    ]
+  },
+  {
+    "tag": ".(00|10|11)",
+    "subfield": "4",
+    "description": " Relator code (R)",
+    "type": "NAME_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".00, X10",
+    "subfield": "f",
+    "description": " Date of a work (NR)",
+    "type": "TITLE",
+    "precedingRule": [
+      "PERIOD"
+    ]
+  },
+  {
+    "tag": "[678][01]0",
+    "subfield": "h",
+    "description": " Medium (NR)   [600/700/800]",
+    "type": "TITLE",
+    "precedingRule": [
+      "PERIOD"
+    ]
+  },
+  {
+    "tag": "7[01]0",
+    "subfield": "i",
+    "description": " Relationship information [700] (R)",
+    "type": "TITLE",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".[01]0",
+    "subfield": "k",
+    "description": " Form subheading (R)",
+    "type": "TITLE",
+    "precedingRule": [
+      "PERIOD"
+    ]
+  },
+  {
+    "tag": ".[01]0",
+    "subfield": "l",
+    "description": " Language of a work (NR)",
+    "type": "TITLE",
+    "precedingRule": [
+      "COMMA",
+      "PERIOD"
+    ],
+    "exceptions": [
+      null,
+      null
+    ]
+  },
+  {
+    "tag": "[678][01]0",
+    "subfield": "m",
+    "description": " Medium of performance for music (R)   [600/700/800]",
+    "type": "TITLE",
+    "precedingRule": [
+      "COMMA"
+    ]
+  },
+  {
+    "tag": ".00",
+    "subfield": "n",
+    "description": " Number of part/section of a work (R)",
+    "type": "TITLE",
+    "precedingRule": [
+      "COMMA",
+      "PERIOD"
+    ],
+    "exceptions": [
+      null,
+      {
+        "rule": "PERIOD",
+        "subfields": [
+          "k",
+          " m",
+          " t"
+        ]
+      },
+      {
+        "rule": "COMMA",
+        "subfields": [
+          "b",
+          " m"
+        ]
+      }
+    ]
+  },
+  {
+    "tag": "[678][10]0",
+    "subfield": "o",
+    "description": " Arranged statement for music (NR)   [600/700/800]",
+    "type": "TITLE",
+    "precedingRule": [
+      "SEMICOLON"
+    ]
+  },
+  {
+    "tag": ".[01]0",
+    "subfield": "p",
+    "description": " Name of part/section of a work (R)",
+    "type": "TITLE",
+    "precedingRule": [
+      "COMMA",
+      "PERIOD",
+      "NONE"
+    ],
+    "exceptions": [
+      null,
+      {
+        "rule": "PERIOD",
+        "subfields": [
+          "t",
+          " n",
+          " p"
+        ]
+      },
+      {
+        "rule": "COMMA",
+        "subfields": [
+          "n"
+        ]
+      },
+      {
+        "rule": "NONE",
+        "subfields": [
+          "k"
+        ]
+      }
+    ]
+  },
+  {
+    "tag": "[678][01]0",
+    "subfield": "r",
+    "description": " Key for music (NR)   [600/700/800]",
+    "type": "TITLE",
+    "precedingRule": [
+      "COMMA"
+    ]
+  },
+  {
+    "tag": "[678]([01]0|11)",
+    "subfield": "s",
+    "description": " Version (NR)   [600/700/800]",
+    "type": "TITLE",
+    "precedingRule": [
+      "PERIOD"
+    ]
+  },
+  {
+    "tag": ".[01]0",
+    "subfield": "t",
+    "description": " Title of a work (NR)",
+    "type": "TITLE",
+    "precedingRule": [
+      "NONE"
+    ],
+    "exceptions": [
+      null
+    ]
+  },
+  {
+    "tag": "8([01]0|11)",
+    "subfield": "v",
+    "description": " Volume/sequential designation (NR)   [800]",
+    "type": "TITLE",
+    "precedingRule": [
+      "SEMICOLON"
+    ]
+  },
+  {
+    "tag": "[78]([01]0|11)",
+    "subfield": "x",
+    "description": " International Standard Serial Number (NR)   [700/800]",
+    "type": "TITLE",
+    "precedingRule": [
+      "PERIOD"
+    ]
+  },
+  {
+    "tag": ".10",
+    "subfield": "d",
+    "description": " Date of meeting or treaty signing (R)",
+    "type": "NAME_AND_TITLE"
+  },
+  {
+    "tag": ".[10]0",
+    "subfield": "g",
+    "description": " Miscellaneous information (NR)",
+    "type": "NAME_AND_TITLE",
+    "precedingRule": [
+      "COMMA"
+    ],
+    "exceptions": [
+      {
+        "rule": "COLON",
+        "subfields": [
+          "d"
+        ]
+      }
+    ]
+  },
+  {
+    "tag": ".10",
+    "subfield": "g",
+    "description": " Miscellaneous information (NR), other party to treaties.",
+    "type": "NAME_AND_TITLE",
+    "precedingRule": [
+      "COMMA"
+    ],
+    "exceptions": [
+      {
+        "rule": "COLON",
+        "subfields": [
+          "d"
+        ]
+      },
+      {
+        "rule": "PERIOD",
+        "subfields": [
+          "t"
+        ]
+      }
+    ]
+  },
+  {
+    "tag": ".1[11]",
+    "subfield": "n",
+    "description": " Number of part/section/meeting (R)",
+    "type": "NAME_AND_TITLE"
+  },
+  {
+    "tag": "6([01]0|11)",
+    "subfield": "v",
+    "description": " Form subdivision (R)   [600]",
+    "type": "SUBJECT_DIVISION",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "6([01]0|11)",
+    "subfield": "x",
+    "description": " General subdivision (R)   [600]",
+    "type": "SUBJECT_DIVISION",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "6([01]0|11)",
+    "subfield": "y",
+    "description": " Chronological subdivision (R)   [600]",
+    "type": "SUBJECT_DIVISION",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "6([01]0|11)",
+    "subfield": "z",
+    "description": " Geographic subdivision (R)   [600]",
+    "type": "SUBJECT_DIVISION",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "8[01]0",
+    "subfield": "w",
+    "description": " Bibliographic record control number (R)   [800]",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".[01]0",
+    "subfield": "0",
+    "description": " Authority record control number (R)",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "6[01]0",
+    "subfield": "2",
+    "description": " Source of heading or term (NR)   [600]",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "[678][01]0",
+    "subfield": "3",
+    "description": " Materials specified (NR)   [600/700/800]",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "[78][01]0",
+    "subfield": "5",
+    "description": " Institution to which field applies (NR)   [700/800]",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".[01]0",
+    "subfield": "6",
+    "description": " Linkage (NR)",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": "8[01]0",
+    "subfield": "7",
+    "description": " Control subfield (NR)   [800]",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  },
+  {
+    "tag": ".00",
+    "subfield": "8",
+    "description": " Field link and sequence number (R)",
+    "type": "FIELD_CONTROL",
+    "precedingRule": [
+      "NONE"
+    ]
+  }
+]
