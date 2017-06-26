@@ -27,8 +27,8 @@
     "type": "git",
     "url": "git@github.com:NatLibFi/marc-record-validators-melinda.git"
   },
-  "license": " AGPL-3.0+",
-  "version": "1.0.0",
+  "license": "AGPL-3.0+",
+  "version": "1.0.1",
   "main": "./lib/main",
   "scripts": {
     "lint": "jshint .",
@@ -48,10 +48,10 @@
   "dependencies": {
     "marc-record-js": "^0.1.1",
     "marc-record-validate": "^1.0.1",
-    "es6-polyfills": "^1.0.1",
-    "es6-shims": "^1.1.0",
+    "es6-polyfills": "^2.0.0",
+    "es6-shims": "^2.0.0",
     "merge": "https://github.com/natlibfi-arlehiko/js.merge#umd",
-    "skosmos-api-client": "https://github.com/natlibfi/skosmos-api-client#simplify"
+    "skosmos-api-client": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
