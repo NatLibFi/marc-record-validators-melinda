@@ -1,5 +1,5 @@
 {
-  "name": "marc-record-validators-melinda",
+  "name": "@natlibfi/marc-record-validators-melinda",
   "description": "Melinda-related validators for marc-record-validate",
   "author": {
     "name": "The National Library of Finland"
@@ -28,7 +28,7 @@
     "url": "git@github.com:NatLibFi/marc-record-validators-melinda.git"
   },
   "license": "AGPL-3.0+",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "./lib/main",
   "scripts": {
     "lint": "jshint .",
@@ -40,16 +40,16 @@
     "test": "npm run test-nodejs && npm run test-browser",
     "check": "npm run lint && npm run cover",
     "travisci": "npm run check",
-    "publish-to-npm": "npm install && npm run check && npm publish",
+    "publish-to-npm": "npm install && npm run check && npm publish --access=public",
     "combine-coverage": "istanbul-combine -d coverage/combined -r html -r lcov -r json coverage/nodejs/coverage.json coverage/browser/coverage-final.json",
     "generate-requirejs-config": "requirejs-configurator --npm -D -P > test/browser-main.js",
     "generate-validate-bundle": "generate-validate-bundle -m '(?!^.+-factory\\.js$)(?=^.+\\.js$)' -d lib/validators -h resources/bundle-header.txt --recursive --filter lib/main.js"
   },
   "dependencies": {
     "marc-record-js": "^0.1.1",
-    "marc-record-validate": "^1.0.1",
-    "es6-polyfills": "^2.0.0",
-    "es6-shims": "^2.0.0",
+    "@natlibfi/marc-record-validate": "^1.0.1",
+    "@natlibfi/es6-polyfills": "^2.0.0",
+    "@natlibfi/es6-shims": "^2.0.0",
     "merge": "https://github.com/natlibfi-arlehiko/js.merge#umd",
     "skosmos-api-client": "^1.0.0"
   },

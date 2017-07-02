@@ -2,7 +2,7 @@
  *
  * @licstart  The following is the entire license notice for the JavaScript code in this file. 
  *
- * Melinda-related validators for marc-record-validate
+ * Melinda-related validators for @natlibfi/marc-record-validate
  *
  * Copyright (c) 2014-2017 University Of Helsinki (The National Library Of Finland)
  *
