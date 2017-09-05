@@ -27,6 +27,18 @@ define(['marc-record-validators-melinda'], function(validateFactory) {
 });
 ```
 
+### Passing options to validators
+```js
+var validate = require('marc-record-validators-melinda')({
+  fix: true,
+  validators: [{
+    name: 'ind1-uniq',
+    options: '500'
+  }]
+}),
+results = validate(record);
+```
+
 ## Development 
 
 Clone the sources and install the package using `npm`:
