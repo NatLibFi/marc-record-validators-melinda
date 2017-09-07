@@ -46,10 +46,11 @@
     "generate-validate-bundle": "generate-validate-bundle -m '(?!^.+-factory\\.js$)(?=^.+\\.js$)' -d lib/validators -h resources/bundle-header.txt --recursive --filter lib/main.js"
   },
   "dependencies": {
-    "marc-record-js": "^0.1.1",
-    "@natlibfi/marc-record-validate": "^1.0.1",
     "@natlibfi/es6-polyfills": "^2.0.0",
     "@natlibfi/es6-shims": "^2.0.0",
+    "@natlibfi/marc-record-validate": "^1.0.1",
+    "lodash": "^4.17.4",
+    "marc-record-js": "git+https://github.com/petuomin/marc-record-js.git",
     "merge": "https://github.com/natlibfi-arlehiko/js.merge#umd",
     "skosmos-api-client": "^1.0.0"
   },
