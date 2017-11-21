@@ -36,21 +36,20 @@
       'chai/chai',
       'chai-as-promised',
       'marc-record-js',
-      '../../lib/validators/function-terms'
+      '../../lib/validators/subject-headings-change'
     ], factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory(
       require('chai'),
       require('chai-as-promised'),
       require('marc-record-js'),
-      require('../../lib/validators/function-terms')
+      require('../../lib/validators/subject-headings-change')
     );
   }
 
 }(this, factory));
 
-function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
-{
+function factory(chai, chaiAsPromised, MarcRecord, validator_factory) {
 
   'use strict';
 
@@ -58,7 +57,7 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
   chai.use(chaiAsPromised);
 
-  describe('function-terms', function() {
+  describe('subject-headings-change', function() {
 
     it('Should be the expected object', function() {
       expect(validator_factory).to.be.an('object');
@@ -98,15 +97,15 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
             var record = new MarcRecord({
               fields: [{
-                tag: '100',
+                tag: '650',
                 subfields: [
                   {
                     code: 'a',
-                    value: 'Foo, Bar'
+                    value: 'lapsikeskeisyys'
                   },
                   {
-                    code: 'e',
-                    value: 'ohj.'
+                    code: '2',
+                    value: 'ysa'
                   }
                 ]
               }]
@@ -114,7 +113,7 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
             return expect(validator_factory.factory().validate(record)).to.eventually.eql([{
               type: 'warning',
-              message: 'Invalid function term in 100$e',
+              message: 'Obsolete subject heading in field 650',
               field: record.fields[0]
             }]);
 
@@ -132,29 +131,29 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
             var record = new MarcRecord({
               fields: [{
-                tag: '100',
+                tag: '650',
                 subfields: [
                   {
                     code: 'a',
-                    value: 'Foo, Bar'
+                    value: 'marsut'
                   },
                   {
-                    code: 'e',
-                    value: 'ohj.'
+                    code: '2',
+                    value: 'ysa'
                   }
                 ]
               }]
             }),
             field_modified = {
-              tag: '100',
+              tag: '650',
               subfields: [
                 {
                   code: 'a',
-                  value: 'Foo, Bar'
+                  value: 'marsu'
                 },
                 {
-                  code: 'e',
-                  value: 'ohjaaja'
+                  code: '2',
+                  value: 'ysa'
                 }
               ]
             },
@@ -169,6 +168,34 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
               }]);
               expect(record_original).to.not.eql(record.toJsonObject());
               expect(record.fields).to.eql([field_modified]);
+
+            });
+
+          });
+
+          it('Should not alter a valid record', function() {
+
+            var record = new MarcRecord({
+              fields: [{
+                tag: '651',
+                subfields: [
+                  {
+                    code: 'a',
+                    value: 'Kuopio'
+                  },
+                  {
+                    code: '2',
+                    value: 'ysa'
+                  }
+                ]
+              }]
+            }),
+
+            record_original = record.toJsonObject();
+
+            return validator_factory.factory().fix(record).then(function(results) {
+
+              expect(record_original).to.eql(record.toJsonObject());
 
             });
 
