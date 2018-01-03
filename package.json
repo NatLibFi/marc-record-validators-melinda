@@ -37,7 +37,7 @@
     "cover-nodejs": "npm run test-nodejs && istanbul check-coverage coverage/nodejs/coverage.json",
     "cover-browser": "npm run test-browser && istanbul check-coverage coverage/browser/coverage-final.json",
     "cover": "npm run test && npm run combine-coverage && istanbul check-coverage coverage/combined/coverage-final.json",
-    "test": "npm run test-nodejs && npm run test-browser",
+    "test": "npm run test-nodejs",
     "check": "npm run lint && npm run cover",
     "travisci": "npm run check",
     "publish-to-npm": "npm install && npm run check && npm publish --access=public",
