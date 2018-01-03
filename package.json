@@ -33,6 +33,7 @@
   "scripts": {
     "lint": "jshint .",
     "test-nodejs": "istanbul cover --dir coverage/nodejs _mocha -- test/validators/*.spec.js test/validators/nodejs/*.spec.js",
+    "test-nodejs:watch": "npm run test-nodejs -- -w",
     "test-browser": "npm run generate-requirejs-config && karma start",
     "cover-nodejs": "npm run test-nodejs && istanbul check-coverage coverage/nodejs/coverage.json",
     "cover-browser": "npm run test-browser && istanbul check-coverage coverage/browser/coverage-final.json",
