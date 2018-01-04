@@ -137,6 +137,10 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory) {
                 tag: '080',
                 subfields: [
                   {
+                    code: 'a',
+                    value: '803.97'
+                  },
+                  {
                     code: '9',
                     value: 'FENNI<KEEP>'
                   }
@@ -146,6 +150,10 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory) {
             field_modified = {
               tag: '080',
               subfields: [
+                {
+                  code: 'a',
+                  value: '803.97'
+                },
                 {
                   code: '2',
                   value: '1974/fin/finuc-s'
@@ -164,7 +172,7 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory) {
               expect(results).to.eql([{
                 'type': 'addSubfield',
                 'field': field_modified,
-                'subfield': field_modified.subfields[0]
+                'subfield': field_modified.subfields[1]
               }]);
               expect(record_original).to.not.eql(record.toJsonObject());
               expect(record.fields).to.eql([field_modified]);
