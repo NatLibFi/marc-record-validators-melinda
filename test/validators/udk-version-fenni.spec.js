@@ -36,21 +36,20 @@
       'chai/chai',
       'chai-as-promised',
       'marc-record-js',
-      '../../lib/validators/function-terms'
+      '../../lib/validators/udk-version-fenni'
     ], factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory(
       require('chai'),
       require('chai-as-promised'),
       require('marc-record-js'),
-      require('../../lib/validators/function-terms')
+      require('../../lib/validators/udk-version-fenni')
     );
   }
 
 }(this, factory));
 
-function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
-{
+function factory(chai, chaiAsPromised, MarcRecord, validator_factory) {
 
   'use strict';
 
@@ -58,7 +57,7 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
   chai.use(chaiAsPromised);
 
-  describe('function-terms', function() {
+  describe('ukd-version-fenni', function() {
 
     it('Should be the expected object', function() {
       expect(validator_factory).to.be.an('object');
@@ -85,11 +84,17 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
           it('Should not resolve with messages', function() {
             return expect(validator_factory.factory().validate(new MarcRecord({
               fields: [{
-                tag: '245',
-                subfields: [{
-                  code: 'a',
+                tag: '080',
+                subfields: [
+                {
+                  code: '5',
+                  value: 'FENNI<KEEP>'
+                },
+                {
+                  code: '2',
                   value: 'foobar'
-                }]
+                }
+                ]
               }]
             }))).to.eventually.eql([]);
           });
@@ -98,15 +103,11 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
             var record = new MarcRecord({
               fields: [{
-                tag: '100',
+                tag: '080',
                 subfields: [
                   {
-                    code: 'a',
-                    value: 'Foo, Bar'
-                  },
-                  {
-                    code: 'e',
-                    value: 'ohj.'
+                    code: '9',
+                    value: 'FENNI<KEEP>'
                   }
                 ]
               }]
@@ -114,7 +115,7 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
             return expect(validator_factory.factory().validate(record)).to.eventually.eql([{
               type: 'warning',
-              message: 'Invalid function term in 100$e',
+              message: 'Missing UDK version definition in field 080 at',
               field: record.fields[0]
             }]);
 
@@ -128,33 +129,30 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
             return expect(validator_factory.factory().fix(new MarcRecord())).to.eventually.be.an('array');
           });
 
-          it('Should fix the record', function() {
+          it('Should fix the record by adding a correct 080 $2 if it is a serial', function() {
 
             var record = new MarcRecord({
+              leader: '|||||nas a22002173i 4500',
               fields: [{
-                tag: '100',
+                tag: '080',
                 subfields: [
                   {
-                    code: 'a',
-                    value: 'Foo, Bar'
-                  },
-                  {
-                    code: 'e',
-                    value: 'ohj.'
+                    code: '9',
+                    value: 'FENNI<KEEP>'
                   }
                 ]
               }]
             }),
             field_modified = {
-              tag: '100',
+              tag: '080',
               subfields: [
                 {
-                  code: 'a',
-                  value: 'Foo, Bar'
+                  code: '2',
+                  value: '1974/fin/finuc-s'
                 },
                 {
-                  code: 'e',
-                  value: 'ohjaaja'
+                  code: '9',
+                  value: 'FENNI<KEEP>'
                 }
               ]
             },
@@ -162,10 +160,55 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
             return validator_factory.factory().fix(record).then(function(results) {
 
+              console.log(JSON.stringify(results));
               expect(results).to.eql([{
-                'type': 'modifyField',
-                'old': record_original.fields[0],
-                'new': field_modified
+                'type': 'addSubfield',
+                'field': field_modified,
+                'subfield': field_modified.subfields[0]
+              }]);
+              expect(record_original).to.not.eql(record.toJsonObject());
+              expect(record.fields).to.eql([field_modified]);
+
+            });
+
+          });
+
+          it('Should fix the record by adding a correct 080 $2 if not serial', function() {
+
+            var record = new MarcRecord({
+              leader: '|||||nxx a22002173i 4500',
+              fields: [{
+                tag: '080',
+                subfields: [
+                  {
+                    code: '9',
+                    value: 'FENNI<KEEP>'
+                  }
+                ]
+              }]
+            }),
+            field_modified = {
+              tag: '080',
+              subfields: [
+                {
+                  code: '2',
+                  value: '1974/fin/fennica'
+                },
+                {
+                  code: '9',
+                  value: 'FENNI<KEEP>'
+                }
+              ]
+            },
+            record_original = record.toJsonObject();
+
+            return validator_factory.factory().fix(record).then(function(results) {
+
+              console.log(JSON.stringify(results));
+              expect(results).to.eql([{
+                'type': 'addSubfield',
+                'field': field_modified,
+                'subfield': field_modified.subfields[0]
               }]);
               expect(record_original).to.not.eql(record.toJsonObject());
               expect(record.fields).to.eql([field_modified]);
