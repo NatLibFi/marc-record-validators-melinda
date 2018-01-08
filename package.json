@@ -52,6 +52,7 @@
     "lodash": "^4.17.4",
     "marc-record-js": "git+https://github.com/petuomin/marc-record-js.git",
     "merge": "https://github.com/natlibfi-arlehiko/js.merge#umd",
+    "request": "^2.83.0",
     "skosmos-api-client": "^1.0.0"
   },
   "devDependencies": {
