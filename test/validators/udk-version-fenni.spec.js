@@ -180,6 +180,65 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory) {
 
           });
 
+          it('Should add the new subfield $2 into a correct position', function() {
+
+            var record = new MarcRecord({
+              leader: '|||||nas a22002173i 4500',
+              fields: [{
+                tag: '080',
+                subfields: [
+                  {
+                    code: 'a',
+                    value: '803.97'
+                  },
+                  {
+                    code: '9',
+                    value: 'FENNI<KEEP>'
+                  },
+                  {
+                    code: '9',
+                    value: 'JOKUMUU<DROP>'
+                  }
+                ]
+              }]
+            }),
+            field_modified = {
+              tag: '080',
+              subfields: [
+                {
+                  code: 'a',
+                  value: '803.97'
+                },
+                {
+                  code: '2',
+                  value: '1974/fin/finuc-s'
+                },
+                {
+                  code: '9',
+                  value: 'FENNI<KEEP>'
+                },
+                {
+                  code: '9',
+                  value: 'JOKUMUU<DROP>'
+                }
+              ]
+            },
+            record_original = record.toJsonObject();
+
+            return validator_factory.factory().fix(record).then(function(results) {
+
+              expect(results).to.eql([{
+                'type': 'addSubfield',
+                'field': field_modified,
+                'subfield': field_modified.subfields[1]
+              }]);
+              expect(record_original).to.not.eql(record.toJsonObject());
+              expect(record.fields).to.eql([field_modified]);
+
+            });
+
+          });
+
           it('Should fix the record by adding a correct 080 $2 if not serial', function() {
 
             var record = new MarcRecord({
