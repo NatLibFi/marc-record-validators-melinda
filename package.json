@@ -37,7 +37,8 @@
     "cover-nodejs": "npm run test-nodejs && istanbul check-coverage coverage/nodejs/coverage.json",
     "cover-browser": "npm run test-browser && istanbul check-coverage coverage/browser/coverage-final.json",
     "cover": "npm run test && npm run combine-coverage && istanbul check-coverage coverage/combined/coverage-final.json",
-    "test": "npm run test-nodejs && npm run test-browser",
+    "test": "npm run test-nodejs",
+    "test:watch": "npm run test-nodejs -- -w",
     "check": "npm run lint && npm run cover",
     "travisci": "npm run check",
     "publish-to-npm": "npm install && npm run check && npm publish --access=public",
@@ -52,6 +53,7 @@
     "lodash": "^4.17.4",
     "marc-record-js": "git+https://github.com/petuomin/marc-record-js.git",
     "merge": "https://github.com/natlibfi-arlehiko/js.merge#umd",
+    "request": "^2.83.0",
     "skosmos-api-client": "^1.0.0"
   },
   "devDependencies": {
