@@ -239,7 +239,7 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
                     },
                     {
                       code: 'e',
-                      value: 'esittäjä.'
+                      value: 'esittäjä'
                     }
                   ]
                 }]
@@ -249,11 +249,6 @@ function factory(chai, chaiAsPromised, MarcRecord, validator_factory)
 
             return validator_factory.factory().fix(record).then(function(results) {
 
-              // expect(results).to.eql([{
-              //   'type': 'modifyField',
-              //   'old': record_original_json,
-              //   'new': record_modified_json[0]
-              // }]);
               expect(record_original_json).to.not.eql(record.toJsonObject());
               expect(record.toJsonObject()).to.eql(record_modified_json);
             });
