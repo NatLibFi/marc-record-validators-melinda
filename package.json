@@ -1,80 +1,104 @@
 {
-  "name": "@natlibfi/marc-record-validators-melinda",
-  "description": "Melinda-related validators for marc-record-validate",
-  "author": {
-    "name": "The National Library of Finland"
-  },
-  "keywords": [
-    "marc",
-    "record",
-    "validate",
-    "validation",
-    "library",
-    "libraries",
-    "bibliography",
-    "bibliographic",
-    "cataloguing",
-    "melinda",
-    "union catalog",
-    "national library",
-    "finland"
-  ],
-  "homepage": "https://github.com/NatLibFi/marc-record-validators-melinda",
-  "bugs": {
-    "url": "https://github.com/NatLibFi/marc-record-validators-melinda/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:NatLibFi/marc-record-validators-melinda.git"
-  },
-  "license": "AGPL-3.0+",
-  "version": "1.0.2",
-  "main": "./lib/main",
-  "scripts": {
-    "lint": "jshint .",
-    "test-nodejs": "istanbul cover --dir coverage/nodejs _mocha -- test/validators/*.spec.js test/validators/nodejs/*.spec.js",
-    "test-browser": "npm run generate-requirejs-config && karma start",
-    "cover-nodejs": "npm run test-nodejs && istanbul check-coverage coverage/nodejs/coverage.json",
-    "cover-browser": "npm run test-browser && istanbul check-coverage coverage/browser/coverage-final.json",
-    "cover": "npm run test && npm run combine-coverage && istanbul check-coverage coverage/combined/coverage-final.json",
-    "test": "npm run test-nodejs",
-    "test:watch": "npm run test-nodejs -- -w",
-    "check": "npm run lint && npm run cover",
-    "travisci": "npm run check",
-    "publish-to-npm": "npm install && npm run check && npm publish --access=public",
-    "combine-coverage": "istanbul-combine -d coverage/combined -r html -r lcov -r json coverage/nodejs/coverage.json coverage/browser/coverage-final.json",
-    "generate-requirejs-config": "requirejs-configurator --npm -D -P > test/browser-main.js",
-    "generate-validate-bundle": "generate-validate-bundle -m '(?!^.+-factory\\.js$)(?=^.+\\.js$)' -d lib/validators -h resources/bundle-header.txt --recursive --filter lib/main.js"
-  },
-  "dependencies": {
-    "@natlibfi/es6-polyfills": "^2.0.0",
-    "@natlibfi/es6-shims": "^2.0.0",
-    "@natlibfi/marc-record-validate": "^1.0.1",
-    "lodash": "^4.17.4",
-    "marc-record-js": "git+https://github.com/petuomin/marc-record-js.git",
-    "merge": "https://github.com/natlibfi-arlehiko/js.merge#umd",
-    "request": "^2.83.0",
-    "skosmos-api-client": "^1.0.0"
-  },
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
-    "jshint": "^2.9.4",
-    "mock-fs": "^3.12.1",
-    "simple-mock": "^0.7.3",
-    "mocha": "https://github.com/jRiest/mocha#fix_browser_delay_built",
-    "istanbul": "^0.4.5",
-    "istanbul-combine": "^0.3.0",
-    "requirejs": "^2.3.2",
-    "karma": "^1.4.1",
-    "karma-mocha": "^1.3.0",
-    "karma-coverage": "^1.1.1",
-    "karma-requirejs": "^1.1.0",
-    "karma-phantomjs-launcher": "^1.0.2",
-    "karma-requirejs-preprocessor": "^0.0.2",
-    "phantomjs-prebuilt": "^2.1.14",
-    "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#peer-deps",
-    "codeclimate-test-reporter": "^0.4.0",
-    "http-client-x-mock": "^1.0.0"
-  }
+	"name": "@natlibfi/marc-record-validators-melinda",
+	"description": "MARC record validators used in Melinda",
+	"author": {
+		"name": "The National Library of Finland"
+	},
+	"keywords": [],
+	"homepage": "https://github.com/natlibfi/marc-record-validators-melinda",
+	"bugs": {
+		"url": "https://github.com/natlibfi/marc-record-validators-melinda/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
+	},
+	"license": "AGPL-3.0+",
+	"version": "2.0.0",
+	"main": "./dist/index.js",
+	"engines": {
+		"node": ">=7"
+	},
+	"scripts": {
+		"prepublishOnly": "npm run build:transpile",
+		"lint": "xo --fix",
+		"test": "cross-env NODE_ENV=test nyc mocha --require babel-core/register",
+		"coverage": "nyc check-coverage",
+		"clean": "rimraf build coverage .nyc_output dist",
+		"build:transpile": "babel src --source-maps --out-dir=dist --minified",
+		"build": "npm run clean && npm run build:transpile && ncu",
+		"watch:build": "chokidar src -c 'npm run build:transpile && node dist/index.js'",
+		"watch:check": "chokidar src test -c 'npm run lint && npm test && npm run coverage'",
+		"check-and-build": "npm run lint && npm test && npm run coverage && npm run build",
+		"travisci": "npm run check-and-build",
+		"publish-to-npm": "npm install && npm run lint && npm test && npm run coverage && npm publish --access=public"
+	},
+	"dependencies": {
+		"marc-record-js": "https://github.com/natlibfi-arlehiko/marc-record-js"
+	},
+	"peerDependencies": {
+		"@natlibfi/marc-record-validate": "^2.0.0"
+	},
+	"devDependencies": {
+		"npm-check-updates": "^2.0.0",
+		"rimraf": "^2.0.0",
+		"mocha": "^5.0.0",
+		"xo": "0.x.x",
+		"istanbul": "0.x.x",
+		"chai": "^4.0.0",
+		"nyc": "^12.0.0",
+		"cross-env": "^5.0.0",
+		"chokidar-cli": "^1.0.0",
+		"babel-cli": "^6.0.0",
+		"babel-register": "^6.0.0",
+		"babel-preset-env": "^1.0.0",
+		"babel-plugin-istanbul": "^4.0.0",
+		"nodemon": "^1.0.0",
+		"codeclimate-test-reporter": "^0.5.0"
+	},
+	"xo": {
+		"prettier": true,
+		"rules": {
+			"prefer-arrow-callback": [
+				"error"
+			]
+		},
+		"envs": [
+			"mocha"
+		]
+	},
+	"babel": {
+		"presets": [
+			[
+				"env",
+				{
+					"targets": {
+						"node": "7"
+					}
+				}
+			]
+		],
+		"env": {
+			"test": {
+				"plugins": [
+					"istanbul"
+				]
+			}
+		}
+	},
+	"nyc": {
+		"reporter": [
+			"lcov",
+			"html"
+		],
+		"require": [
+			"babel-register"
+		],
+		"sourceMap": false,
+		"instrument": false,
+		"lines": 80,
+		"statements": 80,
+		"functions": 80,
+		"branches": 80
+	}
 }
