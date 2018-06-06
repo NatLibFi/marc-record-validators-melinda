@@ -28,7 +28,7 @@
 
 'use strict';
 
-export default async function(tagPattern) {
+export default async function (tagPattern) {
 	if (tagPattern instanceof RegExp) {
 		return {
 			description:

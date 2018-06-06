@@ -26,14 +26,14 @@
  *
  */
 
-export default async function() {
+export default async function () {
 	return {
-    description,
-    validate: async record => ({
-      valid: false
-    }),
-    fix: async record => (
-      console.log('fix block')
-    )
-  }
+		description,
+		validate: async record => ({
+			valid: false
+		}),
+		fix: async record => (
+			console.log('fix block')
+		)
+	};
 }
