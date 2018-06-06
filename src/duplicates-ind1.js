@@ -31,7 +31,8 @@
 export default async function(tagPattern) {
 	if (tagPattern instanceof RegExp) {
 		return {
-			description: 'Handles data fields that only differ in the first indicator',
+			description:
+				'Handles data fields that only differ in the first indicator',
 			validate: async record => ({valid: !record.fields.some(matches)}),
 			fix: async record =>
 				record.fields
