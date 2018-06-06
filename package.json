@@ -29,6 +29,7 @@
 		"build": "npm run clean && npm run build:transpile && ncu",
 		"watch:build": "chokidar src -c 'npm run build:transpile && node dist/index.js'",
 		"watch:check": "chokidar src test -c 'npm run lint && npm test && npm run coverage'",
+		"watch:validator": "chokidar src/$VALIDATOR.js test/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js test/$VALIDATOR.spec.js && npm test test/$VALIDATOR.spec.js && npm run coverage'",
 		"check-and-build": "npm run lint && npm test && npm run coverage && npm run build",
 		"travisci": "npm run check-and-build",
 		"publish-to-npm": "npm install && npm run lint && npm test && npm run coverage && npm publish --access=public"
