@@ -29,7 +29,6 @@
 /* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
 
 'use strict';
-
 import {expect} from 'chai';
 import MarcRecord from 'marc-record-js';
 import validatorFactory from '../src/empty-fields';
@@ -53,10 +52,10 @@ describe('empty-fields', () => {
 				fields: [
 					{
 						tag: '001',
-      			value: '1234567', 
+						value: '1234567',
 						subfields: [
 							{
-								code: 'a', 
+								code: 'a',
 								value: 'foo'
 							}
 						]
@@ -67,17 +66,17 @@ describe('empty-fields', () => {
 
 			expect(result).to.eql({valid: true});
 		});
-		
+
 		it('Finds an empty tag value', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
 					{
 						tag: '008',
-      			value: '', 
+						value: '',
 						subfields: [
 							{
-								code: 'a', 
+								code: 'a',
 								value: 'foo'
 							}
 						]
@@ -94,7 +93,7 @@ describe('empty-fields', () => {
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '245', 
+						tag: '245',
 						subfields: [
 							{
 								code: 'a',
@@ -111,7 +110,7 @@ describe('empty-fields', () => {
 
 		it('Finds an empty subfield array', async () => {
 			const validator = await validatorFactory();
-			const record= new MarcRecord({
+			const record = new MarcRecord({
 				fields: [
 					{
 						tag: '500',
@@ -134,9 +133,9 @@ describe('empty-fields', () => {
 					{
 						tag: '001',
 						value: '1234567'
-					}, 
+					},
 					{
-						tag: '008', 
+						tag: '008',
 						value: ''
 					}
 				]
@@ -156,7 +155,7 @@ describe('empty-fields', () => {
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '245', 
+						tag: '245',
 						subfields: [
 							{
 								code: 'a',
@@ -175,7 +174,7 @@ describe('empty-fields', () => {
 			expect(record.fields).to.eql({
 				fields: [
 					{
-						tag: '245', 
+						tag: '245',
 						subfields: [
 							{
 								code: 'a',

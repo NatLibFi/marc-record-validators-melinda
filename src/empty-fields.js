@@ -25,15 +25,88 @@
  * for the JavaScript code in this file.
  *
  */
+import 'babel-polyfill';
+import {isEmpty} from 'lodash';
+// Import {isEmpty, some, valuesIn, includes} from 'lodash';
 
 export default async function () {
 	return {
-		description,
+		description: 'Handles empty fields',
 		validate: async record => ({
-			valid: false
+			valid: validateRecord(record)
 		}),
 		fix: async record => (
-			console.log('fix block')
+			console.log('FIX stringify: ', JSON.stringify(record.toJsonObject(), undefined, 2))
 		)
 	};
+
+	// Function emptyFields(fields) {
+	// 	const state = iterateRecordObjects(fields);
+	// 	return state;
+	// }
+
+	// function iterateRecordObjects(fields) {
+	// 	const validation = {
+	// 		controlFields: false,
+	// 		subfields: some(flattenArray(fields), isEmpty),
+	// 		isEmptySubfield: valuesIn(fields.map(item => isEmpty(item.subfields)))
+	// 			.includes(true)
+	// 	};
+
+	// 	fields.forEach(item => {
+	// 		validation.controlFields = valuesIn(item).includes('');
+	// 	});
+
+	// 	return !includes(validation, true);
+	// }
+	function validateRecord(record) {
+		const validateObject = findEmptyValues(record).every(subfield => isEmpty(subfield));
+		console.log('validateObject: ', validateObject);
+		return validateObject;
+	}
+
+	function findEmptyValues(record) {
+		// Const record = {fields: [{tag: 'FOO', value: 'bar'}, {tag: 'BAR', value: ''}, {tag: 'FUBAR', subfields: [{code: 'a', value: ''}]}, {tag: 'heppi', value: ''}]};
+		// const filteredFields = record.fields.filter(filterFields);
+		const controlFields = record.fields.filter(emptyControlFields);
+		const subfieldValues = record.fields.filter(emptySubfieldValues);
+		const subfieldArray = record.fields.filter(emptySubfields);
+		// Console.log('controlFields: ', JSON.stringify(controlFields, undefined, 2));
+		// console.log('subfields: ', JSON.stringify(subfieldArray, undefined, 2));
+		// console.log('subfieldValues', JSON.stringify(subfieldValues, undefined, 2));
+
+		function emptyControlFields(field) {
+			return 'value' in field && field.value.length === 0;
+		}
+
+		function emptySubfields(field) {
+			return field.subfields && field.subfields.length === 0;
+		}
+
+		function emptySubfieldValues(field) {
+			return field.subfields.some(subfield => subfield.value.length === 0);
+		}
+
+		// Return 'value' in field && field.value.length === 0 ||
+		// 	field.subfields &&
+		// 		(field.subfields.length === 0 || field.subfields.some(
+		// 			subfield => subfield.value.length === 0)
+		// 		);
+		return [controlFields, subfieldValues, subfieldArray];
+	}
+
+	// Function flattenArray(data) {
+	// 	return data.reduce(function iter(r, a) {
+	// 		if (a === null) {
+	// 			return a;
+	// 		}
+	// 		if (Array.isArray(a)) {
+	// 			return a.reduce(iter, a);
+	// 		}
+	// 		if (typeof a === 'object') {
+	// 			return Object.keys(a).map(key => a[key]).reduce(iter, r);
+	// 		}
+	// 		return r.concat(a);
+	// 	}, []);
+	// }
 }
