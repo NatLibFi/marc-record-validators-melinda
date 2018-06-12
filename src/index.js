@@ -29,8 +29,9 @@
 /* eslint-disable no-unused-vars */
 
 'use strict';
-
+import 'babel-polyfill';
 import DoubleCommas from './double-commas';
 import DuplicatesInd1 from './duplicates-ind1';
+import EmptyFields from './empty-fields';
 
-export {DoubleCommas, DuplicatesInd1};
+export {DoubleCommas, DuplicatesInd1, EmptyFields};
