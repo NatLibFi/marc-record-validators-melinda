@@ -39,8 +39,7 @@ export default async function () {
 				.filter(field => emptyControlFields(field) || emptySubfieldValues(field) || emptySubfields(field))
 				.forEach(field => {
 					if (Object.prototype.hasOwnProperty.call(field, 'subfields') && !isEmpty(field.subfields)) {
-						const subfield = find(field.subfields, {value: ''});
-						record.removeSubfield(subfield, field);
+						record.removeSubfield(find(field.subfields, {value: ''}), field);
 					} else {
 						record.removeField(field);
 					}
