@@ -32,11 +32,11 @@
 
 import {expect} from 'chai';
 import MarcRecord from 'marc-record-js';
-import validatorFactory from '../src/duplicates-ind1';
+import validatorFactory from '../src/fields-present';
 
 describe('duplicates-ind1', () => {
 	it('Creates a validator', async () => {
-		const validator = await validatorFactory(/^245$/);
+		const validator = await validatorFactory();
 
 		expect(validator)
 			.to.be.an('object')
@@ -90,6 +90,38 @@ describe('duplicates-ind1', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false});
+		});
+	});
+
+	describe('#fix', () => {
+		it('Fixes the record', async () => {
+			const validator = await validatorFactory(/^500$/);
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '500',
+						ind1: ' ',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					},
+					{
+						tag: '500',
+						ind1: '1',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					}
+				]
+			});
+			await validator.fix(record);
+
+			expect(record.fields).to.eql([
+				{
+					tag: '500',
+					ind1: '1',
+					ind2: '0',
+					subfields: [{code: 'a', value: 'foo'}]
+				}
+			]);
 		});
 	});
 });

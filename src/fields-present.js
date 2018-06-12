@@ -26,13 +26,19 @@
  *
  */
 
-/* eslint-disable no-unused-vars */
-
 'use strict';
-import 'babel-polyfill';
-import DoubleCommas from './double-commas';
-import DuplicatesInd1 from './duplicates-ind1';
-import EmptyFields from './empty-fields';
-import FieldsPresent from './fields-present';
 
-export {DoubleCommas, DuplicatesInd1, EmptyFields, FieldsPresent};
+export default async function(tagPattern) {
+	if (tagPattern instanceof RegExp) {
+		return {
+			description:
+				'Checks whether the configured fields are present in the record',
+			validate: async record => ({valid: !record.fields.some(matches)})
+		};
+	}
+	throw new Error('No tagPattern provided');
+
+	function matches(field, index, fields) {
+		return tagPattern.test(field.tag);
+	}
+}
