@@ -171,8 +171,8 @@ describe('empty-fields', () => {
 			});
 			await validator.fix(record);
 
-			expect(record.fields).to.eql({
-				fields: [
+			expect(record.fields).to.eql(
+				[
 					{
 						tag: '245',
 						subfields: [
@@ -182,14 +182,17 @@ describe('empty-fields', () => {
 							}
 						]
 					}
-				]
-			});
+				]);
 		});
 
 		it('Removes an empty subfields array', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
+					{
+						tag: '001',
+						value: '1234567'
+					},
 					{
 						tag: '500',
 						subfields: [
@@ -201,7 +204,8 @@ describe('empty-fields', () => {
 
 			expect(record.fields).to.eql([
 				{
-					tag: '500'
+					tag: '001',
+					value: '1234567'
 				}
 			]);
 		});
