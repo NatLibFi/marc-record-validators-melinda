@@ -28,7 +28,7 @@
 
 'use strict';
 
-export default async function () {
+export default async function() {
 	return {
 		description: 'Handle double commas in 700$e-subfields',
 		validate: async record => ({

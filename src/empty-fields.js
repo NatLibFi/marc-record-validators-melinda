@@ -25,7 +25,6 @@
  * for the JavaScript code in this file.
  *
  */
-import 'babel-polyfill';
 import {isEmpty, find} from 'lodash';
 
 export default async function () {
@@ -38,7 +37,7 @@ export default async function () {
 			record.fields
 				.filter(field => emptyControlFields(field) || emptySubfieldValues(field) || emptySubfields(field))
 				.forEach(field => {
-					if (Object.prototype.hasOwnProperty.call(field, 'subfields') && !isEmpty(field.subfields)) {
+					if ('subfields' in field && !isEmpty(field.subfields)) {
 						record.removeSubfield(find(field.subfields, {value: ''}), field);
 					} else {
 						record.removeField(field);
