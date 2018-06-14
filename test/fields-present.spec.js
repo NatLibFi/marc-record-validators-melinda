@@ -30,17 +30,13 @@
 
 'use strict';
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import {expect} from 'chai';
 import MarcRecord from 'marc-record-js';
 import validatorFactory from '../src/fields-present';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
-
-describe('fields-present', () => {
+describe('duplicates-ind1', () => {
 	it('Creates a validator', async () => {
-		const validator = await validatorFactory([/^500$/, /^400$/]);
+		const validator = await validatorFactory();
 
 		expect(validator)
 			.to.be.an('object')
@@ -50,14 +46,9 @@ describe('fields-present', () => {
 		expect(validator.validate).to.be.a('function');
 	});
 
-	it('Throws an error when tagPatterns not provided', async () => {
-		await expect(validatorFactory()).to.be.rejectedWith(Error, 'No tag pattern array provided');
-	});
-
 	describe('#validate', () => {
 		it('Finds the record valid', async () => {
-			const tagPatterns = [/^5..$/, /^FOO$/];
-			const validator = await validatorFactory(tagPatterns);
+			const validator = await validatorFactory(/^500$/);
 			const record = new MarcRecord({
 				fields: [
 					{
@@ -67,7 +58,7 @@ describe('fields-present', () => {
 						subfields: [{code: 'a', value: 'foo'}]
 					},
 					{
-						tag: 'FOO',
+						tag: '500',
 						ind1: ' ',
 						ind2: '0',
 						subfields: [{code: 'a', value: 'foo'}]
@@ -79,18 +70,17 @@ describe('fields-present', () => {
 			expect(result).to.eql({valid: true});
 		});
 		it('Finds the record invalid', async () => {
-			const tagPatterns = [/^5..$/, /^FOO$/];
-			const validator = await validatorFactory(tagPatterns);
+			const validator = await validatorFactory(/^500$/);
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '001',
+						tag: '500',
 						ind1: ' ',
 						ind2: '0',
 						subfields: [{code: 'a', value: 'foo'}]
 					},
 					{
-						tag: 'BAR',
+						tag: '500',
 						ind1: '1',
 						ind2: '0',
 						subfields: [{code: 'a', value: 'foo'}]
@@ -100,6 +90,38 @@ describe('fields-present', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false});
+		});
+	});
+
+	describe('#fix', () => {
+		it('Fixes the record', async () => {
+			const validator = await validatorFactory(/^500$/);
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '500',
+						ind1: ' ',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					},
+					{
+						tag: '500',
+						ind1: '1',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					}
+				]
+			});
+			await validator.fix(record);
+
+			expect(record.fields).to.eql([
+				{
+					tag: '500',
+					ind1: '1',
+					ind2: '0',
+					subfields: [{code: 'a', value: 'foo'}]
+				}
+			]);
 		});
 	});
 });
