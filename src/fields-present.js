@@ -41,6 +41,14 @@ export default async function (tagPatterns) {
 	throw new Error('No tag pattern array provided');
 
 	function isFieldPresent(record) {
-		return tagPatterns.every(pattern => record.fields.some(field => pattern.test(field.tag)));
+		const values = record.fields.map(object => object.tag);
+		return values.every(value => isValid(value));
+	}
+
+	function isValid(value) {
+		return tagPatterns.some(regExp => {
+			const pattern = new RegExp(regExp);
+			return pattern.test(value);
+		});
 	}
 }
