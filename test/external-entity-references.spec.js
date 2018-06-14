@@ -34,11 +34,11 @@ import MarcRecord from 'marc-record-js';
 import validatorFactory from '../src/empty-fields';
 
 const endpoint = 'https://foo.bar';
-const prefixPattern = '/\(FOOBAR\)/'
+const prefixPattern = '/(FOOBAR)/';
 const fields = {
-  773: ['w'],
-  833: ['w', 'p']
-}
+	773: ['w'],
+	833: ['w', 'p']
+};
 
 describe('empty-fields', () => {
 	it('Creates a validator', async () => {
@@ -56,79 +56,78 @@ describe('empty-fields', () => {
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-          fields: [
-            {
-              tag: '001',
-              value: '123456'
-            },
-            {
-              tag: '035',
-              subfields: [
-                {
-                  code: 'a',
-                  value: '(FI-MELINDA)123456'
-                }
-              ]
-            },
-            {
-              tag: '773',
-              subfields: [
-                {
-                  code: 'w',
-                  value: '(FOOBAR)4567'
-                }
-              ]
-            },
-            {
-              tag: '833',
-              subfields: [
-                {
-                  code: 'p',
-                  value: '(FOOBAR)4567'
-                }
-              ]
-            }
-          ]
-        });
-			const result = await validator.validate(record);
-
-			expect(result).to.eql({valid: true});
-    });
-  });
-
-  describe('#validate', () => {
-		it('Finds the record invalid', async () => {
-			const validator = await validatorFactory();
-			const record = new MarcRecord({
 				fields: [
-          {
-            tag: '001',
-            value: '123456'
-          },
-          {
-            tag: '035',
-            subfields: [
-              {
-                code: 'a',
-                value: '(FI-MELINDA)123456'
-              }
-            ]
-          },
-          {
-            tag: '773',
-            subfields: [
-              {
-                code: 'w',
-                value: '(FI-MELINDA)4567'
-              }
-            ]
-          }
-        ]
+					{
+						tag: '001',
+						value: '123456'
+					},
+					{
+						tag: '035',
+						subfields: [
+							{
+								code: 'a',
+								value: '(FI-MELINDA)123456'
+							}
+						]
+					},
+					{
+						tag: '773',
+						subfields: [
+							{
+								code: 'w',
+								value: '(FOOBAR)4567'
+							}
+						]
+					},
+					{
+						tag: '833',
+						subfields: [
+							{
+								code: 'p',
+								value: '(FOOBAR)4567'
+							}
+						]
+					}
+				]
 			});
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: true});
-    });
-  });
+		});
+	});
 
+	describe('#validate', () => {
+		it('Finds the record invalid', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '001',
+						value: '123456'
+					},
+					{
+						tag: '035',
+						subfields: [
+							{
+								code: 'a',
+								value: '(FI-MELINDA)123456'
+							}
+						]
+					},
+					{
+						tag: '773',
+						subfields: [
+							{
+								code: 'w',
+								value: '(FI-MELINDA)4567'
+							}
+						]
+					}
+				]
+			});
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({valid: true});
+		});
+	});
 });
