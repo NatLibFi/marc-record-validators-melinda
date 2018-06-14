@@ -26,13 +26,21 @@
  *
  */
 
-/* eslint-disable no-unused-vars */
-
 'use strict';
-import 'babel-polyfill';
-import DoubleCommas from './double-commas';
-import DuplicatesInd1 from './duplicates-ind1';
-import EmptyFields from './empty-fields';
-import FieldsPresent from './fields-present';
 
-export {DoubleCommas, DuplicatesInd1, EmptyFields, FieldsPresent};
+export default async function (tagPatterns) {
+	if (Array.isArray(tagPatterns)) {
+		return {
+			description:
+				'Checks whether the configured fields are present in the record',
+			validate: async record => ({
+				valid: isFieldPresent(record)
+			})
+		};
+	}
+	throw new Error('No tag pattern array provided');
+
+	function isFieldPresent(record) {
+		return tagPatterns.every(pattern => record.fields.some(field => pattern.test(field.tag)));
+	}
+}
