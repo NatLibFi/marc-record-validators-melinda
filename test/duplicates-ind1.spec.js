@@ -92,4 +92,36 @@ describe('duplicates-ind1', () => {
 			expect(result).to.eql({valid: false});
 		});
 	});
+
+	describe('#fix', () => {
+		it('Fixes the record', async () => {
+			const validator = await validatorFactory(/^500$/);
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '500',
+						ind1: ' ',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					},
+					{
+						tag: '500',
+						ind1: '1',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					}
+				]
+			});
+			await validator.fix(record);
+
+			expect(record.fields).to.eql([
+				{
+					tag: '500',
+					ind1: '1',
+					ind2: '0',
+					subfields: [{code: 'a', value: 'foo'}]
+				}
+			]);
+		});
+	});
 });

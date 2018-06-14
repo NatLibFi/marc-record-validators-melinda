@@ -33,6 +33,5 @@ import 'babel-polyfill';
 import DoubleCommas from './double-commas';
 import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
-import FieldsPresent from './fields-present';
 
-export {DoubleCommas, DuplicatesInd1, EmptyFields, FieldsPresent};
+export {DoubleCommas, DuplicatesInd1, EmptyFields};
