@@ -28,17 +28,27 @@
 
 'use strict';
 
-export default async function(tagPattern) {
-	if (tagPattern instanceof RegExp) {
+export default async function (tagPatterns) {
+	if (Array.isArray(tagPatterns)) {
 		return {
 			description:
 				'Checks whether the configured fields are present in the record',
-			validate: async record => ({valid: !record.fields.some(matches)})
+			validate: async record => ({
+				valid: isFieldPresent(record)
+			})
 		};
 	}
-	throw new Error('No tagPattern provided');
+	throw new Error('No tag pattern array provided');
 
-	function matches(field, index, fields) {
-		return tagPattern.test(field.tag);
+	function isFieldPresent(record) {
+		const values = record.fields.map(object => object.tag);
+		return values.every(value => isValid(value));
+	}
+
+	function isValid(value) {
+		return tagPatterns.some(regExp => {
+			const pattern = new RegExp(regExp);
+			return pattern.test(value);
+		});
 	}
 }
