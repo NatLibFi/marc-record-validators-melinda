@@ -29,20 +29,24 @@
 /* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
 
 'use strict';
-import {expect} from 'chai';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
-import validatorFactory from '../src/empty-fields';
+import validatorFactory from '../src/external-entity-references';
 
-const endpoint = 'https://foo.bar';
-const prefixPattern = '/(FOOBAR)/';
+const {expect} = chai;
+chai.use(chaiAsPromised);
+
+// Const endpoint = 'https://foo.bar';
+const prefixPattern = /^\(FOOBAR\)/;
 const fields = {
 	773: ['w'],
 	833: ['w', 'p']
 };
 
-describe('empty-fields', () => {
+describe('external-entity-references', () => {
 	it('Creates a validator', async () => {
-		const validator = await validatorFactory();
+		const validator = await validatorFactory(prefixPattern, fields);
 
 		expect(validator)
 			.to.be.an('object')
@@ -52,9 +56,13 @@ describe('empty-fields', () => {
 		expect(validator.validate).to.be.a('function');
 	});
 
+	it('Throws an error when prefixPattern not provided', async () => {
+		await expect(validatorFactory()).to.be.rejectedWith(Error, 'Error in validation parameters');
+	});
+
 	describe('#validate', () => {
 		it('Finds the record valid', async () => {
-			const validator = await validatorFactory();
+			const validator = await validatorFactory(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
 					{
@@ -75,7 +83,7 @@ describe('empty-fields', () => {
 						subfields: [
 							{
 								code: 'w',
-								value: '(FOOBAR)4567'
+								value: '(FOOBAR)4001'
 							}
 						]
 					},
@@ -84,7 +92,11 @@ describe('empty-fields', () => {
 						subfields: [
 							{
 								code: 'p',
-								value: '(FOOBAR)4567'
+								value: '(FOOBAR)9550'
+							},
+							{
+								code: 'c',
+								value: '(FI-MELINDA)8850'
 							}
 						]
 					}
@@ -98,7 +110,7 @@ describe('empty-fields', () => {
 
 	describe('#validate', () => {
 		it('Finds the record invalid', async () => {
-			const validator = await validatorFactory();
+			const validator = await validatorFactory(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
 					{
@@ -119,7 +131,7 @@ describe('empty-fields', () => {
 						subfields: [
 							{
 								code: 'w',
-								value: '(FI-MELINDA)4567'
+								value: '(FOOBAR)4000'
 							}
 						]
 					}
