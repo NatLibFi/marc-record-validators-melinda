@@ -26,15 +26,51 @@
  *
  */
 
-export default async function () {
-	return {
-		description: 'Checks if Melinda entity references are resolvable',
-		validate: async record => ({
-			valid: validateRecord(record)
-		})
-	};
+export default async function (tagPattern, fields) {
+	if (tagPattern instanceof RegExp && typeof fields === 'object') {
+		return {
+			description: 'Checks if Melinda entity references are resolvable',
+			validate: async record => ({
+				valid: validateRecord(record)
+			})
+		};
+	}
+	throw new Error('Error in validation parameters');
 
 	function validateRecord(record) {
-		return false;
+		// Filter matching field keys from record.fields
+		const subfields = record.fields.filter(item => item.subfields)
+			.reduce((prev, current) => {
+				Object.keys(fields).forEach(key => {
+					if (key === current.tag) {
+						prev.push(current);
+					}
+				});
+				return prev;
+			}, []);
+
+		// Filter matching objects from subfields
+		const matchingTag = [...subfields].reduce((prev, current) => {
+			Object.keys(fields).forEach(key => {
+				if (key === current.tag) {
+					current.subfields.filter(item => {
+						if (Object.values(fields[key]).filter(value => value === item.code)[0]) {
+							prev.push(item);
+						}
+						return prev;
+					});
+				}
+			});
+			return prev;
+		}, []);
+
+		matchingTag.forEach(obj => {
+			if (tagPattern.test(obj.value)) {
+				obj.value = obj.value.replace(tagPattern, '');
+			}
+		});
+
+		console.log('matchingTag: ', matchingTag);
+		return null;
 	}
 }
