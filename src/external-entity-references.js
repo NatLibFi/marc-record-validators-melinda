@@ -77,10 +77,7 @@ export default async function (tagPattern, fields) {
 
 		async function validateMatcingTags() {
 			const result = await Promise.all(matchingTags.map(obj => getData(obj.value)));
-			let valid = false;
-
-			valid = result.some(value => value !== false);
-			console.log('valid: ', valid);
+			const valid = result.every(value => value !== false);
 			return valid;
 		}
 

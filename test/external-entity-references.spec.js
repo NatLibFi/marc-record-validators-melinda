@@ -32,6 +32,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
+// Import fetchMock from 'fetch-mock';
 import validatorFactory from '../src/external-entity-references';
 
 const {expect} = chai;
@@ -61,7 +62,7 @@ describe('external-entity-references', () => {
 	});
 
 	describe('#validate', () => {
-		it('Finds the record valid', async () => {
+		it('Finds prefixPattern from the record and removes it', async () => {
 			const validator = await validatorFactory(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
@@ -109,7 +110,7 @@ describe('external-entity-references', () => {
 	});
 
 	describe('#validate', () => {
-		it('Finds the record invalid', async () => {
+		it('Finds no matching prefixPattern from the record', async () => {
 			const validator = await validatorFactory(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
