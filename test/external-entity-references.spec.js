@@ -83,7 +83,7 @@ describe('external-entity-references', () => {
 						subfields: [
 							{
 								code: 'w',
-								value: '(FOOBAR)4001'
+								value: '(FOOBAR)5000'
 							}
 						]
 					},
