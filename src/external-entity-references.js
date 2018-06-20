@@ -29,9 +29,9 @@
 import {parseString} from 'xml2js';
 import fetch from 'node-fetch';
 
-const API_QUERY = 'http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
+// Const API_QUERY = 'http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
 
-export default async function (tagPattern, fields) {
+export default async function ({endpoint, tagPattern, fields}) {
 	if (tagPattern instanceof RegExp && typeof fields === 'object') {
 		return {
 			description: 'Checks if Melinda entity references are resolvable',
@@ -91,7 +91,7 @@ export default async function (tagPattern, fields) {
 		}
 
 		async function getData(parameter) {
-			const response = await fetch(`${API_QUERY}${parameter}`);
+			const response = await fetch(`${endpoint}${parameter}`);
 			let valid = false;
 
 			parseString(await response.text(), (err, result) => {

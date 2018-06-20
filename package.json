@@ -60,6 +60,7 @@
 		"chokidar-cli": "^1.0.0",
 		"codeclimate-test-reporter": "^0.5.0",
 		"cross-env": "^5.0.0",
+		"fetch-mock": "^6.4.4",
 		"istanbul": "0.x.x",
 		"mocha": "^5.0.0",
 		"nodemon": "^1.0.0",

@@ -32,12 +32,14 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
-import validatorFactory from '../src/external-entity-references';
+import fetchMock from 'fetch-mock';
+import * as testContext from '../src/external-entity-references'; /* eslint-disable-line import/named */
+import {fixture5000, fixture9550} from './fixtures/external-entity-references';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-// Const endpoint = 'https://foo.bar';
+const endpoint = 'https://foo.bar';
 const prefixPattern = /^\(FOOBAR\)/;
 const fields = {
 	773: ['w'],
@@ -45,8 +47,12 @@ const fields = {
 };
 
 describe('external-entity-references', () => {
+	afterEach(() => {
+		testContext.default.__ResetDependency__('fetch');
+	});
+
 	it('Creates a validator', async () => {
-		const validator = await validatorFactory(prefixPattern, fields);
+		const validator = await testContext.default({endpoint, prefixPattern, fields});
 
 		expect(validator)
 			.to.be.an('object')
@@ -62,7 +68,14 @@ describe('external-entity-references', () => {
 
 	describe('#validate', () => {
 		it('Finds prefixPattern on record and removes it', async () => {
-			const validator = await validatorFactory(prefixPattern, fields);
+			const mock = fetchMock.sandbox();
+
+			mock.get('http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=5000', fixture5000);
+			mock.get('http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=9550', fixture9550);
+
+			testContext.default.__Rewire__('fetch', mock);
+			const validator = await testContext.default({endpoint, prefixPattern, fields});
+
 			const record = new MarcRecord({
 				fields: [
 					{
@@ -110,7 +123,7 @@ describe('external-entity-references', () => {
 
 	describe('#validate', () => {
 		it('Finds no matching prefixPattern on record', async () => {
-			const validator = await validatorFactory(prefixPattern, fields);
+			const validator = await validatorFactory({endpoint, prefixPattern, fields});
 			const record = new MarcRecord({
 				fields: [
 					{
