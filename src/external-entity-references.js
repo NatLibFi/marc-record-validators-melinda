@@ -26,12 +26,17 @@
  *
  */
 
+import {parseString} from 'xml2js';
+import fetch from 'node-fetch';
+
+const API_QUERY = 'http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
+
 export default async function (tagPattern, fields) {
 	if (tagPattern instanceof RegExp && typeof fields === 'object') {
 		return {
 			description: 'Checks if Melinda entity references are resolvable',
 			validate: async record => ({
-				valid: validateRecord(record)
+				valid: await validateRecord(record)
 			})
 		};
 	}
@@ -50,7 +55,7 @@ export default async function (tagPattern, fields) {
 			}, []);
 
 		// Filter matching objects from subfields
-		const matchingTag = [...subfields].reduce((prev, current) => {
+		const matchingTags = [...subfields].reduce((prev, current) => {
 			Object.keys(fields).forEach(key => {
 				if (key === current.tag) {
 					current.subfields.filter(item => {
@@ -64,13 +69,35 @@ export default async function (tagPattern, fields) {
 			return prev;
 		}, []);
 
-		matchingTag.forEach(obj => {
+		matchingTags.forEach(obj => {
 			if (tagPattern.test(obj.value)) {
 				obj.value = obj.value.replace(tagPattern, '');
 			}
 		});
 
-		console.log('matchingTag: ', matchingTag);
-		return null;
+		async function validateMatcingTags() {
+			const result = await Promise.all(matchingTags.map(obj => getData(obj.value)));
+			let valid = false;
+
+			valid = result.some(value => value !== false);
+			console.log('valid: ', valid);
+			return valid;
+		}
+
+		async function getData(parameter) {
+			const response = await fetch(`${API_QUERY}${parameter}`);
+			let valid = false;
+
+			parseString(await response.text(), (err, result) => {
+				if (result['zs:searchRetrieveResponse']['zs:records'].length === 1) {
+					valid = true;
+				}
+				if (err) {
+					console.err(err);
+				}
+			});
+			return valid;
+		}
+		return validateMatcingTags();
 	}
 }
