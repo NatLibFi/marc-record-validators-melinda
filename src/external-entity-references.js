@@ -43,6 +43,9 @@ export default async function (tagPattern, fields) {
 	throw new Error('Error in validation parameters');
 
 	function validateRecord(record) {
+		const removedPrefixes = [];
+		let validationResult = false;
+
 		// Filter matching field keys from record.fields
 		const subfields = record.fields.filter(item => item.subfields)
 			.reduce((prev, current) => {
@@ -69,16 +72,22 @@ export default async function (tagPattern, fields) {
 			return prev;
 		}, []);
 
+		// Matching prefixPatter is removed from object value field.
 		matchingTags.forEach(obj => {
 			if (tagPattern.test(obj.value)) {
 				obj.value = obj.value.replace(tagPattern, '');
+				removedPrefixes.push(obj);
 			}
 		});
 
-		async function validateMatcingTags() {
-			const result = await Promise.all(matchingTags.map(obj => getData(obj.value)));
-			const valid = result.every(value => value !== false);
-			return valid;
+		// If matching prefixPatterns found make an API call
+		if (removedPrefixes.length > 0) {
+			validationResult = validateMatcingTags(removedPrefixes);
+		}
+
+		async function validateMatcingTags(tags) {
+			const result = await Promise.all(tags.map(obj => getData(obj.value)));
+			return result.every(value => value === true);
 		}
 
 		async function getData(parameter) {
@@ -95,6 +104,6 @@ export default async function (tagPattern, fields) {
 			});
 			return valid;
 		}
-		return validateMatcingTags();
+		return validationResult;
 	}
 }

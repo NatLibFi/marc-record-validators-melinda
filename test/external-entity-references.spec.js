@@ -62,7 +62,7 @@ describe('external-entity-references', () => {
 	});
 
 	describe('#validate', () => {
-		it('Finds prefixPattern from the record and removes it', async () => {
+		it('Finds prefixPattern on record and removes it', async () => {
 			const validator = await validatorFactory(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
@@ -110,7 +110,7 @@ describe('external-entity-references', () => {
 	});
 
 	describe('#validate', () => {
-		it('Finds no matching prefixPattern from the record', async () => {
+		it('Finds no matching prefixPattern on record', async () => {
 			const validator = await validatorFactory(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
@@ -132,7 +132,7 @@ describe('external-entity-references', () => {
 						subfields: [
 							{
 								code: 'w',
-								value: '(FOOBAR)4000'
+								value: '(FI-MELINDA)123456'
 							}
 						]
 					}
@@ -140,7 +140,7 @@ describe('external-entity-references', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: true});
+			expect(result).to.eql({valid: false});
 		});
 	});
 });
