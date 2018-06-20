@@ -26,14 +26,15 @@
  *
  */
 
-/* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
+/* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions, no-unused-vars */
 
 'use strict';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
-// Import fetchMock from 'fetch-mock';
-import validatorFactory from '../src/external-entity-references';
+import fetchMock from 'fetch-mock';
+import * as testContext from '../src/external-entity-references'; /* eslint-disable-line import/named */
+import {fixture500, fixture9550} from './fixtures/external-entity-references';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -46,8 +47,12 @@ const fields = {
 };
 
 describe('external-entity-references', () => {
+	afterEach(() => {
+		testContext.default.__ResetDependency__('fetch');
+	});
+
 	it('Creates a validator', async () => {
-		const validator = await validatorFactory(prefixPattern, fields);
+		const validator = await testContext.default(prefixPattern, fields);
 
 		expect(validator)
 			.to.be.an('object')
@@ -58,12 +63,19 @@ describe('external-entity-references', () => {
 	});
 
 	it('Throws an error when prefixPattern not provided', async () => {
-		await expect(validatorFactory()).to.be.rejectedWith(Error, 'Error in validation parameters');
+		await expect(testContext.default()).to.be.rejectedWith(Error, 'Error in validation parameters');
 	});
 
 	describe('#validate', () => {
 		it('Finds prefixPattern from the record and removes it', async () => {
-			const validator = await validatorFactory(prefixPattern, fields);
+			const mock = fetchMock.sandbox();
+
+			mock.get('http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=5000', fixture5000);
+			mock.get('http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=9550', fixture9550);
+
+			testContext.default.__Rewire__('fetch', mock);
+
+			const validator = await testContext.default(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
 					{
@@ -111,7 +123,7 @@ describe('external-entity-references', () => {
 
 	describe('#validate', () => {
 		it('Finds no matching prefixPattern from the record', async () => {
-			const validator = await validatorFactory(prefixPattern, fields);
+			const validator = await testContext.default(prefixPattern, fields);
 			const record = new MarcRecord({
 				fields: [
 					{
