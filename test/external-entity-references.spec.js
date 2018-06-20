@@ -32,7 +32,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
-// Import fetchMock from 'fetch-mock';
 import validatorFactory from '../src/external-entity-references';
 
 const {expect} = chai;
