@@ -31,8 +31,11 @@ import fetch from 'node-fetch';
 
 // Const API_QUERY = 'http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
 
-export default async function ({endpoint, tagPattern, fields}) {
-	if (tagPattern instanceof RegExp && typeof fields === 'object') {
+export default async function ({endpoint, prefixPattern, fields}) {
+	console.log('prefixPattern', prefixPattern);
+	console.log('endpoint', endpoint);
+	console.log('fields', fields);
+	if (prefixPattern instanceof RegExp && typeof fields === 'object') {
 		return {
 			description: 'Checks if Melinda entity references are resolvable',
 			validate: async record => ({
@@ -74,8 +77,8 @@ export default async function ({endpoint, tagPattern, fields}) {
 
 		// Matching prefixPatter is removed from object value field.
 		matchingTags.forEach(obj => {
-			if (tagPattern.test(obj.value)) {
-				obj.value = obj.value.replace(tagPattern, '');
+			if (prefixPattern.test(obj.value)) {
+				obj.value = obj.value.replace(prefixPattern, '');
 				removedPrefixes.push(obj);
 			}
 		});
