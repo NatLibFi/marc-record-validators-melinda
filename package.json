@@ -52,6 +52,7 @@
 		"babel-cli": "^6.26.0",
 		"babel-core": "6.26.3",
 		"babel-plugin-istanbul": "^4.0.0",
+		"babel-plugin-rewire": "^1.1.0",
 		"babel-polyfill": "6.26.0",
 		"babel-preset-env": "^1.0.0",
 		"babel-register": "^6.0.0",
@@ -94,7 +95,8 @@
 		"env": {
 			"test": {
 				"plugins": [
-					"istanbul"
+					"istanbul",
+					"rewire"
 				]
 			}
 		},

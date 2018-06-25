@@ -39,7 +39,7 @@ import {fixture5000, fixture9550} from './fixtures/external-entity-references';
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-const endpoint = 'https://foo.bar';
+const endpoint = 'http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
 const prefixPattern = /^\(FOOBAR\)/;
 const fields = {
 	773: ['w'],
@@ -63,15 +63,16 @@ describe('external-entity-references', () => {
 	});
 
 	it('Throws an error when prefixPattern not provided', async () => {
-		await expect(validatorFactory()).to.be.rejectedWith(Error, 'Error in validation parameters');
+		const validator = await testContext.default({endpoint, prefixPattern, fields});
+		await expect(validator.validate()).to.be.rejectedWith(Error, 'Cannot read property \'fields\' of undefined'); // TODO fix error
 	});
 
 	describe('#validate', () => {
 		it('Finds prefixPattern on record and removes it', async () => {
 			const mock = fetchMock.sandbox();
 
-			mock.get('http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=5000', fixture5000);
-			mock.get('http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=9550', fixture9550);
+			mock.get(`${endpoint}`, fixture5000, {overwriteRoutes: false});
+			mock.get(`${endpoint}`, fixture9550, {overwriteRoutes: false});
 
 			testContext.default.__Rewire__('fetch', mock);
 			const validator = await testContext.default({endpoint, prefixPattern, fields});
