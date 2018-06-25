@@ -64,15 +64,15 @@ describe('external-entity-references', () => {
 
 	it('Throws an error when prefixPattern not provided', async () => {
 		const validator = await testContext.default({endpoint, prefixPattern, fields});
-		await expect(validator.validate()).to.be.rejectedWith(Error, 'Cannot read property \'fields\' of undefined'); // TODO fix error
+		await expect(validator.validate()).to.be.rejectedWith(Error, 'Cannot read property \'fields\' of undefined');
 	});
 
 	describe('#validate', () => {
 		it('Finds prefixPattern on record and removes it', async () => {
 			const mock = fetchMock.sandbox();
 
-			mock.get(`${endpoint}`, fixture5000, {overwriteRoutes: false});
-			mock.get(`${endpoint}`, fixture9550, {overwriteRoutes: false});
+			mock.get(`${endpoint}5000`, fixture5000);
+			mock.get(`${endpoint}9550`, fixture9550);
 
 			testContext.default.__Rewire__('fetch', mock);
 			const validator = await testContext.default({endpoint, prefixPattern, fields});
@@ -124,7 +124,13 @@ describe('external-entity-references', () => {
 
 	describe('#validate', () => {
 		it('Finds no matching prefixPattern on record', async () => {
-			const validator = await validatorFactory({endpoint, prefixPattern, fields});
+			const mock = fetchMock.sandbox();
+
+			mock.get(`${endpoint}5000`, fixture5000);
+
+			testContext.default.__Rewire__('fetch', mock);
+			const validator = await testContext.default({endpoint, prefixPattern, fields});
+
 			const record = new MarcRecord({
 				fields: [
 					{
