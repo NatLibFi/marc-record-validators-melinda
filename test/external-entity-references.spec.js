@@ -40,7 +40,7 @@ const {expect} = chai;
 chai.use(chaiAsPromised);
 
 const endpoint = 'http://melinda.kansalliskirjasto.fi:210/fin01';
-const queryParam = {operation: 'searchRetrieve', maximumRecords: 2, version: 1, query: 'rec.id=5000'};
+const queryParam = '?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
 
 const prefixPattern = /^\(FOOBAR\)/;
 const fields = {
@@ -72,8 +72,9 @@ describe('external-entity-references', () => {
 	describe('#validate', () => {
 		it('Finds prefixPattern on record and removes it', async () => {
 			const mock = fetchMock.sandbox();
-			mock.get(`${endpoint}`, fixture5000, {overwriteRoutes: true, query: queryParam});
-			mock.get(`${endpoint}`, fixture9550, {overwriteRoutes: true, query: queryParam});
+
+			mock.get(`${endpoint}${queryParam}5000`, fixture5000);
+			mock.get(`${endpoint}${queryParam}9550`, fixture9550);
 
 			testContext.default.__Rewire__('fetch', mock);
 			const validator = await testContext.default({endpoint, prefixPattern, fields});
