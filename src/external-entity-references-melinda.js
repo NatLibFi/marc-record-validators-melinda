@@ -29,8 +29,6 @@
 import {parseString} from 'xml2js';
 import fetch from 'node-fetch';
 
-// Const API_QUERY = 'http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
-
 export default async function ({endpoint, prefixPattern, fields}) {
 	if (prefixPattern instanceof RegExp && typeof fields === 'object') {
 		return {
