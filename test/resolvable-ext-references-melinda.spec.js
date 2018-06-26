@@ -33,7 +33,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
 import fetchMock from 'fetch-mock';
-import * as testContext from '../src/external-entity-references-melinda'; /* eslint-disable-line import/named */
+import * as testContext from '../src/resolvable-ext-references-melinda'; /* eslint-disable-line import/named */
 import {fixture5000, fixture9550} from './fixtures/external-entity-references';
 
 const {expect} = chai;
@@ -48,7 +48,7 @@ const fields = {
 	833: ['w', 'p']
 };
 
-describe('external-entity-references-melinda', () => {
+describe('resolvable-ext-references-melinda', () => {
 	afterEach(() => {
 		testContext.default.__ResetDependency__('fetch');
 	});
@@ -160,7 +160,7 @@ describe('external-entity-references-melinda', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: true});
 		});
 	});
 });

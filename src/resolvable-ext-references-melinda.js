@@ -30,7 +30,7 @@ import {parseString} from 'xml2js';
 import fetch from 'node-fetch';
 
 export default async function ({endpoint, prefixPattern, fields}) {
-	if (prefixPattern instanceof RegExp && typeof fields === 'object') {
+	if (typeof endpoint === 'string' && prefixPattern instanceof RegExp && typeof fields === 'object') {
 		return {
 			description: 'Checks if Melinda entity references are resolvable',
 			validate: async record => ({
@@ -42,7 +42,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 
 	function validateRecord(record) {
 		const removedPrefixes = [];
-		let validationResult = false;
+		let validationResult = true;
 
 		// Filter matching field keys from record.fields
 		const subfields = record.fields.filter(item => item.subfields)
@@ -70,7 +70,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 			return prev;
 		}, []);
 
-		// Matching prefixPatter is removed from object value field.
+		// Matching prefixPattern is removed from object value field.
 		matchingTags.forEach(obj => {
 			if (prefixPattern.test(obj.value)) {
 				obj.value = obj.value.replace(prefixPattern, '');
@@ -79,10 +79,10 @@ export default async function ({endpoint, prefixPattern, fields}) {
 		});
 		// If matching prefixPatterns found make an API call
 		if (removedPrefixes.length > 0) {
-			validationResult = validateMatcingTags(removedPrefixes);
+			validationResult = validateMatchingTags(removedPrefixes);
 		}
 
-		async function validateMatcingTags(tags) {
+		async function validateMatchingTags(tags) {
 			const result = await Promise.all(tags.map(obj => getData(obj.value)));
 			return result.every(value => value === true);
 		}
