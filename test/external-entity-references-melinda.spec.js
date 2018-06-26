@@ -33,7 +33,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
 import fetchMock from 'fetch-mock';
-import * as testContext from '../src/external-entity-references'; /* eslint-disable-line import/named */
+import * as testContext from '../src/external-entity-references-melinda'; /* eslint-disable-line import/named */
 import {fixture5000, fixture9550} from './fixtures/external-entity-references';
 
 const {expect} = chai;
@@ -48,7 +48,7 @@ const fields = {
 	833: ['w', 'p']
 };
 
-describe('external-entity-references', () => {
+describe('external-entity-references-melinda', () => {
 	afterEach(() => {
 		testContext.default.__ResetDependency__('fetch');
 	});
@@ -72,7 +72,6 @@ describe('external-entity-references', () => {
 	describe('#validate', () => {
 		it('Finds prefixPattern on record and removes it', async () => {
 			const mock = fetchMock.sandbox();
-
 			mock.get(`${endpoint}${queryParam}5000`, fixture5000);
 			mock.get(`${endpoint}${queryParam}9550`, fixture9550);
 
