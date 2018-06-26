@@ -28,7 +28,7 @@
 
 'use strict';
 
-export default async function(tagPattern) {
+export default async function (tagPattern) {
 	if (tagPattern instanceof RegExp) {
 		return {
 			description:
@@ -43,19 +43,20 @@ export default async function(tagPattern) {
 	throw new Error('No tagPattern provided');
 
 	function matches(field, index, fields) {
+		console.log('field: ', field);
 		return (
 			tagPattern.test(field.tag) && field.ind1 === ' ' && hasDuplicate(field)
 		);
 
-		function hasDuplicate(a) {
+		function hasDuplicate(fieldA) {
 			return fields.some(
-				b =>
-					a !== b &&
-					a.tag === b.tag &&
-					a.ind1 !== b.ind1 &&
-					a.subfields.length === b.subfields.length &&
-					a.subfields.every(aSf =>
-						b.subfields.some(
+				fieldB =>
+					fieldA !== fieldB &&
+					fieldA.tag === fieldB.tag &&
+					fieldA.ind1 !== fieldB.ind1 &&
+					fieldA.subfields.length === fieldB.subfields.length &&
+					fieldA.subfields.every(aSf =>
+						fieldB.subfields.some(
 							bSf => aSf.code === bSf.code && aSf.value === bSf.value
 						)
 					)
