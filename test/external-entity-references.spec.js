@@ -39,7 +39,9 @@ import {fixture5000, fixture9550} from './fixtures/external-entity-references';
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-const endpoint = 'http://melinda.kansalliskirjasto.fi:210/fin01?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
+const endpoint = 'http://melinda.kansalliskirjasto.fi:210/fin01';
+const queryParam = {operation: 'searchRetrieve', maximumRecords: 2, version: 1, query: 'rec.id=5000'};
+
 const prefixPattern = /^\(FOOBAR\)/;
 const fields = {
 	773: ['w'],
@@ -70,9 +72,8 @@ describe('external-entity-references', () => {
 	describe('#validate', () => {
 		it('Finds prefixPattern on record and removes it', async () => {
 			const mock = fetchMock.sandbox();
-
-			mock.get(`${endpoint}5000`, fixture5000);
-			mock.get(`${endpoint}9550`, fixture9550);
+			mock.get(`${endpoint}`, fixture5000, {overwriteRoutes: true, query: queryParam});
+			mock.get(`${endpoint}`, fixture9550, {overwriteRoutes: true, query: queryParam});
 
 			testContext.default.__Rewire__('fetch', mock);
 			const validator = await testContext.default({endpoint, prefixPattern, fields});

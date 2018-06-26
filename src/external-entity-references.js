@@ -79,7 +79,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 				removedPrefixes.push(obj);
 			}
 		});
-
+		console.log('removed removedPrefixes: ', removedPrefixes);
 		// If matching prefixPatterns found make an API call
 		if (removedPrefixes.length > 0) {
 			validationResult = validateMatcingTags(removedPrefixes);
@@ -90,8 +90,11 @@ export default async function ({endpoint, prefixPattern, fields}) {
 			return result.every(value => value === true);
 		}
 
-		async function getData(parameter) {
-			const response = await fetch(`${endpoint}${parameter}`);
+		async function getData(recID) {
+			console.log('recID: ', recID);
+			const queryParam = '?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
+
+			const response = await fetch(`${endpoint}${queryParam}${recID}`);
 			let valid = false;
 
 			parseString(await response.text(), (err, result) => {
