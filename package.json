@@ -43,7 +43,7 @@
 		"lodash": "4.17.10",
 		"marc-record-js": "git+https://github.com/natlibfi-arlehiko/marc-record-js.git",
 		"node-fetch": "^2.1.2",
-		"xml2js": "^0.x.x"
+		"xml2js": "0.x.x"
 	},
 	"peerDependencies": {
 		"@natlibfi/marc-record-validate": "^2.0.0"

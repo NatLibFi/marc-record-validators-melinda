@@ -151,3 +151,173 @@ export const fixture9550 = `
   </datafield>
 </record></zs:recordData><zs:recordPosition>1</zs:recordPosition></zs:record></zs:records></zs:searchRetrieveResponse>
 `;
+
+export const fixture1000 = `
+<?xml version="1.0" encoding="UTF-8"?>
+<zs:searchRetrieveResponse xmlns:zs="http://www.loc.gov/zing/srw/">
+   <zs:version>1.1</zs:version>
+   <zs:numberOfRecords>10000</zs:numberOfRecords>
+   <zs:records>
+      <zs:record>
+         <zs:recordSchema>info:srw/schema/1/marcxml-v1.1</zs:recordSchema>
+         <zs:recordPacking>xml</zs:recordPacking>
+         <zs:recordData>
+            <record xmlns="http://www.loc.gov/MARC21/slim">
+               <leader>00879cam a22002417i 4500</leader>
+               <controlfield tag="001">000000605</controlfield>
+               <controlfield tag="003">FI-MELINDA</controlfield>
+               <controlfield tag="005">20140519232648.0</controlfield>
+               <controlfield tag="008">870209s1986 gw |||||||||||||||||ger||</controlfield>
+               <datafield tag="020" ind1=" " ind2=" ">
+                  <subfield code="a">0-19-826668-5</subfield>
+               </datafield>
+               <datafield tag="035" ind1=" " ind2=" ">
+                  <subfield code="a">(FI-MELINDA)000009550</subfield>
+               </datafield>
+               <datafield tag="041" ind1="0" ind2=" ">
+                  <subfield code="a">eng</subfield>
+               </datafield>
+               <datafield tag="080" ind1=" " ind2=" ">
+                  <subfield code="a">248</subfield>
+               </datafield>
+               <datafield tag="080" ind1=" " ind2=" ">
+                  <subfield code="a">141.131</subfield>
+               </datafield>
+               <datafield tag="100" ind1="0" ind2=" ">
+                  <subfield code="a">Louth, Andrew.</subfield>
+               </datafield>
+               <datafield tag="245" ind1="1" ind2="4">
+                  <subfield code="a">The origins of the Christian mystical tradition :</subfield>
+                  <subfield code="b">from Plato to Denys /</subfield>
+                  <subfield code="c">Andrew Louth.</subfield>
+               </datafield>
+               <datafield tag="250" ind1=" " ind2=" ">
+                  <subfield code="a">Repr.</subfield>
+               </datafield>
+               <datafield tag="260" ind1=" " ind2=" ">
+                  <subfield code="a">Oxford :</subfield>
+                  <subfield code="b">Clarendon Press,</subfield>
+                  <subfield code="c">1983.</subfield>
+               </datafield>
+               <datafield tag="300" ind1=" " ind2=" ">
+                  <subfield code="a">xvii, 215 s.</subfield>
+               </datafield>
+               <datafield tag="500" ind1=" " ind2=" ">
+                  <subfield code="a">First publ. 1981</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">mysticism</subfield>
+                  <subfield code="x">0030-0600</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">mysticism</subfield>
+                  <subfield code="x">Orthodox Eastern Church</subfield>
+                  <subfield code="x">0030-0600</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">Dionysius Areopagita, Pseudo-</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">Platonism</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">mysticism</subfield>
+                  <subfield code="x">comparative studies</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+            </record>
+         </zs:recordData>
+         <zs:recordPosition>1</zs:recordPosition>
+      </zs:record>
+      <zs:record>
+         <zs:recordSchema>info:srw/schema/1/marcxml-v1.1</zs:recordSchema>
+         <zs:recordPacking>xml</zs:recordPacking>
+         <zs:recordData>
+            <record xmlns="http://www.loc.gov/MARC21/slim">
+               <leader>01294cam a22003857i 4500</leader>
+               <controlfield tag="001">000000888</controlfield>
+               <controlfield tag="003">FI-MELINDA</controlfield>
+               <controlfield tag="005">20160729103502.0</controlfield>
+               <controlfield tag="008">881111s1987 dk |||||||||||||||||dan||</controlfield>
+               <datafield tag="020" ind1=" " ind2=" ">
+                  <subfield code="a">0-19-826668-5</subfield>
+               </datafield>
+               <datafield tag="035" ind1=" " ind2=" ">
+                  <subfield code="a">(FI-MELINDA)000009550</subfield>
+               </datafield>
+               <datafield tag="041" ind1="0" ind2=" ">
+                  <subfield code="a">eng</subfield>
+               </datafield>
+               <datafield tag="080" ind1=" " ind2=" ">
+                  <subfield code="a">248</subfield>
+               </datafield>
+               <datafield tag="080" ind1=" " ind2=" ">
+                  <subfield code="a">141.131</subfield>
+               </datafield>
+               <datafield tag="100" ind1="0" ind2=" ">
+                  <subfield code="a">Louth, Andrew.</subfield>
+               </datafield>
+               <datafield tag="245" ind1="1" ind2="4">
+                  <subfield code="a">The origins of the Christian mystical tradition :</subfield>
+                  <subfield code="b">from Plato to Denys /</subfield>
+                  <subfield code="c">Andrew Louth.</subfield>
+               </datafield>
+               <datafield tag="250" ind1=" " ind2=" ">
+                  <subfield code="a">Repr.</subfield>
+               </datafield>
+               <datafield tag="260" ind1=" " ind2=" ">
+                  <subfield code="a">Oxford :</subfield>
+                  <subfield code="b">Clarendon Press,</subfield>
+                  <subfield code="c">1983.</subfield>
+               </datafield>
+               <datafield tag="300" ind1=" " ind2=" ">
+                  <subfield code="a">xvii, 215 s.</subfield>
+               </datafield>
+               <datafield tag="500" ind1=" " ind2=" ">
+                  <subfield code="a">First publ. 1981</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">mysticism</subfield>
+                  <subfield code="x">0030-0600</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">mysticism</subfield>
+                  <subfield code="x">Orthodox Eastern Church</subfield>
+                  <subfield code="x">0030-0600</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">Dionysius Areopagita, Pseudo-</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">Platonism</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+               <datafield tag="650" ind1=" " ind2="7">
+                  <subfield code="a">mysticism</subfield>
+                  <subfield code="x">comparative studies</subfield>
+                  <subfield code="2">atla</subfield>
+               </datafield>
+            </record>
+         </zs:recordData>
+         <zs:recordPosition>2</zs:recordPosition>
+      </zs:record>
+   </zs:records>
+</zs:searchRetrieveResponse>
+`;
+
+
+
+
+
+
+
+
+
+

@@ -28,21 +28,35 @@
 
 import {parseString} from 'xml2js';
 import fetch from 'node-fetch';
+import {last} from 'lodash';
 
 export default async function ({endpoint, prefixPattern, fields}) {
 	if (typeof endpoint === 'string' && prefixPattern instanceof RegExp && typeof fields === 'object') {
 		return {
 			description: 'Checks if Melinda entity references are resolvable',
 			validate: async record => ({
-				valid: await validateRecord(record)
+				valid: await validate(record),
+				messages: await errorMessages(record)
 			})
 		};
 	}
 	throw new Error('Error in validation parameters');
 
+	async function validate(record) {
+		const validateResult = await validateRecord(record);
+		console.log('validateResult.valid: ', validateResult.valid);
+		return validateResult.valid;
+	}
+
+	async function errorMessages(record) {
+		console.log('errorMessages function call');
+		const validateResult = await validateRecord(record);
+		console.log('validateResult.messages: ', validateResult.messages);
+		return validateResult.messages;
+	}
+
 	function validateRecord(record) {
 		const removedPrefixes = [];
-		let validationResult = true;
 
 		// Filter matching field keys from record.fields
 		const subfields = record.fields.filter(item => item.subfields)
@@ -79,30 +93,38 @@ export default async function ({endpoint, prefixPattern, fields}) {
 		});
 		// If matching prefixPatterns found make an API call
 		if (removedPrefixes.length > 0) {
-			validationResult = validateMatchingTags(removedPrefixes);
-		}
-
-		async function validateMatchingTags(tags) {
-			const result = await Promise.all(tags.map(obj => getData(obj.value)));
-			return result.every(value => value === true);
-		}
-
-		async function getData(recID) {
-			const queryParam = '?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
-
-			const response = await fetch(`${endpoint}${queryParam}${recID}`);
-			let valid = false;
-
-			parseString(await response.text(), (err, result) => {
-				if (result['zs:searchRetrieveResponse']['zs:records'].length === 1) {
-					valid = true;
-				}
-				if (err) {
-					console.err(err);
-				}
+			return validateMatchingTags(removedPrefixes).then(result => {
+				console.log('then: ', result);
+				return result;
 			});
-			return valid;
 		}
-		return validationResult;
+	}
+
+	async function validateMatchingTags(tags) {
+		const result = await Promise.all(tags.map(obj => getData(obj.value)));
+		const response = {valid: false, messages: []};
+		if (result.some(value => value === false)) {
+			response.messages.push('error message');
+		}
+		if (result.every(value => value === true)) {
+			response.valid = true;
+		}
+		console.log('response: ', response);
+		return response;
+	}
+
+	async function getData(recID) {
+		const queryParam = '?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
+
+		const response = await fetch(`${endpoint}${queryParam}${recID}`);
+
+		return new Promise(async resolve => {
+			parseString(await response.text(), (err, result) => {
+				const record = last(result['zs:searchRetrieveResponse']['zs:records']);
+				const position = parseInt(last(record['zs:record'])['zs:recordPosition'][0], 10);
+				resolve(position === 1 && !err);
+			});
+		});
 	}
 }
+
