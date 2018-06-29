@@ -152,6 +152,19 @@ describe('resolvable-ext-references-melinda', () => {
 								value: '(FI-MELINDA)123456'
 							}
 						]
+					},
+					{
+						tag: '833',
+						subfields: [
+							{
+								code: 'p',
+								value: '(FI-MELINDA)2620'
+							},
+							{
+								code: 'w',
+								value: '(FI-MELINDA)8850'
+							}
+						]
 					}
 				]
 			});
@@ -195,7 +208,7 @@ describe('resolvable-ext-references-melinda', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: ['erroria pukkaa']});
+			expect(result).to.eql({valid: false, messages: ['Field 773$w with value 1000 is not resolvable']});
 		});
 	});
 });

@@ -34,40 +34,28 @@ export default async function ({endpoint, prefixPattern, fields}) {
 	if (typeof endpoint === 'string' && prefixPattern instanceof RegExp && typeof fields === 'object') {
 		return {
 			description: 'Checks if Melinda entity references are resolvable',
-			validate: async record => ({
-				valid: await validate(record),
-				messages: await errorMessages(record)
-			})
+			validate
 		};
 	}
 	throw new Error('Error in validation parameters');
 
 	async function validate(record) {
 		const validateResult = await validateRecord(record);
-		console.log('validateResult.valid: ', validateResult.valid);
-		return validateResult.valid;
-	}
-
-	async function errorMessages(record) {
-		console.log('errorMessages function call');
-		const validateResult = await validateRecord(record);
-		console.log('validateResult.messages: ', validateResult.messages);
-		return validateResult.messages;
+		return validateResult;
 	}
 
 	function validateRecord(record) {
 		const removedPrefixes = [];
 
 		// Filter matching field keys from record.fields
-		const subfields = record.fields.filter(item => item.subfields)
-			.reduce((prev, current) => {
-				Object.keys(fields).forEach(key => {
-					if (key === current.tag) {
-						prev.push(current);
-					}
-				});
-				return prev;
-			}, []);
+		const subfields = record.fields.reduce((prev, current) => {
+			Object.keys(fields).forEach(key => {
+				if (key === current.tag) {
+					prev.push(current);
+				}
+			});
+			return prev;
+		}, []);
 
 		// Filter matching objects from subfields
 		const matchingTags = [...subfields].reduce((prev, current) => {
@@ -75,7 +63,8 @@ export default async function ({endpoint, prefixPattern, fields}) {
 				if (key === current.tag) {
 					current.subfields.filter(item => {
 						if (Object.values(fields[key]).filter(value => value === item.code)[0]) {
-							prev.push(item);
+							const flatTag = {tag: current.tag, code: item.code, value: item.value};
+							prev.push(flatTag);
 						}
 						return prev;
 					});
@@ -91,26 +80,32 @@ export default async function ({endpoint, prefixPattern, fields}) {
 				removedPrefixes.push(obj);
 			}
 		});
+		return resolveValidation(removedPrefixes);
+	}
+
+	function resolveValidation(removedPrefixes) {
 		// If matching prefixPatterns found make an API call
 		if (removedPrefixes.length > 0) {
 			return validateMatchingTags(removedPrefixes).then(result => {
-				console.log('then: ', result);
 				return result;
 			});
 		}
+		return {valid: true, messages: []};
 	}
 
 	async function validateMatchingTags(tags) {
-		const result = await Promise.all(tags.map(obj => getData(obj.value)));
-		const response = {valid: false, messages: []};
-		if (result.some(value => value === false)) {
-			response.messages.push('error message');
+		const resolved = await Promise.all(tags.map(obj => {
+			return getData(obj.value).then(valid => {
+				const result = {valid, ...obj};
+				return result;
+			});
+		}));
+
+		if (resolved.every(value => value.valid === true)) {
+			return {valid: true, messages: []};
 		}
-		if (result.every(value => value === true)) {
-			response.valid = true;
-		}
-		console.log('response: ', response);
-		return response;
+
+		return {valid: false, messages: resolved.map(obj => `Field ${obj.tag}$${obj.code} with value ${obj.value} is not resolvable`)};
 	}
 
 	async function getData(recID) {
@@ -127,4 +122,3 @@ export default async function ({endpoint, prefixPattern, fields}) {
 		});
 	}
 }
-
