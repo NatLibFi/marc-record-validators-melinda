@@ -38,6 +38,7 @@ import validatorFactory from '../src/field-structure';
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
+//Factory validation
 describe('field-structure', () => {
 	it('Creates a validator', async () => {
 		const config = [{
@@ -73,7 +74,15 @@ describe('field-structure', () => {
 		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - unidentified value: tags');
 	});
 
-	it('Throws an error when config array not valid', async () => {
+	it('Throws an error when config array has field with incorrect data type', async () => {
+		const config = [{
+			leader: /^035$/,
+			tag: 35
+		}];
+		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: tag');
+	});
+
+	it('Throws an error when config array has excluded element', async () => {
 		const config = [{
 			leader: /^035$/,
 			tag: /^035$/
@@ -81,82 +90,84 @@ describe('field-structure', () => {
 		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - excluded element');
 	});
 
-	// describe('#validate', () => {
-	// 	it('Finds the record valid', async () => {
-	// 		const config = [
-	// 			{
-	// 			  tag: /^035$/,
-	// 			  ind1: /^0$/,
-	// 			  ind2: /^1$/
-	// 			},
-	// 			{
-	// 			  tag: /^100$/,
-	// 			  subfields: {
-	// 				a: {maxOccurrence: 1}
-	// 			  }
-	// 			}
-	// 		  ];
-	// 		const validator = await validatorFactory(config);
-	// 		const record = new MarcRecord({
-	// 			fields: [
-	// 			  {
-	// 				tag: '001',
-	// 				value: '123456'
-	// 			  },
-	// 			  {
-	// 				tag: '035',
-	// 				ind1: '0',
-	// 				ind2: '1',
-	// 				subfields: [
-	// 				  {
-	// 					code: 'a',
-	// 					value: 'foo'
-	// 				  }
-	// 				]
-	// 			  },
-	// 			  {
-	// 				tag: '100',
-	// 				ind1: ' ',
-	// 				ind2: ' ',
-	// 				subfields: [
-	// 				  {
-	// 					code: 'a',
-	// 					value: 'bar'
-	// 				  },
-	// 				  {
-	// 					code: 'b',
-	// 					value: 'fubar'
-	// 				  }
-	// 				]
-	// 			  }
-	// 			]
-	// 		  });
-	// 		const result = await validator.validate(record);
+	//Structure validation
+	describe('#validate', () => {
+		const config = [{
+			tag: /^035$/,
+			ind1: /^0$/,
+			ind2: /^1$/
+		},{
+			tag: /^100$/,
+			subfields: {
+				a: {maxOccurrence: 1}
+			}
+		}];
 
-	// 		expect(result).to.eql({valid: true});
-	// 	});
-	// 	it('Finds the record invalid', async () => {
-	// 		const tagPatterns = [/^5..$/, /^FOO$/];
-	// 		const validator = await validatorFactory(tagPatterns);
-	// 		const record = new MarcRecord({
-	// 			fields: [
-	// 				{
-	// 					tag: '001',
-	// 					ind1: ' ',
-	// 					ind2: '0',
-	// 					subfields: [{code: 'a', value: 'foo'}]
-	// 				},
-	// 				{
-	// 					tag: 'BAR',
-	// 					ind1: '1',
-	// 					ind2: '0',
-	// 					subfields: [{code: 'a', value: 'foo'}]
-	// 				}
-	// 			]
-	// 		});
-	// 		const result = await validator.validate(record);
+		const recordValid = new MarcRecord({
+			fields: [{
+				tag: '001',
+				value: '123456'
+			},{
+				tag: '035',
+				ind1: '0',
+				ind2: '1',
+				subfields: [{
+					code: 'a',
+					value: 'foo'
+				}]
+			},{
+				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
+				},{
+					code: 'b',
+					value: 'fubar'
+				}]
+			}]
+		});
 
-	// 		expect(result).to.eql({valid: false});
-	// 	});
-	// });
+		const recordInvalid = new MarcRecord({
+			fields: [{
+				tag: '001',
+				value: '123456'
+			},{
+				tag: '035',
+				ind1: '1',
+				ind2: '1',
+				subfields: [{
+					code: 'a',
+					value: 'foo'
+				}]
+			},{
+				tag: '100',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
+				},{
+					code: 'b',
+					value: 'fubar'
+				},{
+					code: 'a',
+					value: 'barfoo'
+				}]
+			}]
+		});
+
+		it('Finds the record valid', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordValid);
+
+			expect(result).to.eql({valid: true});
+		});
+
+		it('Finds the record invalid', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalid);
+
+			expect(result).to.eql({valid: false});
+		});
+	});
 });

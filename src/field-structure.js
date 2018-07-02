@@ -27,12 +27,12 @@
  */
 
 'use strict';
-import {isEmpty, find} from 'lodash';
+import {filter, forEach} from 'lodash';
 
 export default async function (config) {
-	console.log("-------------------------------------------");
-	console.log("config: ", typeof config, " | ", config)
-	if (typeof config !== 'object' ) {
+	// console.log("-------------------------------------------");
+	// console.log("config: ", typeof config, " | ", config)
+	if (!Array.isArray(config)) {
 		throw new Error('Configuration array not provided');
 	}
 
@@ -50,16 +50,16 @@ export default async function (config) {
 	function configValid(config) {
 		var excluded = [];
 		config.forEach(obj => {
-			excluded = []; //Validate fields, concat excluded elements
+			excluded = []; //Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
 			Object.keys(obj).forEach(function(key) {
 				if(!confSpec[key]) throw new Error('Configuration not valid - unidentified value: ' + key);
+				if(confSpec[key].type === RegExp && !(obj[key] instanceof RegExp)
+					|| confSpec[key].type === Boolean && !(obj[key] instanceof Boolean) ) throw new Error('Configuration not valid - invalid data type for: ' + key);
 				if(confSpec[key].excl) excluded = excluded.concat(confSpec[key].excl);
 			})
-			// console.log("Excluded: ", excluded)
 
 			//Check that no excluded elements are in use
 			Object.keys(obj).forEach(function(key) {
-				// console.log("Key: ", key, " Conf: ", confSpec[key], " excluded: ", excluded.includes(key));
 				if(excluded.includes(key)) throw new Error('Configuration not valid - excluded element');
 			})
 		});
@@ -67,9 +67,49 @@ export default async function (config) {
 
 	//This is used to validate record against config
 	function recordMatchPattern(record) {
-		return config.every(pattern => record.fields.some(field => pattern.test(field.tag)));
-	}
+		//Parse trough every configuration object
+		return config.every( confObj => {
+			//Find all record objects matchin configuration object
+			return record.get(confObj.tag).every( recordSubObj => { 
+				//Validate check that every configuration field exists in record and matches configuration
+				return Object.keys(confObj).every(confField => { 
 
+					//Check that configuration field exists in record object
+					if(!recordSubObj[confField]){
+						console.log("!!! RecordSubObj not found: ", confField); 
+						return false;
+					} 
+
+					//If configuration field is RegExp, test that record field matches it (leader, tag, valuePattern, ind*)
+					if(confObj[confField] instanceof RegExp){
+							return confObj[confField].test(recordSubObj[confField]);
+					}
+					
+					else if(confField === 'strict'){
+						console.log("Strict (boolean)");
+					}
+					
+					//Check that subfield maxOccurence is not exceeded
+					else if(confField === 'subfields'){
+						var isValid = true;
+						forEach(confObj[confField], function(val, key){
+							if(filter(recordSubObj[confField], {code: key}).length > val.maxOccurrence) isValid=false;
+						});
+						return isValid;
+					}
+					
+					else if(confField === 'dependencies'){
+						console.log("Dependencies (Array)");
+					}
+					
+					else{
+						console.log("!!! Configuration field not identified: ", recordSubObj[confField], " | ", typeof recordSubObj[confField]);
+						return false;
+					}
+				});
+			});
+		});
+	}
 }
 
 //Configuration specification
