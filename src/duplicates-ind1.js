@@ -43,12 +43,12 @@ export default async function (tagPattern) {
 	throw new Error('No tagPattern provided');
 
 	function matches(field, index, fields) {
-		console.log('field: ', field);
 		return (
 			tagPattern.test(field.tag) && field.ind1 === ' ' && hasDuplicate(field)
 		);
 
 		function hasDuplicate(fieldA) {
+			console.log('FIELDS: ', fields);
 			return fields.some(
 				fieldB =>
 					fieldA !== fieldB &&

@@ -33,14 +33,18 @@ export default async function (tagPatterns) {
 		return {
 			description:
 				'Checks whether the configured fields are present in the record',
-			validate: async record => ({
-				valid: isFieldPresent(record)
-			})
+			validate
 		};
 	}
 	throw new Error('No tag pattern array provided');
 
-	function isFieldPresent(record) {
-		return tagPatterns.every(pattern => record.fields.some(field => pattern.test(field.tag)));
+	async function validate(record) {
+		for (const pattern of tagPatterns) {
+			const result = record.fields.find(field => pattern.test(field.tag));
+			if (result) {
+				return {valid: true, messages: []};
+			}
+			return {valid: false, messages: [`The prefixPatters ${pattern} not present in the record`]};
+		}
 	}
 }
