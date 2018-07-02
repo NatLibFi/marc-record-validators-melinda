@@ -63,8 +63,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 				if (key === current.tag) {
 					current.subfields.filter(item => {
 						if (Object.values(fields[key]).filter(value => value === item.code)[0]) {
-							const flatTag = {tag: current.tag, code: item.code, value: item.value};
-							prev.push(flatTag);
+							prev.push({tag: current.tag, code: item.code, value: item.value});
 						}
 						return prev;
 					});
@@ -96,8 +95,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 	async function validateMatchingTags(tags) {
 		const resolved = await Promise.all(tags.map(obj => {
 			return getData(obj.value).then(valid => {
-				const result = {valid, ...obj};
-				return result;
+				return {valid, ...obj};
 			});
 		}));
 
