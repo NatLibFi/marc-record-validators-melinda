@@ -100,7 +100,7 @@ describe('fields-present', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false, messages: [
-				'The prefixPatters /^5..$/ not present in the record'
+				'The following tag patterns are not present in the record tag field:  /^5..$/ /^FOO$/'
 			]});
 		});
 	});
