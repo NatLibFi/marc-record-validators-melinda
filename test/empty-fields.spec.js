@@ -63,7 +63,6 @@ describe('empty-fields', () => {
 				]
 			});
 			const result = await validator.validate(record);
-			console.log('result testissä: ', result);
 			expect(result).to.eql({valid: true, messages: []});
 		});
 
