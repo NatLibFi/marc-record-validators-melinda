@@ -90,8 +90,8 @@ describe('field-structure', () => {
 		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - excluded element');
 	});
 
-	//Structure validation
-	describe('#validate', () => {
+	//Indicators and subfields validation
+	describe('#validate: Indicators and subfields', () => {
 		const config = [{
 			tag: /^035$/,
 			ind1: /^0$/,
@@ -152,6 +152,163 @@ describe('field-structure', () => {
 				},{
 					code: 'a',
 					value: 'barfoo'
+				}]
+			}]
+		});
+
+		it('Finds the record valid', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordValid);
+
+			expect(result).to.eql({valid: true});
+		});
+
+		it('Finds the record invalid', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalid);
+
+			expect(result).to.eql({valid: false});
+		});
+	});
+
+	//Patterns and mandatory & strict subfields
+	describe('#validate: Patterns and mandatory & strict subfields', () => {
+		const config = [{
+		    tag: /^001$/,
+    		valuePattern: /\d+/
+		},{
+			tag: /^245$/,
+			strict: true,
+			subfields: {
+				a: {mandatory: true, maxOccurrence: 1, pattern: /\w+/},
+				b: {maxOccurrence: 1, pattern: /\w+/}
+			}
+		}];
+
+		const recordValid = new MarcRecord({
+			fields: [{
+				tag: '001',
+				value: '123456'
+			  },{
+				tag: '100',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
+				  }]
+			  },{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'foo'
+				  },{
+					code: 'b',
+					value: 'bar'
+				}]
+			  }]
+		  });
+
+		const recordInvalid = new MarcRecord({
+			fields: [{
+				tag: '001',
+				value: '123456a'
+			  },{
+				tag: '100',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
+				}]
+			  },{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'foo'
+				  },{
+					code: 'b',
+					value: 'bar'
+				  },{
+					code: 'c',
+					value: 'fubar'
+				}]
+			  }]
+		  });
+
+		it('Finds the record valid', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordValid);
+
+			expect(result).to.eql({valid: true});
+		});
+
+		it('Finds the record invalid', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalid);
+
+			expect(result).to.eql({valid: false});
+		});
+	});
+
+
+	//Dependencies
+	describe('#validate: Dependencies', () => {
+		const config = [{
+			leader: /^.{6}s/,
+			dependencies: [{
+				tag: /^773$/,
+				subfields: {7: /^nnas$/}
+			}]
+		}];
+
+		const recordValid = new MarcRecord({
+			leader: '63ab75sfoo122myhgh',
+			fields: [{
+				tag: '001',
+				value: '123456'
+			},{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'foo'
+				}]
+			},{
+				tag: '773',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: '7',
+					value: 'nnas'
+				  },{
+					code: 'w',
+					value: '789101112'
+				  }]
+			}]
+		  });
+
+		const recordInvalid = new MarcRecord({
+			leader: '63ab75sfoo122myhgh',
+			fields: [{
+				tag: '001',
+				value: '123456'
+			},{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'foo'
+				}]
+			},{
+				tag: '773',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'w',
+					value: '789101112'
 				}]
 			}]
 		});

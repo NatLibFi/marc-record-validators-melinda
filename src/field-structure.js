@@ -51,15 +51,16 @@ export default async function (config) {
 		var excluded = [];
 		config.forEach(obj => {
 			excluded = []; //Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
-			Object.keys(obj).forEach(function(key) {
+			
+			forEach(obj, function(val, key){
 				if(!confSpec[key]) throw new Error('Configuration not valid - unidentified value: ' + key);
-				if(confSpec[key].type === RegExp && !(obj[key] instanceof RegExp)
-					|| confSpec[key].type === Boolean && !(obj[key] instanceof Boolean) ) throw new Error('Configuration not valid - invalid data type for: ' + key);
+				if( (confSpec[key].type === RegExp && !(val instanceof RegExp))
+					|| ( confSpec[key].type === Boolean && typeof val !== 'boolean' )) throw new Error('Configuration not valid - invalid data type for: ' + key);
 				if(confSpec[key].excl) excluded = excluded.concat(confSpec[key].excl);
-			})
+			});
 
 			//Check that no excluded elements are in use
-			Object.keys(obj).forEach(function(key) {
+			forEach(obj, function(val, key) {
 				if(excluded.includes(key)) throw new Error('Configuration not valid - excluded element');
 			})
 		});
@@ -75,31 +76,56 @@ export default async function (config) {
 				return Object.keys(confObj).every(confField => { 
 
 					//Check that configuration field exists in record object
-					if(!recordSubObj[confField]){
+					if((!recordSubObj[confField])
+						&& (confField === 'valuePattern' && !recordSubObj['value'])){
 						console.log("!!! RecordSubObj not found: ", confField); 
 						return false;
 					} 
 
-					//If configuration field is RegExp, test that record field matches it (leader, tag, valuePattern, ind*)
-					if(confObj[confField] instanceof RegExp){
-							return confObj[confField].test(recordSubObj[confField]);
+					//If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
+					if( confObj[confField] instanceof RegExp){
+						//'valuePattern' used in conf spec is actually 'value' in marc
+						if(confField === 'valuePattern') return confObj['valuePattern'].test(recordSubObj['value']);
+						if(confField === 'leader') return confObj[confField].test(record.leader);
+						return confObj[confField].test(recordSubObj[confField]);
 					}
+
+					//Only the specified subfields are allowed if set to true. Defaults to false. (this ic checked at subfields)
+					else if(confField === 'strict') return true;
 					
-					else if(confField === 'strict'){
-						console.log("Strict (boolean)");
-					}
-					
-					//Check that subfield maxOccurence is not exceeded
+					//Check that subfield stuff
 					else if(confField === 'subfields'){
-						var isValid = true;
+						var subfields = recordSubObj[confField],
+							strict = confObj['strict'] || false,
+							elementsTotal = 0,
+							matching = [],
+							length = 0;
+
 						forEach(confObj[confField], function(val, key){
-							if(filter(recordSubObj[confField], {code: key}).length > val.maxOccurrence) isValid=false;
+							matching = filter(subfields, {code: key});
+							length = matching.length;
+							elementsTotal += length; //Calculate amount of record objects matching all confObj objects
+							
+							if(length > val.maxOccurrence) return false;
+							if(confObj.mandatory && length === 0) return false;
+							if(val.pattern){
+								return forEach(matching, function(field){
+									if(!val.pattern.test(field.value)) return false;
+								})
+							}
 						});
-						return isValid;
+
+						//Check if there is less valid calculated objects than objects in subfield object => some not matching strict
+						if(strict && elementsTotal < subfields.length) return false;
+						return true;
 					}
 					
 					else if(confField === 'dependencies'){
-						console.log("Dependencies (Array)");
+						// console.log("----------------------------");
+						// //Dependencies (Array):  63ab75sfoo122myhgh
+						// console.log("Dependencies (Array): ", record.leader); 
+						// //ConfObj:  [ { tag: /^773$/, subfields: { '7': /^nnas$/ } } ]
+						// console.log("ConfObj: ", confObj[confField]); return false;
 					}
 					
 					else{
