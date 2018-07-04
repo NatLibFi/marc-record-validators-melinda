@@ -32,14 +32,13 @@ export default async function () {
 		description: 'Handles empty fields',
 		validate,
 		fix
-		// .forEach(field => {
-		// 	if ('subfields' in field && !isEmpty(field.subfields)) {
-		// 		record.removeSubfield(find(field.subfields, {value: ''}), field);
-		// 	} else {
-		// 		record.removeField(field);
-		// 	}
-		// })
 	};
+
+	async function validate(record) {
+		const result = searchFields(record);
+		const isValid = result.find(obj => obj.valid === false);
+		return isValid === undefined ? {valid: true, messages: []} : omit(isValid, ['field']);
+	}
 
 	async function fix(record) {
 		const fixFields = searchFields(record);
@@ -54,18 +53,9 @@ export default async function () {
 	function searchFields(record) {
 		let validationResult;
 		record.fields.forEach(obj => {
-			const controlFields = emptyControlFields(obj);
-			const subfieldValues = emptySubfieldValues(obj);
-			const subfields = emptySubfields(obj);
-			validationResult = [controlFields, subfieldValues, subfields];
+			validationResult = [emptyControlFields(obj), emptySubfieldValues(obj), emptySubfields(obj)];
 		});
 		return validationResult;
-	}
-
-	async function validate(record) {
-		const result = searchFields(record);
-		const isValid = result.find(obj => obj.valid === false);
-		return isValid === undefined ? {valid: true, messages: []} : omit(isValid, ['field']);
 	}
 
 	function emptyControlFields(field) {
