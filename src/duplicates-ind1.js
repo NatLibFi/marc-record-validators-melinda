@@ -33,7 +33,7 @@ export default async function (tagPattern) {
 		return {
 			description:
 				'Handles data fields that only differ in the first indicator',
-			validate: async record => ({valid: !record.fields.some(matches)}),
+			validate,
 			fix: async record =>
 				record.fields
 					.filter(matches)
@@ -42,25 +42,33 @@ export default async function (tagPattern) {
 	}
 	throw new Error('No tagPattern provided');
 
-	function matches(field, index, fields) {
-		return (
-			tagPattern.test(field.tag) && field.ind1 === ' ' && hasDuplicate(field)
-		);
+	async function validate(record) {
+		const result = [];
+		record.fields.forEach(obj => {
+			const validation = matches(obj, record.fields);
+			result.push({validation, obj});
+		});
+		const invalid = result.find(obj => obj.validation === true);
 
-		function hasDuplicate(fieldA) {
-			console.log('FIELDS: ', fields);
-			return fields.some(
-				fieldB =>
-					fieldA !== fieldB &&
-					fieldA.tag === fieldB.tag &&
-					fieldA.ind1 !== fieldB.ind1 &&
-					fieldA.subfields.length === fieldB.subfields.length &&
-					fieldA.subfields.every(aSf =>
-						fieldB.subfields.some(
-							bSf => aSf.code === bSf.code && aSf.value === bSf.value
-						)
+		return invalid ? {valid: false, messages: [`Multiple ${invalid.obj.tag} fields which only differ in the first indicator`]} : {valid: true, messages: []};
+	}
+
+	function matches(field, fields) {
+		return tagPattern.test(field.tag) && field.ind1 === ' ' && hasDuplicate(field, fields);
+	}
+
+	function hasDuplicate(fieldA, fields) {
+		return fields.some(
+			fieldB =>
+				fieldA !== fieldB &&
+				fieldA.tag === fieldB.tag &&
+				fieldA.ind1 !== fieldB.ind1 &&
+				fieldA.subfields.length === fieldB.subfields.length &&
+				fieldA.subfields.every(aSf =>
+					fieldB.subfields.some(
+						bSf => aSf.code === bSf.code && aSf.value === bSf.value
 					)
-			);
-		}
+				)
+		);
 	}
 }

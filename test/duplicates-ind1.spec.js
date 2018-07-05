@@ -67,7 +67,7 @@ describe('duplicates-ind1', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: true});
+			expect(result).to.eql({valid: true, messages: []});
 		});
 		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory(/^500$/);
@@ -89,7 +89,7 @@ describe('duplicates-ind1', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: false, messages: ['Multiple 500 fields which only differ in the first indicator']});
 		});
 	});
 });
