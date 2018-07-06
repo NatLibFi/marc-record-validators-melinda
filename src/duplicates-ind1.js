@@ -27,6 +27,7 @@
  */
 
 'use strict';
+import {omit} from 'lodash';
 
 export default async function (tagPattern) {
 	if (tagPattern instanceof RegExp) {
@@ -34,23 +35,29 @@ export default async function (tagPattern) {
 			description:
 				'Handles data fields that only differ in the first indicator',
 			validate,
-			fix: async record =>
-				record.fields
-					.filter(matches)
-					.forEach(field => record.removeField(field))
+			fix
 		};
 	}
 	throw new Error('No tagPattern provided');
 
 	async function validate(record) {
-		const result = [];
-		record.fields.forEach(obj => {
-			const validation = matches(obj, record.fields);
-			result.push({validation, obj});
-		});
+		const result = iterateFields(record);
 		const invalid = result.find(obj => obj.validation === true);
-
 		return invalid ? {valid: false, messages: [`Multiple ${invalid.obj.tag} fields which only differ in the first indicator`]} : {valid: true, messages: []};
+	}
+
+	async function fix(record) {
+		const result = iterateFields(record)
+			.filter(item => item.validation === false)
+			.map(item => omit(item, ['validation']));
+		result.forEach(field => record.removeField(field));
+	}
+
+	function iterateFields(record) {
+		return record.fields.map(obj => {
+			const validation = matches(obj, record.fields);
+			return {validation, obj};
+		});
 	}
 
 	function matches(field, fields) {
