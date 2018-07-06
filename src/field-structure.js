@@ -53,9 +53,9 @@ export default async function (config) {
 			excluded = []; //Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
 			
 			forEach(obj, function(val, key){
-				if(!confSpec[key]) throw new Error('Configuration not valid - unidentified value: ' + key);
-				if( (confSpec[key].type === RegExp && !(val instanceof RegExp))
-					|| ( confSpec[key].type === Boolean && typeof val !== 'boolean' )) throw new Error('Configuration not valid - invalid data type for: ' + key);
+				dataMatchesSpec(val, key, confSpec)
+
+				//Concat all excluded elements to array
 				if(confSpec[key].excl) excluded = excluded.concat(confSpec[key].excl);
 			});
 
@@ -64,6 +64,31 @@ export default async function (config) {
 				if(excluded.includes(key)) throw new Error('Configuration not valid - excluded element');
 			})
 		});
+	};
+
+	function dataMatchesSpec(data, key, spec){
+		//Field not found in valid configuration spec
+		if(!spec[key]) throw new Error('Configuration not valid - unidentified value: ' + key);
+				
+		//If configuration type does not match type in valid configuration spec
+		if( typeof data !== spec[key].type && 
+			(spec[key].type === 'RegExp' && !(data instanceof RegExp))) throw new Error('Configuration not valid - invalid data type for: ' + key);
+	
+		//Check subfields/dependencies recursively
+		if( key === 'subfields' || key === 'dependencies' ){
+			forEach(data, function(subObj){
+				//Dependency.subfields is one level, config.subfields two level...
+				if( key === 'subfields' && typeof subObj !== 'object'){
+					if(!(subObj instanceof RegExp)) throw new Error('Configuration not valid - invalid data type for: ' + key);
+				}else{
+					forEach(subObj, function(subVal, subKey){							
+						//'required' used in conf spec is actually 'mandatory' in marc
+						if(subKey === 'mandatory') subKey = 'required';
+						dataMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec)
+					})
+				}
+			})
+		}
 	}
 
 	//This is used to validate record against config
@@ -141,40 +166,40 @@ export default async function (config) {
 //Configuration specification
 const confSpec = {
 	leader: { // Description: Leader pattern
-		type: RegExp,
+		type: 'RegExp',
 		excl: [
 			'tag', 'valuePattern', 'subfields', 'ind1', 'ind2'
 		]
 	},
 	tag: { // Description: Field tag pattern
- 		type: RegExp
+ 		type: 'RegExp'
 	},
 	valuePattern:{ // Description: Pattern to which the field's value must match against
-		type: RegExp,
+		type: 'RegExp',
 		excl: [
 			'leader', 'subfields', 'ind1', 'ind2'
 		]
 	},
 	ind1: { // Description: Indicator-specific configuration object
-		type: RegExp, //Array<Indicator>
+		type: 'RegExp', //Array<Indicator>
 		excl: [
 			'leader', 'value'
 		]
 	},
 	ind2: { // Description: Indicator-specific configuration object
-		type: RegExp, //Array<Indicator>
+		type: 'RegExp', //Array<Indicator>
 		excl: [
 			'leader', 'value'
 		]
 	},
 	strict: { // Description: Only the specified subfields are allowed if set to true. Defaults to false.
-		type: Boolean,
+		type: 'boolean',
 		excl: [
 			'leader', 'valuePattern'
 		]
 	},
 	subfields: { // Description: Subfields configuration
-		type: Object, //Object<String, Subfield> (Keys are subfield codes)
+		type: 'object', //Object<String, Subfield> (Keys are subfield codes)
 		contains: [
 			'String', 'subfieldSpec'
 		],
@@ -183,7 +208,7 @@ const confSpec = {
 		]
 	},
 	dependencies: { // Description: Dependencies configuration
-		type: Array, //Array<Dependency>
+		type: 'array', //Array<Dependency>
 		contains: 'dependencySpec'
 	}
 };
@@ -191,13 +216,13 @@ const confSpec = {
 //Subfiled specification
 const subSpec = {
 	pattern: { // Description: Pattern to which the subfield's value must match against
-		type: RegExp
+		type: 'RegExp'
 	},
 	required: { // Description: Whether the subfield is mandatory or not. Defaults to false
-		type: Boolean
+		type: 'boolean'
 	},
 	maxOccurrence: { // Description: Maximum number of times this subfield can occur. Defaults to unlimited if omitted. The value 0 means that the subfield cannot exist.
-		type: Number
+		type: 'number'
 	}
 }
 
