@@ -41,8 +41,8 @@ export default async function (tagPattern) {
 	throw new Error('No tagPattern provided');
 
 	async function validate(record) {
-		const result = iterateFields(record);
-		const invalid = result.find(obj => obj.validation === true);
+		const invalid = iterateFields(record)
+			.find(obj => obj.validation === true);
 		return invalid ? {valid: false, messages: [`Multiple ${invalid.obj.tag} fields which only differ in the first indicator`]} : {valid: true, messages: []};
 	}
 
@@ -55,8 +55,7 @@ export default async function (tagPattern) {
 
 	function iterateFields(record) {
 		return record.fields.map(obj => {
-			const validation = matches(obj, record.fields);
-			return {validation, obj};
+			return {validation: matches(obj, record.fields), obj};
 		});
 	}
 
