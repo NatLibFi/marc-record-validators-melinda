@@ -50,6 +50,7 @@ export default async function () {
 			record.removeField(isValid);
 		}
 	}
+	
 	function searchFields(record) {
 		let validationResult;
 		record.fields.forEach(obj => {
