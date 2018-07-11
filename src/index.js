@@ -37,5 +37,15 @@ import FieldsPresent from './fields-present';
 import EndingPunctuation from './ending-punctuation';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
+import UnicodeDecomposition from './unicode-decompositon';
 
-export {DoubleCommas, DuplicatesInd1, EmptyFields, FieldsPresent, IsbnIssn, ItemLanguage, EndingPunctuation};
+export {
+  DoubleCommas, 
+  DuplicatesInd1,
+  EmptyFields,
+  FieldsPresent,
+  EndingPunctuation,
+  IsbnIssn,
+  ItemLanguage,
+  UnicodeDecomposition
+};
