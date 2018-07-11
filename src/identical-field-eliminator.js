@@ -51,8 +51,8 @@ export default async function () {
 	}
 
 	async function fix(record) {
-		const uniq = uniqWith(record.fields, isEqual);
-		record.fields.filter(tag => !uniq.includes(tag))
+		record.fields
+			.filter(tag => !uniqWith(record.fields, isEqual).includes(tag))
 			.forEach(tag => record.removeField(tag));
 	}
 }
