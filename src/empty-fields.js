@@ -25,47 +25,54 @@
  * for the JavaScript code in this file.
  *
  */
-import {isEmpty, find} from 'lodash';
+import {find, isEmpty, omit} from 'lodash';
 
 export default async function () {
 	return {
 		description: 'Handles empty fields',
-		validate: async record => ({
-			valid: validateRecord(record)
-		}),
-		fix: async record => (
-			record.fields
-				.filter(field => emptyControlFields(field) || emptySubfieldValues(field) || emptySubfields(field))
-				.forEach(field => {
-					if ('subfields' in field && !isEmpty(field.subfields)) {
-						record.removeSubfield(find(field.subfields, {value: ''}), field);
-					} else {
-						record.removeField(field);
-					}
-				})
-		)
+		validate,
+		fix
 	};
 
-	function validateRecord(record) {
-		const controlFields = record.fields.filter(emptyControlFields);
-		const subfieldValues = record.fields.filter(emptySubfieldValues);
-		const subfieldArray = record.fields.filter(emptySubfields);
-		const validateObject = [controlFields, subfieldValues, subfieldArray].every(subfield => isEmpty(subfield));
+	async function validate(record) {
+		const result = searchFields(record);
+		const isValid = result.find(obj => obj.valid === false);
+		return isValid === undefined ? {valid: true, messages: []} : omit(isValid, ['field']);
+	}
 
-		return validateObject;
+	async function fix(record) {
+		const fixFields = searchFields(record);
+		const isValid = fixFields.find(obj => obj.valid === false);
+
+		if ('subfields' in isValid.field && !isEmpty(isValid.field.subfields)) {
+			record.removeSubfield(find(isValid.field.subfields, {value: ''}), isValid.field);
+		} else {
+			record.removeField(isValid);
+		}
+	}
+	
+	function searchFields(record) {
+		let validationResult;
+		record.fields.forEach(obj => {
+			validationResult = [emptyControlFields(obj), emptySubfieldValues(obj), emptySubfields(obj)];
+		});
+		return validationResult;
 	}
 
 	function emptyControlFields(field) {
-		return 'value' in field && field.value.length === 0;
+		const result = 'value' in field && field.value.length === 0;
+		return result === false ? {valid: true} : {valid: false, messages: [`Field ${field.tag} has empty value`], field};
 	}
 
 	function emptySubfields(field) {
-		return field.subfields && field.subfields.length === 0;
+		const result = field.subfields && field.subfields.length === 0;
+		return result === false ? {valid: true} : {valid: false, messages: [`Field ${field.tag} has no subfields`], field};
 	}
 
 	function emptySubfieldValues(field) {
 		if (field.subfields) {
-			return field.subfields.some(subfield => subfield.value.length === 0);
+			const result = field.subfields.filter(subfield => subfield.value.length === 0);
+			return result.length === 0 ? {valid: true} : {valid: false, messages: result.map(item => `Field ${field.tag}$${item.code} has empty value`), field};
 		}
 	}
 }

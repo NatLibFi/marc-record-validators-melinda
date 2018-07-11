@@ -32,11 +32,11 @@
 
 import {expect} from 'chai';
 import MarcRecord from 'marc-record-js';
-import validatorFactory from '../src/duplicates-ind1';
+import validatorFactory from '../src/identical-field-eliminator';
 
-describe('duplicates-ind1', () => {
+describe('identical-field-eliminator', () => {
 	it('Creates a validator', async () => {
-		const validator = await validatorFactory(/^245$/);
+		const validator = await validatorFactory();
 
 		expect(validator)
 			.to.be.an('object')
@@ -48,20 +48,17 @@ describe('duplicates-ind1', () => {
 
 	describe('#validate', () => {
 		it('Finds the record valid', async () => {
-			const validator = await validatorFactory(/^500$/);
+			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '500',
-						ind1: ' ',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
-					},
-					{
-						tag: '500',
-						ind1: ' ',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						tag: '700',
+						subfields: [
+							{
+								code: 'e',
+								value: 'foo'
+							}
+						]
 					}
 				]
 			});
@@ -70,55 +67,91 @@ describe('duplicates-ind1', () => {
 			expect(result).to.eql({valid: true, messages: []});
 		});
 		it('Finds the record invalid', async () => {
-			const validator = await validatorFactory(/^500$/);
+			const validator = await validatorFactory();
 			const record = new MarcRecord({
+
 				fields: [
 					{
-						tag: '500',
-						ind1: ' ',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						tag: '700',
+						subfields: [
+							{
+								code: 'e',
+								value: 'foo'
+							}
+						]
 					},
 					{
-						tag: '500',
-						ind1: '1',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						tag: '800',
+						subfields: [
+							{
+								code: 'e',
+								value: 'foo'
+							}
+						]
+					},
+					{
+						tag: '800',
+						subfields: [
+							{
+								code: 'e',
+								value: 'foo'
+							}
+						]
+					},
+					{
+						tag: '700',
+						subfields: [
+							{
+								code: 'e',
+								value: 'foo'
+							}
+						]
 					}
 				]
 			});
+
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: ['Multiple 500 fields which only differ in the first indicator']});
+			expect(result).to.eql({valid: false, messages: ['Field 800 has duplicates', 'Field 700 has duplicates']});
 		});
 	});
 
 	describe('#fix', () => {
-		it('Removes duplicate values', async () => {
-			const validator = await validatorFactory(/^500$/);
+		it('Fixes the record', async () => {
+			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '500',
-						ind1: ' ',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						tag: '700',
+						subfields: [
+							{
+								code: 'e',
+								value: 'dest'
+							}
+						]
 					},
 					{
-						tag: '500',
-						ind1: '1',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						tag: '700',
+						subfields: [
+							{
+								code: 'e',
+								value: 'dest'
+							}
+						]
 					}
 				]
 			});
 			await validator.fix(record);
+
 			expect(record.fields).to.eql([
 				{
-					tag: '500',
-					ind1: ' ',
-					ind2: '0',
-					subfields: [{code: 'a', value: 'foo'}]
+					tag: '700',
+					subfields: [
+						{
+							code: 'e',
+							value: 'dest'
+						}
+					]
 				}
 			]);
 		});
