@@ -31,7 +31,7 @@
  */
 
 /* istanbul ignore next: umd wrapper */
-
+/* no-negated-condition */
 import {isEqual, uniqWith} from 'lodash';
 
 export default async function () {
@@ -42,10 +42,17 @@ export default async function () {
 	};
 
 	async function validate(record) {
-		return {valid: uniqWith(record.fields, isEqual).length === record.fields.length};
+		const uniq = uniqWith(record.fields, isEqual);
+		const valid = uniq.length === record.fields.length;
+		const messages = record.fields.filter(tag => !uniq.includes(tag))
+			.map(obj => `Field ${obj.tag} has duplicates`);
+
+		return valid ? {valid, messages: []} : {valid, messages};
 	}
 
 	async function fix(record) {
-		return uniqWith(record.fields, isEqual);
+		const uniq = uniqWith(record.fields, isEqual);
+		record.fields.filter(tag => !uniq.includes(tag))
+			.forEach(tag => record.removeField(tag));
 	}
 }

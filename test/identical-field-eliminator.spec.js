@@ -34,7 +34,7 @@ import {expect} from 'chai';
 import MarcRecord from 'marc-record-js';
 import validatorFactory from '../src/identical-field-eliminator';
 
-describe('double-commas', () => {
+describe('identical-field-eliminator', () => {
 	it('Creates a validator', async () => {
 		const validator = await validatorFactory();
 
@@ -64,7 +64,7 @@ describe('double-commas', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: true});
+			expect(result).to.eql({valid: true, messages: []});
 		});
 		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory();
@@ -112,7 +112,7 @@ describe('double-commas', () => {
 
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: false, messages: ['Field 800 has duplicates', 'Field 700 has duplicates']});
 		});
 	});
 
@@ -120,12 +120,39 @@ describe('double-commas', () => {
 		it('Fixes the record', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				fields: [{tag: '700', subfields: [{code: 'e', value: 'foo,bar'}]}]
+				fields: [
+					{
+						tag: '700',
+						subfields: [
+							{
+								code: 'e',
+								value: 'dest'
+							}
+						]
+					},
+					{
+						tag: '700',
+						subfields: [
+							{
+								code: 'e',
+								value: 'dest'
+							}
+						]
+					}
+				]
 			});
 			await validator.fix(record);
 
 			expect(record.fields).to.eql([
-				{tag: '700', subfields: [{code: 'e', value: 'foo,bar'}]}
+				{
+					tag: '700',
+					subfields: [
+						{
+							code: 'e',
+							value: 'dest'
+						}
+					]
+				}
 			]);
 		});
 	});
