@@ -16,7 +16,7 @@ export const MAP_CONVERSION = {
   'ö': 'ö',
   'Å': 'Å',
   'Ä': 'Ä',
-  'Ö': 'Ö',    
+  'Ö': 'Ö', 
   /**
    * @internal Decompose everything else (list incomplete)
    **/
@@ -80,4 +80,27 @@ export const MAP_CONVERSION = {
   'Ŷ': 'Ŷ',
   'Ỹ': 'Ỹ', 
   'Ÿ': 'Ÿ'
+}
+
+
+
+export function clone(obj) {
+  return typeof obj === 'object' ? JSON.parse(JSON.stringify(obj)) : obj;
+}
+
+export function modifySubfields(field, modifyCallback) {
+  console.log('field: ', field);
+  console.log('modifycallback: ', modifyCallback);
+  // const field_original;
+  // if (!'subfields' in field) {
+  //   throw new Error('Field is not a variable field');
+  // } else {
+  //   field_original = clone(field);
+  //   field.subfields.forEach(modifyCallback);
+  //   return {
+  //     'type': 'modifyField',
+  //     'old': field_original,
+  //     'new': clone(field)
+  //   };
+  // }
 }

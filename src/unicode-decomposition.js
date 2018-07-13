@@ -26,11 +26,13 @@
  *
  **/
 
-import {MAP_CONVERSION} from './utils/unicodes';
+import {MAP_CONVERSION, modifySubfields} from './utils/unicodes';
 
 export default async function () {
 	const PATTERN = Object.keys(MAP_CONVERSION).reduce((result, key, index, list) => {
-		return index === list.length - 1 ? new RegExp(`${result}${key})`) : `${result}${key} |`;
+		console.log('key: ', key);
+		console.log('result: ', result);
+		return index === list.length - 1 ? new RegExp(`${result}${key})`) : `${result}${key}|`;
 	}, '(');
 
 	return {
@@ -49,27 +51,179 @@ export default async function () {
 	}
 
 	async function fix(record) {
-		getFields(record).map(field => {
-			return utils.fix.modifySubfields(field, subfield => {
+		const get = getFields(record).map(field => {
+			return modifySubfields(field, subfield => {
 				if (PATTERN.test(subfield.value)) {
 					subfield.value = convert(subfield.value);
 				}
 			});
 		});
+		console.log('get: ', get);
 	}
 
 	function getFields(record) {
 		return record.fields.filter(field => {
 			if ('subfields' in field) {
+				console.log('subfields: ', field.subfields);
 				return field.subfields.some(subfield => PATTERN.test(subfield.value));
 			}
-			return false;
+			return [];
 		});
 	}
-
 	function convert(value) {
+		console.log('convert: ', convert);
 		return Object.keys(MAP_CONVERSION).reduce((result, key) => {
 			return result.includes(key) ? result.replace(new RegExp(key, 'g'), MAP_CONVERSION[key]) : result;
 		}, value);
 	}
 }
+
+// Result = (‐ |‑ |‒ |– |— |― |å |ä |ö |Å |Ä |Ö |á |à |â |ã |é |è |ê |ẽ |ë |í |ì |î |ĩ |ï|ñ |ó |ò |ô |õ |ś |ú |ù |û |ü |ũ |ý |ỳ |ŷ |ỹ |ÿ |Á |À |Â |Ã |É |È |Ê |Ẽ |Ë |Í |Ì |Î |Ĩ|Ï |Ñ |Ó |Ò |Ô |Õ |Ś |Ú |Ù |Û |Ũ |
+
+// key:  ‐
+// key:  ‑
+// key:  ‒
+// key:  –
+// key:  —
+// key:  ―
+// key:  å
+// key:  ä
+// key:  ö
+// key:  Å
+// key:  Ä
+// key:  Ö
+// key:  á
+// key:  à
+// key:  â
+// key:  ã
+// key:  é
+// key:  è
+// key:  ê
+// key:  ẽ
+// key:  ë
+// key:  í
+// key:  ì
+// key:  î
+// key:  ĩ
+// key:  ï
+// key:  ñ
+// key:  ó
+// key:  ò
+// key:  ô
+// key:  õ
+// key:  ś
+// key:  ú
+// key:  ù
+// key:  û
+// key:  ü
+// key:  ũ
+// key:  ý
+// key:  ỳ
+// key:  ŷ
+// key:  ỹ
+// key:  ÿ
+// key:  Á
+// key:  À
+// key:  Â
+// key:  Ã
+// key:  É
+// key:  È
+// key:  Ê
+// key:  Ẽ
+// key:  Ë
+// key:  Í
+// key:  Ì
+// key:  Î
+// key:  Ĩ
+// key:  Ï
+// key:  Ñ
+// key:  Ó
+// key:  Ò
+// key:  Ô
+// key:  Õ
+// key:  Ś
+// key:  Ú
+// key:  Ù
+// key:  Û
+// key:  Ũ
+// key:  Ü
+// key:  Ý
+// key:  Ỳ
+// key:  Ŷ
+// key:  Ỹ
+// key:  Ÿ
+
+// [
+// '‐',
+// '‑',
+// '‒',
+// '–',
+// '—',
+// '―',
+// 'å',
+// 'ä',
+// 'ö',
+// 'Å',
+// 'Ä',
+// 'Ö',
+// 'á',
+// 'à',
+// 'â',
+// 'ã',
+// 'é',
+// 'è',
+// 'ê',
+// 'ẽ',
+// 'ë',
+// 'í',
+// 'ì',
+// 'î',
+// 'ĩ',
+// 'ï',
+// 'ñ',
+// 'ó',
+// 'ò',
+// 'ô',
+// 'õ',
+// 'ś',
+// 'ú',
+// 'ù',
+// 'û',
+// 'ü',
+// 'ũ',
+// 'ý',
+// 'ỳ',
+// 'ŷ',
+// 'ỹ',
+// 'ÿ',
+// 'Á',
+// 'À',
+// 'Â',
+// 'Ã',
+// 'É',
+// 'È',
+// 'Ê',
+// 'Ẽ',
+// 'Ë',
+// 'Í',
+// 'Ì',
+// 'Î',
+// 'Ĩ',
+// 'Ï',
+// 'Ñ',
+// 'Ó',
+// 'Ò',
+// 'Ô',
+// 'Õ',
+// 'Ś',
+// 'Ú',
+// 'Ù',
+// 'Û',
+// 'Ũ',
+// 'Ü',
+// 'Ý',
+// 'Ỳ',
+// 'Ŷ',
+// 'Ỹ',
+// 'Ÿ'
+// ];

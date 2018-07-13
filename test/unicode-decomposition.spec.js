@@ -59,7 +59,7 @@ describe('unicode-decomposition', () => {
 						tag: '500',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 's', value: 'á'}]
 					},
 					{
 						tag: 'FOO',
@@ -73,6 +73,7 @@ describe('unicode-decomposition', () => {
 
 			expect(result).to.eql({valid: true, messages: []});
 		});
+
 		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
@@ -81,19 +82,51 @@ describe('unicode-decomposition', () => {
 						tag: '001',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 'a', value: 'Å'}]
 					},
 					{
 						tag: 'BAR',
 						ind1: '1',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 'a', value: 'foÅo'}]
 					}
 				]
 			});
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false, messages: []});
+		});
+
+		describe('#fix', () => {
+			it('Fixes the record', async () => {
+				const validator = await validatorFactory();
+				const record = new MarcRecord({
+					fields: [
+						{
+							tag: '001',
+							ind1: ' ',
+							ind2: '0',
+							subfields: [{code: 'a', value: 'foo'}]
+						},
+						{
+							tag: 'BAR',
+							ind1: ' ',
+							ind2: '0',
+							subfields: [{code: 'a', value: 'Ỹd'}]
+						}
+					]
+				});
+				await validator.fix(record);
+
+				expect(record.fields).to.eql([
+					{
+						tag: '001',
+						ind1: ' ',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					}
+				]);
+			});
 		});
 	});
 });
