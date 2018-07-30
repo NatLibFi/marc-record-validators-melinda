@@ -67,7 +67,7 @@ describe('duplicates-ind1', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: true});
+			expect(result).to.eql({valid: true, messages: []});
 		});
 		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory(/^500$/);
@@ -89,7 +89,38 @@ describe('duplicates-ind1', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: false, messages: ['Multiple 500 fields which only differ in the first indicator']});
+		});
+	});
+
+	describe('#fix', () => {
+		it('Removes duplicate values', async () => {
+			const validator = await validatorFactory(/^500$/);
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '500',
+						ind1: ' ',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					},
+					{
+						tag: '500',
+						ind1: '1',
+						ind2: '0',
+						subfields: [{code: 'a', value: 'foo'}]
+					}
+				]
+			});
+			await validator.fix(record);
+			expect(record.fields).to.eql([
+				{
+					tag: '500',
+					ind1: ' ',
+					ind2: '0',
+					subfields: [{code: 'a', value: 'foo'}]
+				}
+			]);
 		});
 	});
 });

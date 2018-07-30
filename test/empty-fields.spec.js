@@ -63,8 +63,7 @@ describe('empty-fields', () => {
 				]
 			});
 			const result = await validator.validate(record);
-
-			expect(result).to.eql({valid: true});
+			expect(result).to.eql({valid: true, messages: []});
 		});
 
 		it('Finds an empty tag value', async () => {
@@ -85,7 +84,7 @@ describe('empty-fields', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: false, messages: ['Field 008 has empty value']});
 		});
 
 		it('Finds an empty subfield value', async () => {
@@ -105,7 +104,7 @@ describe('empty-fields', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: false, messages: ['Field 245$a has empty value']});
 		});
 
 		it('Finds an empty subfield array', async () => {
@@ -121,7 +120,7 @@ describe('empty-fields', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: false, messages: ['Field 500 has no subfields']});
 		});
 	});
 
