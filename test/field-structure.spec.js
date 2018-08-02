@@ -39,7 +39,7 @@ const {expect} = chai;
 chai.use(chaiAsPromised);
 
 //Factory validation
-describe('field-structure', () => {
+describe('Configuration', () => {
 	it('Creates a validator', async () => {
 		const config = [{
 			tag: /^035$/,
@@ -90,6 +90,19 @@ describe('field-structure', () => {
 		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - excluded element');
 	});
 
+	it('Throws an error when config subfields not object', async () => {
+		const config = [{
+		    tag: /^001$/,
+    		valuePattern: /\d+/
+		},{
+			tag: /^245$/,
+			strict: true,
+			subfields:  "This should be Object"
+		}];
+		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - subfields not object');
+	});
+
+
 	//Indicators and subfields validation
 	describe('#validate: Indicators and subfields', () => {
 		const config = [{
@@ -129,7 +142,7 @@ describe('field-structure', () => {
 			}]
 		});
 
-		const recordInvalid = new MarcRecord({
+		const recordInvalidMany = new MarcRecord({
 			fields: [{
 				tag: '001',
 				value: '123456'
@@ -163,9 +176,9 @@ describe('field-structure', () => {
 			expect(result).to.eql({valid: true});
 		});
 
-		it('Finds the record invalid', async () => {
+		it('Finds the record invalid: Too many subfields', async () => {
 			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalid);
+			const result = await validator.validate(recordInvalidMany);
 
 			expect(result).to.eql({valid: false});
 		});
@@ -209,7 +222,7 @@ describe('field-structure', () => {
 			  }]
 		  });
 
-		const recordInvalid = new MarcRecord({
+		  const recordInvalidExtra = new MarcRecord({
 			fields: [{
 				tag: '001',
 				value: '123456a'
@@ -236,6 +249,57 @@ describe('field-structure', () => {
 			  }]
 		  });
 
+		  const recordInvalidTooMany = new MarcRecord({
+			  fields: [{
+				  tag: '001',
+				  value: '123456a'
+				},{
+				  tag: '100',
+				  subfields: [{
+					  code: 'a',
+					  value: 'bar'
+				  }]
+				},{
+				  tag: '245',
+				  ind1: ' ',
+				  ind2: ' ',
+				  subfields: [{
+					  code: 'a',
+					  value: 'foo'
+					},{
+					  code: 'b',
+					  value: 'bar'
+					},{
+					  code: 'a',
+					  value: 'fubar'
+				  }]
+				}]
+			});		 
+			
+			const recordInvalidRegExp = new MarcRecord({
+				fields: [{
+					tag: '001',
+					value: '123456a'
+					},{
+					tag: '100',
+					subfields: [{
+						code: 'a',
+						value: 'bar'
+					}]
+					},{
+					tag: '245',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [{
+						code: 'a',
+						value: 'ää'
+						},{
+						code: 'b',
+						value: 'bar'
+					}]
+					}]
+			});
+
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordValid);
@@ -243,9 +307,23 @@ describe('field-structure', () => {
 			expect(result).to.eql({valid: true});
 		});
 
-		it('Finds the record invalid', async () => {
+		it('Finds the record invalid: Extra field in strict', async () => {
 			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalid);
+			const result = await validator.validate(recordInvalidExtra);
+
+			expect(result).to.eql({valid: false});
+		});
+
+		it('Finds the record invalid: Too many occurances', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalidTooMany);
+
+			expect(result).to.eql({valid: false});
+		});
+
+		it('Finds the record invalid: Invalid RegExp', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalidRegExp);
 
 			expect(result).to.eql({valid: false});
 		});
@@ -320,7 +398,7 @@ describe('field-structure', () => {
 			expect(result).to.eql({valid: true});
 		});
 
-		it('Finds the record invalid', async () => {
+		it('Finds the record invalid: Subfield not there', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordInvalid);
 

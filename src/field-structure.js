@@ -75,13 +75,13 @@ export default async function (config) {
 		//If configuration type does not match type in valid configuration spec
 		if( typeof data !== spec[key].type && 
 			(spec[key].type === 'RegExp' && !(data instanceof RegExp))) throw new Error('Configuration not valid - invalid data type for: ' + key);
-	
+
 		//Check subfields/dependencies recursively
 		if( key === 'subfields' || key === 'dependencies' ){
 			forEach(data, function(subObj){
 				//Dependency.subfields is one level, config.subfields two level...
-				if( key === 'subfields' && typeof subObj !== 'object'){
-					if(!(subObj instanceof RegExp)) throw new Error('Configuration not valid - invalid data type for: ' + key);
+				if(typeof subObj !== 'object'){
+					throw new Error('Configuration not valid - ' + key + ' not object');
 				}else{
 					forEach(subObj, function(subVal, subKey){							
 						//'required' used in conf spec is actually 'mandatory' in marc
@@ -115,14 +115,6 @@ export default async function (config) {
 		return record.get(searchedField).every( recordSubObj => { 
 			//Validate check that every configuration field exists in record and matches configuration
 			return Object.keys(confObj).every(confField => { 
-				
-				//Check that configuration field exists in record object
-				if((!recordSubObj[confField])
-					&& (confField === 'valuePattern' && !recordSubObj['value'])){
-					console.log("!!! RecordSubObj not found: ", confField); 
-					return false;
-				}
-
 				//If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
 				if( confObj[confField] instanceof RegExp){
 					//'valuePattern' used in conf spec is actually 'value' in marc
@@ -167,6 +159,7 @@ export default async function (config) {
 					return recordMatchesConfig(record, confObj[confField], true);
 				}
 				
+				//This should never been reached as configuration object is validated before this
 				else{
 					console.log("!!! Configuration field not identified: ", recordSubObj[confField], " | ", typeof recordSubObj[confField]);
 					return false;
