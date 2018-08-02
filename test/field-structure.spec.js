@@ -287,7 +287,7 @@ describe('field-structure', () => {
 					value: '789101112'
 				  }]
 			}]
-		  });
+		});
 
 		const recordInvalid = new MarcRecord({
 			leader: '63ab75sfoo122myhgh',

@@ -42,9 +42,10 @@ export default async function (config) {
 		description:
 			'Checks whether the configured field-specific objects are valid in the record',
 		validate: async record => ({
-			valid: recordMatchPattern(record)
+			valid: recordMatchesConfig(record, config, false)
 		})
 	};
+
 
 	//This checks that configuration is valid
 	function configValid(config) {
@@ -53,7 +54,7 @@ export default async function (config) {
 			excluded = []; //Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
 			
 			forEach(obj, function(val, key){
-				dataMatchesSpec(val, key, confSpec)
+				configMatchesSpec(val, key, confSpec)
 
 				//Concat all excluded elements to array
 				if(confSpec[key].excl) excluded = excluded.concat(confSpec[key].excl);
@@ -66,7 +67,8 @@ export default async function (config) {
 		});
 	};
 
-	function dataMatchesSpec(data, key, spec){
+	//Recursive validator
+	function configMatchesSpec(data, key, spec){
 		//Field not found in valid configuration spec
 		if(!spec[key]) throw new Error('Configuration not valid - unidentified value: ' + key);
 				
@@ -84,84 +86,96 @@ export default async function (config) {
 					forEach(subObj, function(subVal, subKey){							
 						//'required' used in conf spec is actually 'mandatory' in marc
 						if(subKey === 'mandatory') subKey = 'required';
-						dataMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec)
+						configMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec)
 					})
 				}
 			})
 		}
 	}
 
+
 	//This is used to validate record against config
-	function recordMatchPattern(record) {
-		//Parse trough every configuration object
-		return config.every( confObj => {
-			//Find all record objects matchin configuration object
-			return record.get(confObj.tag).every( recordSubObj => { 
-				//Validate check that every configuration field exists in record and matches configuration
-				return Object.keys(confObj).every(confField => { 
-
-					//Check that configuration field exists in record object
-					if((!recordSubObj[confField])
-						&& (confField === 'valuePattern' && !recordSubObj['value'])){
-						console.log("!!! RecordSubObj not found: ", confField); 
-						return false;
-					} 
-
-					//If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
-					if( confObj[confField] instanceof RegExp){
-						//'valuePattern' used in conf spec is actually 'value' in marc
-						if(confField === 'valuePattern') return confObj['valuePattern'].test(recordSubObj['value']);
-						if(confField === 'leader') return confObj[confField].test(record.leader);
-						return confObj[confField].test(recordSubObj[confField]);
-					}
-
-					//Only the specified subfields are allowed if set to true. Defaults to false. (this ic checked at subfields)
-					else if(confField === 'strict') return true;
-					
-					//Check that subfield stuff
-					else if(confField === 'subfields'){
-						var subfields = recordSubObj[confField],
-							strict = confObj['strict'] || false,
-							elementsTotal = 0,
-							matching = [],
-							length = 0;
-
-						forEach(confObj[confField], function(val, key){
-							matching = filter(subfields, {code: key});
-							length = matching.length;
-							elementsTotal += length; //Calculate amount of record objects matching all confObj objects
-							
-							if(length > val.maxOccurrence) return false;
-							if(confObj.mandatory && length === 0) return false;
-							if(val.pattern){
-								return forEach(matching, function(field){
-									if(!val.pattern.test(field.value)) return false;
-								})
-							}
-						});
-
-						//Check if there is less valid calculated objects than objects in subfield object => some not matching strict
-						if(strict && elementsTotal < subfields.length) return false;
-						return true;
-					}
-					
-					else if(confField === 'dependencies'){
-						// console.log("----------------------------");
-						// //Dependencies (Array):  63ab75sfoo122myhgh
-						// console.log("Dependencies (Array): ", record.leader); 
-						// //ConfObj:  [ { tag: /^773$/, subfields: { '7': /^nnas$/ } } ]
-						// console.log("ConfObj: ", confObj[confField]); return false;
-					}
-					
-					else{
-						console.log("!!! Configuration field not identified: ", recordSubObj[confField], " | ", typeof recordSubObj[confField]);
-						return false;
-					}
+	function recordMatchesConfig(record, conf, dependencies) {
+		//Parse trough every element of configuration array
+		var res = conf.every( confObj => {
+			if(confObj['dependencies']){								
+				return confObj['dependencies'].every( dependency => {
+					return recordMatchesConfigElement(record, dependency.tag, confObj, dependencies);
 				});
+			}else{
+				return recordMatchesConfigElement(record, confObj.tag, confObj, dependencies);
+			}
+		});
+		return res;
+	}
+	
+
+	function recordMatchesConfigElement(record, searchedField, confObj, dependencies){
+		//Find all record objects matching provided configuration object
+		return record.get(searchedField).every( recordSubObj => { 
+			//Validate check that every configuration field exists in record and matches configuration
+			return Object.keys(confObj).every(confField => { 
+				
+				//Check that configuration field exists in record object
+				if((!recordSubObj[confField])
+					&& (confField === 'valuePattern' && !recordSubObj['value'])){
+					console.log("!!! RecordSubObj not found: ", confField); 
+					return false;
+				}
+
+				//If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
+				if( confObj[confField] instanceof RegExp){
+					//'valuePattern' used in conf spec is actually 'value' in marc
+					if(confField === 'valuePattern') return confObj[confField].test(recordSubObj['value']);
+					if(confField === 'leader') return confObj[confField].test(record.leader);
+					return confObj[confField].test(recordSubObj[confField]);
+				}
+
+				//Only the specified subfields are allowed if set to true. Defaults to false. (this ic checked at subfields)
+				else if(confField === 'strict') return true;
+				
+				//Check that subfield stuff
+				else if(confField === 'subfields'){
+					var strict = confObj['strict'] || false,
+					elementsTotal = 0,
+					matching = [],
+					length = 0,
+					valid = true;
+			
+					forEach(confObj['subfields'], function(val, key){
+						matching = filter(recordSubObj['subfields'], {code: key});
+						length = matching.length;
+						elementsTotal += length; //Calculate amount of record objects matching all confObj objects
+						
+						if(length > val.maxOccurrence) valid = false;
+						if((confObj.mandatory || dependencies) && length === 0) valid = false;
+						if(val.pattern){
+							forEach(matching, function(field){
+								if(!val.pattern.test(field.value)) valid = false;
+							})
+						}
+					});
+			
+					//Check if there is less valid calculated objects than objects in subfield object => some not matching strict
+					if(strict && elementsTotal < recordSubObj['subfields'].length) return false;
+
+					return valid;
+				}
+
+				//Recursive check for dependicies
+				else if(confField === 'dependencies'){
+					return recordMatchesConfig(record, confObj[confField], true);
+				}
+				
+				else{
+					console.log("!!! Configuration field not identified: ", recordSubObj[confField], " | ", typeof recordSubObj[confField]);
+					return false;
+				}
 			});
 		});
 	}
 }
+
 
 //Configuration specification
 const confSpec = {
