@@ -193,7 +193,7 @@ describe('Configuration', () => {
 			tag: /^245$/,
 			strict: true,
 			subfields: {
-				a: {mandatory: true, maxOccurrence: 1, pattern: /\w+/},
+				a: {required: true, maxOccurrence: 1, pattern: /\w+/},
 				b: {maxOccurrence: 1, pattern: /\w+/}
 			}
 		}];
@@ -297,7 +297,7 @@ describe('Configuration', () => {
 						code: 'b',
 						value: 'bar'
 					}]
-					}]
+				}]
 			});
 
 			const recordInvalidMissing = new MarcRecord({
@@ -318,8 +318,29 @@ describe('Configuration', () => {
 						code: 'b',
 						value: 'bar'
 					}]
-					}]
+				}]
 			});
+
+			const recordInvalidMissingSubfield = new MarcRecord({
+				fields: [{
+					tag: '001',
+					value: '123456'
+				  },{
+					tag: '100',
+					subfields: [{
+						code: 'a',
+						value: 'bar'
+					  }]
+				  },{
+					tag: '245',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [{
+						code: 'b',
+						value: 'bar'
+					}]
+				  }]
+			  });
 
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory(config);
@@ -352,6 +373,12 @@ describe('Configuration', () => {
 		it('Finds the record invalid: Missing field', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordInvalidMissing);
+
+			expect(result).to.eql({valid: false});
+		});
+		it('Finds the record invalid: Missing subfield', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalidMissingSubfield);
 
 			expect(result).to.eql({valid: false});
 		});

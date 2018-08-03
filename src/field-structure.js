@@ -82,9 +82,7 @@ export default async function (config) {
 					throw new Error('Configuration not valid - ' + key + ' not object');
 				}else{
 					forEach(subObj, function(subVal, subKey){							
-						//'required' used in conf spec is actually 'mandatory' in marc
-						if(subKey === 'mandatory') subKey = 'required';
-						configMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec)
+						configMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec);
 					})
 				}
 			})
@@ -122,18 +120,18 @@ export default async function (config) {
 			return Object.keys(confObj).every(confField => {
 				//If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
 				if( confObj[confField] instanceof RegExp){
-					//'valuePattern' used in conf spec is actually 'value' in marc
+					//'valuePattern' RegExp in conf spec is used to validate 'value' in marc
 					if(confField === 'valuePattern') return confObj[confField].test(recordSubObj['value']);
 					if(confField === 'leader') return confObj[confField].test(record.leader);
 					return confObj[confField].test(recordSubObj[confField]);
 				}
 
-				//Only the specified subfields are allowed if set to true. Defaults to false. (this ic checked at subfields)
+				//Only the specified subfields are allowed if set to true. Defaults to false. (this is checked at subfields)
 				else if(confField === 'strict') return true;
 				
 				//Check that subfield stuff
 				else if(confField === 'subfields'){
-					var strict = confObj['strict'] || false,
+					var strict = confObj['strict'] || false, //Defaults to false
 					elementsTotal = 0,
 					matching = [],
 					length = 0,
@@ -145,11 +143,11 @@ export default async function (config) {
 						elementsTotal += length; //Calculate amount of record objects matching all confObj objects
 						
 						if(length > val.maxOccurrence) valid = false;
-						if((confObj.mandatory || dependencies) && length === 0) valid = false;
+						if((val.required || dependencies) && length === 0) valid = false;
 						if(val.pattern){
 							forEach(matching, function(field){
 								if(!val.pattern.test(field.value)) valid = false;
-							})
+							});
 						}
 					});
 			
@@ -171,8 +169,6 @@ export default async function (config) {
 				}
 			});
 		});
-		
-
 	}
 	////////////////////////////////////////////
 }
@@ -266,6 +262,6 @@ const depSpec = {
 	},
 	subfields: { // Description: An object with subfield codes as keys and RegExp patterns as values. The subfield value must this pattern.
 		type: Object[String, RegExp],
-		mandatory: false
+		required: false
 	}
 }
