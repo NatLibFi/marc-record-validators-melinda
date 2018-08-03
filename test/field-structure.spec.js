@@ -300,6 +300,27 @@ describe('Configuration', () => {
 					}]
 			});
 
+			const recordInvalidMissing = new MarcRecord({
+				fields: [{
+					tag: '100',
+					subfields: [{
+						code: 'a',
+						value: 'bar'
+					}]
+					},{
+					tag: '245',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [{
+						code: 'a',
+						value: 'ää'
+						},{
+						code: 'b',
+						value: 'bar'
+					}]
+					}]
+			});
+
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordValid);
@@ -324,6 +345,13 @@ describe('Configuration', () => {
 		it('Finds the record invalid: Invalid RegExp', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordInvalidRegExp);
+
+			expect(result).to.eql({valid: false});
+		});
+
+		it('Finds the record invalid: Missing field', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalidMissing);
 
 			expect(result).to.eql({valid: false});
 		});

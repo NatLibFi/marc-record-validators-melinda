@@ -30,8 +30,6 @@
 import {filter, forEach} from 'lodash';
 
 export default async function (config) {
-	// console.log("-------------------------------------------");
-	// console.log("config: ", typeof config, " | ", config)
 	if (!Array.isArray(config)) {
 		throw new Error('Configuration array not provided');
 	}
@@ -46,7 +44,7 @@ export default async function (config) {
 		})
 	};
 
-
+	////////////////////////////////////////////
 	//This checks that configuration is valid
 	function configValid(config) {
 		var excluded = [];
@@ -67,19 +65,19 @@ export default async function (config) {
 		});
 	};
 
+
 	//Recursive validator
 	function configMatchesSpec(data, key, spec){
-		//Field not found in valid configuration spec
+		//Field not found in configuration spec
 		if(!spec[key]) throw new Error('Configuration not valid - unidentified value: ' + key);
 				
-		//If configuration type does not match type in valid configuration spec
+		//If configuration type does not match type in configuration spec
 		if( typeof data !== spec[key].type && 
 			(spec[key].type === 'RegExp' && !(data instanceof RegExp))) throw new Error('Configuration not valid - invalid data type for: ' + key);
 
 		//Check subfields/dependencies recursively
 		if( key === 'subfields' || key === 'dependencies' ){
 			forEach(data, function(subObj){
-				//Dependency.subfields is one level, config.subfields two level...
 				if(typeof subObj !== 'object'){
 					throw new Error('Configuration not valid - ' + key + ' not object');
 				}else{
@@ -92,11 +90,13 @@ export default async function (config) {
 			})
 		}
 	}
+	////////////////////////////////////////////
 
 
-	//This is used to validate record against config
+	////////////////////////////////////////////
+	//This is used to validate record against configuration
 	function recordMatchesConfig(record, conf, dependencies) {
-		//Parse trough every element of configuration array
+		//Parse trough every element of config array
 		var res = conf.every( confObj => {
 			if(confObj['dependencies']){								
 				return confObj['dependencies'].every( dependency => {
@@ -110,11 +110,16 @@ export default async function (config) {
 	}
 	
 
+	//Recursive validation function
 	function recordMatchesConfigElement(record, searchedField, confObj, dependencies){
-		//Find all record objects matching provided configuration object
-		return record.get(searchedField).every( recordSubObj => { 
-			//Validate check that every configuration field exists in record and matches configuration
-			return Object.keys(confObj).every(confField => { 
+		var foundFields = record.get(searchedField)
+		//If data matching configuration is not found
+		if( foundFields.length === 0 ) return false;
+		
+		//Parse trough record objects matching provided configuration object
+		return foundFields.every( recordSubObj => { 
+			//Check that every configuration field exists in record and matches configuration
+			return Object.keys(confObj).every(confField => {
 				//If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
 				if( confObj[confField] instanceof RegExp){
 					//'valuePattern' used in conf spec is actually 'value' in marc
@@ -159,14 +164,17 @@ export default async function (config) {
 					return recordMatchesConfig(record, confObj[confField], true);
 				}
 				
-				//This should never been reached as configuration object is validated before this
+				//This should not be reached as configuration is validated
 				else{
 					console.log("!!! Configuration field not identified: ", recordSubObj[confField], " | ", typeof recordSubObj[confField]);
 					return false;
 				}
 			});
 		});
+		
+
 	}
+	////////////////////////////////////////////
 }
 
 
