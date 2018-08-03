@@ -39,7 +39,7 @@ const {expect} = chai;
 chai.use(chaiAsPromised);
 
 //Factory validation
-describe('Configuration', () => {
+describe('field-structure', () => {
 	it('Creates a validator', async () => {
 		const config = [{
 			tag: /^035$/,
@@ -61,47 +61,48 @@ describe('Configuration', () => {
 		expect(validator.description).to.be.a('string');
 		expect(validator.validate).to.be.a('function');
 	});
+	
+	describe('#configuration', () => {
+		it('Throws an error when config array not provided', async () => {
+			await expect(validatorFactory()).to.be.rejectedWith(Error, 'Configuration array not provided');
+		});
 
-	it('Throws an error when config array not provided', async () => {
-		await expect(validatorFactory()).to.be.rejectedWith(Error, 'Configuration array not provided');
+		it('Throws an error when config array has unidentified field', async () => {
+			const config = [{
+				leader: /^035$/,
+				tags: /^035$/
+			}];
+			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - unidentified value: tags');
+		});
+
+		it('Throws an error when config array has field with incorrect data type', async () => {
+			const config = [{
+				leader: /^035$/,
+				tag: 35
+			}];
+			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: tag');
+		});
+
+		it('Throws an error when config array has excluded element', async () => {
+			const config = [{
+				leader: /^035$/,
+				tag: /^035$/
+			}];
+			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - excluded element');
+		});
+
+		it('Throws an error when config subfields not object', async () => {
+			const config = [{
+				tag: /^001$/,
+				valuePattern: /\d+/
+			},{
+				tag: /^245$/,
+				strict: true,
+				subfields:  "This should be Object"
+			}];
+			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - subfields not object');
+		});
 	});
-
-	it('Throws an error when config array has unidentified field', async () => {
-		const config = [{
-			leader: /^035$/,
-			tags: /^035$/
-		}];
-		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - unidentified value: tags');
-	});
-
-	it('Throws an error when config array has field with incorrect data type', async () => {
-		const config = [{
-			leader: /^035$/,
-			tag: 35
-		}];
-		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: tag');
-	});
-
-	it('Throws an error when config array has excluded element', async () => {
-		const config = [{
-			leader: /^035$/,
-			tag: /^035$/
-		}];
-		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - excluded element');
-	});
-
-	it('Throws an error when config subfields not object', async () => {
-		const config = [{
-		    tag: /^001$/,
-    		valuePattern: /\d+/
-		},{
-			tag: /^245$/,
-			strict: true,
-			subfields:  "This should be Object"
-		}];
-		await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - subfields not object');
-	});
-
 
 	//Indicators and subfields validation
 	describe('#validate: Indicators and subfields', () => {
