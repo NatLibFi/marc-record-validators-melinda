@@ -44,7 +44,7 @@ describe('field-structure', () => {
 	describe('#validate: Indicators and subfields', () => {
 		const recordValid = new MarcRecord({
 			fields: [{
-				tag: '245',
+				tag: '245', //Index
 				subfields: [{
 					code: 'a',
 					value: 'Elämäni ja tutkimusretkeni / '
@@ -56,7 +56,7 @@ describe('field-structure', () => {
 					value: 'FOO'
 				}]
 			},{
-				tag: '337',
+				tag: '337', //Range 336-338
 				subfields: [{
 					code: 'a',
 					value: 'käytettävissä ilman laitetta'
@@ -68,7 +68,7 @@ describe('field-structure', () => {
 					value: 'rdamedia'
 				}]
 			},{
-				tag: '500',
+				tag: '500', //Range 500-509
 				subfields: [{
 					code: 'a',
 					value: 'FOO (Bar)'
@@ -117,7 +117,7 @@ describe('field-structure', () => {
 			expect(result).to.eql({valid: true});
 		});
 
-		it('Finds the record invalid: Too many subfields', async () => {
+		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory();
 			const result = await validator.validate(recordInvalid);
 

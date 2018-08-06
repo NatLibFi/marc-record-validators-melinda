@@ -27,16 +27,12 @@
  */
 
 'use strict';
-import {filter, forEach} from 'lodash';
+import {find, forEach} from 'lodash';
 
-export default async function (config) {
-	if (!Array.isArray(config)) {
-		throw new Error('Configuration array not provided');
-	}
-
-	return {
+export default async function () {
+		return {
 		description:
-			'Checks whether the configured field-specific objects are valid in the record',
+			'Checks whether punctuation is valid',
 		validate: async record => ({
 			valid: validateCommas(record)
 		})
@@ -45,41 +41,85 @@ export default async function (config) {
 	////////////////////////////////////////////
 	//This is used to validate record against configuration
 	function validateCommas(record) {
-		return true;
+		console.log("******************* Start *******************");
+		// console.log("Record: ", record);
+		var res = null,
+			tag = null,
+			valid = true,
+			puncChar = null;
+
+		if(!record.fields) return false;
+		record.fields.forEach(field => {
+			tag = parseInt(field.tag, 10);
+			console.log("-----------------------");
+			console.log("Field: ", field);
+
+			//Find configuration object matching tag:
+			res = find(confSpec, function(o) { return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag) })
+			//Configuration not found, should not happen
+			if(!res){ 
+				valid = false;
+				return false; 
+			} 
+			console.log("Punc rule: ", res.punc);
+			console.log("----");
+			
+			//Field does not have subfields, no parsing to be done
+			if(!field.subfields) return;
+			field.subfields.forEach(subField => {
+				console.log("subField: ", subField, " is not control field: ", isNaN(subField.code));
+				if(isNaN(subField.code)){ //Not control field
+					if(!subField.value) return; //Does not have value
+					puncChar = validPuncStr.includes(subField.value.slice(-1)); //If string ends to punctuation char
+					//((res.punc && !puncChar) || (!res.punc && puncChar)) ? valid = false : valid = true;
+					
+					if( (res.punc && !puncChar) || (!res.punc && puncChar)){
+						//Insert punctuation repair here
+						console.log("!!!! Invalid punctuation");
+						valid = false;
+					}else{
+						console.log("Valid punctuation")
+					}
+				}
+			})
+		});
+		console.log("***************** End: *****************");
+		return valid;
 	}
 	////////////////////////////////////////////
 }
 
+const validPuncStr = '?"-!,)].';
 
 //Configuration specification
 const confSpec = [
 	{ // 010-035	EI	 
-		rangeStart: 010,
-		rangeEnd: 035,
+		rangeStart: 10,
+		rangeEnd: 35,
 		index: null,
 		punc: false,
 		special: null
 	},{ //	036	KYLLÄ	vain osakentän $b jälkeen
 		rangeStart: null,
 		rangeEnd: null,
-		index: 036,
+		index: 36,
 		punc: true,
 		special: "vain osakentän $b jälkeen"
 	},{ //	037-050	EI	 
-		rangeStart: 037,
-		rangeEnd: 050,
+		rangeStart: 37,
+		rangeEnd: 50,
 		index: null,
 		punc: false,
 		special: null
 	},{ //	051	KYLLÄ	 
 		rangeStart: null,
 		rangeEnd: null,
-		index: 051,
+		index: 51,
 		punc: true,
 		special: null
 	},{ //	052-09X	EI
-		rangeStart: 052,
-		rangeEnd: 099,
+		rangeStart: 52,
+		rangeEnd: 99,
 		index: null,
 		punc: false,
 		special: null
