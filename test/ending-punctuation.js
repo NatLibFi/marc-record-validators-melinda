@@ -40,422 +40,85 @@ chai.use(chaiAsPromised);
 
 //Factory validation
 describe('field-structure', () => {
-	it('Creates a validator', async () => {
-		const config = [{
-			tag: /^035$/,
-			ind1: /^0$/,
-			ind2: /^1$/
-		},{
-			tag: /^100$/,
-			subfields: {
-				a: {maxOccurrence: 1}
-			}
-		}];
-
-		const validator = await validatorFactory(config);
-
-		expect(validator)
-			.to.be.an('object')
-			.that.has.any.keys('description', 'validate');
-
-		expect(validator.description).to.be.a('string');
-		expect(validator.validate).to.be.a('function');
-	});
-	
-	describe('#configuration', () => {
-		it('Throws an error when config array not provided', async () => {
-			await expect(validatorFactory()).to.be.rejectedWith(Error, 'Configuration array not provided');
-		});
-
-		it('Throws an error when config array has unidentified field', async () => {
-			const config = [{
-				leader: /^035$/,
-				tags: /^035$/
-			}];
-			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - unidentified value: tags');
-		});
-
-		it('Throws an error when config array has field with incorrect data type', async () => {
-			const config = [{
-				leader: /^035$/,
-				tag: 35
-			}];
-			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: tag');
-		});
-
-		it('Throws an error when config array has excluded element', async () => {
-			const config = [{
-				leader: /^035$/,
-				tag: /^035$/
-			}];
-			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - excluded element');
-		});
-
-		it('Throws an error when config subfields not object', async () => {
-			const config = [{
-				tag: /^001$/,
-				valuePattern: /\d+/
-			},{
-				tag: /^245$/,
-				strict: true,
-				subfields:  "This should be Object"
-			}];
-			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - subfields not object');
-		});
-	});
-
 	//Indicators and subfields validation
 	describe('#validate: Indicators and subfields', () => {
-		const config = [{
-			tag: /^035$/,
-			ind1: /^0$/,
-			ind2: /^1$/
-		},{
-			tag: /^100$/,
-			subfields: {
-				a: {maxOccurrence: 1}
-			}
-		}];
-
 		const recordValid = new MarcRecord({
 			fields: [{
-				tag: '001',
-				value: '123456'
-			},{
-				tag: '035',
-				ind1: '0',
-				ind2: '1',
+				tag: '245',
 				subfields: [{
 					code: 'a',
-					value: 'foo'
+					value: 'Elämäni ja tutkimusretkeni / '
+				},{
+					code: 'c',
+					value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+				},{
+					code: '6',
+					value: 'FOO'
 				}]
 			},{
-				tag: '100',
-				ind1: ' ',
-				ind2: ' ',
+				tag: '337',
 				subfields: [{
 					code: 'a',
-					value: 'bar'
-				},{
+					value: 'käytettävissä ilman laitetta'
+				  },{
 					code: 'b',
-					value: 'fubar'
+					value: 'n'
+				  },{
+					code: '2',
+					value: 'rdamedia'
+				}]
+			},{
+				tag: '500',
+				subfields: [{
+					code: 'a',
+					value: 'FOO (Bar)'
 				}]
 			}]
 		});
 
-		const recordInvalidMany = new MarcRecord({
+		const recordInvalid = new MarcRecord({
 			fields: [{
-				tag: '001',
-				value: '123456'
+				tag: '245',
+				subfields: [{
+						code: 'a',
+						value: 'Elämäni ja tutkimusretkeni / '
+					},{
+						code: 'c',
+						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+					},{
+						code: '6',
+						value: 'FOO'
+					}]
 			},{
-				tag: '035',
-				ind1: '1',
-				ind2: '1',
+				tag: '337',
+				subfields: [{
+						code: 'a',
+						value: 'käytettävissä ilman laitetta'
+					},{
+						code: 'b',
+						value: 'n.'
+					},{
+						code: '2',
+						value: 'rdamedia'
+					}]
+			},{
+				tag: '500',
 				subfields: [{
 					code: 'a',
-					value: 'foo'
-				}]
-			},{
-				tag: '100',
-				subfields: [{
-					code: 'a',
-					value: 'bar'
-				},{
-					code: 'b',
-					value: 'fubar'
-				},{
-					code: 'a',
-					value: 'barfoo'
+					value: 'FOO (Bar).'
 				}]
 			}]
 		});
 
 		it('Finds the record valid', async () => {
-			const validator = await validatorFactory(config);
+			const validator = await validatorFactory();
 			const result = await validator.validate(recordValid);
 
 			expect(result).to.eql({valid: true});
 		});
 
 		it('Finds the record invalid: Too many subfields', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalidMany);
-
-			expect(result).to.eql({valid: false});
-		});
-	});
-
-	//Patterns and mandatory & strict subfields
-	describe('#validate: Patterns and mandatory & strict subfields', () => {
-		const config = [{
-		    tag: /^001$/,
-    		valuePattern: /\d+/
-		},{
-			tag: /^245$/,
-			strict: true,
-			subfields: {
-				a: {required: true, maxOccurrence: 1, pattern: /\w+/},
-				b: {maxOccurrence: 1, pattern: /\w+/}
-			}
-		}];
-
-		const recordValid = new MarcRecord({
-			fields: [{
-				tag: '001',
-				value: '123456'
-			  },{
-				tag: '100',
-				subfields: [{
-					code: 'a',
-					value: 'bar'
-				  }]
-			  },{
-				tag: '245',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [{
-					code: 'a',
-					value: 'foo'
-				  },{
-					code: 'b',
-					value: 'bar'
-				}]
-			  }]
-		  });
-
-		  const recordInvalidExtra = new MarcRecord({
-			fields: [{
-				tag: '001',
-				value: '123456a'
-			  },{
-				tag: '100',
-				subfields: [{
-					code: 'a',
-					value: 'bar'
-				}]
-			  },{
-				tag: '245',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [{
-					code: 'a',
-					value: 'foo'
-				  },{
-					code: 'b',
-					value: 'bar'
-				  },{
-					code: 'c',
-					value: 'fubar'
-				}]
-			  }]
-		  });
-
-		  const recordInvalidTooMany = new MarcRecord({
-			  fields: [{
-				  tag: '001',
-				  value: '123456a'
-				},{
-				  tag: '100',
-				  subfields: [{
-					  code: 'a',
-					  value: 'bar'
-				  }]
-				},{
-				  tag: '245',
-				  ind1: ' ',
-				  ind2: ' ',
-				  subfields: [{
-					  code: 'a',
-					  value: 'foo'
-					},{
-					  code: 'b',
-					  value: 'bar'
-					},{
-					  code: 'a',
-					  value: 'fubar'
-				  }]
-				}]
-			});		 
-			
-			const recordInvalidRegExp = new MarcRecord({
-				fields: [{
-					tag: '001',
-					value: '123456a'
-					},{
-					tag: '100',
-					subfields: [{
-						code: 'a',
-						value: 'bar'
-					}]
-					},{
-					tag: '245',
-					ind1: ' ',
-					ind2: ' ',
-					subfields: [{
-						code: 'a',
-						value: 'ää'
-						},{
-						code: 'b',
-						value: 'bar'
-					}]
-				}]
-			});
-
-			const recordInvalidMissing = new MarcRecord({
-				fields: [{
-					tag: '100',
-					subfields: [{
-						code: 'a',
-						value: 'bar'
-					}]
-					},{
-					tag: '245',
-					ind1: ' ',
-					ind2: ' ',
-					subfields: [{
-						code: 'a',
-						value: 'ää'
-						},{
-						code: 'b',
-						value: 'bar'
-					}]
-				}]
-			});
-
-			const recordInvalidMissingSubfield = new MarcRecord({
-				fields: [{
-					tag: '001',
-					value: '123456'
-				  },{
-					tag: '100',
-					subfields: [{
-						code: 'a',
-						value: 'bar'
-					  }]
-				  },{
-					tag: '245',
-					ind1: ' ',
-					ind2: ' ',
-					subfields: [{
-						code: 'b',
-						value: 'bar'
-					}]
-				  }]
-			  });
-
-		it('Finds the record valid', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordValid);
-
-			expect(result).to.eql({valid: true});
-		});
-
-		it('Finds the record invalid: Extra field in strict', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalidExtra);
-
-			expect(result).to.eql({valid: false});
-		});
-
-		it('Finds the record invalid: Too many occurances', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalidTooMany);
-
-			expect(result).to.eql({valid: false});
-		});
-
-		it('Finds the record invalid: Invalid RegExp', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalidRegExp);
-
-			expect(result).to.eql({valid: false});
-		});
-
-		it('Finds the record invalid: Missing field', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalidMissing);
-
-			expect(result).to.eql({valid: false});
-		});
-		it('Finds the record invalid: Missing subfield', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalidMissingSubfield);
-
-			expect(result).to.eql({valid: false});
-		});
-	});
-
-
-	//Dependencies
-	describe('#validate: Dependencies', () => {
-		const config = [{
-			leader: /^.{6}s/,
-			dependencies: [{
-				tag: /^773$/,
-				subfields: {7: /^nnas$/}
-			}]
-		}];
-
-		const recordValid = new MarcRecord({
-			leader: '63ab75sfoo122myhgh',
-			fields: [{
-				tag: '001',
-				value: '123456'
-			},{
-				tag: '245',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [{
-					code: 'a',
-					value: 'foo'
-				}]
-			},{
-				tag: '773',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [{
-					code: '7',
-					value: 'nnas'
-				  },{
-					code: 'w',
-					value: '789101112'
-				  }]
-			}]
-		});
-
-		const recordInvalid = new MarcRecord({
-			leader: '63ab75sfoo122myhgh',
-			fields: [{
-				tag: '001',
-				value: '123456'
-			},{
-				tag: '245',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [{
-					code: 'a',
-					value: 'foo'
-				}]
-			},{
-				tag: '773',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [{
-					code: 'w',
-					value: '789101112'
-				}]
-			}]
-		});
-
-		it('Finds the record valid', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordValid);
-
-			expect(result).to.eql({valid: true});
-		});
-
-		it('Finds the record invalid: Subfield not there', async () => {
-			const validator = await validatorFactory(config);
+			const validator = await validatorFactory();
 			const result = await validator.validate(recordInvalid);
 
 			expect(result).to.eql({valid: false});
