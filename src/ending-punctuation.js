@@ -43,10 +43,15 @@ export default async function () {
 	function validateCommas(record) {
 		console.log("******************* Start *******************");
 		// console.log("Record: ", record);
-		var res = null,
-			tag = null,
+		var message = {},
 			valid = true,
-			puncChar = null;
+			tag = null,
+			res = null,
+			lastSubField = null,
+			lastPuncMark = null,
+			lastPuncDot = null;
+
+		message['message'] = [];
 
 		if(!record.fields) return false;
 		record.fields.forEach(field => {
@@ -56,40 +61,55 @@ export default async function () {
 
 			//Find configuration object matching tag:
 			res = find(confSpec, function(o) { return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag) })
-			//Configuration not found, should not happen
-			if(!res){ 
-				valid = false;
-				return false; 
-			} 
+			if(!res) return; //Configuration not found, pass field without error
+			
 			console.log("Punc rule: ", res.punc);
 			console.log("----");
 			
-			//Field does not have subfields, no parsing to be done
-			if(!field.subfields) return;
+			//Field does not have subfields; invalid
+			if(!field.subfields){
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				return;
+			}
+
+			//Check that each field has required fields and save last data field
 			field.subfields.forEach(subField => {
-				console.log("subField: ", subField, " is not control field: ", isNaN(subField.code));
-				if(isNaN(subField.code)){ //Not control field
-					if(!subField.value) return; //Does not have value
-					puncChar = validPuncStr.includes(subField.value.slice(-1)); //If string ends to punctuation char
-					//((res.punc && !puncChar) || (!res.punc && puncChar)) ? valid = false : valid = true;
-					
-					if( (res.punc && !puncChar) || (!res.punc && puncChar)){
-						//Insert punctuation repair here
-						console.log("!!!! Invalid punctuation");
-						valid = false;
-					}else{
-						console.log("Valid punctuation")
-					}
-				}
+				if(!subField.code || !subField.value) throw 'Missing code or value for subfield: ' + subField; //Does not have code or value 
+				if(isNaN(subField.code)) lastSubField = subField; //Not control field
 			})
+
+			lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
+			lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+
+			//1. Last char should be punc, but its not either one of marks nor dot
+			if( res.punc && !(lastPuncMark || lastPuncDot)) {
+				console.log("!!!! 1. Invalid punctuation");
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+
+			//2. Last char shouldn't be punc, but either one of marks or dot
+			}else if(!res.punc && (lastPuncMark || lastPuncDot)){
+				console.log("!!!! 2. Invalid punctuation");
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+
+			//3. Last char is dot, but previous char is one of punc marks, like 'Question?.'
+			}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
+				console.log("!!!! 3. Invalid punctuation");
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+			}else{
+				console.log("Valid punctuation")
+			}
+
 		});
+
+		message.message.length >= 1 ? message.valid = false : message.valid = true;
+		console.log("Message: ", message);
 		console.log("***************** End: *****************");
-		return valid;
+		return message.valid;
 	}
 	////////////////////////////////////////////
 }
 
-const validPuncStr = '?"-!,)].';
+const validPuncMarks = '?"-!,)]';
 
 //Configuration specification
 const confSpec = [
