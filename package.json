@@ -35,6 +35,8 @@
 		"publish-to-npm": "npm install && npm run lint && npm test && npm run coverage && npm publish --access=public"
 	},
 	"dependencies": {
+		"beautify-isbn": "^2.2.0",
+		"issn-verify": "^1.0.0",
 		"lodash": "4.17.10",
 		"marc-record-js": "git+https://github.com/natlibfi-arlehiko/marc-record-js.git",
 		"ramda": "0.25.0"
