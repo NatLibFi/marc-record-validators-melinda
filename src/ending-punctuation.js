@@ -28,6 +28,9 @@
 
 'use strict';
 import {find, forEach} from 'lodash';
+const repairActions = {
+    REMOVELAST: 'last'
+}
 
 export default async function () {
 		return {
@@ -35,7 +38,10 @@ export default async function () {
 			'Checks whether punctuation is valid',
 		validate: async record => ({
 			valid: validateCommas(record)
-		})
+		}),
+		fix: async record => {
+
+		}
 	};
 
 	////////////////////////////////////////////
@@ -44,7 +50,7 @@ export default async function () {
 		console.log("******************* Start *******************");
 		// console.log("Record: ", record);
 		var message = {},
-			valid = true,
+			repairGuide = [],
 			tag = null,
 			res = null,
 			lastSubField = null,
@@ -80,7 +86,7 @@ export default async function () {
 
 			lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
 			lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
-
+			console.log("Booleans: ", lastPuncMark, lastPuncDot);
 			//1. Last char should be punc, but its not either one of marks nor dot
 			if( res.punc && !(lastPuncMark || lastPuncDot)) {
 				console.log("!!!! 1. Invalid punctuation");
@@ -90,7 +96,7 @@ export default async function () {
 			}else if(!res.punc && (lastPuncMark || lastPuncDot)){
 				console.log("!!!! 2. Invalid punctuation");
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-
+				repairGuide.push({tag: tag, action: repairActions.REMOVELAST})
 			//3. Last char is dot, but previous char is one of punc marks, like 'Question?.'
 			}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
 				console.log("!!!! 3. Invalid punctuation");
