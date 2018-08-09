@@ -33,7 +33,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
-import validatorFactory from '../src/language';
+import validatorFactory from '../src/item-language';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
