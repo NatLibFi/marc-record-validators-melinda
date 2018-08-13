@@ -34,7 +34,7 @@ import chaiAsPromised from 'chai-as-promised';
 import MarcRecord from 'marc-record-js';
 import fetchMock from 'fetch-mock';
 import * as testContext from '../src/resolvable-ext-references-melinda'; /* eslint-disable-line import/named */
-import {fixture5000, fixture9550, fixture1000} from './fixtures/external-entity-references';
+import {fixture5000, fixture9550, fixture1000} from './fixtures/resolvable-ext-references-melinda';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
