@@ -32,27 +32,74 @@ import validateISSN from 'issn-verify';
 
 export default async function () {
 	return {
-		description: 'Validates ISSBN and ISSN values',
-		validate: record => record.get(/^(020|022)$/).reduce((acc, field) => {
-			if (field.tag === '020') {
-				const isbn = field.subfields.find(sf => sf.code === 'a').value;
+		description: 'Validates ISBN and ISSN values',
+		validate,
+		fix
+	};
 
-				if (!validateISBN(isbn)) {
-					acc.messages.push(`ISBN ${isbn} is not valid`);
-					acc.valid = false;
+	function getInvalidFields(record) {
+		return record.get(/^(020|022)$/).filter(field => {
+			if (field.tag === '020') {
+				const subfield = field.subfields.find(sf => sf.code === 'a');
+				if (subfield) {
+					return !validateISBN(subfield.value);
+				}
+			} else {
+				const subfield = field.subfields
+					.find(sf => sf.code === 'a' || sf.code === 'l');
+
+				if (subfield) {
+					return !validateISSN(subfield.value);
+				}
+			}
+
+			return false;
+		});
+	}
+
+	async function validate(record) {
+		const fields = getInvalidFields(record);
+
+		if (fields.length === 0) {
+			return {valid: true};
+		}
+
+		return fields
+			.map(field => {
+				if (field.tag === '020') {
+					const {value} = field.subfields.find(sf => sf.code === 'a');
+					return {name: 'ISBN', value};
 				}
 
+				return {name: 'ISSN', value: getISSN()};
+
+				function getISSN() {
+					return field.subfields.find(sf => {
+						return sf.code === 'a' || sf.code === 'l';
+					}).value;
+				}
+			})
+			.reduce((acc, obj) => {
+				const {name, value} = obj;
+				acc.messages.push(`${name} ${value} is not valid`);
 				return acc;
+			}, {valid: false, messages: []});
+	}
+
+	async function fix(record) {
+		getInvalidFields(record).forEach(field => {
+			if (field.tag === '020') {
+				const subfield = field.subfields.find(sf => sf.code === 'a');
+
+				field.subfields.push({code: 'z', value: subfield.value});
+				record.removeSubfield(subfield, field);
+			} else {
+				const subfield = field.subfields
+					.find(sf => sf.code === 'a' || sf.code === 'l');
+
+				field.subfields.push({code: 'y', value: subfield.value});
+				record.removeSubfield(subfield, field);
 			}
-
-			const issn = field.subfields.find(sf => sf.code === 'a').value;
-
-			if (!validateISSN(issn)) {
-				acc.messages.push(`ISSN ${issn} is not valid`);
-				acc.valid = false;
-			}
-
-			return acc;
-		}, {valid: true, messages: []})
-	};
+		});
+	}
 }
