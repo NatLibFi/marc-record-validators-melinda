@@ -113,7 +113,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 
 		const xml = await response.text();
 
-		return new Promise(async resolve => {
+		return new Promise(resolve => {
 			parseString(xml, (err, result) => {
 				const record = last(result['zs:searchRetrieveResponse']['zs:records']);
 				const position = parseInt(last(record['zs:record'])['zs:recordPosition'][0], 10);
