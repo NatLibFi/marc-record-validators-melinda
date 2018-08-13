@@ -32,7 +32,7 @@ export default async function () {
 	const PATTERN = Object.keys(MAP_CONVERSION).reduce((result, key, index, list) => {
 		console.log('key: ', key);
 		console.log('result: ', result);
-		return index === list.length - 1 ? new RegExp(`${result}${key})`) : `${result}${key}|`;
+		return index === list.length - 1 ? new RegExp(`${result}${key})`) : `${result}${key}map|`;
 	}, '(');
 
 	return {
