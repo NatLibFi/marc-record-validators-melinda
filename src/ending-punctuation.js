@@ -29,18 +29,32 @@
 'use strict';
 import {find, forEach} from 'lodash';
 const repairActions = {
-    REMOVELAST: 'last'
+	REMOVELAST: 'remove',
+	ADDPUNC: 'add'
 }
 
 export default async function () {
-		return {
+	var repairGuide = [];
+
+	return {
 		description:
 			'Checks whether punctuation is valid',
 		validate: async record => ({
 			valid: validateCommas(record)
 		}),
-		fix: async record => {
+		fix: async record =>{
+			validateCommas(record);
+			console.log("Repairs: ", repairGuide);
+			repairGuide.forEach( field => {
+				console.log("Field: ", field);
+				console.log("Tag: ");
+				console.log(record.get(field.tag));
+				console.log("Subfields: ");
+				console.log(record.get(field.tag)[0].subfields); //Voi olla useita samalla tagilla -> Siirrä korjaus boolean arvon taakse repairCommas funktioon...
+				console.log("Subfield: ");
+				console.log(find(record.get(field.tag).subfields, {code: field.subfield} ));
 
+			})
 		}
 	};
 
@@ -50,7 +64,6 @@ export default async function () {
 		console.log("******************* Start *******************");
 		// console.log("Record: ", record);
 		var message = {},
-			repairGuide = [],
 			tag = null,
 			res = null,
 			lastSubField = null,
@@ -86,21 +99,22 @@ export default async function () {
 
 			lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
 			lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
-			console.log("Booleans: ", lastPuncMark, lastPuncDot);
+			console.log("Booleans: ", res.punc, lastPuncMark, lastPuncDot, " | ", (lastPuncMark || lastPuncDot));
 			//1. Last char should be punc, but its not either one of marks nor dot
 			if( res.punc && !(lastPuncMark || lastPuncDot)) {
 				console.log("!!!! 1. Invalid punctuation");
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-
-			//2. Last char shouldn't be punc, but either one of marks or dot
-			}else if(!res.punc && (lastPuncMark || lastPuncDot)){
+				repairGuide.push({tag: tag, subfield: lastSubField.code, action: repairActions.ADDPUNC})
+			//2. Last char shouldn't be punc, but is dot
+			}else if(!res.punc && lastPuncDot){
 				console.log("!!!! 2. Invalid punctuation");
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				repairGuide.push({tag: tag, action: repairActions.REMOVELAST})
+				repairGuide.push({tag: tag, subfield: lastSubField.code, action: repairActions.REMOVELAST})
 			//3. Last char is dot, but previous char is one of punc marks, like 'Question?.'
 			}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
 				console.log("!!!! 3. Invalid punctuation");
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				repairGuide.push({tag: tag, subfield: lastSubField.code, action: repairActions.REMOVELAST})
 			}else{
 				console.log("Valid punctuation")
 			}

@@ -123,5 +123,12 @@ describe('field-structure', () => {
 
 			expect(result).to.eql({valid: false});
 		});
+
+		it('Repairs the invalid record', async () => {
+			const validator = await validatorFactory();
+			const result = await validator.fix(recordInvalid);
+
+			expect(result).to.eql({valid: false});
+		});
 	});
 });
