@@ -23,6 +23,7 @@
 		"prepublishOnly": "npm run build:transpile",
 		"lint": "xo --fix",
 		"test": "cross-env NODE_ENV=test nyc mocha --require babel-core/register",
+		"test:lint": "npm run lint",
 		"coverage": "nyc check-coverage",
 		"clean": "rimraf build coverage .nyc_output dist",
 		"build:transpile": "babel src --source-maps --out-dir=dist --minified",

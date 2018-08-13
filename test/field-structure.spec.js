@@ -38,14 +38,14 @@ import validatorFactory from '../src/field-structure';
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-//Factory validation
+// Factory validation
 describe('field-structure', () => {
 	it('Creates a validator', async () => {
 		const config = [{
 			tag: /^035$/,
 			ind1: /^0$/,
 			ind2: /^1$/
-		},{
+		}, {
 			tag: /^100$/,
 			subfields: {
 				a: {maxOccurrence: 1}
@@ -61,7 +61,7 @@ describe('field-structure', () => {
 		expect(validator.description).to.be.a('string');
 		expect(validator.validate).to.be.a('function');
 	});
-	
+
 	describe('#configuration', () => {
 		it('Throws an error when config array not provided', async () => {
 			await expect(validatorFactory()).to.be.rejectedWith(Error, 'Configuration array not provided');
@@ -95,22 +95,22 @@ describe('field-structure', () => {
 			const config = [{
 				tag: /^001$/,
 				valuePattern: /\d+/
-			},{
+			}, {
 				tag: /^245$/,
 				strict: true,
-				subfields:  "This should be Object"
+				subfields: 'This should be Object'
 			}];
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - subfields not object');
 		});
 	});
 
-	//Indicators and subfields validation
+	// Indicators and subfields validation
 	describe('#validate: Indicators and subfields', () => {
 		const config = [{
 			tag: /^035$/,
 			ind1: /^0$/,
 			ind2: /^1$/
-		},{
+		}, {
 			tag: /^100$/,
 			subfields: {
 				a: {maxOccurrence: 1}
@@ -121,7 +121,7 @@ describe('field-structure', () => {
 			fields: [{
 				tag: '001',
 				value: '123456'
-			},{
+			}, {
 				tag: '035',
 				ind1: '0',
 				ind2: '1',
@@ -129,14 +129,14 @@ describe('field-structure', () => {
 					code: 'a',
 					value: 'foo'
 				}]
-			},{
+			}, {
 				tag: '100',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
-				},{
+				}, {
 					code: 'b',
 					value: 'fubar'
 				}]
@@ -147,7 +147,7 @@ describe('field-structure', () => {
 			fields: [{
 				tag: '001',
 				value: '123456'
-			},{
+			}, {
 				tag: '035',
 				ind1: '1',
 				ind2: '1',
@@ -155,15 +155,15 @@ describe('field-structure', () => {
 					code: 'a',
 					value: 'foo'
 				}]
-			},{
+			}, {
 				tag: '100',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
-				},{
+				}, {
 					code: 'b',
 					value: 'fubar'
-				},{
+				}, {
 					code: 'a',
 					value: 'barfoo'
 				}]
@@ -185,12 +185,12 @@ describe('field-structure', () => {
 		});
 	});
 
-	//Patterns and mandatory & strict subfields
+	// Patterns and mandatory & strict subfields
 	describe('#validate: Patterns and mandatory & strict subfields', () => {
 		const config = [{
-		    tag: /^001$/,
-    		valuePattern: /\d+/
-		},{
+			tag: /^001$/,
+			valuePattern: /\d+/
+		}, {
 			tag: /^245$/,
 			strict: true,
 			subfields: {
@@ -203,145 +203,145 @@ describe('field-structure', () => {
 			fields: [{
 				tag: '001',
 				value: '123456'
-			  },{
+			}, {
 				tag: '100',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
-				  }]
-			  },{
+				}]
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'foo'
-				  },{
+				}, {
 					code: 'b',
 					value: 'bar'
 				}]
-			  }]
-		  });
+			}]
+		});
 
-		  const recordInvalidExtra = new MarcRecord({
+		const recordInvalidExtra = new MarcRecord({
 			fields: [{
 				tag: '001',
 				value: '123456a'
-			  },{
+			}, {
 				tag: '100',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
 				}]
-			  },{
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'foo'
-				  },{
+				}, {
 					code: 'b',
 					value: 'bar'
-				  },{
+				}, {
 					code: 'c',
 					value: 'fubar'
 				}]
-			  }]
-		  });
+			}]
+		});
 
-		  const recordInvalidTooMany = new MarcRecord({
-			  fields: [{
-				  tag: '001',
-				  value: '123456a'
-				},{
-				  tag: '100',
-				  subfields: [{
-					  code: 'a',
-					  value: 'bar'
-				  }]
-				},{
-				  tag: '245',
-				  ind1: ' ',
-				  ind2: ' ',
-				  subfields: [{
-					  code: 'a',
-					  value: 'foo'
-					},{
-					  code: 'b',
-					  value: 'bar'
-					},{
-					  code: 'a',
-					  value: 'fubar'
-				  }]
+		const recordInvalidTooMany = new MarcRecord({
+			fields: [{
+				tag: '001',
+				value: '123456a'
+			}, {
+				tag: '100',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
 				}]
-			});		 
-			
-			const recordInvalidRegExp = new MarcRecord({
-				fields: [{
-					tag: '001',
-					value: '123456a'
-					},{
-					tag: '100',
-					subfields: [{
-						code: 'a',
-						value: 'bar'
-					}]
-					},{
-					tag: '245',
-					ind1: ' ',
-					ind2: ' ',
-					subfields: [{
-						code: 'a',
-						value: 'ää'
-						},{
-						code: 'b',
-						value: 'bar'
-					}]
+			}, {
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'foo'
+				}, {
+					code: 'b',
+					value: 'bar'
+				}, {
+					code: 'a',
+					value: 'fubar'
 				}]
-			});
+			}]
+		});
 
-			const recordInvalidMissing = new MarcRecord({
-				fields: [{
-					tag: '100',
-					subfields: [{
-						code: 'a',
-						value: 'bar'
-					}]
-					},{
-					tag: '245',
-					ind1: ' ',
-					ind2: ' ',
-					subfields: [{
-						code: 'a',
-						value: 'ää'
-						},{
-						code: 'b',
-						value: 'bar'
-					}]
+		const recordInvalidRegExp = new MarcRecord({
+			fields: [{
+				tag: '001',
+				value: '123456a'
+			}, {
+				tag: '100',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
 				}]
-			});
+			}, {
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'ää'
+				}, {
+					code: 'b',
+					value: 'bar'
+				}]
+			}]
+		});
 
-			const recordInvalidMissingSubfield = new MarcRecord({
-				fields: [{
-					tag: '001',
-					value: '123456'
-				  },{
-					tag: '100',
-					subfields: [{
-						code: 'a',
-						value: 'bar'
-					  }]
-				  },{
-					tag: '245',
-					ind1: ' ',
-					ind2: ' ',
-					subfields: [{
-						code: 'b',
-						value: 'bar'
-					}]
-				  }]
-			  });
+		const recordInvalidMissing = new MarcRecord({
+			fields: [{
+				tag: '100',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
+				}]
+			}, {
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'a',
+					value: 'ää'
+				}, {
+					code: 'b',
+					value: 'bar'
+				}]
+			}]
+		});
+
+		const recordInvalidMissingSubfield = new MarcRecord({
+			fields: [{
+				tag: '001',
+				value: '123456'
+			}, {
+				tag: '100',
+				subfields: [{
+					code: 'a',
+					value: 'bar'
+				}]
+			}, {
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [{
+					code: 'b',
+					value: 'bar'
+				}]
+			}]
+		});
 
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory(config);
@@ -385,8 +385,7 @@ describe('field-structure', () => {
 		});
 	});
 
-
-	//Dependencies
+	// Dependencies
 	describe('#validate: Dependencies', () => {
 		const config = [{
 			leader: /^.{6}s/,
@@ -401,7 +400,7 @@ describe('field-structure', () => {
 			fields: [{
 				tag: '001',
 				value: '123456'
-			},{
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
@@ -409,17 +408,17 @@ describe('field-structure', () => {
 					code: 'a',
 					value: 'foo'
 				}]
-			},{
+			}, {
 				tag: '773',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [{
 					code: '7',
 					value: 'nnas'
-				  },{
+				}, {
 					code: 'w',
 					value: '789101112'
-				  }]
+				}]
 			}]
 		});
 
@@ -428,7 +427,7 @@ describe('field-structure', () => {
 			fields: [{
 				tag: '001',
 				value: '123456'
-			},{
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
@@ -436,7 +435,7 @@ describe('field-structure', () => {
 					code: 'a',
 					value: 'foo'
 				}]
-			},{
+			}, {
 				tag: '773',
 				ind1: ' ',
 				ind2: ' ',

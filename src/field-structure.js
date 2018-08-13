@@ -27,154 +27,10 @@
  */
 
 'use strict';
+
 import {filter, forEach} from 'lodash';
 
-export default async function (config) {
-	if (!Array.isArray(config)) {
-		throw new Error('Configuration array not provided');
-	}
-
-	configValid(config);
-
-	return {
-		description:
-			'Checks whether the configured field-specific objects are valid in the record',
-		validate: async record => ({
-			valid: recordMatchesConfig(record, config, false)
-		})
-	};
-
-	////////////////////////////////////////////
-	//This checks that configuration is valid
-	function configValid(config) {
-		var excluded = [];
-		config.forEach(obj => {
-			excluded = []; //Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
-			
-			forEach(obj, function(val, key){
-				configMatchesSpec(val, key, confSpec)
-
-				//Concat all excluded elements to array
-				if(confSpec[key].excl) excluded = excluded.concat(confSpec[key].excl);
-			});
-
-			//Check that no excluded elements are in use
-			forEach(obj, function(val, key) {
-				if(excluded.includes(key)) throw new Error('Configuration not valid - excluded element');
-			})
-		});
-	};
-
-
-	//Recursive validator
-	function configMatchesSpec(data, key, spec){
-		//Field not found in configuration spec
-		if(!spec[key]) throw new Error('Configuration not valid - unidentified value: ' + key);
-				
-		//If configuration type does not match type in configuration spec
-		if( typeof data !== spec[key].type && 
-			(spec[key].type === 'RegExp' && !(data instanceof RegExp))) throw new Error('Configuration not valid - invalid data type for: ' + key);
-
-		//Check subfields/dependencies recursively
-		if( key === 'subfields' || key === 'dependencies' ){
-			forEach(data, function(subObj){
-				if(typeof subObj !== 'object'){
-					throw new Error('Configuration not valid - ' + key + ' not object');
-				}else{
-					forEach(subObj, function(subVal, subKey){							
-						configMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec);
-					})
-				}
-			})
-		}
-	}
-	////////////////////////////////////////////
-
-
-	////////////////////////////////////////////
-	//This is used to validate record against configuration
-	function recordMatchesConfig(record, conf, dependencies) {
-		//Parse trough every element of config array
-		var res = conf.every( confObj => {
-			if(confObj['dependencies']){								
-				return confObj['dependencies'].every( dependency => {
-					return recordMatchesConfigElement(record, dependency.tag, confObj, dependencies);
-				});
-			}else{
-				return recordMatchesConfigElement(record, confObj.tag, confObj, dependencies);
-			}
-		});
-		return res;
-	}
-	
-
-	//Recursive validation function
-	function recordMatchesConfigElement(record, searchedField, confObj, dependencies){
-		var foundFields = record.get(searchedField)
-		//If data matching configuration is not found
-		if( foundFields.length === 0 ) return false;
-		
-		//Parse trough record objects matching provided configuration object
-		return foundFields.every( recordSubObj => { 
-			//Check that every configuration field exists in record and matches configuration
-			return Object.keys(confObj).every(confField => {
-				//If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
-				if( confObj[confField] instanceof RegExp){
-					//'valuePattern' RegExp in conf spec is used to validate 'value' in marc
-					if(confField === 'valuePattern') return confObj[confField].test(recordSubObj['value']);
-					if(confField === 'leader') return confObj[confField].test(record.leader);
-					return confObj[confField].test(recordSubObj[confField]);
-				}
-
-				//Only the specified subfields are allowed if set to true. Defaults to false. (this is checked at subfields)
-				else if(confField === 'strict') return true;
-				
-				//Check that subfield stuff
-				else if(confField === 'subfields'){
-					var strict = confObj['strict'] || false, //Defaults to false
-					elementsTotal = 0,
-					matching = [],
-					length = 0,
-					valid = true;
-			
-					forEach(confObj['subfields'], function(val, key){
-						matching = filter(recordSubObj['subfields'], {code: key});
-						length = matching.length;
-						elementsTotal += length; //Calculate amount of record objects matching all confObj objects
-						
-						if(length > val.maxOccurrence) valid = false;
-						if((val.required || dependencies) && length === 0) valid = false;
-						if(val.pattern){
-							forEach(matching, function(field){
-								if(!val.pattern.test(field.value)) valid = false;
-							});
-						}
-					});
-			
-					//Check if there is less valid calculated objects than objects in subfield object => some not matching strict
-					if(strict && elementsTotal < recordSubObj['subfields'].length) return false;
-
-					return valid;
-				}
-
-				//Recursive check for dependicies
-				else if(confField === 'dependencies'){
-					return recordMatchesConfig(record, confObj[confField], true);
-				}
-				
-				//This should not be reached as configuration is validated
-				else{
-					console.log("!!! Configuration field not identified: ", recordSubObj[confField], " | ", typeof recordSubObj[confField]);
-					return false;
-				}
-			});
-		});
-	}
-	////////////////////////////////////////////
-}
-
-
-//Configuration specification
+// Configuration specification
 const confSpec = {
 	leader: { // Description: Leader pattern
 		type: 'RegExp',
@@ -183,22 +39,22 @@ const confSpec = {
 		]
 	},
 	tag: { // Description: Field tag pattern
- 		type: 'RegExp'
+		type: 'RegExp'
 	},
-	valuePattern:{ // Description: Pattern to which the field's value must match against
+	valuePattern: { // Description: Pattern to which the field's value must match against
 		type: 'RegExp',
 		excl: [
 			'leader', 'subfields', 'ind1', 'ind2'
 		]
 	},
 	ind1: { // Description: Indicator-specific configuration object
-		type: 'RegExp', //Array<Indicator>
+		type: 'RegExp', // Array<Indicator>
 		excl: [
 			'leader', 'value'
 		]
 	},
 	ind2: { // Description: Indicator-specific configuration object
-		type: 'RegExp', //Array<Indicator>
+		type: 'RegExp', // Array<Indicator>
 		excl: [
 			'leader', 'value'
 		]
@@ -210,7 +66,7 @@ const confSpec = {
 		]
 	},
 	subfields: { // Description: Subfields configuration
-		type: 'object', //Object<String, Subfield> (Keys are subfield codes)
+		type: 'object', // Object<String, Subfield> (Keys are subfield codes)
 		contains: [
 			'String', 'subfieldSpec'
 		],
@@ -219,12 +75,12 @@ const confSpec = {
 		]
 	},
 	dependencies: { // Description: Dependencies configuration
-		type: 'array', //Array<Dependency>
+		type: 'array', // Array<Dependency>
 		contains: 'dependencySpec'
 	}
 };
 
-//Subfiled specification
+// Subfiled specification
 const subSpec = {
 	pattern: { // Description: Pattern to which the subfield's value must match against
 		type: 'RegExp'
@@ -235,11 +91,11 @@ const subSpec = {
 	maxOccurrence: { // Description: Maximum number of times this subfield can occur. Defaults to unlimited if omitted. The value 0 means that the subfield cannot exist.
 		type: 'number'
 	}
-}
+};
 
-//Dependency specification
+// Dependency specification
 const depSpec = {
-	tag:{ // Description: Field tag pattern
+	tag: { // Description: Field tag pattern
 		type: RegExp
 	},
 	ind1: { // Description: Pattern to which the indicator must match against
@@ -261,7 +117,168 @@ const depSpec = {
 		]
 	},
 	subfields: { // Description: An object with subfield codes as keys and RegExp patterns as values. The subfield value must this pattern.
-		type: Object[String, RegExp],
+		type: Object, // [String, RegExp]
 		required: false
 	}
+};
+
+export default async function (config) {
+	if (!Array.isArray(config)) {
+		throw new TypeError('Configuration array not provided');
+	}
+
+	configValid(config);
+
+	return {
+		description:
+			'Checks whether the configured field-specific objects are valid in the record',
+		validate: async record => ({
+			valid: recordMatchesConfig(record, config, false)
+		})
+	};
+
+	/// /////////////////////////////////////////
+	// This checks that configuration is valid
+	function configValid(config) {
+		let excluded = [];
+		config.forEach(obj => {
+			excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
+
+			forEach(obj, (val, key) => {
+				configMatchesSpec(val, key, confSpec);
+
+				// Concat all excluded elements to array
+				if (confSpec[key].excl) {
+					excluded = excluded.concat(confSpec[key].excl);
+				}
+			});
+
+			// Check that no excluded elements are in use
+			forEach(obj, (val, key) => {
+				if (excluded.includes(key)) {
+					throw new Error('Configuration not valid - excluded element');
+				}
+			});
+		});
+	}
+
+	// Recursive validator
+	function configMatchesSpec(data, key, spec) {
+		// Field not found in configuration spec
+		if (!spec[key]) {
+			throw new Error('Configuration not valid - unidentified value: ' + key);
+		}
+
+		// If configuration type does not match type in configuration spec
+		if (typeof data !== spec[key].type &&
+			(spec[key].type === 'RegExp' && !(data instanceof RegExp))) {
+			throw new Error('Configuration not valid - invalid data type for: ' + key);
+		}
+
+		// Check subfields/dependencies recursively
+		if (key === 'subfields' || key === 'dependencies') {
+			forEach(data, subObj => {
+				if (typeof subObj === 'object') {
+					forEach(subObj, (subVal, subKey) => {
+						configMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec);
+					});
+				} else {
+					throw new TypeError('Configuration not valid - ' + key + ' not object');
+				}
+			});
+		}
+	}
+	/// /////////////////////////////////////////
+
+	/// /////////////////////////////////////////
+	// This is used to validate record against configuration
+	function recordMatchesConfig(record, conf, dependencies) {
+		// Parse trough every element of config array
+		const res = conf.every(confObj => {
+			if (confObj.dependencies) {
+				return confObj.dependencies.every(dependency => {
+					return recordMatchesConfigElement(record, dependency.tag, confObj, dependencies);
+				});
+			}
+			return recordMatchesConfigElement(record, confObj.tag, confObj, dependencies);
+		});
+		return res;
+	}
+
+	// Recursive validation function
+	function recordMatchesConfigElement(record, searchedField, confObj, dependencies) {
+		const foundFields = record.get(searchedField);
+		// If data matching configuration is not found
+		if (foundFields.length === 0) {
+			return false;
+		}
+
+		// Parse trough record objects matching provided configuration object
+		return foundFields.every(recordSubObj => {
+			// Check that every configuration field exists in record and matches configuration
+			return Object.keys(confObj).every(confField => {
+				// If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
+				if (confObj[confField] instanceof RegExp) {
+					// 'valuePattern' RegExp in conf spec is used to validate 'value' in marc
+					if (confField === 'valuePattern') {
+						return confObj[confField].test(recordSubObj.value);
+					}
+					if (confField === 'leader') {
+						return confObj[confField].test(record.leader);
+					}
+					return confObj[confField].test(recordSubObj[confField]);
+				}
+
+				// Only the specified subfields are allowed if set to true. Defaults to false. (this is checked at subfields)
+				if (confField === 'strict') {
+					return true;
+				}
+
+				// Check that subfield stuff
+				if (confField === 'subfields') {
+					const strict = confObj.strict || false; // Defaults to false
+					let	elementsTotal = 0;
+					let	matching = [];
+					let	valid = true;
+
+					forEach(confObj.subfields, (val, key) => {
+						matching = filter(recordSubObj.subfields, {code: key});
+						elementsTotal += matching.length; // Calculate amount of record objects matching all confObj objects
+
+						if (matching.length > val.maxOccurrence) {
+							valid = false;
+						}
+						if ((val.required || dependencies) && matching.length === 0) {
+							valid = false;
+						}
+						if (val.pattern) {
+							forEach(matching, field => {
+								if (!val.pattern.test(field.value)) {
+									valid = false;
+								}
+							});
+						}
+					});
+
+					// Check if there is less valid calculated objects than objects in subfield object => some not matching strict
+					if (strict && elementsTotal < recordSubObj.subfields.length) {
+						return false;
+					}
+
+					return valid;
+				}
+
+				// Recursive check for dependicies
+				if (confField === 'dependencies') {
+					return recordMatchesConfig(record, confObj[confField], true);
+				}
+
+				// This should not be reached as configuration is validated
+
+				console.log('!!! Configuration field not identified: ', recordSubObj[confField], ' | ', typeof recordSubObj[confField]);
+				return false;
+			});
+		});
+	}
+	/// /////////////////////////////////////////
 }
