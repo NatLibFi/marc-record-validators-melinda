@@ -95,7 +95,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 	async function validateMatchingTags(tags) {
 		const resolved = await Promise.all(tags.map(obj => {
 			return getData(obj.value).then(valid => {
-				return {valid, ...obj};
+				return Object.assign({valid}, obj);
 			});
 		}));
 
@@ -111,8 +111,10 @@ export default async function ({endpoint, prefixPattern, fields}) {
 
 		const response = await fetch(`${endpoint}${queryParam}${recID}`);
 
+		const xml = await response.text();
+
 		return new Promise(async resolve => {
-			parseString(await response.text(), (err, result) => {
+			parseString(xml, (err, result) => {
 				const record = last(result['zs:searchRetrieveResponse']['zs:records']);
 				const position = parseInt(last(record['zs:record'])['zs:recordPosition'][0], 10);
 				resolve(position === 1 && !err);
