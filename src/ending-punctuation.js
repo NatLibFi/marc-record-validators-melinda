@@ -34,35 +34,24 @@ const repairActions = {
 }
 
 export default async function () {
-	var repairGuide = [];
-
 	return {
 		description:
 			'Checks whether punctuation is valid',
 		validate: async record => ({
-			valid: validateCommas(record)
+			valid: validateCommas(record, false) //Record (Object), fix (boolean)
 		}),
 		fix: async record =>{
-			validateCommas(record);
-			console.log("Repairs: ", repairGuide);
-			repairGuide.forEach( field => {
-				console.log("Field: ", field);
-				console.log("Tag: ");
-				console.log(record.get(field.tag));
-				console.log("Subfields: ");
-				console.log(record.get(field.tag)[0].subfields); //Voi olla useita samalla tagilla -> Siirrä korjaus boolean arvon taakse repairCommas funktioon...
-				console.log("Subfield: ");
-				console.log(find(record.get(field.tag).subfields, {code: field.subfield} ));
-
-			})
+			validateCommas(record, true); //Record (Object), fix (boolean)
 		}
 	};
 
 	////////////////////////////////////////////
 	//This is used to validate record against configuration
-	function validateCommas(record) {
-		console.log("******************* Start *******************");
+	function validateCommas(record, fix) {
+		// console.log("******************* Start *******************");
 		// console.log("Record: ", record);
+		// console.log("***********")
+
 		var message = {},
 			tag = null,
 			res = null,
@@ -75,15 +64,15 @@ export default async function () {
 		if(!record.fields) return false;
 		record.fields.forEach(field => {
 			tag = parseInt(field.tag, 10);
-			console.log("-----------------------");
-			console.log("Field: ", field);
+			// console.log("-----------------------");
+			// console.log("Field: ", field);
 
 			//Find configuration object matching tag:
 			res = find(confSpec, function(o) { return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag) })
 			if(!res) return; //Configuration not found, pass field without error
 			
-			console.log("Punc rule: ", res.punc);
-			console.log("----");
+			// console.log("Punc rule: ", res.punc);
+			// console.log("----");
 			
 			//Field does not have subfields; invalid
 			if(!field.subfields){
@@ -99,37 +88,48 @@ export default async function () {
 
 			lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
 			lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
-			console.log("Booleans: ", res.punc, lastPuncMark, lastPuncDot, " | ", (lastPuncMark || lastPuncDot));
-			//1. Last char should be punc, but its not either one of marks nor dot
-			if( res.punc && !(lastPuncMark || lastPuncDot)) {
-				console.log("!!!! 1. Invalid punctuation");
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				repairGuide.push({tag: tag, subfield: lastSubField.code, action: repairActions.ADDPUNC})
-			//2. Last char shouldn't be punc, but is dot
-			}else if(!res.punc && lastPuncDot){
-				console.log("!!!! 2. Invalid punctuation");
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				repairGuide.push({tag: tag, subfield: lastSubField.code, action: repairActions.REMOVELAST})
-			//3. Last char is dot, but previous char is one of punc marks, like 'Question?.'
-			}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
-				console.log("!!!! 3. Invalid punctuation");
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				repairGuide.push({tag: tag, subfield: lastSubField.code, action: repairActions.REMOVELAST})
-			}else{
-				console.log("Valid punctuation")
+			// console.log("Booleans: ", res.punc, lastPuncMark, lastPuncDot, " | ", (lastPuncMark || lastPuncDot));
+			// console.log("REs.special: ", res.special);
+
+			//Special rule
+			if(res.special){
+
 			}
 
+			//Last char should be punc, but its not either one of marks nor dot
+			if( res.punc && !(lastPuncMark || lastPuncDot)) {
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				if(fix)	lastSubField.value = lastSubField.value.concat('.');
+			//Last char shouldn't be punc, but is dot
+			}else if(!res.punc && lastPuncDot){
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
+			//Last char is dot, but previous char is one of punc marks, like 'Question?.'
+			}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
+			}else{
+				// console.log("Valid punctuation")
+			}
 		});
 
 		message.message.length >= 1 ? message.valid = false : message.valid = true;
-		console.log("Message: ", message);
-		console.log("***************** End: *****************");
+		
+		// console.log("Message: ", message);
+		// console.log("***************** End: *****************");
 		return message.valid;
 	}
 	////////////////////////////////////////////
 }
 
+// console.log("***********")
+// console.log("Record field 245: ", record.fields[0])
+// console.log("Record field 337: ", record.fields[1])
+// console.log("Record field 500: ", record.fields[2])
+
 const validPuncMarks = '?"-!,)]';
+
+const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito'];
 
 //Configuration specification
 const confSpec = [
@@ -144,7 +144,9 @@ const confSpec = [
 		rangeEnd: null,
 		index: 36,
 		punc: true,
-		special: "vain osakentän $b jälkeen"
+		special: {
+			after: 'b'
+		}
 	},{ //	037-050	EI	 
 		rangeStart: 37,
 		rangeEnd: 50,
@@ -210,7 +212,10 @@ const confSpec = [
 		rangeEnd: null,
 		index: 242,
 		punc: true,
-		special: "Jos viimeinen osakenttä on $y, piste on ennen sitä"
+		special: {
+			ifLast: 'y',
+			before: true
+		}
 	},{ //	243	EI	 
 		rangeStart: null,
 		rangeEnd: null,
@@ -408,7 +413,10 @@ const confSpec = [
 		rangeEnd: null,
 		index: 520,
 		punc: true,
-		special: null
+		special: {
+			ifLast: 'u',
+			before: true
+		}
 	},{ //	521-526	KYLLÄ	 
 		rangeStart: 521,
 		rangeEnd: 526,
@@ -438,7 +446,10 @@ const confSpec = [
 		rangeEnd: null,
 		index: 538,
 		punc: true,
-		special: null
+		special: {
+			ifLast: 'u',
+			before: true
+		}
 	},{ //	540-541	KYLLÄ	 
 		rangeStart: 540,
 		rangeEnd: 541,
@@ -492,7 +503,9 @@ const confSpec = [
 		rangeEnd: null,
 		index: 567,
 		punc: true,
-		special: "KYLLÄ osakentän $a jälkeen, EI muiden osakenttien jälkeen"
+		special: {
+			after: 'a',
+		}
 	},{ //	580-581	KYLLÄ	 
 		rangeStart: 580,
 		rangeEnd: 581,
@@ -558,7 +571,10 @@ const confSpec = [
 		rangeEnd: 651,
 		index: null,
 		punc: false,
-		special: null
+		special: {
+			finnishTerms : finnishTerms,
+			else : false
+		}
 	},{ //	653	EI	 
 		rangeStart: null,
 		rangeEnd: null,
@@ -570,7 +586,10 @@ const confSpec = [
 		rangeEnd: 662,
 		index: null,
 		punc: false,
-		special: null
+		special: {
+			finnishTerms : finnishTerms,
+			else : false
+		}
 	},{ //	69X	EI	 
 		rangeStart: 690,
 		rangeEnd: 699,
@@ -648,7 +667,9 @@ const confSpec = [
 		rangeEnd: 787,
 		index: null,
 		punc: true,
-		special: null
+		special: {
+			after: 'a'
+		}
 	},{ //	800	KYLLÄ	 
 		rangeStart: null,
 		rangeEnd: null,
@@ -696,7 +717,9 @@ const confSpec = [
 		rangeEnd: null,
 		index: 880,
 		punc: null,
-		special: null
+		special: {
+
+		}
 	},{ //	882-887	EI	 
 		rangeStart: 882,
 		rangeEnd: 887,
