@@ -76,7 +76,7 @@ describe('fields-present', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: true});
+			expect(result).to.eql({valid: true, messages: []});
 		});
 		it('Finds the record invalid', async () => {
 			const tagPatterns = [/^5..$/, /^FOO$/];
@@ -99,7 +99,9 @@ describe('fields-present', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({valid: false, messages: [
+				'The following tag patterns are not present in the record tag field:  /^5..$/ /^FOO$/'
+			]});
 		});
 	});
 });

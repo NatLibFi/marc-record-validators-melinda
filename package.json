@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
 	},
 	"license": "AGPL-3.0+",
-	"version": "2.0.0",
+	"version": "2.2.0",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=7"
@@ -23,11 +23,10 @@
 		"prepublishOnly": "npm run build:transpile",
 		"lint": "xo --fix",
 		"test": "cross-env NODE_ENV=test nyc mocha --require babel-core/register",
-		"test:lint": "npm run lint",
 		"coverage": "nyc check-coverage",
 		"clean": "rimraf build coverage .nyc_output dist",
 		"build:transpile": "babel src --source-maps --out-dir=dist --minified",
-		"build": "npm run clean && npm run build:transpile && ncu --packageFile package.json",
+		"build": "npm run clean && npm run build:transpile && ncu",
 		"watch:build": "chokidar src -c 'npm run build:transpile && node dist/index.js'",
 		"watch:check": "chokidar src test -c 'npm run lint && npm test && npm run coverage'",
 		"watch:validator": "chokidar src/$VALIDATOR.js test/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js test/$VALIDATOR.spec.js && npm test test/$VALIDATOR.spec.js && npm run coverage'",
@@ -36,9 +35,15 @@
 		"publish-to-npm": "npm install && npm run lint && npm test && npm run coverage && npm publish --access=public"
 	},
 	"dependencies": {
+		"beautify-isbn": "^2.2.0",
+		"cld": "^2.4.8",
+		"es6-promisify": "^6.0.0",
+		"issn-verify": "^1.0.0",
+		"langs": "^2.0.0",
 		"lodash": "4.17.10",
 		"marc-record-js": "git+https://github.com/natlibfi-arlehiko/marc-record-js.git",
-		"ramda": "0.25.0"
+		"node-fetch": "^2.1.2",
+		"xml2js": "0.x.x"
 	},
 	"peerDependencies": {
 		"@natlibfi/marc-record-validate": "^2.0.0"
@@ -47,6 +52,7 @@
 		"babel-cli": "^6.26.0",
 		"babel-core": "6.26.3",
 		"babel-plugin-istanbul": "^4.0.0",
+		"babel-plugin-rewire": "^1.1.0",
 		"babel-polyfill": "6.26.0",
 		"babel-preset-env": "^1.0.0",
 		"babel-register": "^6.0.0",
@@ -54,14 +60,15 @@
 		"chai-as-promised": "^7.1.1",
 		"chokidar-cli": "^1.0.0",
 		"codeclimate-test-reporter": "^0.5.0",
-		"cross-env": "^5.2.0",
+		"cross-env": "^5.0.0",
+		"fetch-mock": "^6.4.4",
 		"istanbul": "0.x.x",
 		"mocha": "^5.0.0",
-		"nodemon": "^1.18.3",
+		"nodemon": "^1.0.0",
 		"npm-check-updates": "^2.0.0",
 		"nyc": "^12.0.0",
 		"rimraf": "^2.0.0",
-		"xo": "^0.22.0"
+		"xo": "0.x.x"
 	},
 	"xo": {
 		"prettier": false,
@@ -88,7 +95,8 @@
 		"env": {
 			"test": {
 				"plugins": [
-					"istanbul"
+					"istanbul",
+					"rewire"
 				]
 			}
 		},

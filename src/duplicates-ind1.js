@@ -27,39 +27,54 @@
  */
 
 'use strict';
+import {omit} from 'lodash';
 
-export default async function(tagPattern) {
+export default async function (tagPattern) {
 	if (tagPattern instanceof RegExp) {
 		return {
 			description:
 				'Handles data fields that only differ in the first indicator',
-			validate: async record => ({valid: !record.fields.some(matches)}),
-			fix: async record =>
-				record.fields
-					.filter(matches)
-					.forEach(field => record.removeField(field))
+			validate,
+			fix
 		};
 	}
 	throw new Error('No tagPattern provided');
 
-	function matches(field, index, fields) {
-		return (
-			tagPattern.test(field.tag) && field.ind1 === ' ' && hasDuplicate(field)
-		);
+	async function validate(record) {
+		const invalid = iterateFields(record)
+			.find(obj => obj.validation === true);
+		return invalid ? {valid: false, messages: [`Multiple ${invalid.obj.tag} fields which only differ in the first indicator`]} : {valid: true, messages: []};
+	}
 
-		function hasDuplicate(a) {
-			return fields.some(
-				b =>
-					a !== b &&
-					a.tag === b.tag &&
-					a.ind1 !== b.ind1 &&
-					a.subfields.length === b.subfields.length &&
-					a.subfields.every(aSf =>
-						b.subfields.some(
-							bSf => aSf.code === bSf.code && aSf.value === bSf.value
-						)
+	async function fix(record) {
+		iterateFields(record)
+			.filter(item => item.validation === false)
+			.map(item => omit(item, ['validation']))
+			.forEach(field => record.removeField(field));
+	}
+
+	function iterateFields(record) {
+		return record.fields.map(obj => {
+			return {validation: matches(obj, record.fields), obj};
+		});
+	}
+
+	function matches(field, fields) {
+		return tagPattern.test(field.tag) && field.ind1 === ' ' && hasDuplicate(field, fields);
+	}
+
+	function hasDuplicate(fieldA, fields) {
+		return fields.some(
+			fieldB =>
+				fieldA !== fieldB &&
+				fieldA.tag === fieldB.tag &&
+				fieldA.ind1 !== fieldB.ind1 &&
+				fieldA.subfields.length === fieldB.subfields.length &&
+				fieldA.subfields.every(aSf =>
+					fieldB.subfields.some(
+						bSf => aSf.code === bSf.code && aSf.value === bSf.value
 					)
-			);
-		}
+				)
+		);
 	}
 }

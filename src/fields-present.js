@@ -33,14 +33,20 @@ export default async function (tagPatterns) {
 		return {
 			description:
 				'Checks whether the configured fields are present in the record',
-			validate: async record => ({
-				valid: isFieldPresent(record)
-			})
+			validate
 		};
 	}
 	throw new Error('No tag pattern array provided');
 
-	function isFieldPresent(record) {
-		return tagPatterns.every(pattern => record.fields.some(field => pattern.test(field.tag)));
+	async function validate(record) {
+		const missingFields = tagPatterns.map(pattern => {
+			const result = record.fields.find(field => pattern.test(field.tag));
+			return result ? undefined : pattern;
+		});
+		const isEmpty = missingFields.every(index => index === undefined);
+		let errorMessage = ['The following tag patterns are not present in the record tag field: '];
+		errorMessage = errorMessage.concat(missingFields).join(' ');
+
+		return isEmpty ? {valid: true, messages: []} : {valid: false, messages: [errorMessage]};
 	}
 }
