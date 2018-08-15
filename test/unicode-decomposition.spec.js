@@ -56,16 +56,11 @@ describe('unicode-decomposition', () => {
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '500',
-						ind1: ' ',
-						ind2: '0',
-						subfields: [{code: 's', value: 'á'}]
-					},
-					{
-						tag: 'FOO',
-						ind1: ' ',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						tag: '245',
+						subfields: [{
+							code: 'a',
+							value: 'Föö, Bär'
+						}]
 					}
 				]
 			});
@@ -82,50 +77,62 @@ describe('unicode-decomposition', () => {
 						tag: '001',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'Å'}]
-					},
-					{
-						tag: 'BAR',
-						ind1: '1',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foÅo'}]
+						subfields: [{
+							code: 'a',
+							value: 'Föö, Bär'
+						}]
 					}
 				]
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: []});
+			expect(result).to.eql({valid: false, messages: ['The following subfields are not properly decomposed: a']});
 		});
 
 		describe('#fix', () => {
-			it('Fixes the record', async () => {
+			it('Should fix the record', async () => {
 				const validator = await validatorFactory();
+
 				const record = new MarcRecord({
-					fields: [
+					fields: [{
+						tag: '245',
+						subfields: [
+							{
+								code: 'a',
+								value: 'Föö, Bär'
+							},
+							{
+								code: 'b',
+								value: '== Fubar'
+							}
+						]
+					}]
+				});
+
+				const recordOriginal = record.toJsonObject();
+				const fieldModified = {
+					tag: '245',
+					subfields: [
 						{
-							tag: '001',
-							ind1: ' ',
-							ind2: '0',
-							subfields: [{code: 'a', value: 'foo'}]
+							code: 'a',
+							value: 'Föö, Bär'
 						},
 						{
-							tag: 'BAR',
-							ind1: ' ',
-							ind2: '0',
-							subfields: [{code: 'a', value: 'Ỹd'}]
+							code: 'b',
+							value: '== Fubar'
 						}
 					]
-				});
+				};
 				await validator.fix(record);
 
 				expect(record.fields).to.eql([
 					{
-						tag: '001',
-						ind1: ' ',
-						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						old: recordOriginal.fields[0],
+						new: fieldModified
 					}
 				]);
+				expect(recordOriginal).to.not.eql(record.toJsonObject());
+				expect(record.fields).to.eql([fieldModified]);
 			});
 		});
 	});
