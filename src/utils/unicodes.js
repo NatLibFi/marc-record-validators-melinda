@@ -89,18 +89,14 @@ export function clone(obj) {
 }
 
 export function modifySubfields(field, modifyCallback) {
-  console.log('field: ', field);
-  console.log('modifycallback: ', modifyCallback);
-  // const field_original;
-  // if (!'subfields' in field) {
-  //   throw new Error('Field is not a variable field');
-  // } else {
-  //   field_original = clone(field);
-  //   field.subfields.forEach(modifyCallback);
-  //   return {
-  //     'type': 'modifyField',
-  //     'old': field_original,
-  //     'new': clone(field)
-  //   };
-  // }
+  if (!'subfields' in field) {
+    throw new Error('Field is not a variable field');
+  } else {
+    const fieldOriginal = clone(field);
+    field.subfields.forEach(modifyCallback);
+    return {
+      'old': fieldOriginal,
+      'new': clone(field)
+    };  
+  }
 }

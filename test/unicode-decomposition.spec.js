@@ -123,9 +123,9 @@ describe('unicode-decomposition', () => {
 						}
 					]
 				};
-				await validator.fix(record);
+				const fixed = await validator.fix(record);
 
-				expect(record.fields).to.eql([
+				expect(fixed).to.eql([
 					{
 						old: recordOriginal.fields[0],
 						new: fieldModified

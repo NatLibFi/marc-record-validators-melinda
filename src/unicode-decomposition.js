@@ -30,7 +30,6 @@ import {MAP_CONVERSION, modifySubfields} from './utils/unicodes';
 
 export default async function () {
 	const PATTERN = Object.keys(MAP_CONVERSION).reduce((result, key, index, list) => {
-		// Console.log('key: ', key);
 		return index === list.length - 1 ? new RegExp(`${result}${key})`) : `${result}${key}|`;
 	}, '(');
 
@@ -50,12 +49,13 @@ export default async function () {
 	}
 
 	async function fix(record) {
-		const get = getFields(record).map(field => {
-			return modifySubfields(field, subfield => {
+		return getFields(record).map(field => {
+			const modified = modifySubfields(field, subfield => {
 				if (PATTERN.test(subfield.value)) {
 					subfield.value = convert(subfield.value);
 				}
 			});
+			return modified;
 		});
 	}
 
