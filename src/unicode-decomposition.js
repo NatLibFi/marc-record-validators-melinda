@@ -47,9 +47,7 @@ export default async function () {
 			}
 			return null;
 		});
-		const messages = codes.join(', ');
-
-		return codes.length < 1 ? {valid: true, messages: []} : {valid: false, messages: [`The following subfields are not properly decomposed: ${messages}`]};
+		return codes.length < 1 ? {valid: true, messages: []} : {valid: false, messages: [`The following subfields are not properly decomposed: ${codes.join(', ')}`]};
 	}
 
 	async function fix(record) {
