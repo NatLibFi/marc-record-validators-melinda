@@ -40,31 +40,34 @@ export default async function () {
 	};
 
 	async function validate(record) {
-		const codes = getFields(record).map(field => {
-			return field.subfields.filter(subfield => PATTERN.test(subfield.value))
-				.map(subfield => subfield.code);
+		const codes = getFields(record.fields).map(field => {
+			if ('subfields' in field) {
+				return field.subfields.filter(subfield => PATTERN.test(subfield.value))
+					.map(subfield => subfield.code);
+			}
+			return null;
 		});
 		const messages = codes.join(', ');
+
 		return codes.length < 1 ? {valid: true, messages: []} : {valid: false, messages: [`The following subfields are not properly decomposed: ${messages}`]};
 	}
 
 	async function fix(record) {
-		return getFields(record).map(field => {
-			const modified = modifySubfields(field, subfield => {
+		return getFields(record.fields).map(field => {
+			return modifySubfields(field, subfield => {
 				if (PATTERN.test(subfield.value)) {
 					subfield.value = convert(subfield.value);
 				}
 			});
-			return modified;
 		});
 	}
 
-	function getFields(record) {
-		return record.fields.filter(field => {
+	function getFields(fields) {
+		return fields.filter(field => {
 			if ('subfields' in field) {
 				return field.subfields.some(subfield => PATTERN.test(subfield.value));
 			}
-			return [];
+			return null;
 		});
 	}
 	function convert(value) {

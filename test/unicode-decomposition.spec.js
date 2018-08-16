@@ -65,7 +65,6 @@ describe('unicode-decomposition', () => {
 				]
 			});
 			const result = await validator.validate(record);
-
 			expect(result).to.eql({valid: true, messages: []});
 		});
 
@@ -87,6 +86,22 @@ describe('unicode-decomposition', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false, messages: ['The following subfields are not properly decomposed: a']});
+		});
+
+		it('Returns an empty array when subfields property not present', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '245'
+					},
+					{
+						tag: '2333'
+					}
+				]
+			});
+			const result = await validator.validate(record);
+			expect(result).to.eql({valid: true, messages: []});
 		});
 
 		describe('#fix', () => {
