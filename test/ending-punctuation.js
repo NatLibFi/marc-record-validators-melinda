@@ -40,110 +40,122 @@ chai.use(chaiAsPromised);
 
 //Factory validation
 describe('field-structure', () => {
-	//Indicators and subfields validation
-	describe('#validate: Indicators and subfields', () => {
-		const recordValid = new MarcRecord({
-			fields: [{
-				tag: '245', //Index
-				subfields: [{
-					code: 'a',
-					value: 'Elämäni ja tutkimusretkeni / '
-				},{
-					code: 'c',
-					value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
-				},{
-					code: '6',
-					value: 'FOO'
-				}]
-			},{
-				tag: '337', //Range 336-338
-				subfields: [{
-					code: 'a',
-					value: 'käytettävissä ilman laitetta'
-				  },{
-					code: 'b',
-					value: 'n'
-				  },{
-					code: '2',
-					value: 'rdamedia'
-				}]
-			},{
-				tag: '500', //Range 500-509
-				subfields: [{
-					code: 'a',
-					value: 'FOO (Bar)'
-				}]
-			}]
-		});
+	// Indicators and subfields validation
+	// describe('#validate: Indicators and subfields', () => {
+	// 	const recordValid = new MarcRecord({
+	// 		fields: [{
+	// 			tag: '245', //Index
+	// 			subfields: [{
+	// 				code: 'a',
+	// 				value: 'Elämäni ja tutkimusretkeni / '
+	// 			},{
+	// 				code: 'c',
+	// 				value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+	// 			},{
+	// 				code: '6',
+	// 				value: 'FOO'
+	// 			}]
+	// 		},{
+	// 			tag: '337', //Range 336-338
+	// 			subfields: [{
+	// 				code: 'a',
+	// 				value: 'käytettävissä ilman laitetta'
+	// 			  },{
+	// 				code: 'b',
+	// 				value: 'n'
+	// 			  },{
+	// 				code: '2',
+	// 				value: 'rdamedia'
+	// 			}]
+	// 		},{
+	// 			tag: '500', //Range 500-509
+	// 			subfields: [{
+	// 				code: 'a',
+	// 				value: 'FOO (Bar)'
+	// 			}]
+	// 		}]
+	// 	});
 
-		const recordInvalid = new MarcRecord({
-			fields: [{
-				tag: '245',
-				subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
-					},{
-						code: 'c',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
-					},{
-						code: '6',
-						value: 'FOO'
-					}]
-			},{
-				tag: '337',
-				subfields: [{
-						code: 'a',
-						value: 'käytettävissä ilman laitetta'
-					},{
-						code: 'b',
-						value: 'n.'
-					},{
-						code: '2',
-						value: 'rdamedia'
-					}]
-			},{
-				tag: '500',
-				subfields: [{
-					code: 'a',
-					value: 'FOO (Bar).'
-				}]
-			}]
-		});
+	// 	const recordInvalid = new MarcRecord({
+	// 		fields: [{
+	// 			tag: '245',
+	// 			subfields: [{
+	// 					code: 'a',
+	// 					value: 'Elämäni ja tutkimusretkeni / '
+	// 				},{
+	// 					code: 'c',
+	// 					value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+	// 				},{
+	// 					code: '6',
+	// 					value: 'FOO'
+	// 				}]
+	// 		},{
+	// 			tag: '337',
+	// 			subfields: [{
+	// 					code: 'a',
+	// 					value: 'käytettävissä ilman laitetta'
+	// 				},{
+	// 					code: 'b',
+	// 					value: 'n'
+	// 				},{
+	// 					code: '2',
+	// 					value: 'rdamedia'
+	// 				}]
+	// 		},{
+	// 			tag: '500',
+	// 			subfields: [{
+	// 				code: 'a',
+	// 				value: 'FOO (Bar).'
+	// 			}]
+	// 		}]
+	// 	});
 
-		it('Finds the record valid', async () => {
-			const validator = await validatorFactory();
-			const result = await validator.validate(recordValid);
+	// 	it('Finds the record valid', async () => {
+	// 		const validator = await validatorFactory();
+	// 		const result = await validator.validate(recordValid);
 
-			expect(result).to.eql({valid: true});
-		});
+	// 		expect(result).to.eql({valid: true});
+	// 	});
 
-		it('Finds the record invalid', async () => {
-			const validator = await validatorFactory();
-			const result = await validator.validate(recordInvalid);
+	// 	it('Finds the record invalid', async () => {
+	// 		const validator = await validatorFactory();
+	// 		const result = await validator.validate(recordInvalid);
 
-			expect(result).to.eql({valid: false});
-		});
+	// 		expect(result).to.eql({valid: false});
+	// 	});
 
-		it('Repairs the invalid record', async () => {
-			const validator = await validatorFactory();
-			const result = await validator.fix(recordInvalid);
+	// 	it('Repairs the invalid record', async () => {
+	// 		const validator = await validatorFactory();
+	// 		await validator.fix(recordInvalid);
 
-			expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
-		});
-	});
+	// 		expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
+	// 	});
+	// });
 
 	describe('#specials', () => {
-		//036 KYLLÄ vain osakentän $b jälkeen - Pitääkö muutkin kuin vain viimeinen tarkistaa?
+		//036 KYLLÄ vain osakentän $b jälkeen
+		//Can have subfields a and b, dot only after b
+		//DONE
 		describe('#036 TRUE - only after subfield $b', () => {
 			const recordValid = new MarcRecord({
 				fields: [{
 					tag: '036', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
+						value: 'CNRS 84115'
 					},{
 						code: 'b',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+						value: 'Centre national de la recherche scientifique.'
+					}]
+				}]
+			});
+
+			const recordValidOnlyA = new MarcRecord({
+				fields: [{
+					tag: '036', //Index
+					subfields: [{
+						code: 'a',
+						value: 'CNRS 84115'
 					}]
 				}]
 			});
@@ -153,68 +165,134 @@ describe('field-structure', () => {
 					tag: '036', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
+						value: 'CNRS 84115'
 					},{
-						code: 'c',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+						code: 'b',
+						value: 'Centre national de la recherche scientifique'
+					}]
+				}]
+			});
+
+			const recordInvalidOnlyA = new MarcRecord({
+				fields: [{
+					tag: '036', //Index
+					subfields: [{
+						code: 'a',
+						value: 'CNRS 84115.'
 					}]
 				}]
 			});
 	
 			it('Finds record valid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+				const result = await validator.validate(recordValid);
 
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({valid: true});
+			});
+
+			it('Finds record valid - Only subfield a', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidOnlyA);
+
+				expect(result).to.eql({valid: true});
 			});
 
 			it('Finds record invalid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+				const result = await validator.validate(recordInvalid);
+
+				expect(result).to.eql({valid: false});
+			});
+
+			it('Finds record invalid - Only subfield a', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalidOnlyA);
 
 				expect(result).to.eql({valid: false});
 			});
 		});
 
 
-		//242 KYLLÄ Jos viimeinen osakenttä on $y, piste on ennen sitä - Eli siis ei kentässä y
+		//242 KYLLÄ Jos viimeinen osakenttä on $y, piste on ennen sitä - Eli siis ei kentässä y (ennen sitä)
+		//DONE
 		describe('#242 TRUE - if last subfield $y, punc before it', () => {
 			const recordValid = new MarcRecord({
 				fields: [{
 					tag: '242', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
+						value: 'World of art.'
 					},{
 						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+						value: 'eng'
 					}]
 				}]
-			});
-
-			const recordInvalid = new MarcRecord({
+			});			
+			
+			const recordValidY = new MarcRecord({
 				fields: [{
 					tag: '242', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
+						value: 'World of art.'
 					},{
 						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+						value: 'eng'
+					}]
+				}]
+			});
+
+			const recordInvalidPunc = new MarcRecord({
+				fields: [{
+					tag: '242', //Index
+					subfields: [{
+						code: 'a',
+						value: 'The Arab East.'
+					},{
+						code: 'y',
+						value: 'eng.'
+					}]
+				}]
+			});
+
+			const recordInvalidMissingPunc = new MarcRecord({
+				fields: [{
+					tag: '242', //Index
+					subfields: [{
+						code: 'a',
+						value: 'The Arab East'
+					},{
+						code: 'y',
+						value: 'eng'
 					}]
 				}]
 			});
 	
 			it('Finds record valid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+				const result = await validator.validate(recordValid);
 
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({valid: true});
+			});
+	
+			it('Finds record valid - without $y', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidY);
+
+				expect(result).to.eql({valid: true});
 			});
 
-			it('Finds record invalid', async () => {
+			// Artturi?
+			// it('Finds record invalid - Punctuation at $y', async () => {
+			// 	const validator = await validatorFactory();
+			// 	const result = await validator.validate(recordInvalidPunc);
+
+			// 	expect(result).to.eql({valid: false});
+			// });
+
+			it('Finds record invalid - Missing punc at $a', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+				const result = await validator.validate(recordInvalidMissingPunc);
 
 				expect(result).to.eql({valid: false});
 			});
@@ -222,148 +300,309 @@ describe('field-structure', () => {
 
 
 		//260 KYLLÄ Pääsääntö: $a : $b, $c. Tarkista eri poikkeukset ja välimerkitys MARC 21 Full -versiosta
+		//Piste vain jos viimeinen kenttä c
+		//DONE
 		describe('#260 TRUE - TODO', () => {
-			const recordValid = new MarcRecord({
+			const recordValidEndC = new MarcRecord({
 				fields: [{
 					tag: '260', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
-					},{
-						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
-					}]
+					subfields: [
+						{code: 'a', value: 'Helsinki'},
+						{code: 'b', value: 'Suomen atk-kustannus,'},
+						{code: 'c', value: '1982.'}
+					]
+				}]
+			});			
+			
+			const recordValidEndG = new MarcRecord({
+				fields: [{
+					tag: '260', //Index
+					subfields: [
+						{code: 'a', value: 'London'},
+						{code: 'b', value: 'Macmillan,'},
+						{code: 'c', value: '1971'},
+						{code: 'g', value: '(1973 printing)'}
+					]
+				}]
+			});			
+			
+			const recordValidEndB = new MarcRecord({
+				fields: [{
+					tag: '260', //Index
+					subfields: [
+						{code: '3', value: 'June 1993-'},
+						{code: 'a', value: 'London'},
+						{code: 'b', value: 'Elle'}
+					]
 				}]
 			});
 
-			const recordInvalid = new MarcRecord({
+			const recordInvalidEndC = new MarcRecord({
 				fields: [{
 					tag: '260', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
-					},{
-						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
-					}]
+					subfields: [
+						{code: 'a', value: 'Helsinki'},
+						{code: 'b', value: 'Suomen atk-kustannus,'},
+						{code: 'c', value: '1982'}
+					]
+				}]
+			});			
+			
+			const recordInvalidEndG = new MarcRecord({
+				fields: [{
+					tag: '260', //Index
+					subfields: [
+						{code: 'a', value: 'London'},
+						{code: 'b', value: 'Macmillan,'},
+						{code: 'c', value: '1971'},
+						{code: 'g', value: '(1973 printing).'}
+					]
+				}]
+			});			
+			
+			const recordInvalidEndB = new MarcRecord({
+				fields: [{
+					tag: '260', //Index
+					subfields: [
+						{code: '3', value: 'June 1993-'},
+						{code: 'a', value: 'London'},
+						{code: 'b', value: 'Elle.'}
+					]
 				}]
 			});
 	
 			it('Finds record valid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+				const result = await validator.validate(recordValidEndC);
+
+				expect(result).to.eql({valid: true});
+			});
+	
+			it('Finds record valid', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidEndG);
+
+				expect(result).to.eql({valid: true});
+			});
+	
+			it('Finds record valid', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidEndB);
+
+				expect(result).to.eql({valid: true});
+			});
+
+			it('Finds record invalid', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalidEndC);
 
 				expect(result).to.eql({valid: false});
 			});
 
 			it('Finds record invalid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+				const result = await validator.validate(recordInvalidEndG);
+
+				expect(result).to.eql({valid: false});
+			});
+
+			it('Finds record invalid', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalidEndB);
 
 				expect(result).to.eql({valid: false});
 			});
 		});
 
-		
 		//264 KYLLÄ Tarkista poikkeukset MARC 21 -sovellusohjeesta
-		describe('#264 TRUE - TODO', () => {
+		//Eli jos `ind2 === '4'` niin silloin loppupiste merkitä osakentän *b* loppuun
+		describe('#264 TRUE - If ind2 === 4, punc at the end of $b', () => {
 			const recordValid = new MarcRecord({
 				fields: [{
-					tag: '264', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
-					},{
-						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
-					}]
+					tag: '264',
+					subfields: [
+						{code: 'a', value: 'Helsinki'},
+						{code: 'b', value: 'Helsingin yliopisto'},
+						{code: 'c', value: '1995-2006.'}
+					]
 				}]
+			});
+
+			const recordValidInd = new MarcRecord({
+				fields: [{
+					tag: "264",
+					ind1: ' ',
+					ind2: '4',
+					subfields: [
+						{code: 'a', value: 'Helsinki : '},
+						{code: 'b', value: 'Suomen poliisikoirayhdistys.'},
+						{code: 'c', value: '© 1974'}
+					]
+				  }]
 			});
 
 			const recordInvalid = new MarcRecord({
 				fields: [{
-					tag: '264', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
-					},{
-						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
-					}]
+					tag: '264',
+					subfields: [
+						{code: 'a', value: 'Helsinki'},
+						{code: 'b', value: 'Helsingin yliopisto'},
+						{code: 'c', value: '1995-2006'}
+					]
 				}]
+			});
+
+			const recordInvalidIndB = new MarcRecord({
+				fields: [{
+					tag: "264",
+					ind1: ' ',
+					ind2: '4',
+					subfields: [
+						{code: 'a', value: 'Helsinki : '},
+						{code: 'b', value: 'Suomen poliisikoirayhdistys'},
+						{code: 'c', value: '© 1974'}
+					]
+				  }]
+			});
+
+			const recordInvalidIndCExtra = new MarcRecord({
+				fields: [{
+					tag: "264",
+					ind1: ' ',
+					ind2: '4',
+					subfields: [
+						{code: 'a', value: 'Helsinki : '},
+						{code: 'b', value: 'Suomen poliisikoirayhdistys.'},
+						{code: 'c', value: '© 1974.'}
+					]
+				  }]
+			});
+
+			const recordInvalidIndCB = new MarcRecord({
+				fields: [{
+					tag: "264",
+					ind1: ' ',
+					ind2: '4',
+					subfields: [
+						{code: 'a', value: 'Helsinki : '},
+						{code: 'b', value: 'Suomen poliisikoirayhdistys'},
+						{code: 'c', value: '© 1974.'}
+					]
+				  }]
 			});
 	
 			it('Finds record valid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+				const result = await validator.validate(recordValid);
+
+				expect(result).to.eql({valid: true});
+			});	
+
+			it('Finds record valid - Ind, copyright', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidInd);
+
+				expect(result).to.eql({valid: true});
+			});
+
+			it('Finds record invalid - missing punctuation', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalid);
 
 				expect(result).to.eql({valid: false});
 			});
 
-			it('Finds record invalid', async () => {
+			it('Finds record invalid - Ind, copyright, punc at $b missing', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+				const result = await validator.validate(recordInvalidIndB);
+
+				expect(result).to.eql({valid: false});
+			});
+					
+			it('Finds record invalid - Ind, copyright, extra punc $c', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalidIndCExtra);
+
+				expect(result).to.eql({valid: false});
+			});
+			
+					
+			it('Finds record invalid - Ind, copyright, extra punc $c, missing from $b', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalidIndCB);
 
 				expect(result).to.eql({valid: false});
 			});
 		});
-		
 
-		//340 KYLLÄ Vain joidenkin osakenttien jälkeen. Tarkista osakentät MARC 21 Full -versiosta
-		describe('#340 TRUE - TODO', () => {
-			const recordValid = new MarcRecord({
-				fields: [{
-					tag: '340', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
-					},{
-						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
-					}]
-				}]
-			});
 
-			const recordInvalid = new MarcRecord({
-				fields: [{
-					tag: '340', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
-					},{
-						code: 'y',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
-					}]
-				}]
-			});
+		// //Artturi selvittää
+		// //340 KYLLÄ Vain joidenkin osakenttien jälkeen. Tarkista osakentät MARC 21 Full -versiosta
+		// describe('#340 TRUE - TODO', () => {
+		// 	const recordValid = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '340', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni.'
+		// 			},{
+		// 				code: 'y',
+		// 				value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+		// 			}]
+		// 		}]
+		// 	});
+
+		// 	const recordInvalid = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '340', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni / '
+		// 			},{
+		// 				code: 'y',
+		// 				value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+		// 			}]
+		// 		}]
+		// 	});
 	
-			it('Finds record valid', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+		// 	it('Finds record valid', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordValid);
 
-				expect(result).to.eql({valid: false});
-			});
+		// 		expect(result).to.eql({valid: true});
+		// 	});
 
-			it('Finds record invalid', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+		// 	it('Finds record invalid', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordInvalid);
 
-				expect(result).to.eql({valid: false});
-			});
-		});
+		// 		expect(result).to.eql({valid: false});
+		// 	});
+		// });
 		
 
 		//520 KYLLÄ Jos viimeinen osakenttä on $u, piste on ennen sitä (Sama kuin 242, $y)
+		//Done
 		describe('#520 TRUE - If last subfield $u, punc before it', () => {
 			const recordValid = new MarcRecord({
 				fields: [{
 					tag: '520', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
+						value: 'Mediaväkivalta ja sen yleisö.'
+					}]
+				}]
+			});
+			
+			const recordValidWithU = new MarcRecord({
+				fields: [{
+					tag: '520', //Index
+					subfields: [{
+						code: 'a',
+						value: 'Abstrakti.'
 					},{
 						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+						value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'
 					}]
 				}]
 			});
@@ -373,85 +612,122 @@ describe('field-structure', () => {
 					tag: '520', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
+						value: 'Mediaväkivalta ja sen yleisö'
+					}]
+				}]
+			});
+
+			const recordInvalidWithU = new MarcRecord({
+				fields: [{
+					tag: '520', //Index
+					subfields: [{
+						code: 'a',
+						value: 'Abstrakti'
 					},{
 						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+						value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'
 					}]
 				}]
 			});
 	
-			it('Finds record valid', async () => {
+			it('Finds record valid - $a without $u', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+				const result = await validator.validate(recordValid);
+
+				expect(result).to.eql({valid: true});
+			});	
+
+			it('Finds record valid - $a with $u ', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidWithU);
+
+				expect(result).to.eql({valid: true});
+			});
+
+			it('Finds record invalid - $a without punc', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalid);
 
 				expect(result).to.eql({valid: false});
 			});
 
-			it('Finds record invalid', async () => {
+			it('Finds record invalid - $a without punc with $u', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+				const result = await validator.validate(recordInvalidWithU);
 
 				expect(result).to.eql({valid: false});
 			});
 		});
 		
 
-		//538 KYLLÄ Jos viimeinen osakenttä on $u, piste on ennen sitä (Sama kuin 538)
-		describe('#538 TRUE - If last subfield $u, punc before it', () => {
-			const recordValid = new MarcRecord({
-				fields: [{
-					tag: '538', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
-					},{
-						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
-					}]
-				}]
-			});
+		// //Artturi selvittää
+		// //538 KYLLÄ Jos viimeinen osakenttä on $u, piste on ennen sitä (Sama kuin 520)
+		// describe('#538 TRUE - If last subfield $u, punc before it', () => {
+		// 	const recordValid = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '538', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni.'
+		// 			},{
+		// 				code: 'u',
+		// 				value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+		// 			}]
+		// 		}]
+		// 	});
 
-			const recordInvalid = new MarcRecord({
-				fields: [{
-					tag: '538', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
-					},{
-						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
-					}]
-				}]
-			});
+		// 	const recordInvalid = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '538', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni / '
+		// 			},{
+		// 				code: 'u',
+		// 				value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+		// 			}]
+		// 		}]
+		// 	});
 	
-			it('Finds record valid', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+		// 	it('Finds record valid', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordValid);
 
-				expect(result).to.eql({valid: false});
-			});
+		// 		expect(result).to.eql({valid: true});
+		// 	});
 
-			it('Finds record invalid', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+		// 	it('Finds record invalid', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordInvalid);
 
-				expect(result).to.eql({valid: false});
-			});
-		});
+		// 		expect(result).to.eql({valid: false});
+		// 	});
+		// });
 
 
-		//567 KYLLÄ osakentän $a jälkeen, EI muiden osakenttien jälkeen - tarkistetaanko muut?
+		//567 KYLLÄ osakentän $a jälkeen, EI muiden osakenttien jälkeen
+		//Only after subfield a
+		//DONE
 		describe('#567 TRUE - After subfield $a, FALSE after others', () => {
 			const recordValid = new MarcRecord({
 				fields: [{
 					tag: '567', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
+						value: 'Narratiivinen tutkimus.'
+					}]
+				}]
+			});
+
+			const recordValidWithoutA = new MarcRecord({
+				fields: [{
+					tag: '567', //Index
+					subfields: [{
+						code: 'b',
+						value: 'Narrative inquiry (Research method)'
 					},{
-						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+						code: '2',
+						value: 'lcsh'
 					}]
 				}]
 			});
@@ -461,203 +737,243 @@ describe('field-structure', () => {
 					tag: '567', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
-					},{
-						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+						value: 'Narratiivinen tutkimus'
 					}]
 				}]
 			});
+
+			
+			const recordInvalidWithoutA = new MarcRecord({
+				fields: [{
+					tag: '567', //Index
+					subfields: [{
+						code: 'b',
+						value: 'Narrative inquiry.'
+					},{
+						code: '2',
+						value: 'lcsh'
+					}]
+				}]
+			});
+
 	
 			it('Finds record valid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+				const result = await validator.validate(recordValid);
+
+				expect(result).to.eql({valid: true});
+			});
+
+			it('Finds record valid', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidWithoutA);
+
+				expect(result).to.eql({valid: true});
+			});
+
+			it('Finds record invalid', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalid);
 
 				expect(result).to.eql({valid: false});
 			});
 
 			it('Finds record invalid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+				const result = await validator.validate(recordInvalidWithoutA);
 
 				expect(result).to.eql({valid: false});
 			});
 		});
 
 
-		//647-651 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ - Default TRUE, until more special cases are added
-		describe('#647-651 FALSE - If finnish, else TRUE', () => {
-			const recordValidFinNo = new MarcRecord({
-				fields: [{
-					tag: '647', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni'
-					},{
-						code: '2',
-						value: 'kulo'
-					}]
-				}]
-			});
+		// //647-651 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ - Default TRUE, until more special cases are added
+		// describe('#647-651 FALSE - If finnish, else TRUE', () => {
+		// 	const recordValidFinNo = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '647', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni'
+		// 			},{
+		// 				code: '2',
+		// 				value: 'kulo'
+		// 			}]
+		// 		}]
+		// 	});
 
-			const recordValidNoControlYes = new MarcRecord({
-				fields: [{
-					tag: '647', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni'
-					},{
-						code: '2',
-						value: 'kulo'
-					}]
-				}]
-			});
+		// 	const recordValidNoControlYes = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '647', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni'
+		// 			},{
+		// 				code: '2',
+		// 				value: 'kulo'
+		// 			}]
+		// 		}]
+		// 	});
 
-			const recordInvalidFinYes = new MarcRecord({
-				fields: [{
-					tag: '647', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
-					},{
-						code: '2',
-						value: 'kulo'
-					}]
-				}]
-			});
+		// 	const recordInvalidFinYes = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '647', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni.'
+		// 			},{
+		// 				code: '2',
+		// 				value: 'kulo'
+		// 			}]
+		// 		}]
+		// 	});
 
-			const recordInvalidNoControlNo = new MarcRecord({
-				fields: [{
-					tag: '647', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni'
-					}]
-				}]
-			});
+		// 	const recordInvalidNoControlNo = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '647', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni'
+		// 			}]
+		// 		}]
+		// 	});
 	
-			it('Finds record valid - Finnish and no punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordValidFinNo);
+		// 	it('Finds record valid - Finnish and no punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordValidFinNo);
 
-				expect(result).to.eql({valid: true});
-			});			
+		// 		expect(result).to.eql({valid: true});
+		// 	});			
 			
-			it('Finds record valid - Not Finnish and punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordValidNoControlYes);
+		// 	it('Finds record valid - Not Finnish and punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordValidNoControlYes);
 
-				expect(result).to.eql({valid: true});
-			});
+		// 		expect(result).to.eql({valid: true});
+		// 	});
 
-			it('Finds record invalid - Finnish and punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalidFinYes);
+		// 	it('Finds record invalid - Finnish and punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordInvalidFinYes);
 
-				expect(result).to.eql({valid: false});
-			});
+		// 		expect(result).to.eql({valid: false});
+		// 	});
 
-			it('Finds record invalid - no control field and no punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalidNoControlNo);
+		// 	it('Finds record invalid - no control field and no punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordInvalidNoControlNo);
 
-				expect(result).to.eql({valid: false});
-			});
-		});
+		// 		expect(result).to.eql({valid: false});
+		// 	});
+		// });
 
 
-		//654-662 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ - Default TRUE, until more special cases are added
-		describe('#654-662 TRUE - If finnish, else TRUE', () => {
-			const recordValidFinNo = new MarcRecord({
-				fields: [{
-					tag: '662', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni'
-					},{
-						code: '2',
-						value: 'kulo'
-					}]
-				}]
-			});
+		// //654-662 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ - Default TRUE, until more special cases are added
+		// describe('#654-662 TRUE - If finnish, else TRUE', () => {
+		// 	const recordValidFinNo = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '662', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni'
+		// 			},{
+		// 				code: '2',
+		// 				value: 'kulo'
+		// 			}]
+		// 		}]
+		// 	});
 
-			const recordValidNoControlYes = new MarcRecord({
-				fields: [{
-					tag: '662', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni'
-					},{
-						code: '2',
-						value: 'kulo'
-					}]
-				}]
-			});
+		// 	const recordValidNoControlYes = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '662', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni'
+		// 			},{
+		// 				code: '2',
+		// 				value: 'kulo'
+		// 			}]
+		// 		}]
+		// 	});
 
-			const recordInvalidFinYes = new MarcRecord({
-				fields: [{
-					tag: '662', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
-					},{
-						code: '2',
-						value: 'kulo'
-					}]
-				}]
-			});
+		// 	const recordInvalidFinYes = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '662', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni.'
+		// 			},{
+		// 				code: '2',
+		// 				value: 'kulo'
+		// 			}]
+		// 		}]
+		// 	});
 
-			const recordInvalidNoControlNo = new MarcRecord({
-				fields: [{
-					tag: '662', //Index
-					subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni'
-					}]
-				}]
-			});
+		// 	const recordInvalidNoControlNo = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '662', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: 'Elämäni ja tutkimusretkeni'
+		// 			}]
+		// 		}]
+		// 	});
 	
-			it('Finds record valid - Finnish and no punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordValidFinNo);
+		// 	it('Finds record valid - Finnish and no punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordValidFinNo);
 
-				expect(result).to.eql({valid: true});
-			});			
+		// 		expect(result).to.eql({valid: true});
+		// 	});			
 			
-			it('Finds record valid - Not Finnish and punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordValidNoControlYes);
+		// 	it('Finds record valid - Not Finnish and punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordValidNoControlYes);
 
-				expect(result).to.eql({valid: true});
-			});
+		// 		expect(result).to.eql({valid: true});
+		// 	});
 
-			it('Finds record invalid - Finnish and punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalidFinYes);
+		// 	it('Finds record invalid - Finnish and punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordInvalidFinYes);
 
-				expect(result).to.eql({valid: false});
-			});
+		// 		expect(result).to.eql({valid: false});
+		// 	});
 
-			it('Finds record invalid - no control field and no punc', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalidNoControlNo);
+		// 	it('Finds record invalid - no control field and no punc', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordInvalidNoControlNo);
 
-				expect(result).to.eql({valid: false});
-			});
-		});
+		// 		expect(result).to.eql({valid: false});
+		// 	});
+		// });
 
 
 		//760-787 KYLLÄ osakentän $a jälkeen, EI muiden osakenttien jälkeen (kuten 567)
+		//DONE
 		describe('#760-787 TRUE - After subfield $a, FALSE after others', () => {
 			const recordValid = new MarcRecord({
 				fields: [{
 					tag: '760', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni.'
+						value: 'Mellor, Alec.'
 					},{
-						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
+						code: 't',
+						value: 'Strange masonic stories'
+					},{
+						code: 'e',
+						value: 'eng'
+					}]
+				}]
+			});			
+			
+			const recordValidOnlyA = new MarcRecord({
+				fields: [{
+					tag: '760', //Index
+					subfields: [{
+						code: 'a',
+						value: 'Mellor, Alec.'
 					}]
 				}]
 			});
@@ -667,73 +983,100 @@ describe('field-structure', () => {
 					tag: '760', //Index
 					subfields: [{
 						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
+						value: 'Mellor, Alec.'
 					},{
-						code: 'u',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
+						code: 't',
+						value: 'Strange masonic stories'
+					},{
+						code: 'e',
+						value: 'eng.'
 					}]
 				}]
 			});
-	
-			it('Finds record valid', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
 
-				expect(result).to.eql({valid: false});
-			});
-
-			it('Finds record invalid', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
-
-				expect(result).to.eql({valid: false});
-			});
-		});
-		
-		// ok. Mut hei, nyt kun alat saamaan ton punctuationin valmiiks, niin se `880`-kenttä: https://www.kansalliskirjasto.fi/extra/marc21/bib/841-88X.htm#880
-		// Spex on siinä, mutta lyhkäsesti: `880`-kentässä on muiden kenttien translitteroidut versiot (Data eri kirjaimistolla). 880-kentän osakentästä `6` selviää mihin kenttää se linkkaa.
-		// Eli tää on se Loppupisteohjeen `Samoin kuin vastaavat kentät` -keissi
-		//100 1# ‡6 880-01 ‡a Hirata, Atsutane, ‡d 1776-1843.
-		//880 1# ‡6 100-01/$1 ‡a 平田 篤胤, ‡d 1776-1843.
-		
-		//880 Samoin kuin vastaavat kentät - TODO - Siis tarkistetaan kontrollikentän $6 säännön
-		describe('#880 - Like linked fields', () => {
-			const recordValid = new MarcRecord({
+			const recordInvalidOnlyA = new MarcRecord({
 				fields: [{
-					tag: '880', //Index
+					tag: '760', //Index
 					subfields: [{
 						code: 'a',
-						value: '平田 篤胤'
-					},{
-						code: 'b',
-						value: '1776-1843.'
-					},{
-						code: '6',
-						value: '100-01/$1' //Tag 100 has value TRUE -> last data subfield should have punc
+						value: 'Mellor, Alec'
 					}]
-				}]
-			});
-
-			const recordInvalid = new MarcRecord({
-				fields: [{
-					tag: '880', //Index
-					subfields: []
 				}]
 			});
 	
 			it('Finds record valid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordValid);
+				const result = await validator.validate(recordValid);
 
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({valid: true});
+			});	
+
+			it('Finds record valid - Only subfield a', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidOnlyA);
+
+				expect(result).to.eql({valid: true});
 			});
 
 			it('Finds record invalid', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
+				const result = await validator.validate(recordInvalid);
+
+				expect(result).to.eql({valid: false});
+			});
+
+			it('Finds record invalid - Only subfield a', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalidOnlyA);
 
 				expect(result).to.eql({valid: false});
 			});
 		});
+		
+		// // ok. Mut hei, nyt kun alat saamaan ton punctuationin valmiiks, niin se `880`-kenttä: https://www.kansalliskirjasto.fi/extra/marc21/bib/841-88X.htm#880
+		// // Spex on siinä, mutta lyhkäsesti: `880`-kentässä on muiden kenttien translitteroidut versiot (Data eri kirjaimistolla). 880-kentän osakentästä `6` selviää mihin kenttää se linkkaa.
+		// // Eli tää on se Loppupisteohjeen `Samoin kuin vastaavat kentät` -keissi
+		// //100 1# ‡6 880-01 ‡a Hirata, Atsutane, ‡d 1776-1843.
+		// //880 1# ‡6 100-01/$1 ‡a 平田 篤胤, ‡d 1776-1843.
+		
+		// //880 Samoin kuin vastaavat kentät - TODO - Siis tarkistetaan kontrollikentän $6 säännön
+		// describe('#880 - Like linked fields', () => {
+		// 	const recordValid = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '880', //Index
+		// 			subfields: [{
+		// 				code: 'a',
+		// 				value: '平田 篤胤'
+		// 			},{
+		// 				code: 'b',
+		// 				value: '1776-1843.'
+		// 			},{
+		// 				code: '6',
+		// 				value: '100-01/$1' //Tag 100 has value TRUE -> last data subfield should have punc
+		// 			}]
+		// 		}]
+		// 	});
+
+		// 	const recordInvalid = new MarcRecord({
+		// 		fields: [{
+		// 			tag: '880', //Index
+		// 			subfields: []
+		// 		}]
+		// 	});
+	
+		// 	it('Finds record valid', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordValid);
+
+		// 		expect(result).to.eql({valid: true});
+		// 	});
+
+		// 	it('Finds record invalid', async () => {
+		// 		const validator = await validatorFactory();
+		// 		const result = await validator.validate(recordInvalid);
+
+		// 		expect(result).to.eql({valid: false});
+		// 	});
+		// });
 	});
 });

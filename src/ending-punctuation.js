@@ -91,25 +91,75 @@ export default async function () {
 			// console.log("Booleans: ", res.punc, lastPuncMark, lastPuncDot, " | ", (lastPuncMark || lastPuncDot));
 			// console.log("REs.special: ", res.special);
 
-			//Special rule
-			if(res.special){
-
+			var normalPuncRules = function(punc, checkEnd){
+				//Last char should be punc, but its not either one of marks nor dot
+				if( punc && !(lastPuncMark || lastPuncDot)) {
+					console.log("1. Invalid punctuation - missing")
+					message.message.push('Field ' + tag + ' has invalid ending punctuation');
+					if(fix)	lastSubField.value = lastSubField.value.concat('.');
+				//Last char is dot, but previous char is one of punc marks, like 'Question?.'
+				}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
+					console.log("2. Invalid punctuation - duplicate, like '?.'")
+					message.message.push('Field ' + tag + ' has invalid ending punctuation');
+					if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
+				//Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
+				}else if(checkEnd && (!punc && lastPuncDot)){
+					console.log("3. Invalid punctuation - Shouldn't be dot, is")
+					message.message.push('Field ' + tag + ' has invalid ending punctuation');
+					if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
+				}else{
+					console.log("Valid punctuation")
+				}
 			}
 
-			//Last char should be punc, but its not either one of marks nor dot
-			if( res.punc && !(lastPuncMark || lastPuncDot)) {
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				if(fix)	lastSubField.value = lastSubField.value.concat('.');
-			//Last char shouldn't be punc, but is dot
-			}else if(!res.punc && lastPuncDot){
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
-			//Last char is dot, but previous char is one of punc marks, like 'Question?.'
-			}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
-			}else{
-				// console.log("Valid punctuation")
+			//Special rules
+			if(res.special){
+				//Punctuation should be only after specific field
+				if(res.special.afterOnly){
+					//Speficif field that should follow main punc rule
+					lastSubField.code === res.special.afterOnly ? normalPuncRules(res.punc, true) : normalPuncRules(!res.punc, true)
+				
+				//Rules if last, some subrules
+				}else if(res.special.ifLast){
+					console.log("LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.ifLast);
+					
+					//IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
+					if(res.special.ind && field.ind2 === res.special.ind){
+						//Extra dot at the end of $c ('© 1974.'), which should be only copyright year
+						if(lastSubField.value.includes('©') && lastPuncDot){
+							console.log("Extra punc at ©")
+							message.message.push('Field ' + tag + ' has invalid ending punctuation');
+						} 
+						
+						//Checked field is actually $b
+						lastSubField = find(field.subfields, {code: 'b'});
+						lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
+						lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+						console.log("Searched field: $"+ lastSubField.code, " ", lastSubField.value, " lastPuncMark: ", lastPuncMark, ", lastPuncDot:", lastPuncDot);
+						normalPuncRules(res.punc, false);  //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+					
+					//Otherwise use same logic as afterOnly
+					}else{
+						console.log("Otherwise");
+						normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+					}
+				
+				//Second last, subfield has to be searched again
+				}else if(res.special.secondLastIf){
+					console.log("Re-search")
+					console.log("LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.secondLastIf);
+
+					//Get secondlast field
+					field.subfields.forEach(subField => {
+						if(isNaN(subField.code) && res.special && res.special.secondLastIf !== subField.code) lastSubField = subField; //Not control field
+					})
+
+					lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
+					lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+					normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+				
+				//Normal rules:
+				}else normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 			}
 		});
 
@@ -126,6 +176,13 @@ export default async function () {
 // console.log("Record field 245: ", record.fields[0])
 // console.log("Record field 337: ", record.fields[1])
 // console.log("Record field 500: ", record.fields[2])
+
+//Tekemättä:
+//340
+//538
+//647-651
+//654-662
+//880
 
 const validPuncMarks = '?"-!,)]';
 
@@ -145,7 +202,7 @@ const confSpec = [
 		index: 36,
 		punc: true,
 		special: {
-			after: 'b'
+			afterOnly: 'b'
 		}
 	},{ //	037-050	EI	 
 		rangeStart: 37,
@@ -213,8 +270,7 @@ const confSpec = [
 		index: 242,
 		punc: true,
 		special: {
-			ifLast: 'y',
-			before: true
+			secondLastIf: 'y',
 		}
 	},{ //	243	EI	 
 		rangeStart: null,
@@ -251,7 +307,9 @@ const confSpec = [
 		rangeEnd: null,
 		index: 260,
 		punc: true,
-		special: "Pääsääntö: $a : $b, $c. Tarkista eri poikkeukset ja välimerkitys MARC 21 Full -versiosta"
+		special: {
+			afterOnly: 'c'
+		}
 	},{ //	263	EI	 
 		rangeStart: null,
 		rangeEnd: null,
@@ -263,7 +321,10 @@ const confSpec = [
 		rangeEnd: null,
 		index: 264,
 		punc: true,
-		special: "Tarkista poikkeukset MARC 21 -sovellusohjeesta"
+		special: {
+			ifLast: 'c',
+			ind: '4'
+		}
 	},{ //	270	EI	 
 		rangeStart: null,
 		rangeEnd: null,
@@ -414,8 +475,7 @@ const confSpec = [
 		index: 520,
 		punc: true,
 		special: {
-			ifLast: 'u',
-			before: true
+			secondLastIf: 'u',
 		}
 	},{ //	521-526	KYLLÄ	 
 		rangeStart: 521,
@@ -448,7 +508,6 @@ const confSpec = [
 		punc: true,
 		special: {
 			ifLast: 'u',
-			before: true
 		}
 	},{ //	540-541	KYLLÄ	 
 		rangeStart: 540,
@@ -504,7 +563,7 @@ const confSpec = [
 		index: 567,
 		punc: true,
 		special: {
-			after: 'a',
+			afterOnly: 'a',
 		}
 	},{ //	580-581	KYLLÄ	 
 		rangeStart: 580,
@@ -668,7 +727,7 @@ const confSpec = [
 		index: null,
 		punc: true,
 		special: {
-			after: 'a'
+			afterOnly: 'a'
 		}
 	},{ //	800	KYLLÄ	 
 		rangeStart: null,
