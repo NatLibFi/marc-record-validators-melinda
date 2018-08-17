@@ -82,14 +82,12 @@ export const MAP_CONVERSION = {
   'Ÿ': 'Ÿ'
 }
 
-
-
 export function clone(obj) {
   return typeof obj === 'object' ? JSON.parse(JSON.stringify(obj)) : obj;
 }
 
 export function modifySubfields(field, modifyCallback) {
-  if (!'subfields' in field) {
+  if (!field.hasOwnProperty('subfields')) {
     throw new Error('Field is not a variable field');
   } else {
     const fieldOriginal = clone(field);
