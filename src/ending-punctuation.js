@@ -80,17 +80,19 @@ export default async function () {
 				return;
 			}
 
-			// var findLastSubfield = function(){
-			// }
+			var findLastSubfield = function(){
+				lastSubField = null,
+				//Check that each field has required fields and save last data field
+				field.subfields.forEach(subField => {
+					if(!subField.code || !subField.value) throw 'Missing code or value for subfield: ' + subField; //Does not have code or value 
+					if(isNaN(subField.code)) lastSubField = subField; //Not control field
+				})
 
-			//Check that each field has required fields and save last data field
-			field.subfields.forEach(subField => {
-				if(!subField.code || !subField.value) throw 'Missing code or value for subfield: ' + subField; //Does not have code or value 
-				if(isNaN(subField.code)) lastSubField = subField; //Not control field
-			})
+				lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
+				lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+			}
 
-			lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
-			lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+
 			// console.log("Booleans: ", res.punc, lastPuncMark, lastPuncDot, " | ", (lastPuncMark || lastPuncDot));
 			// console.log("REs.special: ", res.special);
 
@@ -120,6 +122,7 @@ export default async function () {
 			if(res.special){
 				//Punctuation should be only after specific field
 				if(res.special.afterOnly){
+					findLastSubfield();
 					//Speficif field that should follow main punc rule
 					lastSubField.code === res.special.afterOnly ? normalPuncRules(res.punc, true) : normalPuncRules(!res.punc, true)
 				
@@ -146,6 +149,7 @@ export default async function () {
 					//Otherwise use same logic as afterOnly
 					}else{
 						console.log("Otherwise");
+						findLastSubfield();
 						normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 					}
 				
@@ -166,6 +170,8 @@ export default async function () {
 				
 				//Search for Finnish terms
 				}else if(res.special.termField){
+					findLastSubfield();
+
 					var languageField = find(field.subfields, {code: res.special.termField});
 					//ToDo: Ternary
 					(languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) ? normalPuncRules(res.punc, true) : normalPuncRules(res.special.else, false);  //Strict because of years etc (648, 650)
@@ -179,6 +185,7 @@ export default async function () {
 					
 				//Search last of array and check if it has punc
 				}else if(res.special.lastOf){
+					lastSubField = null;
 					field.subfields.forEach(subField => {
 						if(isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) lastSubField = subField; //Not control field
 						if(res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1){
@@ -193,7 +200,10 @@ export default async function () {
 					normalPuncRules(res.punc, false);
 					
 				//Normal rules:
-				}else normalPuncRules(res.punc, false);
+				}else{
+					findLastSubfield();
+					normalPuncRules(res.punc, false);
+				} 
 			}
 		});
 
