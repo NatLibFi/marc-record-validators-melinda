@@ -38,7 +38,7 @@ import EndingPunctuation from './ending-punctuation';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
-import UnicodeDecomposition from './unicode-decompositon';
+import UnicodeDecomposition from './unicode-decomposition';
 
 export {
   DoubleCommas, 
