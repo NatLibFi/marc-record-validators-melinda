@@ -80,6 +80,9 @@ export default async function () {
 				return;
 			}
 
+			// var findLastSubfield = function(){
+			// }
+
 			//Check that each field has required fields and save last data field
 			field.subfields.forEach(subField => {
 				if(!subField.code || !subField.value) throw 'Missing code or value for subfield: ' + subField; //Does not have code or value 
@@ -91,6 +94,7 @@ export default async function () {
 			// console.log("Booleans: ", res.punc, lastPuncMark, lastPuncDot, " | ", (lastPuncMark || lastPuncDot));
 			// console.log("REs.special: ", res.special);
 
+			//Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 			var normalPuncRules = function(punc, checkEnd){
 				//Last char should be punc, but its not either one of marks nor dot
 				if( punc && !(lastPuncMark || lastPuncDot)) {
@@ -129,6 +133,7 @@ export default async function () {
 						if(lastSubField.value.includes('©') && lastPuncDot){
 							console.log("Extra punc at ©")
 							message.message.push('Field ' + tag + ' has invalid ending punctuation');
+							if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
 						} 
 						
 						//Checked field is actually $b
@@ -146,20 +151,49 @@ export default async function () {
 				
 				//Second last, subfield has to be searched again
 				}else if(res.special.secondLastIf){
-					console.log("Re-search")
-					console.log("LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.secondLastIf);
+					// console.log("Re-search")
+					// console.log("LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.secondLastIf);
 
-					//Get secondlast field
+					//Get second last field
 					field.subfields.forEach(subField => {
-						if(isNaN(subField.code) && res.special && res.special.secondLastIf !== subField.code) lastSubField = subField; //Not control field
+						if(isNaN(subField.code) && res.special.secondLastIf !== subField.code) lastSubField = subField; //Not control field
+					})
+					console.log("New LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.secondLastIf);
+
+					lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
+					lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+					normalPuncRules(res.punc, false); 
+				
+				//Search for Finnish terms
+				}else if(res.special.termField){
+					var languageField = find(field.subfields, {code: res.special.termField});
+					//ToDo: Ternary
+					(languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) ? normalPuncRules(res.punc, true) : normalPuncRules(res.special.else, false);  //Strict because of years etc (648, 650)
+					// if(languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1){
+					// 	console.log("In finnish term list, rule: ", res.punc)
+					// 	normalPuncRules(res.punc, true) //Strict because of years etc (648, 650)
+					// }else{
+					// 	console.log("No control field or not in Finnish term list, rule: ", res.special.else);
+					// 	normalPuncRules(res.special.else, false)
+					// }
+					
+				//Search last of array and check if it has punc
+				}else if(res.special.lastOf){
+					field.subfields.forEach(subField => {
+						if(isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) lastSubField = subField; //Not control field
+						if(res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1){
+							lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
+							lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+							normalPuncRules(res.punc, true); //Strict because of mandatory
+						} 
 					})
 
 					lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
 					lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
-					normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-				
+					normalPuncRules(res.punc, false);
+					
 				//Normal rules:
-				}else normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+				}else normalPuncRules(res.punc, false);
 			}
 		});
 
@@ -178,15 +212,12 @@ export default async function () {
 // console.log("Record field 500: ", record.fields[2])
 
 //Tekemättä:
-//340
-//538
-//647-651
-//654-662
+//340 - Kysymys https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
 //880
 
 const validPuncMarks = '?"-!,)]';
 
-const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito'];
+const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars'];
 
 //Configuration specification
 const confSpec = [
@@ -372,7 +403,10 @@ const confSpec = [
 		rangeEnd: null,
 		index: 340,
 		punc: true,
-		special: null
+		special: {
+			lastOf: ['a', 'd', 'e', 'f', 'h', 'i'],
+			mandatory: ['b']
+		}
 	},{ //	342	EI	 
 		rangeStart: null,
 		rangeEnd: null,
@@ -507,7 +541,7 @@ const confSpec = [
 		index: 538,
 		punc: true,
 		special: {
-			ifLast: 'u',
+			secondLastIf: 'u',
 		}
 	},{ //	540-541	KYLLÄ	 
 		rangeStart: 540,
@@ -631,8 +665,9 @@ const confSpec = [
 		index: null,
 		punc: false,
 		special: {
+			termField: '2',
 			finnishTerms : finnishTerms,
-			else : false
+			else : true
 		}
 	},{ //	653	EI	 
 		rangeStart: null,
@@ -646,8 +681,9 @@ const confSpec = [
 		index: null,
 		punc: false,
 		special: {
+			termField: '2',
 			finnishTerms : finnishTerms,
-			else : false
+			else : true
 		}
 	},{ //	69X	EI	 
 		rangeStart: 690,
