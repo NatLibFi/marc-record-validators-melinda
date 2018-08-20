@@ -38,41 +38,34 @@ export default async function () {
 		description:
 			'Checks whether punctuation is valid',
 		validate: async record => ({
-			valid: validateCommas(record, false) //Record (Object), fix (boolean)
+			valid: validatePunc(record, false) //Record (Object), fix (boolean)
 		}),
 		fix: async record =>{
-			validateCommas(record, true); //Record (Object), fix (boolean)
+			validatePunc(record, true); //Record (Object), fix (boolean)
 		}
 	};
 
 	////////////////////////////////////////////
 	//This is used to validate record against configuration
-	function validateCommas(record, fix) {
+	function validatePunc(record, fix) {
 		// console.log("******************* Start *******************");
 		// console.log("Record: ", record);
 		// console.log("***********")
 
 		var message = {},
-			tag = null,
 			res = null,
+			iTag = null,
 			lastSubField = null,
 			lastPuncMark = null,
 			lastPuncDot = null;
 
 		message['message'] = [];
 
-		if(!record.fields) return false;
-		record.fields.forEach(field => {
-			tag = parseInt(field.tag, 10);
-			// console.log("-----------------------");
-			// console.log("Field: ", field);
 
+		function validateField(field, tag){
 			//Find configuration object matching tag:
 			res = find(confSpec, function(o) { return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag) })
 			if(!res) return; //Configuration not found, pass field without error
-			
-			// console.log("Punc rule: ", res.punc);
-			// console.log("----");
 			
 			//Field does not have subfields; invalid
 			if(!field.subfields){
@@ -80,6 +73,7 @@ export default async function () {
 				return;
 			}
 
+			//This is used to find last subfield that shold have punctuation
 			var findLastSubfield = function(){
 				lastSubField = null,
 				//Check that each field has required fields and save last data field
@@ -92,9 +86,6 @@ export default async function () {
 				lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
 			}
 
-
-			// console.log("Booleans: ", res.punc, lastPuncMark, lastPuncDot, " | ", (lastPuncMark || lastPuncDot));
-			// console.log("REs.special: ", res.special);
 
 			//Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 			var normalPuncRules = function(punc, checkEnd){
@@ -128,8 +119,9 @@ export default async function () {
 				
 				//Rules if last, some subrules
 				}else if(res.special.ifLast){
+					findLastSubfield();
 					console.log("LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.ifLast);
-					
+
 					//IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
 					if(res.special.ind && field.ind2 === res.special.ind){
 						//Extra dot at the end of $c ('© 1974.'), which should be only copyright year
@@ -149,7 +141,6 @@ export default async function () {
 					//Otherwise use same logic as afterOnly
 					}else{
 						console.log("Otherwise");
-						findLastSubfield();
 						normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 					}
 				
@@ -189,22 +180,56 @@ export default async function () {
 					field.subfields.forEach(subField => {
 						if(isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) lastSubField = subField; //Not control field
 						if(res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1){
-							lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
-							lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+							lastPuncMark = validPuncMarks.includes(subField.value.slice(-1)); //If string ends to punctuation char
+							lastPuncDot = '.'.includes(subField.value.slice(-1)); //If string ends to dot
 							normalPuncRules(res.punc, true); //Strict because of mandatory
 						} 
 					})
 
-					lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
-					lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
-					normalPuncRules(res.punc, false);
-					
-				//Normal rules:
-				}else{
-					findLastSubfield();
-					normalPuncRules(res.punc, false);
-				} 
+					if(lastSubField){
+						lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
+						lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
+						normalPuncRules(res.punc, false);
+					}
+
+				}else if(res.special.linked){
+					console.log("-------------------");
+					console.log("res.special.linked: ", res.special.linked);
+					console.log("Field: ", field);
+					console.log("-------------------");
+					var linkedTag = null;
+					try{
+						linkedTag = find(field.subfields, {code: res.special.linked}).value;
+						if(!linkedTag || isNaN(linkedTag.substr(0,3))) return false;
+						linkedTag = parseInt(linkedTag.substr(0,3), 10)//This feels stupid, but is used in MarcRecord to extract tag
+					}catch(e){
+						message.message.push('Field ' + tag + ' has invalid ending punctuation');
+						return false;
+					}
+
+					console.log("Find: ", linkedTag  );
+					console.log("-------------------");
+					validateField(field, linkedTag);
+					// res = find(confSpec, function(o) { return o.index === linkedTag || (o.rangeStart <= linkedTag && o.rangeEnd >= linkedTag) })
+					// if(!res) return; //Configuration not found, pass field without error
+					// console.log("Res: ", res);
+					// console.log("-------------------");
+				}
+			//Normal rules:
+			}else{
+				findLastSubfield();
+				normalPuncRules(res.punc, false);
+			} 
+		}
+
+		if(!record.fields) return false;
+		record.fields.forEach(field => {
+			try{
+				iTag = parseInt(field.tag, 10);
+			}catch(e){
+				return false;
 			}
+			validateField(field, iTag);
 		});
 
 		message.message.length >= 1 ? message.valid = false : message.valid = true;
@@ -823,7 +848,7 @@ const confSpec = [
 		index: 880,
 		punc: null,
 		special: {
-
+			linked: '6'
 		}
 	},{ //	882-887	EI	 
 		rangeStart: 882,
