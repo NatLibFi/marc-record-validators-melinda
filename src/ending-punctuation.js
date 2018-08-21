@@ -48,10 +48,6 @@ export default async function () {
 	////////////////////////////////////////////
 	//This is used to validate record against configuration
 	function validatePunc(record, fix) {
-		// console.log("******************* Start *******************");
-		// console.log("Record: ", record);
-		// console.log("***********")
-
 		var message = {},
 			res = null,
 			iTag = null,
@@ -60,7 +56,6 @@ export default async function () {
 			lastPuncDot = null;
 
 		message['message'] = [];
-
 
 		function validateField(field, tag){
 			//Find configuration object matching tag:
@@ -91,21 +86,21 @@ export default async function () {
 			var normalPuncRules = function(punc, checkEnd){
 				//Last char should be punc, but its not either one of marks nor dot
 				if( punc && !(lastPuncMark || lastPuncDot)) {
-					console.log("1. Invalid punctuation - missing")
+					// console.log("1. Invalid punctuation - missing")
 					message.message.push('Field ' + tag + ' has invalid ending punctuation');
 					if(fix)	lastSubField.value = lastSubField.value.concat('.');
 				//Last char is dot, but previous char is one of punc marks, like 'Question?.'
 				}else if(lastPuncDot && validPuncMarks.includes(lastSubField.value.charAt(lastSubField.value.length-2))){
-					console.log("2. Invalid punctuation - duplicate, like '?.'")
+					// console.log("2. Invalid punctuation - duplicate, like '?.'")
 					message.message.push('Field ' + tag + ' has invalid ending punctuation');
 					if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
 				//Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
 				}else if(checkEnd && (!punc && lastPuncDot)){
-					console.log("3. Invalid punctuation - Shouldn't be dot, is")
+					// console.log("3. Invalid punctuation - Shouldn't be dot, is")
 					message.message.push('Field ' + tag + ' has invalid ending punctuation');
 					if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
 				}else{
-					console.log("Valid punctuation")
+					// console.log("Valid punctuation")
 				}
 			}
 
@@ -114,19 +109,18 @@ export default async function () {
 				//Punctuation should be only after specific field
 				if(res.special.afterOnly){
 					findLastSubfield();
-					//Speficif field that should follow main punc rule
-					lastSubField.code === res.special.afterOnly ? normalPuncRules(res.punc, true) : normalPuncRules(!res.punc, true)
+					if(typeof(res.special.strict) === 'undefined') res.special.strict = true; //Just to be safe
+					lastSubField.code === res.special.afterOnly ? normalPuncRules(res.punc, res.special.strict) : normalPuncRules(!res.punc, true)
 				
 				//Rules if last, some subrules
 				}else if(res.special.ifLast){
 					findLastSubfield();
-					console.log("LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.ifLast);
 
 					//IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
 					if(res.special.ind && field.ind2 === res.special.ind){
 						//Extra dot at the end of $c ('© 1974.'), which should be only copyright year
 						if(lastSubField.value.includes('©') && lastPuncDot){
-							console.log("Extra punc at ©")
+							// console.log("Extra punc at ©")
 							message.message.push('Field ' + tag + ' has invalid ending punctuation');
 							if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
 						} 
@@ -135,25 +129,18 @@ export default async function () {
 						lastSubField = find(field.subfields, {code: 'b'});
 						lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
 						lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
-						console.log("Searched field: $"+ lastSubField.code, " ", lastSubField.value, " lastPuncMark: ", lastPuncMark, ", lastPuncDot:", lastPuncDot);
 						normalPuncRules(res.punc, false);  //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 					
-					//Otherwise use same logic as afterOnly
+					//Otherwise normal punc rules
 					}else{
-						console.log("Otherwise");
 						normalPuncRules(res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 					}
 				
-				//Second last, subfield has to be searched again
+				//Second last
 				}else if(res.special.secondLastIf){
-					// console.log("Re-search")
-					// console.log("LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.secondLastIf);
-
-					//Get second last field
 					field.subfields.forEach(subField => {
 						if(isNaN(subField.code) && res.special.secondLastIf !== subField.code) lastSubField = subField; //Not control field
 					})
-					console.log("New LastSubfield: $"+ lastSubField.code, " ", lastSubField.value, " base punc: ", res.punc, " ifLast: ", res.special.secondLastIf);
 
 					lastPuncMark = validPuncMarks.includes(lastSubField.value.slice(-1)); //If string ends to punctuation char
 					lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
@@ -162,19 +149,10 @@ export default async function () {
 				//Search for Finnish terms
 				}else if(res.special.termField){
 					findLastSubfield();
-
 					var languageField = find(field.subfields, {code: res.special.termField});
-					//ToDo: Ternary
 					(languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) ? normalPuncRules(res.punc, true) : normalPuncRules(res.special.else, false);  //Strict because of years etc (648, 650)
-					// if(languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1){
-					// 	console.log("In finnish term list, rule: ", res.punc)
-					// 	normalPuncRules(res.punc, true) //Strict because of years etc (648, 650)
-					// }else{
-					// 	console.log("No control field or not in Finnish term list, rule: ", res.special.else);
-					// 	normalPuncRules(res.special.else, false)
-					// }
 					
-				//Search last of array and check if it has punc
+				//Search last of array in subfields and check if it has punc
 				}else if(res.special.lastOf){
 					lastSubField = null;
 					field.subfields.forEach(subField => {
@@ -192,29 +170,17 @@ export default async function () {
 						normalPuncRules(res.punc, false);
 					}
 
+				//If field has linked rules (tag: 880), find rules and revalidate
 				}else if(res.special.linked){
-					console.log("-------------------");
-					console.log("res.special.linked: ", res.special.linked);
-					console.log("Field: ", field);
-					console.log("-------------------");
 					var linkedTag = null;
 					try{
-						linkedTag = find(field.subfields, {code: res.special.linked}).value;
-						if(!linkedTag || isNaN(linkedTag.substr(0,3))) return false;
-						linkedTag = parseInt(linkedTag.substr(0,3), 10)//This feels stupid, but is used in MarcRecord to extract tag
+						linkedTag = parseInt(find(field.subfields, {code: res.special.linked}).value.substr(0,3), 10) //Substring feels stupid, but is used in MarcRecord to extract tag. 
 					}catch(e){
-						message.message.push('Field ' + tag + ' has invalid ending punctuation');
 						return false;
 					}
-
-					console.log("Find: ", linkedTag  );
-					console.log("-------------------");
 					validateField(field, linkedTag);
-					// res = find(confSpec, function(o) { return o.index === linkedTag || (o.rangeStart <= linkedTag && o.rangeEnd >= linkedTag) })
-					// if(!res) return; //Configuration not found, pass field without error
-					// console.log("Res: ", res);
-					// console.log("-------------------");
 				}
+
 			//Normal rules:
 			}else{
 				findLastSubfield();
@@ -233,22 +199,11 @@ export default async function () {
 		});
 
 		message.message.length >= 1 ? message.valid = false : message.valid = true;
-		
-		// console.log("Message: ", message);
-		// console.log("***************** End: *****************");
 		return message.valid;
 	}
 	////////////////////////////////////////////
 }
 
-// console.log("***********")
-// console.log("Record field 245: ", record.fields[0])
-// console.log("Record field 337: ", record.fields[1])
-// console.log("Record field 500: ", record.fields[2])
-
-//Tekemättä:
-//340 - Kysymys https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-//880
 
 const validPuncMarks = '?"-!,)]';
 
@@ -262,13 +217,14 @@ const confSpec = [
 		index: null,
 		punc: false,
 		special: null
-	},{ //	036	KYLLÄ	vain osakentän $b jälkeen
+	},{ //	036	KYLLÄ vain osakentän $b jälkeen
 		rangeStart: null,
 		rangeEnd: null,
 		index: 36,
 		punc: true,
 		special: {
-			afterOnly: 'b'
+			afterOnly: 'b',
+			strict: true //Punctuation only after $b, because $a is register number
 		}
 	},{ //	037-050	EI	 
 		rangeStart: 37,
@@ -374,7 +330,8 @@ const confSpec = [
 		index: 260,
 		punc: true,
 		special: {
-			afterOnly: 'c'
+			afterOnly: 'c',
+			strict: true //ToDo: check
 		}
 	},{ //	263	EI	 
 		rangeStart: null,
@@ -633,6 +590,7 @@ const confSpec = [
 		punc: true,
 		special: {
 			afterOnly: 'a',
+			strict: true //ToDo: check
 		}
 	},{ //	580-581	KYLLÄ	 
 		rangeStart: 580,
@@ -798,7 +756,8 @@ const confSpec = [
 		index: null,
 		punc: true,
 		special: {
-			afterOnly: 'a'
+			afterOnly: 'a',
+			strict: true //ToDo: check
 		}
 	},{ //	800	KYLLÄ	 
 		rangeStart: null,
