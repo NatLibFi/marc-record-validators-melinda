@@ -26,7 +26,7 @@
  *
  */
 
- /**
+/**
  *
  * @licstart  The following is the entire license notice for the JavaScript code in this file.
  *
@@ -55,22 +55,36 @@
  */
 
 'use strict';
+import {orderBy, isEqual} from 'lodash';
+
 export default async function (tagPattern) {
-	if (tagPattern instanceof RegExp) {
-		return {
-			description:
+	return {
+		description:
 				'Handles field ordering',
-			validate,
-			fix
-		};
-	}
-	throw new Error('No tagPattern provided');
+		validate: async record => ({
+			valid: await validate(record.fields, tagPattern)
+		}),
+		fix: async record => ({
+			fix: await sort(record.fields, tagPattern)
+		})
+	};
 
-	async function validate(record) {
-    return null;
+	function validate(fields, tagPattern) {
+		const original = fields;
+		const sorted = sort(fields, tagPattern);
+		const compareArrays = isEqual(original, sorted);
+		return compareArrays ? {valid: true, messages: []} : {valid: false, messages: ['Fields are in incorrect order']};
 	}
 
-	async function fix(record) {
-	 return null;
+	function sort(fields, tagPattern) {
+		if (tagPattern) {
+			const matchingTags = fields.map((field, index) => {
+				return tagPattern.some(pattern => pattern.test(field.tag)) ? {field, index} : null;
+			});
+			const trimmedResults = matchingTags.filter(x => x);
+			return trimmedResults;
+		}
+		const sortedFields = orderBy(fields, ['tag']);
+		return sortedFields;
 	}
 }
