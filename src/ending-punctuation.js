@@ -37,31 +37,42 @@ export default async function () {
 	return {
 		description:
 			'Checks whether punctuation is valid',
-		validate: async record => ({
-			valid: validatePunc(record, false) //Record (Object), fix (boolean)
-		}),
-		fix: async record =>{
-			validatePunc(record, true); //Record (Object), fix (boolean)
-		}
+		validate: async record => (
+			validatePunc(record, false) //Record (Object), fix (boolean)
+		),
+		fix: async record =>(
+			validatePunc(record, true) //Record (Object), fix (boolean)
+		)
 	};
 
 	//This is used to validate record against configuration
 	function validatePunc(record, fix) {
 		var message = {},
 			res = null,
-			iTag = null,
+			tag = null,
 			lastSubField = null,
 			lastPuncMark = null,
 			lastPuncDot = null;
 
 		message['message'] = [];
+		if(fix) message['fix'] = [];
 
 		//Function introduction before use; actual parsing and calling after these
-		function validateField(field, tag){
+		function validateField(field, linkedTag){
+			if(linkedTag) tag = linkedTag;
+			else{
+				try{
+					tag = parseInt(field.tag, 10);
+				}catch(e){
+					return false;
+				}
+			}
+
 			//Find configuration object matching tag:
 			res = find(confSpec, function(o) { return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag) })
 			if(!res) return; //Configuration not found, pass field without error
-			
+			tag = field.tag; //Plain string tag (Like '036') to be used in message
+
 			//Field does not have subfields; invalid
 			if(!field.subfields){
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
@@ -88,17 +99,26 @@ export default async function () {
 				if( punc && !(lastPuncMark || lastPuncDot)) {
 					// console.log("1. Invalid punctuation - missing")
 					message.message.push('Field ' + tag + ' has invalid ending punctuation');
-					if(fix)	subfield.value = subfield.value.concat('.');
+					if(fix){
+						subfield.value = subfield.value.concat('.');
+						message.fix.push('Field ' + tag + ' - Added punctuation to $'+ subfield.code);
+					}	
 				//Last char is dot, but previous char is one of punc marks, like 'Question?.'
 				}else if(lastPuncDot && validPuncMarks.includes(subfield.value.charAt(subfield.value.length-2))){
 					// console.log("2. Invalid punctuation - duplicate, like '?.'")
 					message.message.push('Field ' + tag + ' has invalid ending punctuation');
-					if(fix) subfield.value = subfield.value.slice(0, -1);
+					if(fix){
+						subfield.value = subfield.value.slice(0, -1);
+						message.fix.push('Field ' + tag + ' - Removed double punctuation from $'+ subfield.code);
+					} 
 				//Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
 				}else if(checkEnd && (!punc && lastPuncDot)){
 					// console.log("3. Invalid punctuation - Shouldn't be dot, is")
 					message.message.push('Field ' + tag + ' has invalid ending punctuation');
-					if(fix) subfield.value = subfield.value.slice(0, -1);
+					if(fix){
+						subfield.value = subfield.value.slice(0, -1);
+						message.fix.push('Field ' + tag + ' - Removed punctuation from $'+ subfield.code);
+					} 
 				}else{
 					// console.log("Valid punctuation")
 				}
@@ -122,7 +142,10 @@ export default async function () {
 						lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
 						if(lastSubField.value.includes('©') && lastPuncDot){
 							message.message.push('Field ' + tag + ' has invalid ending punctuation');
-							if(fix) lastSubField.value = lastSubField.value.slice(0, -1);
+							if(fix){
+								lastSubField.value = lastSubField.value.slice(0, -1);
+								message.fix.push('Field ' + tag + ' - Removed punctuation from $'+ lastSubField.code);
+							} 
 						} 
 						
 						//Checked field is actually $b
@@ -177,16 +200,11 @@ export default async function () {
 		//Actual parsing of all fields
 		if(!record.fields) return false;
 		record.fields.forEach(field => {
-			try{
-				iTag = parseInt(field.tag, 10);
-			}catch(e){
-				return false;
-			}
-			validateField(field, iTag);
+			validateField(field);
 		});
 
 		message.message.length >= 1 ? message.valid = false : message.valid = true;
-		return message.valid;
+		return message;
 	}
 }
 

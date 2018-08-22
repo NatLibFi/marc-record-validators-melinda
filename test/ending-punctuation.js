@@ -45,87 +45,95 @@ describe('field-structure', () => {
 		const recordValid = new MarcRecord({
 			fields: [{
 				tag: '245', 
-				subfields: [{
-					code: 'a',
-					value: 'Elämäni ja tutkimusretkeni / '
-				},{
-					code: 'c',
-					value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'
-				},{
-					code: '6',
-					value: 'FOO'
-				}]
+				subfields: [
+					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'},
+					{code: '6', value: 'FOO'}
+				]
 			},{
 				tag: '337', //Range 336-338
-				subfields: [{
-					code: 'a',
-					value: 'käytettävissä ilman laitetta'
-				  },{
-					code: 'b',
-					value: 'n'
-				  },{
-					code: '2',
-					value: 'rdamedia'
-				}]
+				subfields: [
+					{code: 'a', value: 'käytettävissä ilman laitetta'},
+					{code: 'b', value: 'n'},
+					{code: '2', value: 'rdamedia'}
+				]
 			},{
 				tag: '500', //Range 500-509
-				subfields: [{
-					code: 'a',
-					value: 'FOO (Bar)'
-				}]
+				subfields: [
+					{code: 'a', value: 'FOO (Bar)'}
+				]
 			}]
 		});
 
 		const recordInvalid = new MarcRecord({
 			fields: [{
 				tag: '245',
-				subfields: [{
-						code: 'a',
-						value: 'Elämäni ja tutkimusretkeni / '
-					},{
-						code: 'c',
-						value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'
-					},{
-						code: '6',
-						value: 'FOO'
-					}]
+				subfields: [
+					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
+					{code: '6', value: 'FOO'}
+				]
 			},{
 				tag: '337',
-				subfields: [{
-						code: 'a',
-						value: 'käytettävissä ilman laitetta'
-					},{
-						code: 'b',
-						value: 'n'
-					},{
-						code: '2',
-						value: 'rdamedia'
-					}]
+				subfields: [
+					{code: 'a', value: 'käytettävissä ilman laitetta'},
+					{code: 'b', value: 'n.'}, //This can be abbreviation -> does not generate error
+					{code: '2', value: 'rdamedia'}
+				]
 			},{
 				tag: '500',
-				subfields: [{
-					code: 'a',
-					value: 'FOO (Bar).'
-				}]
+				subfields: [
+					{code: 'a', value: 'FOO (Bar).'}
+				]
+			}]
+		});
+		const recordBroken = new MarcRecord({
+			fields: [{
+				tag: '245',
+				subfields: [
+					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
+					{code: '6', value: 'FOO'}
+				]
+			},{
+				tag: '337',
+				subfields: [
+					{code: 'a', value: 'käytettävissä ilman laitetta'},
+					{code: 'b', value: 'n'}, //Dot removed from possible abbreviation as it cannot be removed in fixing
+					{code: '2', value: 'rdamedia'}
+				]
+			},{
+				tag: '500',
+				subfields: [
+					{code: 'a', value: 'FOO (Bar).'}
+				]
 			}]
 		});
 
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory();
 			const result = await validator.validate(recordValid);
-			expect(result).to.eql({valid: true});
+			expect(result.valid).to.eql(true);
 		});
 
 		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory();
 			const result = await validator.validate(recordInvalid);
-			expect(result).to.eql({valid: false});
+			expect(result).to.eql({ 
+				message: [ 'Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation' ],
+				valid: false 
+			});
 		});
 
 		it('Repairs the invalid record', async () => {
 			const validator = await validatorFactory();
-			await validator.fix(recordInvalid);
-			expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
+			const result = await validator.fix(recordBroken);
+			expect( recordBroken.equalsTo(recordValid)).to.eql(true);
+			expect(result).to.eql({ 
+				message: [ 'Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation' ],
+				fix: [ 'Field 245 - Added punctuation to $c', 'Field 500 - Removed double punctuation from $a' ],
+				valid: false 
+			});
 		});
 	});
 
@@ -137,85 +145,93 @@ describe('field-structure', () => {
 			const recordValid = new MarcRecord({
 				fields: [{
 					tag: '036', 
-					subfields: [{
-						code: 'a',
-						value: 'CNRS 84115'
-					},{
-						code: 'b',
-						value: 'Centre national de la recherche scientifique.'
-					}]
+					subfields: [
+						{ code: 'a', value: 'CNRS 84115'},
+						{ code: 'b', value: 'Centre national de la recherche scientifique.'}
+					]
 				}]
 			});
 
 			const recordValidOnlyA = new MarcRecord({
 				fields: [{
 					tag: '036', 
-					subfields: [{
-						code: 'a',
-						value: 'CNRS 84115'
-					}]
+					subfields: [
+						{ code: 'a', value: 'CNRS 84115' }
+					]
 				}]
 			});
 	
 			it('Finds record valid - Punc $b', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			it('Finds record valid - Only $a without punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidOnlyA);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
 			const recordInvalid = new MarcRecord({
 				fields: [{
 					tag: '036', 
-					subfields: [{
-						code: 'a',
-						value: 'CNRS 84115'
-					},{
-						code: 'b',
-						value: 'Centre national de la recherche scientifique'
-					}]
+					subfields: [
+						{ code: 'a', value: 'CNRS 84115' },
+						{ code: 'b', value: 'Centre national de la recherche scientifique' }
+					]
 				}]
 			});
-
+			
 			const recordInvalidOnlyA = new MarcRecord({
 				fields: [{
 					tag: '036', 
-					subfields: [{
-						code: 'a',
-						value: 'CNRS 84115.'
-					}]
+					subfields: [
+						{ code: 'a', value: 'CNRS 84115.' } //$a is register number, no change for abbreviation
+					]
 				}]
 			});
 
 			it('Finds record invalid - No punc $b', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 036 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - Only $a with punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidOnlyA);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 036 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $b', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid);
+				const result = await validator.fix(recordInvalid);
 				expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 036 has invalid ending punctuation' ],
+					fix: [ 'Field 036 - Added punctuation to $b'],
+					valid: false 
+				});
 			});
 
-			it('Repairs the invalid record - Removes punc $a (because $a is register number, no change for abbreviation)', async () => {
+			it('Repairs the invalid record - Removes punc $a (register)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidOnlyA);
-				expect( recordInvalidOnlyA.equalsTo(recordValidOnlyA)).to.eql(true);
+				const result = await validator.fix(recordInvalidOnlyA);
+				expect( recordInvalidOnlyA.equalsTo(recordValidOnlyA)).to.eql(true);				
+				expect(result).to.eql({ 
+					message: [ 'Field 036 has invalid ending punctuation' ],
+					fix: [ 'Field 036 - Removed punctuation from $a'],
+					valid: false 
+				});
 			});
 		});
 
@@ -226,32 +242,22 @@ describe('field-structure', () => {
 			const recordValidOnlyA = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'World of art.'
-					},{
-						code: 'y',
-						value: 'eng'
-					}]
+					subfields: [
+						{ code: 'a', value: 'World of art.' },
+						{ code: 'y', value: 'eng' }
+					]
 				}]
 			});			
 			
 			const recordValidMultiple = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'Annals of chemistry.'
-					},{
-						code: 'n',
-						value: 'Series C,'
-					},{
-						code: 'p',
-						value: 'Organic chemistry and biochemistry.'
-					},{
-						code: 'y',
-						value: 'eng'
-					}]
+					subfields: [
+						{ code: 'a', value: 'Annals of chemistry.' },
+						{ code: 'n', value: 'Series C,' },
+						{ code: 'p', value: 'Organic chemistry and biochemistry.' },
+						{ code: 'y', value: 'eng' }
+					]
 				}]
 			});
 			
@@ -259,90 +265,70 @@ describe('field-structure', () => {
 			const recordValidWithoutY = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'World of art.'
-					}]
+					subfields: [
+						{ code: 'a', value: 'World of art.' }
+					]
 				}]
 			});	
 
 			it('Finds record valid - Punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidOnlyA);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 	
 			it('Finds record valid - Punc $p', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidMultiple);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			it('Finds record valid - Punc $a without $y', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidWithoutY);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 	
 			//Invalid tests
 			const recordInvalidOnlyAMissingA = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'World of art'
-					},{
-						code: 'y',
-						value: 'eng'
-					}]
+					subfields: [
+						{ code: 'a', value: 'World of art' },
+						{ code: 'y', value: 'eng' }
+					]
 				}]
 			}); 
 
-			//Tarkistaa myös $y:n
-			//ToDo: Because punctuation is only detected from second last field $y is never checked; this is why this causes error
 			const recordInvalidOnlyAPuncY = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'World of art.'
-					},{
-						code: 'y',
-						value: 'eng.' //ToDo: check from Artturi if language codes are checked strictly
-					}]
+					subfields: [
+						{ code: 'a', value: 'World of art.' }, 
+						{ code: 'y', value: 'eng.' } //$y is also checked as rule is explicit
+					]
 				}]
 			});
 
-			//ToDo: Because punc is missing from $a this is detected as invalid, but punc at $y is ignored
 			const recordInvalidOnlyAMissingAPuncY = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'World of art'
-					},{
-						code: 'y',
-						value: 'eng.' //ToDo: check from Artturi if language codes are checked strictly
-					}]
+					subfields: [
+						{ code: 'a', value: 'World of art' },
+						{ code: 'y', value: 'eng.' } //$y is also checked as rule is explicit
+					]
 				}]
 			}); 
 			
 			const recordValidMultipleMissingP = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'Annals of chemistry.'
-					},{
-						code: 'n',
-						value: 'Series C,'
-					},{
-						code: 'p',
-						value: 'Organic chemistry and biochemistry'
-					},{
-						code: 'y',
-						value: 'eng'
-					}]
+					subfields: [
+						{ code: 'a', value: 'Annals of chemistry.' },
+						{ code: 'n', value: 'Series C,' },
+						{ code: 'p', value: 'Organic chemistry and biochemistry' },
+						{ code: 'y', value: 'eng' }
+					]
 				}]
 			});
 			
@@ -350,74 +336,111 @@ describe('field-structure', () => {
 			const recordValidWithoutYMissingA = new MarcRecord({
 				fields: [{
 					tag: '242', 
-					subfields: [{
-						code: 'a',
-						value: 'World of art'
-					}]
+					subfields: [
+						{ code: 'a', value: 'World of art' }
+					]
 				}]
 			});	
 
 			it('Finds record invalid - No punc at $a (only before $y)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidOnlyAMissingA);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 242 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
-			it('Finds record invalid - Punc at $y (Language field)', async () => { //ToDo: check from Artturi if language codes are checked strictly
+			it('Finds record invalid - Punc at $y (Language field)', async () => { //$y is also checked as rule is explicit
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidOnlyAPuncY);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 242 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
-			it('Finds record invalid - No punc at $a & punc $y', async () => { //ToDo: check from Artturi if language codes are checked strictly
+			it('Finds record invalid - No punc at $a & punc $y', async () => { //$y is also checked as rule is explicit
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidOnlyAMissingAPuncY);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - No punc $p (last before $y)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidMultipleMissingP);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 242 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - No punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidWithoutYMissingA);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 242 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidOnlyAMissingA);
+				const result = await validator.fix(recordInvalidOnlyAMissingA);
 				expect( recordInvalidOnlyAMissingA.equalsTo(recordValidOnlyA)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 242 has invalid ending punctuation' ],
+					fix: [ 'Field 242 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 
-			//ToDo: This bugs because of $y (above)
-			it('Repairs the invalid record - Remove punc $y (Language field)', async () => { //ToDo: check from Artturi if language codes are checked strictly
+			it('Repairs the invalid record - Remove punc $y (Language field)', async () => { 
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidOnlyAPuncY);
+				const result = await validator.fix(recordInvalidOnlyAPuncY);
 				expect( recordInvalidOnlyAPuncY.equalsTo(recordValidOnlyA)).to.eql(true); 
+				expect(result).to.eql({ 
+					message: [ 'Field 242 has invalid ending punctuation' ],
+					fix: [ 'Field 242 - Removed punctuation from $y'],
+					valid: false 
+				});
 			});
 
-			//ToDo: This bugs because of $y (above)
-			it('Repairs the invalid record - Add punc $a & remove punc $y (Language field)', async () => { //ToDo: check from Artturi if language codes are checked strictly
+			it('Repairs the invalid record - Add punc $a & remove punc $y (Language field)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidOnlyAMissingAPuncY);
+				const result = await validator.fix(recordInvalidOnlyAMissingAPuncY);
 				expect( recordInvalidOnlyAMissingAPuncY.equalsTo(recordValidOnlyA)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation' ],
+					fix: [ 'Field 242 - Removed punctuation from $y', 'Field 242 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 
 			it('Repairs the invalid record - Add punc $p', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordValidMultipleMissingP);
+				const result = await validator.fix(recordValidMultipleMissingP);
 				expect( recordValidMultipleMissingP.equalsTo(recordValidMultiple)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 242 has invalid ending punctuation' ],
+					fix: [ 'Field 242 - Added punctuation to $p'],
+					valid: false 
+				});
 			});
 
 			it('Repairs the invalid record - Add punc $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordValidWithoutYMissingA);
+				const result = await validator.fix(recordValidWithoutYMissingA);
 				expect( recordValidWithoutYMissingA.equalsTo(recordValidWithoutY)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 242 has invalid ending punctuation' ],
+					fix: [ 'Field 242 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 		});
 
@@ -463,19 +486,19 @@ describe('field-structure', () => {
 			it('Finds record valid - Punc $c', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidEndC);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 	
 			it('Finds record valid - Punc char $g (after $c)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidEndG);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 	
 			it('Finds record valid - No punc $b', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidEndB);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -505,26 +528,42 @@ describe('field-structure', () => {
 			it('Finds record invalid', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidEndC);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 260 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidEndGDouble);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 260 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $c', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidEndC);
+				const result = await validator.fix(recordInvalidEndC);
 				expect( recordInvalidEndC.equalsTo(recordValidEndC)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 260 has invalid ending punctuation' ],
+					fix: [ 'Field 260 - Added punctuation to $c'],
+					valid: false 
+				});
 			});
 
 			it('Repairs the invalid record - Remove double punc $g', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidEndGDouble);
+				const result = await validator.fix(recordInvalidEndGDouble);
 				expect( recordInvalidEndGDouble.equalsTo(recordValidEndG)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 260 has invalid ending punctuation' ],
+					fix: [ 'Field 260 - Removed double punctuation from $g'],
+					valid: false 
+				});
 			});
 		});
 
@@ -560,13 +599,13 @@ describe('field-structure', () => {
 			it('Finds record valid', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 
 			it('Finds record valid - Ind, copyright', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidInd);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -623,51 +662,83 @@ describe('field-structure', () => {
 			it('Finds record invalid - No punc $c', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 264 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - Ind, copyright, no punc $b ', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidIndBMissing);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 264 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 					
 			it('Finds record invalid - Ind, copyright, extra punc $c', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidIndCExtra);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 264 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 					
 			it('Finds record invalid - Ind, copyright, extra punc $c, no punc $b', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidIndBMissingCExtra);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 264 has invalid ending punctuation', 'Field 264 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $c', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid);
+				const result = await validator.fix(recordInvalid);
 				expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 264 has invalid ending punctuation' ],
+					fix: [ 'Field 264 - Added punctuation to $c'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - Add punc $b (Last $c, but ind2 === 4) ', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidIndBMissing);
+				const result = await validator.fix(recordInvalidIndBMissing);
 				expect( recordInvalidIndBMissing.equalsTo(recordValidInd)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 264 has invalid ending punctuation' ],
+					fix: [ 'Field 264 - Added punctuation to $b'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - Remove punc $c ($c has ©, should not have punc)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidIndCExtra);
+				const result = await validator.fix(recordInvalidIndCExtra);
 				expect( recordInvalidIndCExtra.equalsTo(recordValidInd)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 264 has invalid ending punctuation' ],
+					fix: [ 'Field 264 - Removed punctuation from $c'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - Add punc $b, remove punc $c', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidIndBMissingCExtra);
+				const result = await validator.fix(recordInvalidIndBMissingCExtra);
 				expect( recordInvalidIndBMissingCExtra.equalsTo(recordValidInd)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 264 has invalid ending punctuation', 'Field 264 has invalid ending punctuation' ],
+					fix: [ 'Field 264 - Removed punctuation from $c', 'Field 264 - Added punctuation to $b'],
+					valid: false 
+				});
 			});
 		});
 
@@ -734,35 +805,35 @@ describe('field-structure', () => {
 			it('Finds record valid - Punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidA);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 	
 			it('Finds record valid - Punc $a (last) & punc $b (mandatory)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidAB);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 	
 			it('Finds record valid - Punc $d (last of two)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidDD);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 	
 			it('Finds record valid - Punc $d (last of two) followed by $g', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidComplex);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 	
 			it('Finds record valid - No punc (not $b, nor from list)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidJ2);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -822,66 +893,106 @@ describe('field-structure', () => {
 			it('Finds record invalid - No punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidA);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 340 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 	
 			it('Finds record invalid - No punc $a (last)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidAMissingB);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 340 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 	
 			it('Finds record invalid - No punc $b (mandatory)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidABMissing);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 340 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 	
 			it('Finds record invalid - No punc $d (last of two)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidDDMissing);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 340 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 	
 			it('Finds record invalid - No punc $d (last of two) followed by $g', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidComplexDMissing);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 340 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $a (only)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidA);
+				const result = await validator.fix(recordInvalidA);
 				expect( recordInvalidA.equalsTo(recordInvalidA)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 340 has invalid ending punctuation' ],
+					fix: [ 'Field 340 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - Add punc $a (last)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidAMissingB);
+				const result = await validator.fix(recordInvalidAMissingB);
 				expect( recordInvalidAMissingB.equalsTo(recordValidAB)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 340 has invalid ending punctuation' ],
+					fix: [ 'Field 340 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - Add punc $b (mandatory)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidABMissing);
+				const result = await validator.fix(recordInvalidABMissing);
 				expect( recordInvalidABMissing.equalsTo(recordValidAB)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 340 has invalid ending punctuation' ],
+					fix: [ 'Field 340 - Added punctuation to $b'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - Add punc $d (last of two)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidDDMissing);
+				const result = await validator.fix(recordInvalidDDMissing);
 				expect( recordInvalidDDMissing.equalsTo(recordValidDD)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 340 has invalid ending punctuation' ],
+					fix: [ 'Field 340 - Added punctuation to $d'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - Add punc $d (last of list)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidComplexDMissing);
+				const result = await validator.fix(recordInvalidComplexDMissing);
 				expect( recordInvalidComplexDMissing.equalsTo(recordInvalidComplexDMissing)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 340 has invalid ending punctuation' ],
+					fix: [ 'Field 340 - Added punctuation to $d'],
+					valid: false 
+				});
 			});
 		});
 		
@@ -921,19 +1032,19 @@ describe('field-structure', () => {
 			it('Finds record valid - Punc $a (without $u)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 
 			it('Finds record valid - Punc $a (with $u) ', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidWithU);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			it('Finds record valid - Punc $a & $u (punc at $u should be ignored) ', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidU);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -959,26 +1070,42 @@ describe('field-structure', () => {
 			it('Finds record invalid - No punc $a (without $u)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 520 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - No punc $a (with $u)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidWithU);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 520 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $a (only)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid);
+				const result = await validator.fix(recordInvalid);
 				expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 520 has invalid ending punctuation' ],
+					fix: [ 'Field 520 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 
 			it('Repairs the invalid record - Add punc $a (last before $u)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidWithU);
+				const result = await validator.fix(recordInvalidWithU);
 				expect( recordInvalidWithU.equalsTo(recordValidWithU)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 520 has invalid ending punctuation' ],
+					fix: [ 'Field 520 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 		});
 		
@@ -1022,19 +1149,19 @@ describe('field-structure', () => {
 			it('Finds record valid - Punc $i (last before $u)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 	
 			it('Finds record valid - Punc $i & punc $u ($u is URL, should pass)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidPuncU);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 	
 			it('Finds record valid - Punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidOnlyA);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -1072,32 +1199,51 @@ describe('field-structure', () => {
 			it('Finds record invalid - No punc $i (last before $u)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidMissingI);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 538 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - Invalid punc $i (":" not valid punc mark, but this is according example...)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidI);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 538 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - No punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidOnlyA);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 538 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $i (last)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidMissingI);
+				const result = await validator.fix(recordInvalidMissingI);
 				expect( recordInvalidMissingI.equalsTo(recordValid)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 538 has invalid ending punctuation' ],
+					fix: [ 'Field 538 - Added punctuation to $i'],
+					valid: false 
+				});
 			});
 
-			it('Repairs the invalid record - ', async () => {
+			it('Repairs the invalid record - Add punc $a (only)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidOnlyA);
+				const result = await validator.fix(recordInvalidOnlyA);
 				expect( recordInvalidOnlyA.equalsTo(recordValidOnlyA)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 538 has invalid ending punctuation' ],
+					fix: [ 'Field 538 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 		});
 
@@ -1128,13 +1274,13 @@ describe('field-structure', () => {
 			it('Finds record valid - Punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			it('Finds record valid - No punc $b (only data field)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidWithoutA);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -1160,26 +1306,42 @@ describe('field-structure', () => {
 			it('Finds record invalid - No punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 567 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - Punc $b (only data field)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidWithoutA);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 567 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $a (only)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid);
+				const result = await validator.fix(recordInvalid);
 				expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 567 has invalid ending punctuation' ],
+					fix: [ 'Field 567 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 
 			it('Repairs the invalid record - Remove punc $b (only data field)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidWithoutA);
+				const result = await validator.fix(recordInvalidWithoutA);
 				expect( recordInvalidWithoutA.equalsTo(recordValidWithoutA)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 567 has invalid ending punctuation' ],
+					fix: [ 'Field 567 - Removed punctuation from $b'],
+					valid: false 
+				});
 			});
 		});
 
@@ -1255,37 +1417,37 @@ describe('field-structure', () => {
 			it('Finds record valid - 647 Fast, punc char at end', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid647FastEndPunc);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});			
 			
 			it('Finds record valid - 648 Finnish, without punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordVali648dFinNo);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 			
 			it('Finds record valid - 648 Fast, without punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid648FastNo);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 			
 			it('Finds record valid - 650 Finnish, without punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid650FinNo);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 			
 			it('Finds record valid - 650 English, punc (no control)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid650EngNoControl);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 			
 			it('Finds record valid - 650 English, with punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid650EngControl);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -1355,74 +1517,122 @@ describe('field-structure', () => {
 			it('Finds record invalid - 647 Fast, dot at end', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid647FastEndPunc);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 647 has invalid ending punctuation'],
+					valid: false 
+				});
 			});			
 			
 			it('Finds record invalid - 648 Finnish, with punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvali648dFinYes);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 648 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			it('Finds record invalid - 648 Fast, with punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid648FastYes);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 648 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			it('Finds record invalid - 650 Finnish, with punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid650FinYes);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 650 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			it('Finds record invalid - 650 !Finnish, without punc (no control)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid650EngNoControl);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 650 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			it('Finds record invalid - 650 !Finnish, without punc', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid650EngControl);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 650 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - 647 Fast, removes double punc $d', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid647FastEndPunc);
+				const result = await validator.fix(recordInvalid647FastEndPunc);
 				expect( recordInvalid647FastEndPunc.equalsTo(recordValid647FastEndPunc)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 647 has invalid ending punctuation' ],
+					fix: [ 'Field 647 - Removed double punctuation from $d'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 648 Finnish, removes punc $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvali648dFinYes);
+				const result = await validator.fix(recordInvali648dFinYes);
 				expect( recordInvali648dFinYes.equalsTo(recordVali648dFinNo)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 648 has invalid ending punctuation' ],
+					fix: [ 'Field 648 - Removed punctuation from $a'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 648 Fast, removes punc $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid648FastYes);
+				const result = await validator.fix(recordInvalid648FastYes);
 				expect( recordInvalid648FastYes.equalsTo(recordValid648FastNo)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 648 has invalid ending punctuation' ],
+					fix: [ 'Field 648 - Removed punctuation from $a'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 650 Finnish, removes punc $x', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid650FinYes);
+				const result = await validator.fix(recordInvalid650FinYes);
 				expect( recordInvalid650FinYes.equalsTo(recordValid650FinNo)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 650 has invalid ending punctuation' ],
+					fix: [ 'Field 650 - Removed punctuation from $x'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 650 !Finnish, add punc $v (no control)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid650EngNoControl);
+				const result = await validator.fix(recordInvalid650EngNoControl);
 				expect( recordInvalid650EngNoControl.equalsTo(recordValid650EngNoControl)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 650 has invalid ending punctuation' ],
+					fix: [ 'Field 650 - Added punctuation to $v'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 650 !Finnish, add punc $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid650EngControl);
+				const result = await validator.fix(recordInvalid650EngControl);
 				expect( recordInvalid650EngControl.equalsTo(recordValid650EngControl)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 650 has invalid ending punctuation' ],
+					fix: [ 'Field 650 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 		});
 
@@ -1508,43 +1718,43 @@ describe('field-structure', () => {
 			it('Finds record valid - 655 Finnish, no punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid655FinNo);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 			
 			it('Finds record valid - 655 English, with punc $y', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid655EngYes);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 			
 			it('Finds record valid - 655 English, with punc $a (no control)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid655EngYesNoControl);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 			
 			it('Finds record valid - 656 Finnish, without punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid656FinNo);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 			
 			it('Finds record valid - 657 English, with punc $z', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid657EngYes);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 			
 			it('Finds record valid - 658 English, with punc $d', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid658EngYes);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 
 			it('Finds record valid - 662 English, with punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid662EngYes);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 			
 			//Invalid tests
@@ -1624,86 +1834,142 @@ describe('field-structure', () => {
 			it('Finds record invalid - 655 Finnish, punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid655FinYes);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 655 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - 655 !Finnish, without punc $y', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid655EngNo);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 655 has invalid ending punctuation'],
+					valid: false 
+				});
 			});	
 
 			it('Finds record invalid - 655 !Finnish, without punc $a (no control)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid655EngNoNoControl);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 655 has invalid ending punctuation'],
+					valid: false 
+				});
 			});	
 
 			it('Finds record invalid - 656 Finnish, with punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid656FinYes);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 656 has invalid ending punctuation'],
+					valid: false 
+				});
 			});	
 
 			it('Finds record invalid - 657 !Finnish, without punc $z', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid657EngNo);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 657 has invalid ending punctuation'],
+					valid: false 
+				});
 			});	
 
 			it('Finds record invalid - 658 !Finnish, without punc $d', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid658EngNo);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 658 has invalid ending punctuation'],
+					valid: false 
+				});
 			});	
 
 			it('Finds record invalid - 662 !Finnish, without punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid662EngNo);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 662 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - 655 Finnish, remove punc $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid655FinYes);
+				const result = await validator.fix(recordInvalid655FinYes);
 				expect( recordInvalid655FinYes.equalsTo(recordValid655FinNo)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 655 has invalid ending punctuation' ],
+					fix: [ 'Field 655 - Removed punctuation from $a'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 655 !Finnish, add punc $y', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid655EngNo);
+				const result = await validator.fix(recordInvalid655EngNo);
 				expect( recordInvalid655EngNo.equalsTo(recordValid655EngYes)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 655 has invalid ending punctuation' ],
+					fix: [ 'Field 655 - Added punctuation to $y'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 655 !Finnish, add punc $a (no control)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid655EngNoNoControl);
+				const result = await validator.fix(recordInvalid655EngNoNoControl);
 				expect( recordInvalid655EngNoNoControl.equalsTo(recordValid655EngYesNoControl)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 655 has invalid ending punctuation' ],
+					fix: [ 'Field 655 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 656 Finnish, remove punc $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid656FinYes);
+				const result = await validator.fix(recordInvalid656FinYes);
 				expect( recordInvalid656FinYes.equalsTo(recordValid656FinNo)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 656 has invalid ending punctuation' ],
+					fix: [ 'Field 656 - Removed punctuation from $a'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 657 !Finnish, add punc $z', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid657EngNo);
+				const result = await validator.fix(recordInvalid657EngNo);
 				expect( recordInvalid657EngNo.equalsTo(recordValid657EngYes)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 657 has invalid ending punctuation' ],
+					fix: [ 'Field 657 - Added punctuation to $z'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 658 !Finnish, add punc $d', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid658EngNo);
+				const result = await validator.fix(recordInvalid658EngNo);
 				expect( recordInvalid658EngNo.equalsTo(recordValid658EngYes)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 658 has invalid ending punctuation' ],
+					fix: [ 'Field 658 - Added punctuation to $d'],
+					valid: false 
+				});
 			});
 			
 			it('Repairs the invalid record - 662 !Finnish, add pun $a', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid662EngNo);
+				const result = await validator.fix(recordInvalid662EngNo);
 				expect( recordInvalid662EngNo.equalsTo(recordValid662EngYes)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 662 has invalid ending punctuation' ],
+					fix: [ 'Field 662 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 		});
 
@@ -1735,13 +2001,13 @@ describe('field-structure', () => {
 			it('Finds record valid - Punc $a, but following fields, $e no punc (last)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});	
 
 			it('Finds record valid - Punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidOnlyA);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -1768,32 +2034,48 @@ describe('field-structure', () => {
 			it('Finds record invalid - Punc $e (language field, strict)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 760 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 
 			it('Finds record invalid - No punc $a (only)', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidOnlyA);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 760 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Remove punc $e (language field, strict)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalid);
+				const result = await validator.fix(recordInvalid);
 				expect( recordInvalid.equalsTo(recordValid)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 760 has invalid ending punctuation' ],
+					fix: [ 'Field 760 - Removed punctuation from $e'],
+					valid: false 
+				});
 			});
 
 			it('Repairs the invalid record - Add punc $a (only)', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidOnlyA);
+				const result = await validator.fix(recordInvalidOnlyA);
 				expect( recordInvalidOnlyA.equalsTo(recordValidOnlyA)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 760 has invalid ending punctuation' ],
+					fix: [ 'Field 760 - Added punctuation to $a'],
+					valid: false 
+				});
 			});
 		});
 		
 		// "`880`-kenttä: https://www.kansalliskirjasto.fi/extra/marc21/bib/841-88X.htm#880  Eli tää on se Loppupisteohjeen `Samoin kuin vastaavat kentät` -keissi
 		// Spex on siinä, mutta lyhkäsesti: `880`-kentässä on muiden kenttien translitteroidut versiot (Data eri kirjaimistolla). 880-kentän osakentästä `6` selviää mihin kenttää se linkkaa."	
-		//880 Samoin kuin vastaavat kentät - TODO - Siis tarkistetaan kontrollikentän $6 säännön
+		//880 Samoin kuin vastaavat kentät - Siis tarkistetaan kontrollikentän $6 säännön
 		describe('#880 - Like linked fields', () => {
 			//Valid tests
 			const recordValidSimple = new MarcRecord({
@@ -1822,13 +2104,13 @@ describe('field-structure', () => {
 			it('Finds record valid - Punc $b', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidSimple);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 	
 			it('Finds record valid - Punc $c', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValidComplex);
-				expect(result).to.eql({valid: true});
+				expect(result.valid).to.eql(true);
 			});
 
 			//Invalid tests
@@ -1858,26 +2140,42 @@ describe('field-structure', () => {
 			it('Finds record invalid - No punc $b', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidSimple);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 880 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 	
 			it('Finds record invalid - No punc $c', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalidComplex);
-				expect(result).to.eql({valid: false});
+				expect(result).to.eql({ 
+					message:[ 'Field 880 has invalid ending punctuation'],
+					valid: false 
+				});
 			});
 			
 			//Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $b', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidSimple);
+				const result = await validator.fix(recordInvalidSimple);
 				expect( recordInvalidSimple.equalsTo(recordValidSimple)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 880 has invalid ending punctuation' ],
+					fix: [ 'Field 880 - Added punctuation to $b'],
+					valid: false 
+				});
 			});
 
 			it('Repairs the invalid record - Add punc $c', async () => {
 				const validator = await validatorFactory();
-				await validator.fix(recordInvalidComplex);
+				const result = await validator.fix(recordInvalidComplex);
 				expect( recordInvalidComplex.equalsTo(recordValidComplex)).to.eql(true);
+				expect(result).to.eql({ 
+					message: [ 'Field 880 has invalid ending punctuation' ],
+					fix: [ 'Field 880 - Added punctuation to $c'],
+					valid: false 
+				});
 			});
 		});
 	});
