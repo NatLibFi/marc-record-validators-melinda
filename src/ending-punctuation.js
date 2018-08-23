@@ -27,806 +27,228 @@
  */
 
 'use strict';
-import {find, forEach} from 'lodash';
-const repairActions = {
-	REMOVELAST: 'remove',
-	ADDPUNC: 'add'
-}
+import {find} from 'lodash';
+// Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
+import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf';
 
 export default async function () {
 	return {
 		description:
 			'Checks whether punctuation is valid',
 		validate: async record => (
-			validatePunc(record, false) //Record (Object), fix (boolean)
+			validatePunc(record, false) // Record (Object), fix (boolean)
 		),
-		fix: async record =>(
-			validatePunc(record, true) //Record (Object), fix (boolean)
+		fix: async record => (
+			validatePunc(record, true) // Record (Object), fix (boolean)
 		)
 	};
 
-	//This is used to validate record against configuration
+	// This is used to validate record against configuration
 	function validatePunc(record, fix) {
-		var message = {},
-			res = null,
-			tag = null,
-			lastSubField = null,
-			lastPuncMark = null,
-			lastPuncDot = null;
+		const message = {};
 
-		message['message'] = [];
-		if(fix) message['fix'] = [];
+		message.message = [];
+		if (fix) {
+			message.fix = [];
+		}
 
-		//Function introduction before use; actual parsing and calling after these
-		function validateField(field, linkedTag){
-			if(linkedTag) tag = linkedTag;
-			else{
-				try{
+		// Function introduction before use; actual parsing and calling after these
+		let lastField = null;
+
+		// This is used to find last subfield that should have punctuation
+		const findLastSubfield = function (field) {
+			lastField = null;
+			field.subfields.forEach(subField => { // Check that each field has required fields and save last data field
+				if (!subField.code || !subField.value) {
+					throw new Error('Missing code or value for subfield: ' + subField);
+				} // Does not have code or value
+				if (isNaN(subField.code)) {
+					lastField = subField;
+				} // Not control field
+			});
+			return lastField;
+		};
+
+		let lastPuncMark = null;
+
+		let lastPuncDot = null;
+
+		// Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+		const normalPuncRules = function (subfield, punc, tag, checkEnd) {
+			lastPuncMark = validPuncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
+			lastPuncDot = '.'.includes(subfield.value.slice(-1)); // If string ends to dot
+
+			// Last char should be punc, but its not either one of marks nor dot
+			if (punc && !(lastPuncMark || lastPuncDot)) {
+				// Console.log("1. Invalid punctuation - missing")
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				if (fix) {
+					subfield.value = subfield.value.concat('.');
+					message.fix.push('Field ' + tag + ' - Added punctuation to $' + subfield.code);
+				}
+			// Last char is dot, but previous char is one of punc marks, like 'Question?.'
+			} else if (lastPuncDot && validPuncMarks.includes(subfield.value.charAt(subfield.value.length - 2))) {
+				// Console.log("2. Invalid punctuation - duplicate, like '?.'")
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				if (fix) {
+					subfield.value = subfield.value.slice(0, -1);
+					message.fix.push('Field ' + tag + ' - Removed double punctuation from $' + subfield.code);
+				}
+			// Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
+			} else if (checkEnd && (!punc && lastPuncDot)) {
+				// Console.log("3. Invalid punctuation - Shouldn't be dot, is")
+				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+				if (fix) {
+					subfield.value = subfield.value.slice(0, -1);
+					message.fix.push('Field ' + tag + ' - Removed punctuation from $' + subfield.code);
+				}
+			} else {
+				// Console.log("Valid punctuation")
+			}
+		};
+
+		// Special cases from here on
+		const specialCases = function (res, field, tag) {
+			let lastSubField = null;
+			// Punctuation should be only after specific field
+			if (res.special.afterOnly) {
+				lastSubField = findLastSubfield(field);
+				if (typeof (res.special.strict) === 'undefined') { // Just to be safe
+					res.special.strict = true;
+				}
+
+				if (lastSubField.code === res.special.afterOnly) {
+					normalPuncRules(lastSubField, res.punc, tag, res.special.strict);
+				} else {
+					normalPuncRules(lastSubField, !res.punc, tag, true);
+				}
+
+			// Rules if last, some subrules
+			} else if (res.special.ifLast) {
+				lastSubField = findLastSubfield(field);
+
+				// IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
+				if (res.special.ind && field.ind2 === res.special.ind) {
+					// Extra dot at the end of $c ('© 1974.'), which should be only copyright year
+					lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); // If string ends to dot
+					if (lastSubField.value.includes('©') && lastPuncDot) {
+						message.message.push('Field ' + tag + ' has invalid ending punctuation');
+						if (fix) {
+							lastSubField.value = lastSubField.value.slice(0, -1);
+							message.fix.push('Field ' + tag + ' - Removed punctuation from $' + lastSubField.code);
+						}
+					}
+
+					// Checked field is actually $b
+					lastSubField = find(field.subfields, {code: 'b'});
+					normalPuncRules(lastSubField, res.punc, tag, false); // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+
+				// Otherwise normal punc rules
+				} else {
+					normalPuncRules(lastSubField, res.punc, tag, false);
+				} // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+
+			// Second last
+			} else if (res.special.secondLastIfLast) {
+				field.subfields.forEach(subField => {
+					if (isNaN(subField.code) && res.special.secondLastIfLast !== subField.code) {
+						lastSubField = subField;
+					} // Not control field
+					if (typeof (res.special.last) !== 'undefined' && res.special.secondLastIfLast === subField.code) {
+						normalPuncRules(subField, res.special.last, tag, true);
+					} // Strict because this field should not be abbreviation
+				});
+				normalPuncRules(lastSubField, res.punc, tag, false);
+
+			// Search for Finnish terms
+			} else if (res.special.termField) {
+				lastSubField = findLastSubfield(field);
+				const languageField = find(field.subfields, {code: res.special.termField});
+				if (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
+					normalPuncRules(lastSubField, res.punc, tag, true);
+				} else {
+					normalPuncRules(lastSubField, res.special.else, tag, false); // Strict because of years etc (648, 650)
+				}
+
+			// Search last of array in subfields and check if it has punc
+			} else if (res.special.lastOf) {
+				lastSubField = null;
+				field.subfields.forEach(subField => {
+					if (isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) {
+						lastSubField = subField;
+					} // Not control field
+					if (res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1) {
+						normalPuncRules(subField, res.punc, tag, true);
+					} // Strict because of mandatory
+				});
+
+				if (lastSubField) {
+					normalPuncRules(lastSubField, res.punc, tag, false);
+				}
+
+			// If field has linked rules (tag: 880), find rules and re-validate
+			} else if (res.special.linked) {
+				let linkedTag = null;
+				try {
+					linkedTag = parseInt(find(field.subfields, {code: res.special.linked}).value.substr(0, 3), 10); // Substring feels stupid, but is used in MarcRecord to extract tag.
+				} catch (e) {
+					return false;
+				}
+				validateField(field, linkedTag);
+			}
+		};
+
+		// Field validation with punctuation rules for normal and special cases in subfunction (to reduce complexity to please travisci)
+		function validateField(field, linkedTag) {
+			let res = null;
+
+			let tag = null;
+
+			let lastSubField = null;
+
+			if (linkedTag) {
+				tag = linkedTag;
+			} else {
+				try {
 					tag = parseInt(field.tag, 10);
-				}catch(e){
+				} catch (e) {
 					return false;
 				}
 			}
 
-			//Find configuration object matching tag:
-			res = find(confSpec, function(o) { return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag) })
-			if(!res) return; //Configuration not found, pass field without error
-			tag = field.tag; //Plain string tag (Like '036') to be used in message
+			// Find configuration object matching tag:
+			res = find(confSpec, o => {
+				return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag);
+			});
 
-			//Field does not have subfields; invalid
-			if(!field.subfields){
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
+			if (!res) {
+				return;
+			} // Configuration not found, pass field without error
+
+			// Field does not have subfields; invalid
+			if (typeof (field.subfields) === 'undefined' || field.subfields === null) {
+				message.message.push('Field ' + field.tag + ' has invalid ending punctuation');
 				return;
 			}
 
-			//This is used to find last subfield that shold have punctuation
-			var findLastSubfield = function(){
-				lastSubField = null,
-				//Check that each field has required fields and save last data field
-				field.subfields.forEach(subField => {
-					if(!subField.code || !subField.value) throw 'Missing code or value for subfield: ' + subField; //Does not have code or value 
-					if(isNaN(subField.code)) lastSubField = subField; //Not control field
-				})
+			// Normal rules
+			if (typeof (res.special) === 'undefined' || res.special === null) {
+				lastSubField = findLastSubfield(field);
+				normalPuncRules(lastSubField, res.punc, field.tag, false);
+			} else {
+				specialCases(res, field, field.tag);
 			}
-
-
-			//Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-			var normalPuncRules = function(subfield, punc, checkEnd){
-				lastPuncMark = validPuncMarks.includes(subfield.value.slice(-1)); //If string ends to punctuation char
-				lastPuncDot = '.'.includes(subfield.value.slice(-1)); //If string ends to dot
-
-				//Last char should be punc, but its not either one of marks nor dot
-				if( punc && !(lastPuncMark || lastPuncDot)) {
-					// console.log("1. Invalid punctuation - missing")
-					message.message.push('Field ' + tag + ' has invalid ending punctuation');
-					if(fix){
-						subfield.value = subfield.value.concat('.');
-						message.fix.push('Field ' + tag + ' - Added punctuation to $'+ subfield.code);
-					}	
-				//Last char is dot, but previous char is one of punc marks, like 'Question?.'
-				}else if(lastPuncDot && validPuncMarks.includes(subfield.value.charAt(subfield.value.length-2))){
-					// console.log("2. Invalid punctuation - duplicate, like '?.'")
-					message.message.push('Field ' + tag + ' has invalid ending punctuation');
-					if(fix){
-						subfield.value = subfield.value.slice(0, -1);
-						message.fix.push('Field ' + tag + ' - Removed double punctuation from $'+ subfield.code);
-					} 
-				//Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
-				}else if(checkEnd && (!punc && lastPuncDot)){
-					// console.log("3. Invalid punctuation - Shouldn't be dot, is")
-					message.message.push('Field ' + tag + ' has invalid ending punctuation');
-					if(fix){
-						subfield.value = subfield.value.slice(0, -1);
-						message.fix.push('Field ' + tag + ' - Removed punctuation from $'+ subfield.code);
-					} 
-				}else{
-					// console.log("Valid punctuation")
-				}
-			}
-
-			//Special rules
-			if(res.special){
-				//Punctuation should be only after specific field
-				if(res.special.afterOnly){
-					findLastSubfield();
-					if(typeof(res.special.strict) === 'undefined') res.special.strict = true; //Just to be safe
-					lastSubField.code === res.special.afterOnly ? normalPuncRules(lastSubField, res.punc, res.special.strict) : normalPuncRules(lastSubField, !res.punc, true)
-				
-				//Rules if last, some subrules
-				}else if(res.special.ifLast){
-					findLastSubfield();
-
-					//IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
-					if(res.special.ind && field.ind2 === res.special.ind){
-						//Extra dot at the end of $c ('© 1974.'), which should be only copyright year
-						lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); //If string ends to dot
-						if(lastSubField.value.includes('©') && lastPuncDot){
-							message.message.push('Field ' + tag + ' has invalid ending punctuation');
-							if(fix){
-								lastSubField.value = lastSubField.value.slice(0, -1);
-								message.fix.push('Field ' + tag + ' - Removed punctuation from $'+ lastSubField.code);
-							} 
-						} 
-						
-						//Checked field is actually $b
-						lastSubField = find(field.subfields, {code: 'b'});
-						normalPuncRules(lastSubField, res.punc, false);  //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-					
-					//Otherwise normal punc rules
-					}else normalPuncRules(lastSubField, res.punc, false); //Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-				
-				//Second last
-				}else if(res.special.secondLastIfLast){
-					field.subfields.forEach(subField => {
-						if(isNaN(subField.code) && res.special.secondLastIfLast !== subField.code) lastSubField = subField; //Not control field
-						if(typeof(res.special.last) !== 'undefined' && res.special.secondLastIfLast === subField.code) normalPuncRules(subField, res.special.last, true); //Strict because this field should not be abbreviation
-					})
-					normalPuncRules(lastSubField, res.punc, false); 
-
-				//Search for Finnish terms
-				}else if(res.special.termField){
-					findLastSubfield();
-					var languageField = find(field.subfields, {code: res.special.termField});
-					(languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) ? normalPuncRules(lastSubField, res.punc, true) : normalPuncRules(lastSubField, res.special.else, false);  //Strict because of years etc (648, 650)
-					
-				//Search last of array in subfields and check if it has punc
-				}else if(res.special.lastOf){
-					lastSubField = null;
-					field.subfields.forEach(subField => {
-						if(isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) lastSubField = subField; //Not control field
-						if(res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1) normalPuncRules(subField, res.punc, true); //Strict because of mandatory
-					})
-
-					if(lastSubField) normalPuncRules(lastSubField, res.punc, false);
-
-				//If field has linked rules (tag: 880), find rules and re-validate
-				}else if(res.special.linked){
-					var linkedTag = null;
-					try{
-						linkedTag = parseInt(find(field.subfields, {code: res.special.linked}).value.substr(0,3), 10) //Substring feels stupid, but is used in MarcRecord to extract tag. 
-					}catch(e){
-						return false;
-					}
-					validateField(field, linkedTag);
-				}
-
-			//Normal rules
-			}else{
-				findLastSubfield();
-				normalPuncRules(lastSubField, res.punc, false);
-			} 
 		}
 
-		//Actual parsing of all fields
-		if(!record.fields) return false;
+		// Actual parsing of all fields
+		if (!record.fields) {
+			return false;
+		}
 		record.fields.forEach(field => {
 			validateField(field);
 		});
 
-		message.message.length >= 1 ? message.valid = false : message.valid = true;
+		message.valid = !(message.message.length >= 1);
 		return message;
 	}
 }
-
-
-const validPuncMarks = '?"-!,)]';
-
-const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars'];
-
-//Configuration specification
-const confSpec = [
-	{ // 010-035	EI	 
-		rangeStart: 10,
-		rangeEnd: 35,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	036	KYLLÄ vain osakentän $b jälkeen
-		rangeStart: null,
-		rangeEnd: null,
-		index: 36,
-		punc: true,
-		special: {
-			afterOnly: 'b',
-			strict: true //Punctuation only after $b, because $a is register number
-		}
-	},{ //	037-050	EI	 
-		rangeStart: 37,
-		rangeEnd: 50,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	051	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 51,
-		punc: true,
-		special: null
-	},{ //	052-09X	EI
-		rangeStart: 52,
-		rangeEnd: 99,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	100	KYLLÄ
-		rangeStart: null,
-		rangeEnd: null,
-		index: 100,
-		punc: true,
-		special: null
-	},{ //	110	KYLLÄ
-		rangeStart: null,
-		rangeEnd: null,
-		index: 110,
-		punc: true,
-		special: null
-	},{ //	111	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 111,
-		punc: true,
-		special: null
-	},{ //	130	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 130,
-		punc: true,
-		special: null
-	},{ //	210	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 210,
-		punc: false,
-		special: null
-	},{ //	222	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 222,
-		punc: false,
-		special: null
-	},{ //	240	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 240,
-		punc: false,
-		special: null
-	},{ //	242	KYLLÄ	Jos viimeinen osakenttä on $y, piste on ennen sitä
-		rangeStart: null,
-		rangeEnd: null,
-		index: 242,
-		punc: true,
-		special: {
-			secondLastIfLast: 'y',
-			last: false
-		}
-	},{ //	243	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 243,
-		punc: false,
-		special: null
-	},{ //	245	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 245,
-		punc: true,
-		special: null
-	},{ //	246-247	EI	 
-		rangeStart: 246,
-		rangeEnd: 247,
-		index: null,
-		punc: false,
-		special: null
-	},{ // 	250	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 250,
-		punc: true,
-		special: null
-	},{ //	254-258	KYLLÄ	 
-		rangeStart: 254,
-		rangeEnd: 258,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	260	KYLLÄ	Pääsääntö: $a : $b, $c. Tarkista eri poikkeukset ja välimerkitys MARC 21 Full -versiosta
-		rangeStart: null,
-		rangeEnd: null,
-		index: 260,
-		punc: true,
-		special: {
-			afterOnly: 'c',
-			strict: false //Others fields may contain abbreviation
-		}
-	},{ //	263	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 263,
-		punc: false,
-		special: null
-	},{ //	264	KYLLÄ	Tarkista poikkeukset MARC 21 -sovellusohjeesta
-		rangeStart: null,
-		rangeEnd: null,
-		index: 264,
-		punc: true,
-		special: {
-			ifLast: 'c',
-			ind: '4'
-		}
-	},{ //	270	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 270,
-		punc: false,
-		special: null
-	},{ //	300	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 300,
-		punc: false,
-		special: null
-	},{ //	306	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 306,
-		punc: false,
-		special: null
-	},{ //	307	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 307,
-		punc: true,
-		special: null
-	},{ //	310	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 310,
-		punc: false,
-		special: null
-	},{ //	321	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 321,
-		punc: false,
-		special: null
-	},{ //	336-338	EI	 
-		rangeStart: 336,
-		rangeEnd: 338,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	340	KYLLÄ	Vain joidenkin osakenttien jälkeen. Tarkista osakentät MARC 21 Full -versiosta
-		rangeStart: null,
-		rangeEnd: null,
-		index: 340,
-		punc: true,
-		special: {
-			lastOf: ['a', 'd', 'e', 'f', 'h', 'i'],
-			mandatory: ['b']
-		}
-	},{ //	342	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 342,
-		punc: false,
-		special: null
-	},{ //	343	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 343,
-		punc: true,
-		special: null
-	},{ //	344-348	EI	 
-		rangeStart: 344,
-		rangeEnd: 348,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	351-352	KYLLÄ	 
-		rangeStart: 351,
-		rangeEnd: 352,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	355	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 355,
-		punc: false,
-		special: null
-	},{ //	357	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 357,
-		punc: false,
-		special: null
-	},{ //	362	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 362,
-		punc: true,
-		special: null
-	},{ //	363	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 363,
-		punc: false,
-		special: null
-	},{ //	365-366	EI	 
-		rangeStart: 365,
-		rangeEnd: 366,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	370	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 370,
-		punc: false,
-		special: null
-	},{ //	377	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 377,
-		punc: false,
-		special: null
-	},{ //	380-388	EI	 
-		rangeStart: 380,
-		rangeEnd: 388,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	490	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 490,
-		punc: false,
-		special: null
-	},{ //	500-509	KYLLÄ	 
-		rangeStart: 500,
-		rangeEnd: 509,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	510	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 510,
-		punc: false,
-		special: null
-	},{ //	511-518	KYLLÄ	 
-		rangeStart: 511,
-		rangeEnd: 518,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	520	KYLLÄ	Jos viimeinen osakenttä on $u, piste on ennen sitä
-		rangeStart: null,
-		rangeEnd: null,
-		index: 520,
-		punc: true,
-		special: {
-			secondLastIfLast: 'u',
-			// last: false //$u is URL and hence should not be checked as URL's can have '.' at end
-		}
-	},{ //	521-526	KYLLÄ	 
-		rangeStart: 521,
-		rangeEnd: 526,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	530	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 530,
-		punc: true,
-		special: null
-	},{ //	533-534	KYLLÄ	 
-		rangeStart: 533,
-		rangeEnd: 534,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	535-536	EI	 
-		rangeStart: 535,
-		rangeEnd: 536,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	538	KYLLÄ	Jos viimeinen osakenttä on $u, piste on ennen sitä
-		rangeStart: null,
-		rangeEnd: null,
-		index: 538,
-		punc: true,
-		special: {
-			secondLastIfLast: 'u', 
-			// last: false //$u is URL and hence should not be checked as URL's can have '.' at end
-		}
-	},{ //	540-541	KYLLÄ	 
-		rangeStart: 540,
-		rangeEnd: 541,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	542	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 542,
-		punc: false,
-		special: null
-	},{ //	544-547	KYLLÄ	 
-		rangeStart: 544,
-		rangeEnd: 547,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	550	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 550,
-		punc: true,
-		special: null
-	},{ //	552	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 552,
-		punc: true,
-		special: null
-	},{ //	555-556	KYLLÄ	 
-		rangeStart: 555,
-		rangeEnd: 556,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	561-563	KYLLÄ	 
-		rangeStart: 561,
-		rangeEnd: 563,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	565	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 565,
-		punc: false,
-		special: null
-	},{ //	567	KYLLÄ osakentän $a jälkeen, EI muiden osakenttien jälkeen
-		rangeStart: null,
-		rangeEnd: null,
-		index: 567,
-		punc: true,
-		special: {
-			afterOnly: 'a',
-			strict: true //$b can only be controlled term
-		}
-	},{ //	580-581	KYLLÄ	 
-		rangeStart: 580,
-		rangeEnd: 581,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	583	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 583,
-		punc: false,
-		special: null
-	},{ //	584-585	KYLLÄ	 
-		rangeStart: 584,
-		rangeEnd: 585,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	586	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 586,
-		punc: false,
-		special: null
-	},{ //	588	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: null,
-		punc: true,
-		special: null
-	},{ //	59X	EI	 
-		rangeStart: 590,
-		rangeEnd: 599,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	600	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 600,
-		punc: true,
-		special: null
-	},{ //	610	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 610,
-		punc: true,
-		special: null
-	},{ //	611	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 611,
-		punc: true,
-		special: null
-	},{ //	630	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 630,
-		punc: true,
-		special: null
-	},{ //	647-651	 	EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ
-		rangeStart: 647,
-		rangeEnd: 651,
-		index: null,
-		punc: false,
-		special: {
-			termField: '2',
-			finnishTerms : finnishTerms,
-			else : true
-		}
-	},{ //	653	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 653,
-		punc: false,
-		special: null
-	},{ //	654-662	 	EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ
-		rangeStart: 654,
-		rangeEnd: 662,
-		index: null,
-		punc: false,
-		special: {
-			termField: '2',
-			finnishTerms : finnishTerms,
-			else : true
-		}
-	},{ //	69X	EI	 
-		rangeStart: 690,
-		rangeEnd: 699,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	700	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 700,
-		punc: true,
-		special: null
-	},{ //	710	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 710,
-		punc: true,
-		special: null
-	},{ //	711	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 711,
-		punc: true,
-		special: null
-	},{ //	720	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 720,
-		punc: false,
-		special: null
-	},{ //	730	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 730,
-		punc: true,
-		special: null
-	},{ //	740	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 740,
-		punc: true,
-		special: null
-	},{ //	751	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 751,
-		punc: false,
-		special: null
-	},{ //	752	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 752,
-		punc: true,
-		special: null
-	},{ //	753	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 753,
-		punc: false,
-		special: null
-	},{ //	754	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 754,
-		punc: true,
-		special: null
-	},{ //	758	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 758,
-		punc: false,
-		special: null
-	},{ //	760-787	 KYLLÄ osakentän $a jälkeen, EI muiden osakenttien jälkeen
-		rangeStart: 760,
-		rangeEnd: 787,
-		index: null,
-		punc: true,
-		special: {
-			afterOnly: 'a',
-			strict: false 
-		}
-	},{ //	800	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 800,
-		punc: true,
-		special: null
-	},{ //	810	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 810,
-		punc: true,
-		special: null
-	},{ //	811	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 811,
-		punc: true,
-		special: null
-	},{ //	830	KYLLÄ	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 830,
-		punc: true,
-		special: null
-	},{ //	850	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 850,
-		punc: false,
-		special: null
-	},{ //	852	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 852,
-		punc: false,
-		special: null
-	},{ //	856	EI	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 856,
-		punc: false,
-		special: null
-	},{ //	880	Samoin kuin vastaavat kentät	 
-		rangeStart: null,
-		rangeEnd: null,
-		index: 880,
-		punc: null,
-		special: {
-			linked: '6'
-		}
-	},{ //	882-887	EI	 
-		rangeStart: 882,
-		rangeEnd: 887,
-		index: null,
-		punc: false,
-		special: null
-	},{ //	9XX	EI	 
-		rangeStart: 900,
-		rangeEnd: 999,
-		index: null,
-		punc: false,
-		special: null
-	}
-]
