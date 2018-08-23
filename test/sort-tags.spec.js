@@ -31,7 +31,7 @@ import {expect} from 'chai';
 import MarcRecord from 'marc-record-js';
 import validatorFactory from '../src/sort-tags';
 
-describe('duplicates-ind1', () => {
+describe('sort-tags', () => {
 	it('Creates a validator', async () => {
 		const validator = await validatorFactory();
 
@@ -47,7 +47,6 @@ describe('duplicates-ind1', () => {
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				leader: 'foo',
 				fields: [
 					{
 						tag: '001',
@@ -90,7 +89,6 @@ describe('duplicates-ind1', () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord(
 				{
-					leader: 'foo',
 					fields: [
 						{
 							tag: '008',
@@ -135,7 +133,6 @@ describe('duplicates-ind1', () => {
 			const validator = await validatorFactory([/^5..$/, /^7..$/]);
 			const record = new MarcRecord(
 				{
-					leader: 'foo',
 					fields: [
 						{
 							tag: '001',
@@ -143,6 +140,10 @@ describe('duplicates-ind1', () => {
 						},
 						{
 							tag: '530',
+							value: 'bar'
+						},
+						{
+							tag: '30',
 							value: 'bar'
 						},
 						{
@@ -217,81 +218,80 @@ describe('duplicates-ind1', () => {
 			await validator.fix(record);
 			expect(record.fields).to.eql([
 				{
-					leader: 'foo',
-					fields: [
+					tag: '001',
+					value: '100'
+				},
+				{
+					tag: '30',
+					value: 'bar'
+				},
+				{
+					tag: '530',
+					value: 'bar'
+				},
+				{
+					tag: '520',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
 						{
-							tag: '001',
-							value: '100'
-						},
+							code: 'a',
+							value: 'asdassdaasdsadsasad'
+						}
+					]
+				},
+				{
+					tag: '700',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
 						{
-							tag: '008',
-							value: 'bar'
-						},
+							code: 'a',
+							value: 'Bar Foo'
+						}
+					]
+				},
+				{
+					tag: '711',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
 						{
-							tag: '245',
-							ind1: ' ',
-							ind2: ' ',
-							subfields: [
-								{
-									code: 'a',
-									value: 'Fubar'
-								}
-							]
-						},
+							code: 'a',
+							value: 'Foo'
+						}
+					]
+				},
+				{
+					tag: '710',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
 						{
-							tag: '520',
-							ind1: ' ',
-							ind2: ' ',
-							subfields: [
-								{
-									code: 'a',
-									value: 'asdassdaasdsadsasad'
-								}
-							]
-						},
+							code: 'w',
+							value: 'Bar'
+						}
+					]
+				},
+				{
+					tag: 'a',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
 						{
-							tag: '500',
-							ind1: ' ',
-							ind2: ' ',
-							subfields: [
-								{
-									code: 'a',
-									value: 'qweweqewqqweweqwq'
-								}
-							]
-						},
+							code: 'a',
+							value: 'qweweqewqqweweqwq'
+						}
+					]
+				},
+				{
+					tag: 'c',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
 						{
-							tag: '700',
-							ind1: ' ',
-							ind2: ' ',
-							subfields: [
-								{
-									code: 'a',
-									value: 'Bar Foo'
-								}
-							]
-						},
-						{
-							tag: '710',
-							ind1: ' ',
-							ind2: ' ',
-							subfields: [
-								{
-									code: 'a',
-									value: 'Foo'
-								}
-							]
-						},
-						{
-							tag: '711',
-							ind1: ' ',
-							ind2: ' ',
-							subfields: [
-								{
-									code: 'w',
-									value: 'Bar'
-								}
-							]
+							code: 'a',
+							value: 'Fubar'
 						}
 					]
 				}

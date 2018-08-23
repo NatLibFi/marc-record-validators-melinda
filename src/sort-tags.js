@@ -55,36 +55,47 @@
  */
 
 'use strict';
-import {orderBy, isEqual} from 'lodash';
+import {orderBy, isEqual, reject} from 'lodash';
 
 export default async function (tagPattern) {
 	return {
 		description:
 				'Handles field ordering',
-		validate: async record => ({
-			valid: await validate(record.fields, tagPattern)
-		}),
+		validate,
 		fix: async record => ({
-			fix: await sort(record.fields, tagPattern)
+			fix: await sort(record, tagPattern)
 		})
 	};
 
-	function validate(fields, tagPattern) {
-		const original = fields;
-		const sorted = sort(fields, tagPattern);
-		const compareArrays = isEqual(original, sorted);
+	async function validate(record, tagPattern) {
+		const compareArrays = isEqual(record.fields, await sort(record.fields, tagPattern));
 		return compareArrays ? {valid: true, messages: []} : {valid: false, messages: ['Fields are in incorrect order']};
 	}
 
-	function sort(fields, tagPattern) {
+	function sort(record, tagPattern) {
 		if (tagPattern) {
-			const matchingTags = fields.map((field, index) => {
-				return tagPattern.some(pattern => pattern.test(field.tag)) ? {field, index} : null;
-			});
-			const trimmedResults = matchingTags.filter(x => x);
-			return trimmedResults;
+			return sortPatternFields(record, tagPattern);
 		}
-		const sortedFields = orderBy(fields, ['tag']);
-		return sortedFields;
+		return sortFields(record);
 	}
+}
+
+function sortPatternFields(record, tagPattern) {
+	const matchingTags = record.fields.map(field => {
+		return tagPattern.some(pattern => pattern.test(field.tag)) ? field : null;
+	}).filter(tag => tag);
+	const sortedArray = sortFields(record.fields);
+	const fixedList = reject(sortedArray, (field => tagPattern.some(pattern => pattern.test(field.tag))));
+	fixedList.splice(index(sortedArray, tagPattern), 0, ...matchingTags);
+	record.fields = fixedList;
+}
+
+function sortFields(fields) {
+	return orderBy(fields, ['tag']);
+}
+
+function index(fields, tagPattern) {
+	return fields.findIndex(field => {
+		return tagPattern.some(pattern => pattern.test(field.tag));
+	});
 }
