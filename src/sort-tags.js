@@ -85,9 +85,9 @@ function sortPatternFields(record, tagPattern) {
 		return tagPattern.some(pattern => pattern.test(field.tag)) ? field : null;
 	}).filter(tag => tag);
 	const sortedArray = sortFields(record.fields);
-	const fixedList = reject(sortedArray, (field => tagPattern.some(pattern => pattern.test(field.tag))));
-	fixedList.splice(index(sortedArray, tagPattern), 0, ...matchingTags);
-	record.fields = fixedList;
+	const fixedArray = reject(sortedArray, (field => tagPattern.some(pattern => pattern.test(field.tag))));
+	fixedArray.splice(index(sortedArray, tagPattern), 0, ...matchingTags);
+	record.fields = fixedArray;
 }
 
 function sortFields(fields) {
