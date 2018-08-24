@@ -138,14 +138,8 @@ describe('unicode-decomposition', () => {
 						}
 					]
 				};
-				const fixed = await validator.fix(record);
+				await validator.fix(record);
 
-				expect(fixed).to.eql([
-					{
-						old: recordOriginal.fields[0],
-						new: fieldModified
-					}
-				]);
 				expect(recordOriginal).to.not.eql(record.toJsonObject());
 				expect(record.fields).to.eql([fieldModified]);
 			});

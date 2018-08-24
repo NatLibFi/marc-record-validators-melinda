@@ -25,8 +25,89 @@
  * for the JavaScript code in this file.
  *
  **/
-
-import {MAP_CONVERSION, modifySubfields} from './utils/unicodes';
+const MAP_CONVERSION = {
+	/**
+   * @internal Normalizations
+   **/
+	'‐': '-',
+	'‑': '-',
+	'‒': '-',
+	'–': '-',
+	'—': '-',
+	'―': '-',
+	/**
+   * @internal Precompose å, ä, ö, Å, Ä and Ö
+   **/
+	å: 'å',
+	ä: 'ä',
+	ö: 'ö',
+	Å: 'Å',
+	Ä: 'Ä',
+	Ö: 'Ö',
+	/**
+   * @internal Decompose everything else (list incomplete)
+   **/
+	á: 'á',
+	à: 'à',
+	â: 'â',
+	ã: 'ã',
+	é: 'é',
+	è: 'è',
+	ê: 'ê',
+	ẽ: 'ẽ',
+	ë: 'ë',
+	í: 'í',
+	ì: 'ì',
+	î: 'î',
+	ĩ: 'ĩ',
+	ï: 'ï',
+	ñ: 'ñ',
+	ó: 'ó',
+	ò: 'ò',
+	ô: 'ô',
+	õ: 'õ',
+	ś: 'ś',
+	ú: 'ú',
+	ù: 'ù',
+	û: 'û',
+	ü: 'ü',
+	ũ: 'ũ',
+	ý: 'ý',
+	ỳ: 'ỳ',
+	ŷ: 'ŷ',
+	ỹ: 'ỹ',
+	ÿ: 'ÿ',
+	Á: 'Á',
+	À: 'À',
+	Â: 'Â',
+	Ã: 'Ã',
+	É: 'É',
+	È: 'È',
+	Ê: 'Ê',
+	Ẽ: 'Ẽ',
+	Ë: 'Ë',
+	Í: 'Í',
+	Ì: 'Ì',
+	Î: 'Î',
+	Ĩ: 'Ĩ',
+	Ï: 'Ï',
+	Ñ: 'Ñ',
+	Ó: 'Ó',
+	Ò: 'Ò',
+	Ô: 'Ô',
+	Õ: 'Õ',
+	Ś: 'Ś',
+	Ú: 'Ú',
+	Ù: 'Ù',
+	Û: 'Û',
+	Ũ: 'Ũ',
+	Ü: 'Ü',
+	Ý: 'Ý',
+	Ỳ: 'Ỳ',
+	Ŷ: 'Ŷ',
+	Ỹ: 'Ỹ',
+	Ÿ: 'Ÿ'
+};
 
 export default async function () {
 	const PATTERN = Object.keys(MAP_CONVERSION).reduce((result, key, index, list) => {
@@ -51,12 +132,12 @@ export default async function () {
 	}
 
 	async function fix(record) {
-		return getFields(record.fields).map(field => {
-			return modifySubfields(field, subfield => {
-				if (PATTERN.test(subfield.value)) {
+		getFields(record.fields).forEach(field => {
+			field.subfields
+				.filter(subfield => PATTERN.test(subfield.value))
+				.forEach(subfield => {
 					subfield.value = convert(subfield.value);
-				}
-			});
+				});
 		});
 	}
 
