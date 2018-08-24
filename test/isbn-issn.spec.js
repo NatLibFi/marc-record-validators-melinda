@@ -29,11 +29,12 @@
 /* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
 
 'use strict';
+
 import {expect} from 'chai';
 import MarcRecord from 'marc-record-js';
-import validatorFactory from '../src/empty-fields';
+import validatorFactory from '../src/isbn-issn';
 
-describe('empty-fields', () => {
+describe('isbn-issn', () => {
 	it('Creates a validator', async () => {
 		const validator = await validatorFactory();
 
@@ -51,162 +52,127 @@ describe('empty-fields', () => {
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '001',
-						value: '1234567',
-						subfields: [
-							{
-								code: 'a',
-								value: 'foo'
-							}
-						]
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: '978-951-9155-47-0'}]
+					},
+					{
+						tag: '022',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: '0355-0893'}]
 					}
 				]
 			});
 			const result = await validator.validate(record);
-			expect(result).to.eql({valid: true, messages: []});
+
+			expect(result).to.eql({valid: true});
 		});
 
-		it('Finds an empty tag value', async () => {
+		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '008',
-						value: '',
-						subfields: [
-							{
-								code: 'a',
-								value: 'foo'
-							}
-						]
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: 'foo'}]
+					},
+					{
+						tag: '022',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: 'bar'}]
 					}
 				]
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: ['Field 008 has empty value']});
+			expect(result).to.eql({valid: false, messages: [
+				'ISBN foo is not valid',
+				'ISSN bar is not valid'
+			]});
 		});
 
-		it('Finds an empty subfield value', async () => {
+		it('Finds the record invalid (ISSN in \'l\'-subfield)', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '245',
-						subfields: [
-							{
-								code: 'a',
-								value: ''
-							}
-						]
-					}
-				]
-			});
-			const result = await validator.validate(record);
-
-			expect(result).to.eql({valid: false, messages: ['Field 245$a has empty value']});
-		});
-
-		it('Finds an empty subfield array', async () => {
-			const validator = await validatorFactory();
-			const record = new MarcRecord({
-				fields: [
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: 'foo'}]
+					},
 					{
-						tag: '500',
-						subfields: [
-						]
+						tag: '022',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'l', value: 'bar'}]
 					}
 				]
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: ['Field 500 has no subfields']});
+			expect(result).to.eql({valid: false, messages: [
+				'ISBN foo is not valid',
+				'ISSN bar is not valid'
+			]});
 		});
 	});
 
 	describe('#fix', () => {
-		it('Removes tag with empty value', async () => {
+		it('Moves invalid ISBN to z-subfield', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				fields: [
-					{
-						tag: '001',
-						value: '1234567'
-					},
-					{
-						tag: '008',
-						value: ''
-					}
-				]
+				fields: [{tag: '020', ind1: ' ', ind2: ' ',
+					subfields: [{code: 'a', value: 'foo'}]
+				}]
 			});
+
 			await validator.fix(record);
 
-			expect(record.fields).to.eql([
-				{
-					tag: '001',
-					value: '1234567'
-				}
-			]);
+			expect(record.fields).to.eql([{
+				tag: '020', ind1: ' ', ind2: ' ', subfields: [
+					{code: 'z', value: 'foo'}
+				]
+			}]);
 		});
 
-		it('Removes an empty value inside subfields array', async () => {
+		it('Moves invalid ISSN to y-subfield', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				fields: [
-					{
-						tag: '245',
-						subfields: [
-							{
-								code: 'a',
-								value: 'foo'
-							},
-							{
-								code: 'b',
-								value: ''
-							}
-						]
-					}
-				]
+				fields: [{tag: '022', ind1: ' ', ind2: ' ',
+					subfields: [{code: 'a', value: 'foo'}]
+				}]
 			});
+
 			await validator.fix(record);
 
-			expect(record.fields).to.eql(
-				[
-					{
-						tag: '245',
-						subfields: [
-							{
-								code: 'a',
-								value: 'foo'
-							}
-						]
-					}
-				]);
+			expect(record.fields).to.eql([{
+				tag: '022', ind1: ' ', ind2: ' ', subfields: [
+					{code: 'y', value: 'foo'}
+				]
+			}]);
 		});
 
-		it('Removes an empty subfields array', async () => {
+		it('Moves invalid ISSN to y-subfield (Origin l-subfield)', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				fields: [
-					{
-						tag: '001',
-						value: '1234567'
-					},
-					{
-						tag: '500',
-						subfields: [
-						]
-					}
-				]
+				fields: [{tag: '022', ind1: ' ', ind2: ' ',
+					subfields: [{code: 'l', value: 'foo'}]
+				}]
 			});
+
 			await validator.fix(record);
 
-			expect(record.fields).to.eql([
-				{
-					tag: '001',
-					value: '1234567'
-				}
-			]);
+			expect(record.fields).to.eql([{
+				tag: '022', ind1: ' ', ind2: ' ', subfields: [
+					{code: 'y', value: 'foo'}
+				]
+			}]);
 		});
 	});
 });
