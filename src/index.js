@@ -37,6 +37,7 @@ import FieldsPresent from './fields-present';
 import EndingPunctuation from './ending-punctuation';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
+import FixedFields from './fixed-fields';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import UnicodeDecomposition from './unicode-decomposition';
 
@@ -48,6 +49,7 @@ export {
 	EndingPunctuation,
 	IsbnIssn,
 	ItemLanguage,
-	UnicodeDecomposition,
-	ResolvableExtReferences
+	FixedFields,
+	ResolvableExtReferences,
+	UnicodeDecomposition
 };
