@@ -41,13 +41,13 @@ import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import UnicodeDecomposition from './unicode-decomposition';
 
 export {
-  DoubleCommas, 
-  DuplicatesInd1,
-  EmptyFields,
-  FieldsPresent,
-  EndingPunctuation,
-  IsbnIssn,
-  ItemLanguage,
-  UnicodeDecomposition,
-  ResolvableExtReferences
+	DoubleCommas,
+	DuplicatesInd1,
+	EmptyFields,
+	FieldsPresent,
+	EndingPunctuation,
+	IsbnIssn,
+	ItemLanguage,
+	UnicodeDecomposition,
+	ResolvableExtReferences
 };
