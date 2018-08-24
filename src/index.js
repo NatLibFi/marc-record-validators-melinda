@@ -34,5 +34,6 @@ import DoubleCommas from './double-commas';
 import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
 import FieldsPresent from './fields-present';
-import EndingPunctuation from './ending-punctuation'
+import EndingPunctuation from './ending-punctuation';
+
 export {DoubleCommas, DuplicatesInd1, EmptyFields, FieldsPresent, EndingPunctuation};
