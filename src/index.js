@@ -38,14 +38,18 @@ import EndingPunctuation from './ending-punctuation';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
 import FixedFields from './fixed-fields';
+import ResolvableExtReferences from './resolvable-ext-references-melinda';
+import UnicodeDecomposition from './unicode-decomposition';
 
 export {
 	DoubleCommas,
 	DuplicatesInd1,
 	EmptyFields,
 	FieldsPresent,
+	EndingPunctuation,
 	IsbnIssn,
 	ItemLanguage,
-	EndingPunctuation,
-	FixedFields
+	FixedFields,
+	ResolvableExtReferences,
+	UnicodeDecomposition
 };
