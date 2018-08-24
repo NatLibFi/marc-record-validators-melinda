@@ -37,5 +37,17 @@ import FieldsPresent from './fields-present';
 import EndingPunctuation from './ending-punctuation';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
+import ResolvableExtReferences from './resolvable-ext-references-melinda';
+import UnicodeDecomposition from './unicode-decomposition';
 
-export {DoubleCommas, DuplicatesInd1, EmptyFields, FieldsPresent, IsbnIssn, ItemLanguage, EndingPunctuation};
+export {
+	DoubleCommas,
+	DuplicatesInd1,
+	EmptyFields,
+	FieldsPresent,
+	EndingPunctuation,
+	IsbnIssn,
+	ItemLanguage,
+	UnicodeDecomposition,
+	ResolvableExtReferences
+};
