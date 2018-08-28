@@ -135,7 +135,7 @@ describe('language', () => {
 			]});
 		});
 
-		it('Finds the record invalid (Detected language differs and has multiple suggestions)', async () => {
+		it('Finds the record valid (Detected language differs and has multiple suggestions)', async () => {
 			const validator = await validatorFactory(/^520$/);
 			const record = new MarcRecord({
 				fields: [
@@ -158,8 +158,9 @@ describe('language', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: [
-				'Item language code is invalid. Suggestions: fin, eng'
+			expect(result).to.eql({valid: true, messages: [
+				'Item language code is invalid. Current code: \'eng\', suggestions: fin,eng'
+
 			]});
 		});
 	});

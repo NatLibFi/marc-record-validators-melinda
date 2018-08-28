@@ -71,8 +71,8 @@ export default async function (tagPattern, treshold = 90) {
 		}
 
 		if (results.suggested) {
-			return {valid: false, messages: [
-				`Item language code is invalid. Suggestions: ${results.suggested}`
+			return {valid: Boolean(results.currentCode), messages: [
+				`Item language code is invalid. Current code: '${results.currentCode}', suggestions: ${results.suggested.join()}`
 			]};
 		}
 	}
@@ -82,11 +82,15 @@ export default async function (tagPattern, treshold = 90) {
 
 		/* istanbul ignore if: Unreliable text is hard to find */
 		if (results.notReliable && !results.currentCode) {
-			throw new Error('Language code is missing and detection results are unreliable');
+			return;
+		}
+
+		if (results.suggested && results.currentCode) {
+			return;
 		}
 
 		if (results.failed && !results.currentCode) {
-			throw new Error('Language code is missing and detection failed');
+			return;
 		}
 
 		if (results.detected && results.detected !== results.currentCode) {
@@ -125,15 +129,15 @@ export default async function (tagPattern, treshold = 90) {
 				}]});
 			}
 		}
-
-		return {valid: false, messages: [
-			`Item language code is invalid. Correct language code: ${results.detected}`
-		]};
 	}
 
 	async function checkLanguage(record) {
 		const text = getText(record);
 		const langCode = getLanguageCode(record);
+
+		if (text.length === 0) {
+			return {failed: true, currentCode: langCode};
+		}
 
 		try {
 			const results = await detect(text);
@@ -149,9 +153,8 @@ export default async function (tagPattern, treshold = 90) {
 				}
 
 				return {
-					suggested: results.languages
-						.map(l => get2TLangCode(l.code))
-						.join(', ')
+					currentCode: langCode,
+					suggested: results.languages.map(l => get2TLangCode(l.code))
 				};
 			}
 
@@ -161,7 +164,7 @@ export default async function (tagPattern, treshold = 90) {
 				return {failed: true, currentCode: langCode};
 			}
 
-			throw err;
+			throw err instanceof Error ? err : new Error(err.message);
 		}
 
 		function getText(record) {
