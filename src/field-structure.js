@@ -77,6 +77,12 @@ const confSpec = {
 	dependencies: { // Description: Dependencies configuration
 		type: 'array', // Array<Dependency>
 		contains: 'dependencySpec'
+	},
+	minOccurrance: { //ToDo
+		type: 'number' //Defines the minimum number of times the field must occur. Defaults to 1.
+	},
+	maxOccurrance: { //ToDo
+		type: 'number' //Defines the maximum number of times the field can occur. Defaults to unlimited.
 	}
 };
 
@@ -119,6 +125,15 @@ const depSpec = {
 	subfields: { // Description: An object with subfield codes as keys and RegExp patterns as values. The subfield value must this pattern.
 		type: Object, // [String, RegExp]
 		required: false
+	},
+	negate: { //ToDo
+		type: 'boolean' // Determines if the rule is negated: No fields can match the dependency specification. Defaults to false.
+	}, //ToDo
+	minOccurrance: {
+		type: 'number' //Defines the minimum number of times the field must occur. Defaults to 1.
+	}, //ToDo
+	maxOccurrance: {
+		type: 'number' //Defines the maximum number of times the field can occur. Defaults to unlimited.
 	}
 };
 
@@ -205,18 +220,41 @@ export default async function (config) {
 		return res;
 	}
 
+	function checkOccuranceError(max, min, length){
+		//Check max and min occurrance of field. Done here to detect cases of 0 occurance and remove duplicate checks
+		if((max && max> length)
+			|| (min && min < length)){
+				console.log("Occurance error")
+			return true;
+		}
+	}
+
 	// Recursive validation function
 	function recordMatchesConfigElement(record, searchedField, confObj, dependencies) {
+		console.log("--------------------------------")
+		console.log("searchedField: ", searchedField);
 		const foundFields = record.get(searchedField);
+		console.log("Confobj: ", confObj);
+		console.log("Max: ", confObj.maxOccurrance, " length: ", foundFields.length, " boolean: ", confObj.maxOccurrance > foundFields.length);
+		console.log("Min: ", confObj.minOccurrance, " length: ", foundFields.length, " boolean: ", confObj.minOccurrance < foundFields.length);
+
+		if(checkOccuranceError(confObj.maxOccurrance, confObj.minOccurrance, foundFields.length)){
+			return false;
+		}
+		
 		// If data matching configuration is not found
 		if (foundFields.length === 0) {
+			console.log("FoundFields empty")
 			return false;
 		}
 
 		// Parse trough record objects matching provided configuration object
 		return foundFields.every(recordSubObj => {
+			console.log("recordSubObj: ", recordSubObj);
 			// Check that every configuration field exists in record and matches configuration
 			return Object.keys(confObj).every(confField => {
+				console.log("confField: ", confField);
+
 				// If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
 				if (confObj[confField] instanceof RegExp) {
 					// 'valuePattern' RegExp in conf spec is used to validate 'value' in marc
@@ -229,9 +267,9 @@ export default async function (config) {
 					return confObj[confField].test(recordSubObj[confField]);
 				}
 
-				// Only the specified subfields are allowed if set to true. Defaults to false. (this is checked at subfields)
+				// Only the specified subfields are allowed if set to true. Defaults to false. 
 				if (confField === 'strict') {
-					return true;
+					return true; //This is checked at subfields
 				}
 
 				// Check that subfield stuff
@@ -270,15 +308,25 @@ export default async function (config) {
 
 				// Recursive check for dependicies
 				if (confField === 'dependencies') {
+					console.log("Dependency recursive")
+					//ToDo, calculate occurances etc.
+					if(checkOccuranceError(confObj[confField].maxOccurrance, confObj[confField].minOccurrance, occ)){
+						return false;
+					}
 					return recordMatchesConfig(record, confObj[confField], true);
 				}
 
-				// This should not be reached as configuration is validated
+				if(confField === 'maxOccurrance' || confField === 'minOccurrance'){
+					console.log("Occurance: ", confObj[confField]);
+					return true; //Checked on higher level, but detect valid conf field.
+				}
 
+				// This should not be reached as configuration is validated
 				console.log('!!! Configuration field not identified: ', recordSubObj[confField], ' | ', typeof recordSubObj[confField]);
 				return false;
 			});
 		});
+		console.log("--------------------------------")
 	}
 	/// /////////////////////////////////////////
 }
