@@ -46,7 +46,7 @@
 		"xml2js": ">=0.4.19 <1.0.0"
 	},
 	"peerDependencies": {
-		"@natlibfi/marc-record-validate": "^2.0.0"
+		"@natlibfi/marc-record-validate": "^3.0.0"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
