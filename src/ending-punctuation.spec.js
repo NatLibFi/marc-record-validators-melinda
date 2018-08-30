@@ -32,19 +32,21 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/ending-punctuation';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
 // Factory validation
-describe('field-structure', () => {
+describe('ending-punctuation', () => {
 	// Indicators and subfields validation
 	describe('#validate: Indicators and subfields', () => {
-		const recordValid = new MarcRecord({
+		const recordValid = new MarcRecord({leader: '',
 			fields: [{
 				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
 					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'},
@@ -52,6 +54,8 @@ describe('field-structure', () => {
 				]
 			}, {
 				tag: '337', // Range 336-338
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'käytettävissä ilman laitetta'},
 					{code: 'b', value: 'n'},
@@ -59,15 +63,19 @@ describe('field-structure', () => {
 				]
 			}, {
 				tag: '500', // Range 500-509
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'FOO (Bar)'}
 				]
 			}]
 		});
 
-		const recordInvalid = new MarcRecord({
+		const recordInvalid = new MarcRecord({leader: '',
 			fields: [{
 				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
 					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
@@ -75,6 +83,8 @@ describe('field-structure', () => {
 				]
 			}, {
 				tag: '337',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'käytettävissä ilman laitetta'},
 					{code: 'b', value: 'n.'}, // This can be abbreviation -> does not generate error
@@ -82,14 +92,18 @@ describe('field-structure', () => {
 				]
 			}, {
 				tag: '500',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'FOO (Bar).'}
 				]
 			}]
 		});
-		const recordBroken = new MarcRecord({
+		const recordBroken = new MarcRecord({leader: '',
 			fields: [{
 				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
 					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
@@ -97,6 +111,8 @@ describe('field-structure', () => {
 				]
 			}, {
 				tag: '337',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'käytettävissä ilman laitetta'},
 					{code: 'b', value: 'n'}, // Dot removed from possible abbreviation as it cannot be removed in fixing
@@ -104,6 +120,8 @@ describe('field-structure', () => {
 				]
 			}, {
 				tag: '500',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'FOO (Bar).'}
 				]
@@ -142,9 +160,11 @@ describe('field-structure', () => {
 		// Can have subfields a and b, dot only after b
 		describe('#036 TRUE - only after subfield $b', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({
+			const recordValid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '036',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'CNRS 84115'},
 						{code: 'b', value: 'Centre national de la recherche scientifique.'}
@@ -152,9 +172,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidOnlyA = new MarcRecord({
+			const recordValidOnlyA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '036',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'CNRS 84115'}
 					]
@@ -174,9 +196,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({
+			const recordInvalid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '036',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'CNRS 84115'},
 						{code: 'b', value: 'Centre national de la recherche scientifique'}
@@ -184,9 +208,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidOnlyA = new MarcRecord({
+			const recordInvalidOnlyA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '036',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'CNRS 84115.'} // $a is register number, no change for abbreviation
 					]
@@ -238,9 +264,11 @@ describe('field-structure', () => {
 		// "242 KYLLÄ Jos viimeinen osakenttä on $y, piste on ennen sitä" - Eli siis ei kentässä y (ennen sitä)
 		describe('#242 TRUE - if last subfield $y, punc before it', () => {
 			// Valid tests
-			const recordValidOnlyA = new MarcRecord({
+			const recordValidOnlyA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art.'},
 						{code: 'y', value: 'eng'}
@@ -248,9 +276,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidMultiple = new MarcRecord({
+			const recordValidMultiple = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Annals of chemistry.'},
 						{code: 'n', value: 'Series C,'},
@@ -261,9 +291,11 @@ describe('field-structure', () => {
 			});
 
 			// "Suositellaan käytettäväksi myös osakenttää ‡y (käännöksen kielikoodi)." https://www.kiwi.fi/pages/viewpage.action?pageId=51282044
-			const recordValidWithoutY = new MarcRecord({
+			const recordValidWithoutY = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art.'}
 					]
@@ -289,9 +321,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidOnlyAMissingA = new MarcRecord({
+			const recordInvalidOnlyAMissingA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art'},
 						{code: 'y', value: 'eng'}
@@ -299,9 +333,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidOnlyAPuncY = new MarcRecord({
+			const recordInvalidOnlyAPuncY = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art.'},
 						{code: 'y', value: 'eng.'} // $y is also checked as rule is explicit
@@ -309,9 +345,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidOnlyAMissingAPuncY = new MarcRecord({
+			const recordInvalidOnlyAMissingAPuncY = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art'},
 						{code: 'y', value: 'eng.'} // $y is also checked as rule is explicit
@@ -319,9 +357,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidMultipleMissingP = new MarcRecord({
+			const recordValidMultipleMissingP = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Annals of chemistry.'},
 						{code: 'n', value: 'Series C,'},
@@ -332,9 +372,11 @@ describe('field-structure', () => {
 			});
 
 			// "Suositellaan käytettäväksi myös osakenttää ‡y (käännöksen kielikoodi)." https://www.kiwi.fi/pages/viewpage.action?pageId=51282044
-			const recordValidWithoutYMissingA = new MarcRecord({
+			const recordValidWithoutYMissingA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '242',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art'}
 					]
@@ -447,9 +489,11 @@ describe('field-structure', () => {
 		// Punc only if last subfield c
 		describe('#260 TRUE - Punc only if last subfield c', () => {
 			// Valid tests
-			const recordValidEndC = new MarcRecord({
+			const recordValidEndC = new MarcRecord({leader: '',
 				fields: [{
 					tag: '260',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Suomen atk-kustannus,'},
@@ -458,9 +502,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidEndG = new MarcRecord({
+			const recordValidEndG = new MarcRecord({leader: '',
 				fields: [{
 					tag: '260',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'London'},
 						{code: 'b', value: 'Macmillan,'},
@@ -470,9 +516,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidEndB = new MarcRecord({
+			const recordValidEndB = new MarcRecord({leader: '',
 				fields: [{
 					tag: '260',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: '3', value: 'June 1993-'},
 						{code: 'a', value: 'London'},
@@ -500,9 +548,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidEndC = new MarcRecord({
+			const recordInvalidEndC = new MarcRecord({leader: '',
 				fields: [{
 					tag: '260',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Suomen atk-kustannus,'},
@@ -511,9 +561,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidEndGDouble = new MarcRecord({
+			const recordInvalidEndGDouble = new MarcRecord({leader: '',
 				fields: [{
 					tag: '260',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'London'},
 						{code: 'b', value: 'Macmillan,'},
@@ -569,9 +621,11 @@ describe('field-structure', () => {
 		// Eli jos `ind2 === '4'` niin silloin loppupiste merkitä osakentän *b* loppuun
 		describe('#264 TRUE - If ind2 === 4, punc at the end of $b', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({
+			const recordValid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Helsingin yliopisto'},
@@ -580,7 +634,7 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidInd = new MarcRecord({
+			const recordValidInd = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -606,7 +660,7 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({
+			const recordInvalid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
 					subfields: [
@@ -617,7 +671,7 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidIndBMissing = new MarcRecord({
+			const recordInvalidIndBMissing = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -630,7 +684,7 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidIndCExtra = new MarcRecord({
+			const recordInvalidIndCExtra = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -643,7 +697,7 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidIndBMissingCExtra = new MarcRecord({
+			const recordInvalidIndBMissingCExtra = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -744,18 +798,22 @@ describe('field-structure', () => {
 		// This doesn't match spec at all, but these rules were provided (https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340)
 		describe('#340 TRUE - Punc at $b always and to last of [$a, $d, $e, $f, $h, $i]', () => {
 			// Valid tests
-			const recordValidA = new MarcRecord({
+			const recordValidA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'marble.'}
 					]
 				}]
 			});
 
-			const recordValidAB = new MarcRecord({
+			const recordValidAB = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
 						{code: 'b',	value: '20 cm. folded to 10 x 12 cm.'}
@@ -763,9 +821,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidDD = new MarcRecord({
+			const recordValidDD = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'd', value: 'handwritten'},
 						{code: 'd',	value: 'typed.'}
@@ -773,9 +833,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidComplex = new MarcRecord({
+			const recordValidComplex = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'wove paper'},
 						{code: 'c',	value: 'ink'},
@@ -787,9 +849,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidJ2 = new MarcRecord({
+			const recordValidJ2 = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'j', value: 'original'},
 						{code: '2',	value: 'rda'}
@@ -828,18 +892,22 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidA = new MarcRecord({
+			const recordInvalidA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'marble'}
 					]
 				}]
 			});
 
-			const recordInvalidAMissingB = new MarcRecord({
+			const recordInvalidAMissingB = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
 						{code: 'b',	value: '20 cm. folded to 10 x 12 cm.'}
@@ -847,9 +915,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidABMissing = new MarcRecord({
+			const recordInvalidABMissing = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
 						{code: 'b',	value: '20 cm. folded to 10 x 12 cm'}
@@ -857,9 +927,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidDDMissing = new MarcRecord({
+			const recordInvalidDDMissing = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'd', value: 'handwritten'},
 						{code: 'd',	value: 'typed'}
@@ -867,9 +939,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidComplexDMissing = new MarcRecord({
+			const recordInvalidComplexDMissing = new MarcRecord({leader: '',
 				fields: [{
 					tag: '340',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'wove paper'},
 						{code: 'c',	value: 'ink'},
@@ -986,18 +1060,22 @@ describe('field-structure', () => {
 		// "520 KYLLÄ Jos viimeinen osakenttä on $u, piste on ennen sitä" (Sama kuin 242, $y)
 		describe('#520 TRUE - If last subfield $u, punc before it', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({
+			const recordValid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '520',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Mediaväkivalta ja sen yleisö.'}
 					]
 				}]
 			});
 
-			const recordValidWithU = new MarcRecord({
+			const recordValidWithU = new MarcRecord({leader: '',
 				fields: [{
 					tag: '520',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
 						{code: 'u',	value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
@@ -1005,9 +1083,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidU = new MarcRecord({
+			const recordValidU = new MarcRecord({leader: '',
 				fields: [{
 					tag: '520',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
 						{code: 'u',	value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm.'}
@@ -1034,18 +1114,22 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({
+			const recordInvalid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '520',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Mediaväkivalta ja sen yleisö'}
 					]
 				}]
 			});
 
-			const recordInvalidWithU = new MarcRecord({
+			const recordInvalidWithU = new MarcRecord({leader: '',
 				fields: [{
 					tag: '520',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Abstrakti'},
 						{code: 'u',	value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
@@ -1100,9 +1184,11 @@ describe('field-structure', () => {
 		// (speksin mukaan y->u) https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
 		describe('#538 TRUE - If last subfield $u, punc before it', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({
+			const recordValid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '538',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Project methodology for digital version'},
 						{code: 'i',	value: 'Technical details.'}, // This ended to ':' in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
@@ -1111,9 +1197,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidPuncU = new MarcRecord({
+			const recordValidPuncU = new MarcRecord({leader: '',
 				fields: [{
 					tag: '538',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Project methodology for digital version'},
 						{code: 'i',	value: 'Technical details.'},
@@ -1122,9 +1210,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidOnlyA = new MarcRecord({
+			const recordValidOnlyA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '538',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'SECAM-videolaite.'}
 					]
@@ -1150,9 +1240,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidMissingI = new MarcRecord({
+			const recordInvalidMissingI = new MarcRecord({leader: '',
 				fields: [{
 					tag: '538',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Project methodology for digital version'},
 						{code: 'i',	value: 'Technical details'},
@@ -1161,9 +1253,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidI = new MarcRecord({
+			const recordInvalidI = new MarcRecord({leader: '',
 				fields: [{
 					tag: '538',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Project methodology for digital version'},
 						{code: 'i',	value: 'Technical details:'}, // This is actually like in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
@@ -1172,9 +1266,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidOnlyA = new MarcRecord({
+			const recordInvalidOnlyA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '538',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'SECAM-videolaite'}
 					]
@@ -1236,18 +1332,22 @@ describe('field-structure', () => {
 		// Only if last subfield $a
 		describe('#567 TRUE - After subfield $a, FALSE after others', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({
+			const recordValid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '567',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Narratiivinen tutkimus.'}
 					]
 				}]
 			});
 
-			const recordValidWithoutA = new MarcRecord({
+			const recordValidWithoutA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '567',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'b',	value: 'Narrative inquiry'},
 						{code: '2',	value: 'lcsh'}
@@ -1268,18 +1368,22 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({
+			const recordInvalid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '567',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Narratiivinen tutkimus'}
 					]
 				}]
 			});
 
-			const recordInvalidWithoutA = new MarcRecord({
+			const recordInvalidWithoutA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '567',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'b',	value: 'Narrative inquiry.'},
 						{code: '2',	value: 'lcsh'}
@@ -1334,9 +1438,11 @@ describe('field-structure', () => {
 		// Default TRUE, until more special cases are added
 		describe('#647-651 FALSE - If finnish, else TRUE', () => {
 			// Valid tests
-			const recordValid647FastEndPunc = new MarcRecord({
+			const recordValid647FastEndPunc = new MarcRecord({leader: '',
 				fields: [{
 					tag: '647',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Hurricane Katrina'},
 						{code: 'd', value: '(2005)'},
@@ -1345,9 +1451,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordVali648dFinNo = new MarcRecord({
+			const recordVali648dFinNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '648',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1900-luku'},
 						{code: '2', value: 'ysa'}
@@ -1355,9 +1463,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid648FastNo = new MarcRecord({
+			const recordValid648FastNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '648',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1862'},
 						{code: '2', value: 'fast'} // https://www.kansalliskirjasto.fi/extra/marc21/bib/6XX.htm#648
@@ -1365,9 +1475,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid650FinNo = new MarcRecord({
+			const recordValid650FinNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '650',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät'},
@@ -1376,9 +1488,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid650EngNoControl = new MarcRecord({
+			const recordValid650EngNoControl = new MarcRecord({leader: '',
 				fields: [{
 					tag: '650',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Flour industry'},
 						{code: 'v', value: 'Periodicals.'}
@@ -1386,9 +1500,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid650EngControl = new MarcRecord({
+			const recordValid650EngControl = new MarcRecord({leader: '',
 				fields: [{
 					tag: '650',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Career Exploration.'},
 						{code: '2', value: 'ericd'}
@@ -1433,9 +1549,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid647FastEndPunc = new MarcRecord({
+			const recordInvalid647FastEndPunc = new MarcRecord({leader: '',
 				fields: [{
 					tag: '647',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Hurricane Katrina'},
 						{code: 'd', value: '(2005).'},
@@ -1444,9 +1562,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvali648dFinYes = new MarcRecord({
+			const recordInvali648dFinYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '648',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1900-luku.'},
 						{code: '2', value: 'ysa'}
@@ -1454,9 +1574,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid648FastYes = new MarcRecord({
+			const recordInvalid648FastYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '648',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1862.'},
 						{code: '2', value: 'fast'}
@@ -1464,9 +1586,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid650FinYes = new MarcRecord({
+			const recordInvalid650FinYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '650',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät.'},
@@ -1475,9 +1599,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid650EngNoControl = new MarcRecord({
+			const recordInvalid650EngNoControl = new MarcRecord({leader: '',
 				fields: [{
 					tag: '650',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Flour industry'},
 						{code: 'v', value: 'Periodicals'}
@@ -1485,9 +1611,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid650EngControl = new MarcRecord({
+			const recordInvalid650EngControl = new MarcRecord({leader: '',
 				fields: [{
 					tag: '650',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Career Exploration'},
 						{code: '2', value: 'ericd'}
@@ -1622,9 +1750,11 @@ describe('field-structure', () => {
 		// Default TRUE, until more special cases are added
 		describe('#654-662 TRUE - If finnish, else TRUE', () => {
 			// Valid tests
-			const recordValid655FinNo = new MarcRecord({
+			const recordValid655FinNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kausijulkaisut'},
 						{code: '2', value: 'ysa'}
@@ -1632,9 +1762,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid655EngYes = new MarcRecord({
+			const recordValid655EngYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Bird\'s-eye views'},
 						{code: 'y', value: '1874.'},
@@ -1643,18 +1775,22 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid655EngYesNoControl = new MarcRecord({
+			const recordValid655EngYesNoControl = new MarcRecord({leader: '',
 				fields: [{
 					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Diaries.'}
 					]
 				}]
 			});
 
-			const recordValid656FinNo = new MarcRecord({
+			const recordValid656FinNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '656',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kuvaamataidonopettajat'},
 						{code: '2', value: 'ysa'}
@@ -1662,9 +1798,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid657EngYes = new MarcRecord({
+			const recordValid657EngYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '657',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Personnel benefits management'},
 						{code: 'x', value: 'Vital statistics'},
@@ -1674,9 +1812,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid658EngYes = new MarcRecord({
+			const recordValid658EngYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '658',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Math manipulatives'},
 						{code: 'd', value: 'highly correlated.'},
@@ -1685,9 +1825,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValid662EngYes = new MarcRecord({
+			const recordValid662EngYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '662',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Antarctica.'},
 						{code: '2', value: 'lcsh/naf'}
@@ -1738,9 +1880,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid655FinYes = new MarcRecord({
+			const recordInvalid655FinYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kausijulkaisut.'},
 						{code: '2', value: 'ysa'}
@@ -1748,9 +1892,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid655EngNo = new MarcRecord({
+			const recordInvalid655EngNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Bird\'s-eye views'},
 						{code: 'y', value: '1874'},
@@ -1759,18 +1905,22 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid655EngNoNoControl = new MarcRecord({
+			const recordInvalid655EngNoNoControl = new MarcRecord({leader: '',
 				fields: [{
 					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Diaries'}
 					]
 				}]
 			});
 
-			const recordInvalid656FinYes = new MarcRecord({
+			const recordInvalid656FinYes = new MarcRecord({leader: '',
 				fields: [{
 					tag: '656',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kuvaamataidonopettajat.'},
 						{code: '2', value: 'ysa'}
@@ -1778,9 +1928,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid657EngNo = new MarcRecord({
+			const recordInvalid657EngNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '657',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Personnel benefits management'},
 						{code: 'x', value: 'Vital statistics'},
@@ -1790,9 +1942,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid658EngNo = new MarcRecord({
+			const recordInvalid658EngNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '658',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Math manipulatives'},
 						{code: 'd', value: 'highly correlated'},
@@ -1801,9 +1955,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalid662EngNo = new MarcRecord({
+			const recordInvalid662EngNo = new MarcRecord({leader: '',
 				fields: [{
 					tag: '662',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Antarctica'},
 						{code: '2', value: 'lcsh/naf'}
@@ -1957,9 +2113,11 @@ describe('field-structure', () => {
 		// Only if last subfield $a
 		describe('#760-787 TRUE - After subfield $a, FALSE after others', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({
+			const recordValid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '760',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: 'Mellor, Alec.'},
 						{code: 't',	value: 'Strange masonic stories'},
@@ -1968,9 +2126,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidOnlyA = new MarcRecord({
+			const recordValidOnlyA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '760',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Mellor, Alec.'}
 					]
@@ -1990,9 +2150,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({
+			const recordInvalid = new MarcRecord({leader: '',
 				fields: [{
 					tag: '760',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Mellor, Alec.'},
 						{code: 't', value: 'Strange masonic stories'},
@@ -2001,9 +2163,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidOnlyA = new MarcRecord({
+			const recordInvalidOnlyA = new MarcRecord({leader: '',
 				fields: [{
 					tag: '760',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Mellor, Alec'}
 					]
@@ -2057,9 +2221,11 @@ describe('field-structure', () => {
 		// 880 Samoin kuin vastaavat kentät - Siis tarkistetaan kontrollikentän $6 säännön
 		describe('#880 - Like linked fields', () => {
 			// Valid tests
-			const recordValidSimple = new MarcRecord({
+			const recordValidSimple = new MarcRecord({leader: '',
 				fields: [{
 					tag: '880',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: '平田 篤胤'},
 						{code: 'b',	value: '1776-1843.'},
@@ -2068,9 +2234,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordValidComplex = new MarcRecord({
+			const recordValidComplex = new MarcRecord({leader: '',
 				fields: [{
 					tag: '880',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'b',	value: 'ידיעות אחרונות'},
 						{code: 'b',	value: 'ספרי חמד'},
@@ -2093,9 +2261,11 @@ describe('field-structure', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidSimple = new MarcRecord({
+			const recordInvalidSimple = new MarcRecord({leader: '',
 				fields: [{
 					tag: '880',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'a',	value: '平田 篤胤'},
 						{code: 'b',	value: '1776-1843'},
@@ -2104,9 +2274,11 @@ describe('field-structure', () => {
 				}]
 			});
 
-			const recordInvalidComplex = new MarcRecord({
+			const recordInvalidComplex = new MarcRecord({leader: '',
 				fields: [{
 					tag: '880',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{code: 'b', value: 'ידיעות אחרונות'},
 						{code: 'b',	value: 'ספרי חמד'},

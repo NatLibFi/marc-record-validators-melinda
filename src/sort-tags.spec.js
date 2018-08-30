@@ -28,7 +28,7 @@
 'use strict';
 
 import {expect} from 'chai';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/sort-tags';
 
 describe('sort-tags', () => {

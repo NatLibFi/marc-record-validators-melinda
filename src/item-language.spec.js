@@ -32,13 +32,13 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/item-language';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-describe('language', () => {
+describe('item-language', () => {
 	it('Creates a validator', async () => {
 		const validator = await validatorFactory(/^520$/);
 
@@ -183,7 +183,7 @@ describe('language', () => {
 					{
 						tag: '520',
 						ind1: ' ',
-						ind2: '',
+						ind2: ' ',
 						subfields: [{
 							code: 'a',
 							value: 'If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.'
@@ -207,7 +207,7 @@ describe('language', () => {
 				{
 					tag: '520',
 					ind1: ' ',
-					ind2: '',
+					ind2: ' ',
 					subfields: [{
 						code: 'a',
 						value: 'If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.'
@@ -227,7 +227,7 @@ describe('language', () => {
 					{
 						tag: '520',
 						ind1: ' ',
-						ind2: '',
+						ind2: ' ',
 						subfields: [{
 							code: 'a',
 							value: 'If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.'
@@ -251,7 +251,7 @@ describe('language', () => {
 				{
 					tag: '520',
 					ind1: ' ',
-					ind2: '',
+					ind2: ' ',
 					subfields: [{
 						code: 'a',
 						value: 'If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.'
@@ -277,7 +277,7 @@ describe('language', () => {
 					{
 						tag: '520',
 						ind1: ' ',
-						ind2: '',
+						ind2: ' ',
 						subfields: [{
 							code: 'a',
 							value: 'If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.'
@@ -301,7 +301,7 @@ describe('language', () => {
 				{
 					tag: '520',
 					ind1: ' ',
-					ind2: '',
+					ind2: ' ',
 					subfields: [{
 						code: 'a',
 						value: 'If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.'

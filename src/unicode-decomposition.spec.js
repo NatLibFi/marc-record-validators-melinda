@@ -32,7 +32,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/unicode-decomposition';
 
 const {expect} = chai;
@@ -88,22 +88,6 @@ describe('unicode-decomposition', () => {
 			expect(result).to.eql({valid: false, messages: ['The following subfields are not properly decomposed: a']});
 		});
 
-		it('Returns an empty array when subfields property not present', async () => {
-			const validator = await validatorFactory();
-			const record = new MarcRecord({
-				fields: [
-					{
-						tag: '245'
-					},
-					{
-						tag: '2333'
-					}
-				]
-			});
-			const result = await validator.validate(record);
-			expect(result).to.eql({valid: true, messages: []});
-		});
-
 		describe('#fix', () => {
 			it('Should fix the record', async () => {
 				const validator = await validatorFactory();
@@ -124,9 +108,11 @@ describe('unicode-decomposition', () => {
 					}]
 				});
 
-				const recordOriginal = record.toJsonObject();
+				const recordOriginal = record.toObject();
 				const fieldModified = {
 					tag: '245',
+					ind1: ' ',
+					ind2: ' ',
 					subfields: [
 						{
 							code: 'a',
@@ -140,7 +126,7 @@ describe('unicode-decomposition', () => {
 				};
 				await validator.fix(record);
 
-				expect(recordOriginal).to.not.eql(record.toJsonObject());
+				expect(recordOriginal).to.not.eql(record);
 				expect(record.fields).to.eql([fieldModified]);
 			});
 		});

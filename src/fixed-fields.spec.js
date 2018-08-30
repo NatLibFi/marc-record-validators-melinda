@@ -32,7 +32,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/fixed-fields';
 
 const {expect} = chai;

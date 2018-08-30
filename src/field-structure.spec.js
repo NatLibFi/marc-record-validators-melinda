@@ -32,7 +32,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/field-structure';
 
 const {expect} = chai;
@@ -118,6 +118,7 @@ describe('field-structure', () => {
 		}];
 
 		const recordValid = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '001',
 				value: '123456'
@@ -144,6 +145,7 @@ describe('field-structure', () => {
 		});
 
 		const recordInvalidMany = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '001',
 				value: '123456'
@@ -157,6 +159,8 @@ describe('field-structure', () => {
 				}]
 			}, {
 				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
@@ -200,11 +204,14 @@ describe('field-structure', () => {
 		}];
 
 		const recordValid = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '001',
 				value: '123456'
 			}, {
 				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
@@ -224,11 +231,14 @@ describe('field-structure', () => {
 		});
 
 		const recordInvalidExtra = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '001',
 				value: '123456a'
 			}, {
 				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
@@ -251,11 +261,14 @@ describe('field-structure', () => {
 		});
 
 		const recordInvalidTooMany = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '001',
 				value: '123456a'
 			}, {
 				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
@@ -278,11 +291,14 @@ describe('field-structure', () => {
 		});
 
 		const recordInvalidRegExp = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '001',
 				value: '123456a'
 			}, {
 				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
@@ -302,8 +318,11 @@ describe('field-structure', () => {
 		});
 
 		const recordInvalidMissing = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'
@@ -323,11 +342,14 @@ describe('field-structure', () => {
 		});
 
 		const recordInvalidMissingSubfield = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '001',
 				value: '123456'
 			}, {
 				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [{
 					code: 'a',
 					value: 'bar'

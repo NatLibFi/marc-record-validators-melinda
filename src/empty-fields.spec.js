@@ -30,7 +30,7 @@
 
 'use strict';
 import {expect} from 'chai';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/empty-fields';
 
 describe('empty-fields', () => {
@@ -174,6 +174,8 @@ describe('empty-fields', () => {
 				[
 					{
 						tag: '245',
+						ind1: ' ',
+						ind2: ' ',
 						subfields: [
 							{
 								code: 'a',
