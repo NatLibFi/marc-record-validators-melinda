@@ -26,6 +26,7 @@
 *
 */
 
+/* eslint-disable require-await */
 'use strict';
 
 import {promisify} from 'es6-promisify';

@@ -30,8 +30,7 @@
  * This validator de-duplicates identical fields in a record.
  */
 
-/* istanbul ignore next: umd wrapper */
-/* no-negated-condition */
+/* eslint-disable require-await */
 import {isEqual, uniqWith} from 'lodash';
 
 export default async function () {

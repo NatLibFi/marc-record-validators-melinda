@@ -26,6 +26,7 @@
  *
  */
 
+/* eslint-disable require-await */
 'use strict';
 
 import {filter, forEach} from 'lodash';

@@ -26,6 +26,7 @@
 *
 */
 
+/* eslint-disable require-await */
 'use strict';
 
 export default async function (configuration) {

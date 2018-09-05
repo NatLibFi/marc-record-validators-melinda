@@ -25,6 +25,8 @@
  * for the JavaScript code in this file.
  *
  */
+
+/* eslint-disable require-await */
 import {find, isEmpty, omit} from 'lodash';
 
 export default async function () {

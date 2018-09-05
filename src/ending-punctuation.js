@@ -26,6 +26,7 @@
  *
  */
 
+/* eslint-disable require-await */
 'use strict';
 import {find} from 'lodash';
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';

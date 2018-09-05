@@ -26,6 +26,7 @@
  *
  */
 
+/* eslint-disable require-await */
 import {parseString} from 'xml2js';
 import fetch from 'node-fetch';
 import {last} from 'lodash';

@@ -26,6 +26,7 @@
 *
 */
 
+/* eslint-disable require-await */
 'use strict';
 import {validate as validateISBN} from 'beautify-isbn';
 import validateISSN from 'issn-verify';
