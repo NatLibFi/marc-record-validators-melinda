@@ -26,6 +26,7 @@
  *
  */
 
+/* eslint-disable require-await */
 'use strict';
 import {orderBy, isEqual, reject} from 'lodash';
 
