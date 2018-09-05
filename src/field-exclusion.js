@@ -26,6 +26,8 @@
  *
  */
 
+/* eslint-disable require-await */
+
 'use strict';
 
 import {forEach, every, some} from 'lodash';
