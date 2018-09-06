@@ -37,6 +37,7 @@ import EndingPunctuation from './ending-punctuation';
 import FieldsPresent from './fields-present';
 import FieldStructure from './field-structure';
 import FixedFields from './fixed-fields';
+import FieldExclusion from './field-exclusion';
 import IdenticalFields from './identical-fields';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
@@ -49,6 +50,7 @@ export {
 	DuplicatesInd1,
 	EmptyFields,
 	EndingPunctuation,
+	FieldExclusion,
 	FieldsPresent,
 	FieldStructure,
 	FixedFields,
