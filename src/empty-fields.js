@@ -26,6 +26,10 @@
  *
  */
 
+/**
+* DEPRECATED: This validator is not needed because @natlibfi/marc-record doesn't allow fields with empty values
+*/
+
 /* eslint-disable require-await */
 import {find, isEmpty, omit} from 'lodash';
 
