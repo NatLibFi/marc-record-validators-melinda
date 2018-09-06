@@ -33,17 +33,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/field-exclusion';
+import validatorFactory from '../src/subfield-exclusion';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
 // Factory validation
-describe('field-exclusion', () => {
+describe('subfield-exclusion', () => {
 	describe('#validate: Check configuration validation', () => {
 		it('Creates a validator from simple config', async () => {
 			const config = [{
-				tag: /^500$/
+				tag: /^500$/,
+				subfields: [{code: /4/}]
 			}];
 
 			const validator = await validatorFactory(config);
@@ -57,10 +58,12 @@ describe('field-exclusion', () => {
 
 		it('Creates a validator from complex config', async () => {
 			const config = [{
-				tag: /^500$/,
-				subfields: [
-					{code: /9/, value: /^(?!FENNI<KEEP>).*$/}
-				]
+				tag: /^210$/,
+				ind2: /\s/,
+				subfields: [{
+					code: /2/,
+					value: /.+/
+				}]
 			}];
 
 			const validator = await validatorFactory(config);
@@ -70,6 +73,14 @@ describe('field-exclusion', () => {
 
 			expect(validator.description).to.be.a('string');
 			expect(validator.validate).to.be.a('function');
+		});
+
+		it('Fails to create a validator from invalid config - subfields missing', async () => {
+			const config = [{
+				tag: /^210$/
+			}];
+
+			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - missing mandatory element: subfields');
 		});
 
 		it('Fails to create a validator from invalid config - tag', async () => {
@@ -83,7 +94,7 @@ describe('field-exclusion', () => {
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: tag');
 		});
 
-		it('Fails to create a validator from invalid config - msising array', async () => {
+		it('Fails to create a validator from invalid config - missing array', async () => {
 			const config = {
 				tag: '500',
 				subfields: [
@@ -116,17 +127,15 @@ describe('field-exclusion', () => {
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: value');
 		});
 
-		it('Fails to create a validator from invalid config - exclusion: value, ind1', async () => {
+		it('Fails to create a validator from invalid config - missing mandatory: tag', async () => {
 			const config = [{
-				tag: /^500$/,
 				value: /^500$/,
-				ind1: /^500$/,
 				subfields: [
 					{code: /9/, value: /^(?!FENNI<KEEP>).*$/}
 				]
 			}];
 
-			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - excluded element');
+			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - missing mandatory element: tag');
 		});
 
 		it('Fails to create a validator from invalid config - missing mandatory: tag', async () => {
@@ -191,15 +200,23 @@ describe('field-exclusion', () => {
 		});
 	});
 
-	// Simple configuration https://github.com/NatLibFi/marc-record-validators-melinda/issues/45
+	// Simple configuration https://github.com/NatLibFi/marc-record-validators-melinda/issues/46
 	describe('#validate: Simple configuration (spec)', () => {
 		const config = [{
-			tag: /^500$/
+			tag: /^100$/,
+			subfields: [{code: /4/}]
 		}];
 
 		const recordValid = new MarcRecord({
 			leader: 'foo',
 			fields: [{
+				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo Bar'}
+				]
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
@@ -212,47 +229,19 @@ describe('field-exclusion', () => {
 		const recordInvalid = new MarcRecord({
 			leader: 'foo',
 			fields: [{
+				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo Bar'},
+					{code: '4', value: 'att'}
+				]
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Fubar'}
-				]
-			}, {
-				tag: '500',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [
-					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
-					{code: '9', value: 'ALMA<KEEP>'}
-				]
-			}]
-		});
-
-		const recordInvalidDouble = new MarcRecord({
-			leader: 'foo',
-			fields: [{
-				tag: '245',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
-			}, {
-				tag: '500',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [
-					{code: 'a', value: 'Foo'},
-					{code: '9', value: 'ALMA<KEEP>'}
-				]
-			}, {
-				tag: '500',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [
-					{code: 'a', value: 'Bar'},
-					{code: '9', value: 'ALMA<KEEP>'}
 				]
 			}]
 		});
@@ -260,6 +249,13 @@ describe('field-exclusion', () => {
 		const recordInvalidFixed = new MarcRecord({
 			leader: 'foo',
 			fields: [{
+				tag: '100',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo Bar'}
+				]
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
@@ -278,13 +274,7 @@ describe('field-exclusion', () => {
 		it('Finds the record invalid (spec)', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordInvalid);
-			expect(result).to.eql({valid: false, message: ['Field $500 should be excluded']});
-		});
-
-		it('Finds the record invalid - double', async () => {
-			const validator = await validatorFactory(config);
-			const result = await validator.validate(recordInvalidDouble);
-			expect(result).to.eql({valid: false, message: ['Field $500 should be excluded', 'Field $500 should be excluded']});
+			expect(result).to.eql({valid: false, message: ['Subfield $100$$4should be excluded']});
 		});
 
 		it('Repairs invalid record', async () => {
@@ -292,39 +282,33 @@ describe('field-exclusion', () => {
 			await validator.fix(recordInvalid);
 			expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
 		});
-
-		it('Repairs invalid record - double', async () => {
-			const validator = await validatorFactory(config);
-			await validator.fix(recordInvalidDouble);
-			expect(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
-		});
 	});
 
-	// Complex configuration https://github.com/NatLibFi/marc-record-validators-melinda/issues/45
+	// Complex configuration https://github.com/NatLibFi/marc-record-validators-melinda/issues/46
 	describe('#validate: Complex configuration (spec)', () => {
 		const config = [{
-			tag: /^500$/,
+			tag: /^210$/,
+			ind2: /\s/,
 			subfields: [
-				{code: /9/, value: /^(?!FENNI<KEEP>).*$/}
+				{code: /2/, value: /.+/}
 			]
 		}];
 
 		const recordValid = new MarcRecord({
 			leader: 'foo',
 			fields: [{
+				tag: '210',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo'}
+				]
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Fubar'}
-				]
-			}, {
-				tag: '500',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [
-					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
-					{code: '9', value: 'FENNI<KEEP>'}
 				]
 			}]
 		});
@@ -332,19 +316,19 @@ describe('field-exclusion', () => {
 		const recordInvalid = new MarcRecord({
 			leader: 'foo',
 			fields: [{
+				tag: '210',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo'},
+					{code: '2', value: 'dnlm'}
+				]
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Fubar'}
-				]
-			}, {
-				tag: '500',
-				ind1: ' ',
-				ind2: ' ',
-				subfields: [
-					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
-					{code: '9', value: 'ALMA<KEEP>'}
 				]
 			}]
 		});
@@ -352,6 +336,13 @@ describe('field-exclusion', () => {
 		const recordInvalidFixed = new MarcRecord({
 			leader: 'foo',
 			fields: [{
+				tag: '210',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo'}
+				]
+			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
@@ -370,7 +361,7 @@ describe('field-exclusion', () => {
 		it('Finds the record invalid (spec)', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordInvalid);
-			expect(result).to.eql({valid: false, message: ['Field $500 should be excluded']});
+			expect(result).to.eql({valid: false, message: ['Subfield $210$$2should be excluded']});
 		});
 
 		it('Repairs invalid record', async () => {
@@ -385,23 +376,26 @@ describe('field-exclusion', () => {
 		const configInd = [{
 			tag: /^500$/,
 			ind1: /^8$/,
-			ind2: /^4$/
-		}];
-
-		const configValue = [{
-			tag: /^500$/,
-			value: /^8$/
+			ind2: /^4$/,
+			subfields: [
+				{code: /2/, value: /.+/}
+			]
 		}];
 
 		const recordValid = new MarcRecord({
 			leader: 'foo',
 			fields: [{
-				tag: '500',
-				ind1: '8',
-				ind2: '0',
+				tag: '210',
+				ind1: ' ',
+				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
-					{code: '9', value: 'ALMA<KEEP>'}
+					{code: 'a', value: 'Foo'}
+				]
+			}, {
+				tag: '500',
+				subfields: [
+					{code: 'a', value: 'Foo'},
+					{code: '2', value: 'dnlm'}
 				]
 			}]
 		});
@@ -420,13 +414,13 @@ describe('field-exclusion', () => {
 				ind1: '8',
 				ind2: '4',
 				subfields: [
-					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
-					{code: '9', value: 'ALMA<KEEP>'}
+					{code: 'a', value: 'Foo'},
+					{code: '2', value: 'dnlm'}
 				]
 			}]
 		});
 
-		const recordValueInvalid = new MarcRecord({
+		const recordIndInvalidFixed = new MarcRecord({
 			leader: 'foo',
 			fields: [{
 				tag: '245',
@@ -437,18 +431,10 @@ describe('field-exclusion', () => {
 				]
 			}, {
 				tag: '500',
-				value: '8'
-			}]
-		});
-
-		const recordInvalidFixed = new MarcRecord({
-			leader: 'foo',
-			fields: [{
-				tag: '245',
-				ind1: ' ',
-				ind2: ' ',
+				ind1: '8',
+				ind2: '4',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
+					{code: 'a', value: 'Foo'}
 				]
 			}]
 		});
@@ -459,34 +445,16 @@ describe('field-exclusion', () => {
 			expect(result).to.eql({valid: true, message: []});
 		});
 
-		it('Finds the record valid - Value', async () => {
-			const validator = await validatorFactory(configValue);
-			const result = await validator.validate(recordValid);
-			expect(result).to.eql({valid: true, message: []});
-		});
-
 		it('Finds the record invalid - Ind', async () => {
 			const validator = await validatorFactory(configInd);
 			const result = await validator.validate(recordIndInvalid);
-			expect(result).to.eql({valid: false, message: ['Field $500 should be excluded']});
+			expect(result).to.eql({valid: false, message: ['Subfield $500$$2should be excluded']});
 		});
 
-		it('Finds the record invalid - Value', async () => {
-			const validator = await validatorFactory(configValue);
-			const result = await validator.validate(recordValueInvalid);
-			expect(result).to.eql({valid: false, message: ['Field $500 should be excluded']});
-		});
-
-		it('Repairs invalid record - Ind', async () => {
+		it('Repairs invalid record', async () => {
 			const validator = await validatorFactory(configInd);
 			await validator.fix(recordIndInvalid);
-			expect(recordIndInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
-		});
-
-		it('Repairs invalid record - Value', async () => {
-			const validator = await validatorFactory(configValue);
-			await validator.fix(recordValueInvalid);
-			expect(recordValueInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+			expect(recordIndInvalid.equalsTo(recordIndInvalidFixed)).to.eql(true);
 		});
 	});
 });

@@ -26,10 +26,19 @@
  *
  */
 
+/* eslint-disable require-await */
+
 'use strict';
 
-import {forEach, every, some} from 'lodash';
+import {forEach, every} from 'lodash';
 import {isRegExp} from 'util';
+
+// Tag (RegExp): Pattern to match the field's tags Mandatory
+// ind1 (RegExp): Pattern to match the field's ind1 property
+// ind2 (RegExp): Pattern to match the field's ind2 property
+// subfields (Array<Object>): An array of objects with the following properties (Mandatory):
+// // code (RegExp): Pattern to match the subfield's code Mandatory
+// // value (RegExp): Pattern to match the subfield's value
 
 // Configuration specification
 const confSpec = {
@@ -37,23 +46,11 @@ const confSpec = {
 		type: 'RegExp',
 		mandatory: true
 	},
-	value: { // Regular expression object for matching a controlfields value. Mutual exclusive with
-		type: 'RegExp',
-		excl: [
-			'subfields', 'ind1', 'ind2'
-		]
-	},
 	ind1: { // Pattern to match the field's ind1 property.
-		type: 'RegExp', // Array<Indicator>
-		excl: [
-			'value'
-		]
+		type: 'RegExp' // Array<Indicator>
 	},
 	ind2: { // Pattern to match the field's ind2 property.
-		type: 'RegExp', // Array<Indicator>
-		excl: [
-			'value'
-		]
+		type: 'RegExp' // Array<Indicator>
 	},
 	subfields: { // An array of objects with the following properties
 		code: {
@@ -61,9 +58,9 @@ const confSpec = {
 			mandatory: true
 		},
 		value: {
-			type: 'RegExp',
-			mandatory: true
-		}
+			type: 'RegExp'
+		},
+		mandatory: true
 	}
 };
 
@@ -87,24 +84,11 @@ export default async function (config) {
 	/// /////////////////////////////////////////
 	// These check that configuration is valid
 	function configValid(config) {
-		let excluded = [];
 		config.forEach(obj => {
-			excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
 			checkMandatory(confSpec, obj);
 
 			forEach(obj, (val, key) => {
 				configMatchesSpec(val, key, confSpec);
-				// Concat all excluded elements to array
-				if (confSpec[key].excl) {
-					excluded = excluded.concat(confSpec[key].excl);
-				}
-			});
-
-			// Check that no excluded elements are in use
-			forEach(obj, (val, key) => {
-				if (excluded.includes(key)) {
-					throw new Error('Configuration not valid - excluded element');
-				}
 			});
 		});
 	}
@@ -151,19 +135,6 @@ export default async function (config) {
 
 	/// /////////////////////////////////////////
 	// These check that record is valid
-	function subFieldCheck(confField, element) {
-		// Parse trough every configuration subfield, check if one matches some subobjects fields
-		return some(confField, subField => {
-			return some(element.subfields, elemSub => {
-				// Check if subfield matches configuration spec
-				if (subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
-					subField.value && elemSub.value && (subField.value.test(elemSub.value))) {
-					return true;
-				}
-			});
-		});
-	}
-
 	function excludeFields(record, conf, fix) {
 		var res = {};
 		res.message = [];
@@ -177,30 +148,33 @@ export default async function (config) {
 			forEach(found, element => {
 				// Compare each found element against each configuration object
 				if (every(confObj, (confField, confKey) => {
-					// This is already checked on .get()
-					if (confKey === 'tag') {
+					// Tag already checked at .get(), subfields later
+					if (confKey === 'tag' || confKey === 'subfields') {
 						return true;
-					}
-
-					// Check subfield configurations
-					if (confKey === 'subfields') {
-						return subFieldCheck(confField, element);
 					}
 
 					// Configuration object is RegExp and record value matches it
 					if (element[confKey] && isRegExp(confField) && confField.test(element[confKey])) {
 						return true;
+					}
 
 					// Configuration object not found from found element
-					}
 					return false;
 				})) {
-					// All configuration fields match, element should be excluded.
-					if (fix) {
-						record.removeField(element);
-					} else {
-						res.message.push('Field $' + element.tag + ' should be excluded');
-					}
+					// All configuration fields match, check if some subfields should be excluded.
+					forEach(confObj.subfields, subField => {
+						forEach(element.subfields, elemSub => {
+							// Check if subfield matches configuration spec
+							if (subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
+								(typeof subField.value === 'undefined' || (subField.value && elemSub.value && (subField.value.test(elemSub.value))))) {
+								if (fix) {
+									record.removeSubfield(elemSub, element);
+								} else {
+									res.message.push('Subfield $' + element.tag + '$$' + elemSub.code + 'should be excluded');
+								}
+							}
+						});
+					});
 				}
 			});
 		});
