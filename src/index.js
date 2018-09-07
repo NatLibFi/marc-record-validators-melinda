@@ -43,6 +43,7 @@ import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SortTags from './sort-tags';
+import SubfieldExclusion from './subfield-exclusion';
 import UnicodeDecomposition from './unicode-decomposition';
 
 export {
