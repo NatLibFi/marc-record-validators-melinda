@@ -29,13 +29,10 @@
 /* eslint-disable require-await */
 'use strict';
 
-import {promisify} from 'es6-promisify';
-import {detect as detectAsync} from 'cld';
+import {loadModule as loadCLD} from 'cld3-asm';
 import LanguageCodes from 'langs';
 
-export default async function (tagPattern, treshold = 90) {
-	const detect = promisify(detectAsync);
-
+export default async function (tagPattern, treshold = 0.9) {
 	if (tagPattern instanceof RegExp) {
 		return {
 			description:
@@ -44,6 +41,7 @@ export default async function (tagPattern, treshold = 90) {
 			fix
 		};
 	}
+
 	throw new Error('No tagPattern provided');
 
 	async function validate(record) {
@@ -52,13 +50,6 @@ export default async function (tagPattern, treshold = 90) {
 		if (results.failed) {
 			return {valid: Boolean(results.currentCode), messages: [
 				'Language detection failed'
-			]};
-		}
-
-		/* istanbul ignore if: Unreliable text is hard to find */
-		if (results.notReliable) {
-			return {valid: Boolean(results.currentCode), messages: [
-				'Language detection was not reliable'
 			]};
 		}
 
@@ -73,18 +64,13 @@ export default async function (tagPattern, treshold = 90) {
 
 		if (results.suggested) {
 			return {valid: Boolean(results.currentCode), messages: [
-				`Item language code is invalid. Current code: '${results.currentCode}', suggestions: ${results.suggested.join()}`
+				`Item language code is invalid. Current code: ${results.currentCode}, suggestions: ${results.suggested.join()}`
 			]};
 		}
 	}
 
 	async function fix(record) {
 		const results = await checkLanguage(record);
-
-		/* istanbul ignore if: Unreliable text is hard to find */
-		if (results.notReliable && !results.currentCode) {
-			return;
-		}
 
 		if (results.suggested && results.currentCode) {
 			return;
@@ -136,35 +122,40 @@ export default async function (tagPattern, treshold = 90) {
 		const text = getText(record);
 		const langCode = getLanguageCode(record);
 
+		const cldFactory = await loadCLD();
+		const Identifier = cldFactory.create();
+
 		if (text.length === 0) {
+			Identifier.dispose();
 			return {failed: true, currentCode: langCode};
 		}
 
 		try {
-			const results = await detect(text);
+			const results = await Identifier.findLanguage(text);
+			Identifier.dispose();
 
-			if (results.reliable) {
-				const detectedLang = results.languages.find(l => l.percent >= treshold);
-
-				if (detectedLang) {
+			if (results.is_reliable) {
+				if (results.probability >= treshold) {
 					return {
-						detected: get2TLangCode(detectedLang.code),
+						detected: get2TLangCode(results.language),
 						currentCode: langCode
 					};
 				}
 
 				return {
 					currentCode: langCode,
-					suggested: results.languages.map(l => get2TLangCode(l.code))
+					suggested: [get2TLangCode(results.language)]
 				};
 			}
 
-			return {notReliable: true, currentCode: langCode};
+			return {failed: true, currentCode: langCode};
 		} catch (err) {
-			if (/^Failed to identify language$/.test(err.message)) {
-				return {failed: true, currentCode: langCode};
-			}
+			/* istanbul ignore next: How to cause errors? */
+			try {
+				Identifier.dispose();
+			} catch (err2) {}
 
+			/* istanbul ignore next: How to cause errors? */
 			throw err instanceof Error ? err : new Error(err.message);
 		}
 
