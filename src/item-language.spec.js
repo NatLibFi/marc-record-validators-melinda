@@ -81,7 +81,7 @@ describe('item-language', () => {
 			expect(result).to.eql({valid: true});
 		});
 
-		it('Finds the record invalid (Language code is missing and detection fails)', async () => {
+		it('Finds the record invalid (Language code is missing and detection failed', async () => {
 			const validator = await validatorFactory(/^520$/);
 			const record = new MarcRecord({
 				fields: [
@@ -135,15 +135,19 @@ describe('item-language', () => {
 			]});
 		});
 
-		it('Finds the record valid (Detected language differs and has multiple suggestions)', async () => {
-			const validator = await validatorFactory(/^520$/);
+		it('Finds the record invalid (Probability doesn\'t meet treshold)', async () => {
+			const validator = await validatorFactory(/^520$/, 1);
 			const record = new MarcRecord({
 				fields: [
+					{
+						tag: '008',
+						value: '151118t20162016fi^a|||^^^^^^^|0|^0|fin|^'
+					},
 					{
 						tag: '041',
 						ind1: ' ',
 						ind2: ' ',
-						subfields: [{code: 'a', value: 'eng'}]
+						subfields: [{code: 'a', value: 'fin'}]
 					},
 					{
 						tag: '520',
@@ -151,7 +155,7 @@ describe('item-language', () => {
 						ind2: '',
 						subfields: [{
 							code: 'a',
-							value: 'You should have received a copy of the GNU Affero General Public License along with this program. Mukana myös toimintaehdotuksia, joita Suomen tulee ajaa veroparatiisiongelman ratkaisemiseksi. Veroparatiisit on ajankohtainen tietopaketti veronkierron mekanismeista ja vaikutuksista.'
+							value: 'If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.'
 						}]
 					}
 				]
@@ -159,8 +163,30 @@ describe('item-language', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: true, messages: [
-				'Item language code is invalid. Current code: \'eng\', suggestions: fin,eng'
+				'Item language code is invalid. Current code: fin, suggestions: eng'
+			]});
+		});
 
+		it('Finds the record invalid (No detectable text)', async () => {
+			const validator = await validatorFactory(/^520$/, 1);
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '008',
+						value: '151118t20162016fi^a|||^^^^^^^|0|^0|fin|^'
+					},
+					{
+						tag: '041',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: 'fin'}]
+					}
+				]
+			});
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({valid: true, messages: [
+				'Language detection failed'
 			]});
 		});
 	});
