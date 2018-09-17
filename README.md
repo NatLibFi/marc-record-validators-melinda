@@ -1,6 +1,6 @@
 # MARC record validators used in Melinda [![NPM Version](https://img.shields.io/npm/v/@natlibfi/marc-record-validators-melinda.svg)](https://npmjs.org/package/@natlibfi/marc-record-validators-melinda) [![Build Status](https://travis-ci.org/NatLibFi/marc-record-validators-melinda.svg)](https://travis-ci.org/NatLibFi/marc-record-validators-melinda) [![Test Coverage](https://codeclimate.com/github/NatLibFi/marc-record-validators-melinda/badges/coverage.svg)](https://codeclimate.com/github/NatLibFi/marc-record-validators-melinda/coverage)
 
-MARC record validators used in Melinda
+MARC record validators used in Melinda. See [wiki](https://github.com/NatLibFi/marc-record-validators-melinda/wiki) for documentation.
 
 ## License and copyright
 
