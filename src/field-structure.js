@@ -40,7 +40,8 @@ const confSpec = {
 		]
 	},
 	tag: { // Description: Field tag pattern
-		type: 'RegExp'
+		type: 'RegExp',
+		excl: ['leader']
 	},
 	valuePattern: { // Description: Pattern to which the field's value must match against
 		type: 'RegExp',
@@ -96,25 +97,32 @@ const subSpec = {
 
 // Dependency specification
 const depSpec = {
+	leader: { // Description: Leader pattern
+		type: 'RegExp',
+		excl: [
+			'tag', 'valuePattern', 'subfields', 'ind1', 'ind2'
+		]
+	},
 	tag: { // Description: Field tag pattern
-		type: RegExp
+		type: RegExp,
+		excl: ['leader']
 	},
 	ind1: { // Description: Pattern to which the indicator must match against
 		type: RegExp,
 		excl: [
-			'value'
+			'value', 'leader'
 		]
 	},
 	ind2: { // Description: Pattern to which the indicator must match against
 		type: RegExp,
 		excl: [
-			'value'
+			'value', 'leader'
 		]
 	},
 	valuePattern: { // Description: Pattern to which the field's value must match agains
 		type: RegExp,
 		excl: [
-			'subfields', 'ind1', 'ind2'
+			'subfields', 'ind1', 'ind2', 'leader'
 		]
 	},
 	subfields: { // Description: An object with subfield codes as keys and RegExp patterns as values. The subfield value must this pattern.
@@ -197,12 +205,18 @@ export default async function (config) {
 		// Parse trough every element of config array
 		const res = conf.every(confObj => {
 			if (confObj.dependencies) {
-				return confObj.dependencies.every(dependency => {
-					return recordMatchesConfigElement(record, dependency.tag, confObj, dependencies);
-				});
+				if (confObj.dependencies.every(dependency => {
+					return recordMatchesConfigElement(record, dependency.tag, dependency, dependencies);
+				})) {
+					return recordMatchesConfigElement(record, confObj.tag, confObj, dependencies);
+				}
+
+				return true;
 			}
+
 			return recordMatchesConfigElement(record, confObj.tag, confObj, dependencies);
 		});
+
 		return res;
 	}
 
@@ -212,6 +226,11 @@ export default async function (config) {
 		// If data matching configuration is not found
 		if (foundFields.length === 0) {
 			return false;
+		}
+
+		// The only requirement is the tag: The field must be present
+		if (Object.keys(confObj).length === 0) {
+			return true;
 		}
 
 		// Parse trough record objects matching provided configuration object

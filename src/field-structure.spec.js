@@ -445,7 +445,7 @@ describe('field-structure', () => {
 		});
 
 		const recordInvalid = new MarcRecord({
-			leader: '63ab75sfoo122myhgh',
+			leader: '63ab75afoo122myhgh',
 			fields: [{
 				tag: '001',
 				value: '123456'
@@ -462,6 +462,9 @@ describe('field-structure', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [{
+					code: '7',
+					value: 'nnas'
+				}, {
 					code: 'w',
 					value: '789101112'
 				}]
@@ -475,9 +478,39 @@ describe('field-structure', () => {
 			expect(result).to.eql({valid: true});
 		});
 
-		it('Finds the record invalid: Subfield not there', async () => {
+		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordInvalid);
+
+			expect(result).to.eql({valid: false});
+		});
+
+		it('Find the record valid (Dependency on leader)', async () => {
+			const validator = await validatorFactory([
+				{tag: /^007$/, dependencies: [{leader: /^.{6}[at]/}]}
+			]);
+			const result = await validator.validate(new MarcRecord({
+				leader: '00000ccm^a22003372i^4500',
+				fields: [
+					{tag: '001', value: '123456'},
+					{tag: '245', value: 'foobar'}
+				]
+			}));
+
+			expect(result).to.eql({valid: true});
+		});
+
+		it('Find the record invalid (Dependency on leader)', async () => {
+			const validator = await validatorFactory([
+				{tag: /^007$/, dependencies: [{leader: /^.{6}[at]/}]}
+			]);
+			const result = await validator.validate(new MarcRecord({
+				leader: '00000cam^a22003372i^4500',
+				fields: [
+					{tag: '001', value: '123456'},
+					{tag: '245', value: 'foobar'}
+				]
+			}));
 
 			expect(result).to.eql({valid: false});
 		});
