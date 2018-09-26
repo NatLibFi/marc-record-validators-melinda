@@ -233,7 +233,7 @@ export default async function () {
 
 				if (lastSubField) {
 					normalPuncRules(lastSubField, res.punc, field.tag, false);
-				}				
+				}
 			} else {
 				specialCases(res, field, field.tag);
 			}
