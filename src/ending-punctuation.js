@@ -1,30 +1,30 @@
 /**
- *
- * @licstart  The following is the entire license notice for the JavaScript code in this file.
- *
- * MARC record validators used in Melinda
- *
- * Copyright (C) 2014-2018 University Of Helsinki (The National Library Of Finland)
- *
- * This file is part of marc-record-validators-melinda
- *
- * marc-record-validators-melinda program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * marc-record-validators-melinda is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @licend  The above is the entire license notice
- * for the JavaScript code in this file.
- *
- */
+*
+* @licstart  The following is the entire license notice for the JavaScript code in this file.
+*
+* MARC record validators used in Melinda
+*
+* Copyright (C) 2014-2018 University Of Helsinki (The National Library Of Finland)
+*
+* This file is part of marc-record-validators-melinda
+*
+* marc-record-validators-melinda program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero General Public License as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* marc-record-validators-melinda is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+* @licend  The above is the entire license notice
+* for the JavaScript code in this file.
+*
+*/
 
 /* eslint-disable require-await */
 'use strict';
@@ -35,7 +35,7 @@ import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf'
 export default async function () {
 	return {
 		description:
-			'Checks whether punctuation is valid',
+		'Checks whether punctuation is valid',
 		validate: async record => (
 			validatePunc(record, false) // Record (Object), fix (boolean)
 		),
@@ -53,31 +53,26 @@ export default async function () {
 			message.fix = [];
 		}
 
-		// Function introduction before use; actual parsing and calling after these
-		let lastField = null;
+		// Actual parsing of all fields
+		if (!record.fields) {
+			return false;
+		}
+		record.fields.forEach(field => {
+			validateField(field);
+		});
+
+		message.valid = !(message.message.length >= 1);
+		return message;
 
 		// This is used to find last subfield that should have punctuation
-		const findLastSubfield = function (field) {
-			lastField = null;
-			field.subfields.forEach(subField => { // Check that each field has required fields and save last data field
-				if (!subField.code || !subField.value) {
-					throw new Error('Missing code or value for subfield: ' + subField);
-				} // Does not have code or value
-				if (isNaN(subField.code)) {
-					lastField = subField;
-				} // Not control field
-			});
-			return lastField;
-		};
-
-		let lastPuncMark = null;
-
-		let lastPuncDot = null;
+		function findLastSubfield(field) {
+			return field.subfields.filter(sf => isNaN(sf.code)).slice(-1).shift();
+		}
 
 		// Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-		const normalPuncRules = function (subfield, punc, tag, checkEnd) {
-			lastPuncMark = validPuncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
-			lastPuncDot = '.'.includes(subfield.value.slice(-1)); // If string ends to dot
+		function normalPuncRules(subfield, punc, tag, checkEnd) {
+			const lastPuncMark = validPuncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
+			const lastPuncDot = '.'.includes(subfield.value.slice(-1)); // If string ends to dot
 
 			// Last char should be punc, but its not either one of marks nor dot
 			if (punc && !(lastPuncMark || lastPuncDot)) {
@@ -87,7 +82,7 @@ export default async function () {
 					subfield.value = subfield.value.concat('.');
 					message.fix.push('Field ' + tag + ' - Added punctuation to $' + subfield.code);
 				}
-			// Last char is dot, but previous char is one of punc marks, like 'Question?.'
+				// Last char is dot, but previous char is one of punc marks, like 'Question?.'
 			} else if (lastPuncDot && validPuncMarks.includes(subfield.value.charAt(subfield.value.length - 2))) {
 				// Console.log("2. Invalid punctuation - duplicate, like '?.'")
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
@@ -95,7 +90,7 @@ export default async function () {
 					subfield.value = subfield.value.slice(0, -1);
 					message.fix.push('Field ' + tag + ' - Removed double punctuation from $' + subfield.code);
 				}
-			// Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
+				// Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
 			} else if (checkEnd && (!punc && lastPuncDot)) {
 				// Console.log("3. Invalid punctuation - Shouldn't be dot, is")
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
@@ -103,13 +98,11 @@ export default async function () {
 					subfield.value = subfield.value.slice(0, -1);
 					message.fix.push('Field ' + tag + ' - Removed punctuation from $' + subfield.code);
 				}
-			} else {
-				// Console.log("Valid punctuation")
 			}
-		};
+		}
 
 		// Special cases from here on
-		const specialCases = function (res, field, tag) {
+		function specialCases(res, field, tag) {
 			let lastSubField = null;
 			// Punctuation should be only after specific field
 			if (res.special.afterOnly) {
@@ -124,14 +117,14 @@ export default async function () {
 					normalPuncRules(lastSubField, !res.punc, tag, true);
 				}
 
-			// Rules if last, some subrules
+				// Rules if last, some subrules
 			} else if (res.special.ifLast) {
 				lastSubField = findLastSubfield(field);
 
 				// IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
 				if (res.special.ind && field.ind2 === res.special.ind) {
 					// Extra dot at the end of $c ('© 1974.'), which should be only copyright year
-					lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); // If string ends to dot
+					const lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); // If string ends to dot
 					if (lastSubField.value.includes('©') && lastPuncDot) {
 						message.message.push('Field ' + tag + ' has invalid ending punctuation');
 						if (fix) {
@@ -142,14 +135,16 @@ export default async function () {
 
 					// Checked field is actually $b
 					lastSubField = find(field.subfields, {code: 'b'});
-					normalPuncRules(lastSubField, res.punc, tag, false); // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 
-				// Otherwise normal punc rules
+					if (lastSubField) {
+						normalPuncRules(lastSubField, res.punc, tag, false); // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+					}
+					// Otherwise normal punc rules
 				} else {
 					normalPuncRules(lastSubField, res.punc, tag, false);
 				} // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
 
-			// Second last
+				// Second last
 			} else if (res.special.secondLastIfLast) {
 				field.subfields.forEach(subField => {
 					if (isNaN(subField.code) && res.special.secondLastIfLast !== subField.code) {
@@ -161,7 +156,7 @@ export default async function () {
 				});
 				normalPuncRules(lastSubField, res.punc, tag, false);
 
-			// Search for Finnish terms
+				// Search for Finnish terms
 			} else if (res.special.termField) {
 				lastSubField = findLastSubfield(field);
 				const languageField = find(field.subfields, {code: res.special.termField});
@@ -171,7 +166,7 @@ export default async function () {
 					normalPuncRules(lastSubField, res.special.else, tag, false); // Strict because of years etc (648, 650)
 				}
 
-			// Search last of array in subfields and check if it has punc
+				// Search last of array in subfields and check if it has punc
 			} else if (res.special.lastOf) {
 				lastSubField = null;
 				field.subfields.forEach(subField => {
@@ -187,7 +182,7 @@ export default async function () {
 					normalPuncRules(lastSubField, res.punc, tag, false);
 				}
 
-			// If field has linked rules (tag: 880), find rules and re-validate
+				// If field has linked rules (tag: 880), find rules and re-validate
 			} else if (res.special.linked) {
 				let linkedTag = null;
 				try {
@@ -197,7 +192,7 @@ export default async function () {
 				}
 				validateField(field, linkedTag);
 			}
-		};
+		}
 
 		// Field validation with punctuation rules for normal and special cases in subfunction (to reduce complexity to please travisci)
 		function validateField(field, linkedTag) {
@@ -235,21 +230,13 @@ export default async function () {
 			// Normal rules
 			if (typeof (res.special) === 'undefined' || res.special === null) {
 				lastSubField = findLastSubfield(field);
-				normalPuncRules(lastSubField, res.punc, field.tag, false);
+
+				if (lastSubField) {
+					normalPuncRules(lastSubField, res.punc, field.tag, false);
+				}				
 			} else {
 				specialCases(res, field, field.tag);
 			}
 		}
-
-		// Actual parsing of all fields
-		if (!record.fields) {
-			return false;
-		}
-		record.fields.forEach(field => {
-			validateField(field);
-		});
-
-		message.valid = !(message.message.length >= 1);
-		return message;
 	}
 }
