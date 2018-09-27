@@ -27,7 +27,7 @@
  */
 
 'use strict';
-const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars'];
+const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars', 'kaunokki'];
 
 const validPuncMarks = '?"-!,)]';
 // Configuration specification
