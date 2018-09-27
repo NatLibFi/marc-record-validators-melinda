@@ -35,7 +35,7 @@ import {find, isEmpty, omit} from 'lodash';
 
 export default async function () {
 	return {
-		description: 'Handles empty fields',
+		description: 'Handles empty fields **DEPRECATED**',
 		validate,
 		fix
 	};

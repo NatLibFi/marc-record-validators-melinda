@@ -33,7 +33,7 @@ import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/empty-fields';
 
-describe.skip('empty-fields **DEPRECATED**', () => {
+describe('empty-fields **DEPRECATED**', () => {
 	it('Creates a validator', async () => {
 		const validator = await validatorFactory();
 
