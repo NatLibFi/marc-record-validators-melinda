@@ -1,30 +1,30 @@
 /**
- *
- * @licstart  The following is the entire license notice for the JavaScript code in this file.
- *
- * MARC record validators used in Melinda
- *
- * Copyright (C) 2014-2018 University Of Helsinki (The National Library Of Finland)
- *
- * This file is part of marc-record-validators-melinda
- *
- * marc-record-validators-melinda program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * marc-record-validators-melinda is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @licend  The above is the entire license notice
- * for the JavaScript code in this file.
- *
- */
+*
+* @licstart  The following is the entire license notice for the JavaScript code in this file.
+*
+* MARC record validators used in Melinda
+*
+* Copyright (C) 2014-2018 University Of Helsinki (The National Library Of Finland)
+*
+* This file is part of marc-record-validators-melinda
+*
+* marc-record-validators-melinda program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero General Public License as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* marc-record-validators-melinda is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+* @licend  The above is the entire license notice
+* for the JavaScript code in this file.
+*
+*/
 
 /* eslint-disable require-await */
 
@@ -66,6 +66,11 @@ const confSpec = {
 			type: 'RegExp',
 			mandatory: true
 		}
+	},
+	dependencies: {
+		leader: {
+			type: 'RegExp'
+		}
 	}
 };
 
@@ -74,11 +79,14 @@ export default async function (config) {
 		throw new TypeError('Configuration array not provided');
 	}
 
+	// Transform RegExp-only elements to objects
+	config = config.map(e => isRegExp(e) ? {tag: e} : e);
+
 	configValid(config);
 
 	return {
 		description:
-			'Checks whether the configured field-specific objects are valid in the record',
+		'Checks whether the configured field-specific objects are valid in the record',
 		validate: async record => (
 			excludeFields(record, config, false)
 		),
@@ -92,11 +100,6 @@ export default async function (config) {
 		let excluded = [];
 		config.forEach(obj => {
 			excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
-
-			// Convert RegExp-only confs to objects
-			if (isRegExp(obj)) {
-				obj = {tag: obj};
-			}
 
 			checkMandatory(confSpec, obj);
 
@@ -145,6 +148,14 @@ export default async function (config) {
 				}
 			});
 		}
+
+		if (key === 'dependencies') {
+			forEach(data, subObj => {
+				if (!(typeof subObj === 'object' && !Array.isArray(subObj) && Object.keys(subObj).length === 1 && isRegExp(subObj.leader))) {
+					throw new TypeError('Configuration not valid - Invalid dependencies config');
+				}
+			});
+		}
 	}
 
 	function checkMandatory(spec, obj) {
@@ -180,6 +191,7 @@ export default async function (config) {
 		// Parse trough every element of config array
 		forEach(conf, confObj => {
 			var found = record.get(confObj.tag); // Find matching record fields based on mandatory tag
+			const excluded = [];
 
 			// Check if some of found record fields matches all configuration fields
 			forEach(found, element => {
@@ -188,6 +200,12 @@ export default async function (config) {
 					// This is already checked on .get()
 					if (confKey === 'tag') {
 						return true;
+					}
+
+					if (confKey === 'dependencies') {
+						return confObj.dependencies.every(dependency => {
+							return dependency.leader.test(record.leader);
+						});
 					}
 
 					// Check subfield configurations
@@ -199,18 +217,20 @@ export default async function (config) {
 					if (element[confKey] && isRegExp(confField) && confField.test(element[confKey])) {
 						return true;
 
-					// Configuration object not found from found element
+						// Configuration object not found from found element
 					}
 					return false;
 				})) {
 					// All configuration fields match, element should be excluded.
 					if (fix) {
-						record.removeField(element);
+						excluded.push(element);
 					} else {
 						res.message.push('Field $' + element.tag + ' should be excluded');
 					}
 				}
 			});
+
+			excluded.forEach(field => record.removeField(field));
 		});
 
 		// Fix does not send response
