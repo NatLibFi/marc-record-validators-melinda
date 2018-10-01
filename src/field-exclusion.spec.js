@@ -42,9 +42,7 @@ chai.use(chaiAsPromised);
 describe('field-exclusion', () => {
 	describe('#validate: Check configuration validation', () => {
 		it('Creates a validator from simple config', async () => {
-			const config = [{
-				tag: /^500$/
-			}];
+			const config = [/^500$/];
 
 			const validator = await validatorFactory(config);
 			expect(validator)

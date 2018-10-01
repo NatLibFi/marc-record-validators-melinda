@@ -92,6 +92,12 @@ export default async function (config) {
 		let excluded = [];
 		config.forEach(obj => {
 			excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
+
+			// Convert RegExp-only confs to objects
+			if (isRegExp(obj)) {
+				obj = {tag: obj};
+			}
+
 			checkMandatory(confSpec, obj);
 
 			forEach(obj, (val, key) => {
