@@ -60,5 +60,6 @@ export {
 	ItemLanguage,
 	ResolvableExtReferences,
 	SortTags,
+	SubfieldExclusion,
 	UnicodeDecomposition
 };
