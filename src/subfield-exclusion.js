@@ -163,17 +163,21 @@ export default async function (config) {
 				})) {
 					// All configuration fields match, check if some subfields should be excluded.
 					forEach(confObj.subfields, subField => {
+						const excluded = [];
+
 						forEach(element.subfields, elemSub => {
 							// Check if subfield matches configuration spec
 							if (subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
 								(typeof subField.value === 'undefined' || (subField.value && elemSub.value && (subField.value.test(elemSub.value))))) {
 								if (fix) {
-									record.removeSubfield(elemSub, element);
+									excluded.push(elemSub);
 								} else {
 									res.message.push('Subfield $' + element.tag + '$$' + elemSub.code + 'should be excluded');
 								}
 							}
 						});
+
+						excluded.forEach(sf => record.removeSubfield(sf, element));
 					});
 				}
 			});
