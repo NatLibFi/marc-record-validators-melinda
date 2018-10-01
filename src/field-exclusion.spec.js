@@ -487,4 +487,30 @@ describe('field-exclusion', () => {
 			expect(recordValueInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
 		});
 	});
+
+	describe('Dependencies', () => {
+		it('Finds the record invalid because dependency matches', async () => {
+			const config = [{
+				tag: /^041$/,
+				dependencies: [{leader: /^.{6}a/}]
+			}];
+
+			const record = new MarcRecord({
+				leader: '00000cam^a22003372i^4500',
+				fields: [{
+					tag: '041',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{code: 'a', value: 'Fubar'}
+					]
+				}]
+			});
+
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({valid: false, message: ['Field $041 should be excluded']});
+		});
+	});
 });
