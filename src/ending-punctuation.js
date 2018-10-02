@@ -66,7 +66,8 @@ export default async function () {
 
 		// This is used to find last subfield that should have punctuation
 		function findLastSubfield(field) {
-			return field.subfields.filter(sf => isNaN(sf.code)).slice(-1).shift();
+			const subfields = field.subfields.filter(sf => isNaN(sf.code) && 'value' in sf);
+			return subfields.slice(-1).shift();
 		}
 
 		// Punctuation rule (Boolean), Check no ending dot strict (Boolean)
@@ -107,43 +108,46 @@ export default async function () {
 			// Punctuation should be only after specific field
 			if (res.special.afterOnly) {
 				lastSubField = findLastSubfield(field);
-				if (typeof (res.special.strict) === 'undefined') { // Just to be safe
-					res.special.strict = true;
-				}
 
-				if (lastSubField.code === res.special.afterOnly) {
-					normalPuncRules(lastSubField, res.punc, tag, res.special.strict);
-				} else {
-					normalPuncRules(lastSubField, !res.punc, tag, true);
-				}
+				if (lastSubField) {
+					if (typeof (res.special.strict) === 'undefined') { // Just to be safe
+						res.special.strict = true;
+					}
 
+					if (lastSubField.code === res.special.afterOnly) {
+						normalPuncRules(lastSubField, res.punc, tag, res.special.strict);
+					} else {
+						normalPuncRules(lastSubField, !res.punc, tag, true);
+					}
+				}
 				// Rules if last, some subrules
 			} else if (res.special.ifLast) {
 				lastSubField = findLastSubfield(field);
 
-				// IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
-				if (res.special.ind && field.ind2 === res.special.ind) {
-					// Extra dot at the end of $c ('© 1974.'), which should be only copyright year
-					const lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); // If string ends to dot
-					if (lastSubField.value.includes('©') && lastPuncDot) {
-						message.message.push('Field ' + tag + ' has invalid ending punctuation');
-						if (fix) {
-							lastSubField.value = lastSubField.value.slice(0, -1);
-							message.fix.push('Field ' + tag + ' - Removed punctuation from $' + lastSubField.code);
+				if (lastSubField) {
+					// IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
+					if (res.special.ind && field.ind2 === res.special.ind) {
+						// Extra dot at the end of $c ('© 1974.'), which should be only copyright year
+						const lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); // If string ends to dot
+						if (lastSubField.value.includes('©') && lastPuncDot) {
+							message.message.push('Field ' + tag + ' has invalid ending punctuation');
+							if (fix) {
+								lastSubField.value = lastSubField.value.slice(0, -1);
+								message.fix.push('Field ' + tag + ' - Removed punctuation from $' + lastSubField.code);
+							}
 						}
-					}
 
-					// Checked field is actually $b
-					lastSubField = find(field.subfields, {code: 'b'});
+						// Checked field is actually $b
+						lastSubField = find(field.subfields, {code: 'b'});
 
-					if (lastSubField) {
-						normalPuncRules(lastSubField, res.punc, tag, false); // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-					}
-					// Otherwise normal punc rules
-				} else {
-					normalPuncRules(lastSubField, res.punc, tag, false);
-				} // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-
+						if (lastSubField) {
+							normalPuncRules(lastSubField, res.punc, tag, false); // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+						}
+						// Otherwise normal punc rules
+					} else {
+						normalPuncRules(lastSubField, res.punc, tag, false);
+					} // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+				}
 				// Second last
 			} else if (res.special.secondLastIfLast) {
 				field.subfields.forEach(subField => {
@@ -159,17 +163,19 @@ export default async function () {
 				// Search for Finnish terms
 			} else if (res.special.termField) {
 				lastSubField = findLastSubfield(field);
-				const languageField = find(field.subfields, {code: res.special.termField});
-				if (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
-					normalPuncRules(lastSubField, res.punc, tag, true);
-				} else {
-					normalPuncRules(lastSubField, res.special.else, tag, false); // Strict because of years etc (648, 650)
-				}
 
+				if (lastSubField) {
+					const languageField = find(field.subfields, {code: res.special.termField});
+					if (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
+						normalPuncRules(lastSubField, res.punc, tag, true);
+					} else {
+						normalPuncRules(lastSubField, res.special.else, tag, false); // Strict because of years etc (648, 650)
+					}
+				}
 				// Search last of array in subfields and check if it has punc
 			} else if (res.special.lastOf) {
 				lastSubField = null;
-				field.subfields.forEach(subField => {
+				field.subfields.filter(subField => 'value' in subField).forEach(subField => {
 					if (isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) {
 						lastSubField = subField;
 					} // Not control field
