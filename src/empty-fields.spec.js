@@ -33,7 +33,15 @@ import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/empty-fields';
 
-describe('empty-fields **DEPRECATED**', () => {
+before(() => {
+	MarcRecord.setValidationOptions({subfields: false, subfieldValues: false});
+});
+
+after(() => {
+	MarcRecord.setValidationOptions({});
+});
+
+describe('empty-fields', () => {
 	it('Creates a validator', async () => {
 		const validator = await validatorFactory();
 
@@ -63,31 +71,10 @@ describe('empty-fields **DEPRECATED**', () => {
 				]
 			});
 			const result = await validator.validate(record);
-			expect(result).to.eql({valid: true, messages: []});
+			expect(result).to.to.have.property('valid', true);
 		});
 
-		it('Finds an empty tag value', async () => {
-			const validator = await validatorFactory();
-			const record = new MarcRecord({
-				fields: [
-					{
-						tag: '008',
-						value: '',
-						subfields: [
-							{
-								code: 'a',
-								value: 'foo'
-							}
-						]
-					}
-				]
-			});
-			const result = await validator.validate(record);
-
-			expect(result).to.eql({valid: false, messages: ['Field 008 has empty value']});
-		});
-
-		it('Finds an empty subfield value', async () => {
+		it('Finds a missing subfield value', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
@@ -95,8 +82,7 @@ describe('empty-fields **DEPRECATED**', () => {
 						tag: '245',
 						subfields: [
 							{
-								code: 'a',
-								value: ''
+								code: 'a'
 							}
 						]
 					}
@@ -104,7 +90,7 @@ describe('empty-fields **DEPRECATED**', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: ['Field 245$a has empty value']});
+			expect(result).to.eql({valid: false, messages: ['Field 245 has missing subfield values: a']});
 		});
 
 		it('Finds an empty subfield array', async () => {
@@ -125,31 +111,7 @@ describe('empty-fields **DEPRECATED**', () => {
 	});
 
 	describe('#fix', () => {
-		it('Removes tag with empty value', async () => {
-			const validator = await validatorFactory();
-			const record = new MarcRecord({
-				fields: [
-					{
-						tag: '001',
-						value: '1234567'
-					},
-					{
-						tag: '008',
-						value: ''
-					}
-				]
-			});
-			await validator.fix(record);
-
-			expect(record.fields).to.eql([
-				{
-					tag: '001',
-					value: '1234567'
-				}
-			]);
-		});
-
-		it('Removes an empty value inside subfields array', async () => {
+		it('Removes a subfield with missing value', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
@@ -161,8 +123,7 @@ describe('empty-fields **DEPRECATED**', () => {
 								value: 'foo'
 							},
 							{
-								code: 'b',
-								value: ''
+								code: 'b'
 							}
 						]
 					}
@@ -186,7 +147,7 @@ describe('empty-fields **DEPRECATED**', () => {
 				]);
 		});
 
-		it('Removes an empty subfields array', async () => {
+		it('Removes a field with no subfields', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
@@ -196,8 +157,7 @@ describe('empty-fields **DEPRECATED**', () => {
 					},
 					{
 						tag: '500',
-						subfields: [
-						]
+						subfields: []
 					}
 				]
 			});

@@ -23,7 +23,7 @@
 		"prepublishOnly": "npm run build:transpile",
 		"check-deps": "npm-check;exit 0",
 		"lint": "eslint --fix src",
-		"test:unit:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require babel-core/register --exclude src/empty-fields.spec.js",
+		"test:unit:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require babel-core/register",
 		"test:unit": "npm run test:unit:base -- src/**/*.spec.js",
 		"test": "npm run lint && npm run test:unit && npm run coverage",
 		"clean": "rimraf build dist",
@@ -35,7 +35,7 @@
 		"publish-to-npm": "npm install && npm test && npm run coverage && npm publish --access=public"
 	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^2.0.0",
+		"@natlibfi/marc-record": "^4.0.0",
 		"beautify-isbn": "^2.2.0",
 		"cld3-asm": "^1.0.1",
 		"issn-verify": "^1.0.0",
@@ -45,7 +45,7 @@
 		"xml2js": ">=0.4.19 <1.0.0"
 	},
 	"peerDependencies": {
-		"@natlibfi/marc-record-validate": "^3.0.0"
+		"@natlibfi/marc-record-validate": "^4.0.0"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
