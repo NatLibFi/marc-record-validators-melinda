@@ -140,7 +140,7 @@ export default async function (config) {
 
 	return {
 		description:
-			'Checks whether the configured field-specific objects are valid in the record',
+			'Check whether the configured fields have valid structure',
 		validate: async record => ({
 			valid: recordMatchesConfig(record, config, false)
 		})
