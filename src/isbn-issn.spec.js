@@ -123,7 +123,7 @@ describe('isbn-issn', () => {
 		});
 
 		it('Finds the record invalid (ISBN without hyphens)', async () => {
-			const validator = await validatorFactory();
+			const validator = await validatorFactory({hyphenateISBN: true});
 			const record = new MarcRecord({
 				fields: [
 					{
@@ -195,7 +195,7 @@ describe('isbn-issn', () => {
 		});
 
 		it('Adds hyphens to ISBN', async () => {
-			const validator = await validatorFactory();
+			const validator = await validatorFactory({hyphenateISBN: true});
 			const record = new MarcRecord({
 				fields: [{tag: '020', ind1: ' ', ind2: ' ',
 					subfields: [{code: 'a', value: '9789519155470'}]

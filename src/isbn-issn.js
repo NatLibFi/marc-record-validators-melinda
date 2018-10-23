@@ -28,10 +28,10 @@
 
 /* eslint-disable require-await */
 'use strict';
-import {validate as validateISBN, hyphenate as hyphenateISBN} from 'beautify-isbn';
+import {validate as validateISBN, hyphenate as hyphenateIsbnFunc} from 'beautify-isbn';
 import validateISSN from 'issn-verify';
 
-export default async function () {
+export default async function ({hyphenateISBN = false} = {}) {
 	return {
 		description: 'Validates ISBN and ISSN values',
 		validate,
@@ -43,7 +43,7 @@ export default async function () {
 			if (field.tag === '020') {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
 				if (subfield) {
-					return !validateISBN(subfield.value) || !/-/.test(subfield.value);
+					return !validateISBN(subfield.value) || (hyphenateISBN && !/-/.test(subfield.value));
 				}
 			} else {
 				const subfield = field.subfields
@@ -93,8 +93,8 @@ export default async function () {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
 
 				// ISBN is valid but is missing hyphens
-				if (validateISBN(subfield.value)) {
-					subfield.value = hyphenateISBN(subfield.value);
+				if (validateISBN(subfield.value) && hyphenateISBN) {
+					subfield.value = hyphenateIsbnFunc(subfield.value);
 				} else {
 					field.subfields.push({code: 'z', value: subfield.value});
 					record.removeSubfield(subfield, field);
