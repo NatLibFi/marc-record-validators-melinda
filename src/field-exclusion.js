@@ -86,7 +86,7 @@ export default async function (config) {
 
 	return {
 		description:
-		'Checks whether the configured field-specific objects are valid in the record',
+		'Checks that the record does not contain the configured fields',
 		validate: async record => (
 			excludeFields(record, config, false)
 		),

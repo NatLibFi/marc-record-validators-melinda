@@ -35,7 +35,7 @@ import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf'
 export default async function () {
 	return {
 		description:
-		'Checks whether punctuation is valid',
+		'Handles invalid ending punctuation',
 		validate: async record => (
 			validatePunc(record, false) // Record (Object), fix (boolean)
 		),
