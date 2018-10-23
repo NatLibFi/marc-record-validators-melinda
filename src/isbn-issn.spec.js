@@ -121,6 +121,25 @@ describe('isbn-issn', () => {
 				'ISSN bar is not valid'
 			]});
 		});
+
+		it('Finds the record invalid (ISBN without hyphens)', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: '9789519155470'}]
+					}
+				]
+			});
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({valid: false, messages: [
+				'ISBN 9789519155470 is not valid'
+			]});
+		});
 	});
 
 	describe('#fix', () => {
@@ -171,6 +190,23 @@ describe('isbn-issn', () => {
 			expect(record.fields).to.eql([{
 				tag: '022', ind1: ' ', ind2: ' ', subfields: [
 					{code: 'y', value: 'foo'}
+				]
+			}]);
+		});
+
+		it('Adds hyphens to ISBN', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [{tag: '020', ind1: ' ', ind2: ' ',
+					subfields: [{code: 'a', value: '9789519155470'}]
+				}]
+			});
+
+			await validator.fix(record);
+
+			expect(record.fields).to.eql([{
+				tag: '020', ind1: ' ', ind2: ' ', subfields: [
+					{code: 'a', value: '978-951-9155-47-0'}
 				]
 			}]);
 		});
