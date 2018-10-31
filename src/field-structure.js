@@ -223,14 +223,9 @@ export default async function (config) {
 	// Recursive validation function
 	function recordMatchesConfigElement(record, searchedField, confObj, dependencies) {
 		const foundFields = record.get(searchedField);
-		// If data matching configuration is not found
-		if (foundFields.length === 0) {
+		// If field has dependencies and fields matching configuration is not found
+		if (foundFields.length === 0 && confObj.dependencies) {
 			return false;
-		}
-
-		// The only requirement is the tag: The field must be present
-		if (Object.keys(confObj).length === 0) {
-			return true;
 		}
 
 		// Parse trough record objects matching provided configuration object
