@@ -31,8 +31,7 @@
 		"build:transpile": "babel src --source-maps --out-dir=dist",
 		"build": "npm run clean && npm run build:transpile && npm run check-deps",
 		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm test && npm run coverage'",
-		"watch:validator": "cross-env DEBUG=1 NODE_ENV=test chokidar src/$VALIDATOR.js src/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js src/$VALIDATOR.spec.js && npm run test:unit:base --  src/$VALIDATOR.spec.js && npm run coverage'",
-		"publish-to-npm": "npm install && npm test && npm run coverage && npm publish --access=public"
+		"watch:validator": "cross-env DEBUG=1 NODE_ENV=test chokidar src/$VALIDATOR.js src/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js src/$VALIDATOR.spec.js && npm run test:unit:base --  src/$VALIDATOR.spec.js && npm run coverage'"
 	},
 	"dependencies": {
 		"@natlibfi/marc-record": "^4.0.0",
