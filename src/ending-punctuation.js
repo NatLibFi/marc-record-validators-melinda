@@ -26,7 +26,7 @@
 *
 */
 
-/* eslint-disable require-await */
+/* eslint-disable require-await, max-depth, complexity, max-params */
 'use strict';
 import {find} from 'lodash';
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
@@ -71,11 +71,12 @@ export default async function () {
 		}
 
 		// Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-		function normalPuncRules(subfield, punc, tag, checkEnd) {
-			const lastPuncMark = validPuncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
+		function normalPuncRules(subfield, punc, tag, checkEnd, overrideValidPuncMarks) {
+			const puncMarks = overrideValidPuncMarks || validPuncMarks;
+			const lastPuncMark = puncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
 			const lastPuncDot = '.'.includes(subfield.value.slice(-1)); // If string ends to dot
 
-			// Last char should be punc, but its not either one of marks nor dot
+			// Last char should be punc, but its not one of marks nor dot
 			if (punc && !(lastPuncMark || lastPuncDot)) {
 				// Console.log("1. Invalid punctuation - missing")
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
@@ -83,14 +84,16 @@ export default async function () {
 					subfield.value = subfield.value.concat('.');
 					message.fix.push('Field ' + tag + ' - Added punctuation to $' + subfield.code);
 				}
+
 				// Last char is dot, but previous char is one of punc marks, like 'Question?.'
-			} else if (lastPuncDot && validPuncMarks.includes(subfield.value.charAt(subfield.value.length - 2))) {
+			} else if (lastPuncDot && subfield.value.length > 1 && puncMarks.includes(subfield.value.charAt(subfield.value.length - 2))) {
 				// Console.log("2. Invalid punctuation - duplicate, like '?.'")
 				message.message.push('Field ' + tag + ' has invalid ending punctuation');
 				if (fix) {
 					subfield.value = subfield.value.slice(0, -1);
 					message.fix.push('Field ' + tag + ' - Removed double punctuation from $' + subfield.code);
 				}
+
 				// Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
 			} else if (checkEnd && (!punc && lastPuncDot)) {
 				// Console.log("3. Invalid punctuation - Shouldn't be dot, is")
@@ -120,35 +123,22 @@ export default async function () {
 						normalPuncRules(lastSubField, !res.punc, tag, true);
 					}
 				}
-				// Rules if last, some subrules
-			} else if (res.special.ifLast) {
+			} else if (res.special.ifBoth) {
 				lastSubField = findLastSubfield(field);
+				if (lastSubField && lastSubField.code === res.special.puncSubField) {
+					// Ind2 match, check second if at punc rules with special punc char override
+					if ((res.special.ifInd2 && res.special.ifInd2.includes(field.ind2))) {
+						normalPuncRules(lastSubField, res.special.ifBoth, tag, true, res.special.ifLastCharNot);
 
-				if (lastSubField) {
-					// IF `ind2 === '4'` check punc at $b, $c should not have punc if it has ©
-					if (res.special.ind && field.ind2 === res.special.ind) {
-						// Extra dot at the end of $c ('© 1974.'), which should be only copyright year
-						const lastPuncDot = '.'.includes(lastSubField.value.slice(-1)); // If string ends to dot
-						if (lastSubField.value.includes('©') && lastPuncDot) {
-							message.message.push('Field ' + tag + ' has invalid ending punctuation');
-							if (fix) {
-								lastSubField.value = lastSubField.value.slice(0, -1);
-								message.fix.push('Field ' + tag + ' - Removed punctuation from $' + lastSubField.code);
-							}
-						}
+					// Matches execption to special rule, noPuncIfInd2 (likely with value 4, that indicates copyright mark)
+					} else if (res.special.noPuncIfInd2 && field.ind2 && res.special.noPuncIfInd2.includes(field.ind2)) {
+						normalPuncRules(lastSubField, !res.special.ifBoth, tag, true, res.special.ifLastCharNot);
 
-						// Checked field is actually $b
-						lastSubField = find(field.subfields, {code: 'b'});
-
-						if (lastSubField) {
-							normalPuncRules(lastSubField, res.punc, tag, false); // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-						}
-						// Otherwise normal punc rules
+					// Does not match rules -> shouldn't have punc
 					} else {
-						normalPuncRules(lastSubField, res.punc, tag, false);
-					} // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+						normalPuncRules(lastSubField, !res.special.ifBoth, tag, true, res.special.ifLastCharNot);
+					}
 				}
-				// Second last
 			} else if (res.special.secondLastIfLast) {
 				field.subfields.forEach(subField => {
 					if (isNaN(subField.code) && res.special.secondLastIfLast !== subField.code) {
@@ -241,7 +231,11 @@ export default async function () {
 					normalPuncRules(lastSubField, res.punc, field.tag, false);
 				}
 			} else {
-				specialCases(res, field, field.tag);
+				try {
+					specialCases(res, field, field.tag);
+				} catch (e) {
+					console.error('Catched error from special case: ', e);
+				}
 			}
 		}
 	}

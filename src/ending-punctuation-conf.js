@@ -134,7 +134,7 @@ const confSpec = [
 		index: null,
 		punc: false,
 		special: null
-	}, { // 	250	KYLLÄ
+	}, { // 250	KYLLÄ
 		rangeStart: null,
 		rangeEnd: null,
 		index: 250,
@@ -167,8 +167,11 @@ const confSpec = [
 		index: 264,
 		punc: true,
 		special: {
-			ifLast: 'c',
-			ind: '4'
+			ifBoth: true,
+			puncSubField: 'c',
+			ifInd2: ['0', '1', '2', '3'],
+			ifLastCharNot: ']-)?',
+			noPuncIfInd2: ['4']
 		}
 	}, { //	270	EI
 		rangeStart: null,
