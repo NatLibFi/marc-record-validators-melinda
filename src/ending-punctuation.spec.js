@@ -617,15 +617,25 @@ describe('ending-punctuation', () => {
 			});
 		});
 
-		// "264 KYLLÄ Tarkista poikkeukset MARC 21 -sovellusohjeesta"
-		// Eli jos `ind2 === '4'` niin silloin loppupiste merkitä osakentän *b* loppuun
-		describe('#264 TRUE - If ind2 === 4, punc at the end of $b', () => {
-			// Valid tests
-			const recordValid = new MarcRecord({leader: '',
+		// 264-kenttään tulee loppupiste, JOS on käytetty osakenttää ‡c tuotantoajan, julkaisuajan,
+		// jakeluajan tai valmistusajan ilmaisemiseen (2. indikaattori = 0, 1, 2 tai 3) JA osakenttä ‡c
+		// ei pääty hakasulkuun ']' tai tavuviivaan '-'   tai kaarisulkuun ')'  tai kysymysmerkkiin '?'
+
+		// Copyright-vuoden kanssa ei käytetä loppupistettä (2. indikaattori = 4).
+
+		// Esimerkit
+		// 264 #0 ‡a [Vantaa?] : ‡b [Olli Kela], ‡c [2011?]
+		// 264 #1 ‡a Helsinki : ‡b Helsingin yliopisto, ‡c 1992-
+		// 264 #1 ‡a Helsinki : ‡b Helsingin yliopisto, ‡c 1995-2006.   ← loppupiste
+		// 264 #2 ‡a Kouvola : ‡b Nuorisovirasto
+		// 264 #3 ‡a Lahti : ‡b Valtion monistuskeskus, ‡c 1965.  ← loppupiste
+		describe('#264 TRUE - If ind2 === 0, 1, 2 or 3, punc at the end', () => {
+		// Valid tests
+			const recordValidInd2v1 = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
-					ind1: ' ',
-					ind2: ' ',
+					ind1: '#',
+					ind2: '1',
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Helsingin yliopisto'},
@@ -634,7 +644,32 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidInd = new MarcRecord({leader: '',
+			const recordValidInd2v1Short = new MarcRecord({leader: '',
+				fields: [{
+					tag: '264',
+					ind1: '#',
+					ind2: '1',
+					subfields: [
+						{code: 'a', value: 'Helsinki'},
+						{code: 'b', value: 'Helsingin yliopisto'},
+						{code: 'c', value: '1995-'}
+					]
+				}]
+			});
+
+			const recordValidInd2v2WithoutC = new MarcRecord({leader: '',
+				fields: [{
+					tag: '264',
+					ind1: '#',
+					ind2: '2',
+					subfields: [
+						{code: 'a', value: 'Kouvola'},
+						{code: 'b', value: 'Nuorisovirasto'}
+					]
+				}]
+			});
+
+			const recordValidCopyright = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -647,22 +682,35 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			it('Finds record valid', async () => {
+			it('Finds record valid - Ind2 = 1, $c 1995-2006.', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.validate(recordValid);
+				const result = await validator.validate(recordValidInd2v1);
 				expect(result.valid).to.eql(true);
 			});
 
-			it('Finds record valid - Ind, copyright', async () => {
+			it('Finds record valid - Ind2 = 1, $c 1995-', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.validate(recordValidInd);
+				const result = await validator.validate(recordValidInd2v1Short);
 				expect(result.valid).to.eql(true);
 			});
 
-			// Invalid tests
-			const recordInvalid = new MarcRecord({leader: '',
+			it('Finds record valid - Ind2 = 2, no $c', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidInd2v2WithoutC);
+				expect(result.valid).to.eql(true);
+			});
+
+			it('Finds record valid - Ind2 = 4, copyright', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValidCopyright);
+				expect(result.valid).to.eql(true);
+			});
+
+			const recordInvalidInd2v1 = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
+					ind1: '#',
+					ind2: '1',
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Helsingin yliopisto'},
@@ -671,20 +719,7 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidIndBMissing = new MarcRecord({leader: '',
-				fields: [{
-					tag: '264',
-					ind1: ' ',
-					ind2: '4',
-					subfields: [
-						{code: 'a', value: 'Helsinki : '},
-						{code: 'b', value: 'Suomen poliisikoirayhdistys'},
-						{code: 'c', value: '© 1974'}
-					]
-				}]
-			});
-
-			const recordInvalidIndCExtra = new MarcRecord({leader: '',
+			const recordInvalidCopyrightCExtra = new MarcRecord({leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -697,51 +732,20 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidIndBMissingCExtra = new MarcRecord({leader: '',
-				fields: [{
-					tag: '264',
-					ind1: ' ',
-					ind2: '4',
-					subfields: [
-						{code: 'a', value: 'Helsinki : '},
-						{code: 'b', value: 'Suomen poliisikoirayhdistys'},
-						{code: 'c', value: '© 1974.'}
-					]
-				}]
-			});
-
 			it('Finds record invalid - No punc $c', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.validate(recordInvalid);
+				const result = await validator.validate(recordInvalidInd2v1);
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
 					valid: false
 				});
 			});
 
-			it('Finds record invalid - Ind, copyright, no punc $b ', async () => {
+			it('Finds record invalid - Ind2 = 4, copyright, extra punc $c', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.validate(recordInvalidIndBMissing);
+				const result = await validator.validate(recordInvalidCopyrightCExtra);
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
-					valid: false
-				});
-			});
-
-			it('Finds record invalid - Ind, copyright, extra punc $c', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.validate(recordInvalidIndCExtra);
-				expect(result).to.eql({
-					message: ['Field 264 has invalid ending punctuation'],
-					valid: false
-				});
-			});
-
-			it('Finds record invalid - Ind, copyright, extra punc $c, no punc $b', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.validate(recordInvalidIndBMissingCExtra);
-				expect(result).to.eql({
-					message: ['Field 264 has invalid ending punctuation', 'Field 264 has invalid ending punctuation'],
 					valid: false
 				});
 			});
@@ -749,8 +753,8 @@ describe('ending-punctuation', () => {
 			// Fix tests; invalid->valid
 			it('Repairs the invalid record - Add punc $c', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalid);
-				expect(recordInvalid.equalsTo(recordValid)).to.eql(true);
+				const result = await validator.fix(recordInvalidInd2v1);
+				expect(recordInvalidInd2v1.equalsTo(recordValidInd2v1)).to.eql(true);
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
 					fix: ['Field 264 - Added punctuation to $c'],
@@ -758,35 +762,13 @@ describe('ending-punctuation', () => {
 				});
 			});
 
-			it('Repairs the invalid record - Add punc $b (Last $c, but ind2 === 4) ', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalidIndBMissing);
-				expect(recordInvalidIndBMissing.equalsTo(recordValidInd)).to.eql(true);
-				expect(result).to.eql({
-					message: ['Field 264 has invalid ending punctuation'],
-					fix: ['Field 264 - Added punctuation to $b'],
-					valid: false
-				});
-			});
-
 			it('Repairs the invalid record - Remove punc $c ($c has ©, should not have punc)', async () => {
 				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalidIndCExtra);
-				expect(recordInvalidIndCExtra.equalsTo(recordValidInd)).to.eql(true);
+				const result = await validator.fix(recordInvalidCopyrightCExtra);
+				expect(recordInvalidCopyrightCExtra.equalsTo(recordValidCopyright)).to.eql(true);
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
 					fix: ['Field 264 - Removed punctuation from $c'],
-					valid: false
-				});
-			});
-
-			it('Repairs the invalid record - Add punc $b, remove punc $c', async () => {
-				const validator = await validatorFactory();
-				const result = await validator.fix(recordInvalidIndBMissingCExtra);
-				expect(recordInvalidIndBMissingCExtra.equalsTo(recordValidInd)).to.eql(true);
-				expect(result).to.eql({
-					message: ['Field 264 has invalid ending punctuation', 'Field 264 has invalid ending punctuation'],
-					fix: ['Field 264 - Removed punctuation from $c', 'Field 264 - Added punctuation to $b'],
 					valid: false
 				});
 			});
