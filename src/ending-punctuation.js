@@ -57,6 +57,7 @@ export default async function () {
 		if (!record.fields) {
 			return false;
 		}
+
 		record.fields.forEach(field => {
 			validateField(field);
 		});
@@ -144,6 +145,7 @@ export default async function () {
 					if (isNaN(subField.code) && res.special.secondLastIfLast !== subField.code) {
 						lastSubField = subField;
 					} // Not control field
+
 					if (typeof (res.special.last) !== 'undefined' && res.special.secondLastIfLast === subField.code) {
 						normalPuncRules(subField, res.special.last, tag, true);
 					} // Strict because this field should not be abbreviation
@@ -156,7 +158,8 @@ export default async function () {
 
 				if (lastSubField) {
 					const languageField = find(field.subfields, {code: res.special.termField});
-					if (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
+					if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
+					// If (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
 						normalPuncRules(lastSubField, res.punc, tag, true);
 					} else {
 						normalPuncRules(lastSubField, res.special.else, tag, false); // Strict because of years etc (648, 650)
@@ -169,6 +172,7 @@ export default async function () {
 					if (isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) {
 						lastSubField = subField;
 					} // Not control field
+
 					if (res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1) {
 						normalPuncRules(subField, res.punc, tag, true);
 					} // Strict because of mandatory
@@ -186,6 +190,7 @@ export default async function () {
 				} catch (e) {
 					return false;
 				}
+
 				validateField(field, linkedTag);
 			}
 		}
