@@ -34,13 +34,13 @@
 		"watch:validator": "cross-env DEBUG=1 NODE_ENV=test chokidar src/$VALIDATOR.js src/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js src/$VALIDATOR.spec.js && npm run test:unit:base --  src/$VALIDATOR.spec.js && npm run coverage'"
 	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^4.0.0",
+		"@natlibfi/marc-record": "^4.0.4",
 		"beautify-isbn": "^2.2.0",
 		"cld3-asm": "^1.0.1",
 		"issn-verify": "^1.0.0",
 		"langs": "^2.0.0",
-		"lodash": "4.17.10",
-		"node-fetch": "^2.1.2",
+		"lodash": "^4.17.11",
+		"node-fetch": "^2.3.0",
 		"xml2js": ">=0.4.19 <1.0.0"
 	},
 	"peerDependencies": {
@@ -48,25 +48,25 @@
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
-		"babel-eslint": "^9.0.0",
-		"babel-plugin-istanbul": "^5.0.0",
+		"babel-eslint": "^10.0.1",
+		"babel-plugin-istanbul": "^5.1.0",
 		"babel-plugin-rewire": "^1.1.0",
 		"babel-preset-env": "^1.6.1",
 		"babel-register": "^6.26.0",
-		"chai": "^4.1.2",
+		"chai": "^4.2.0",
 		"chai-as-promised": "^7.1.1",
 		"chokidar-cli": "^1.2.0",
-		"codeclimate-test-reporter": ">=0.5.0 <1.0.0",
+		"codeclimate-test-reporter": "^0.5.1",
 		"cross-env": "^5.2.0",
-		"eslint": "^5.2.0",
-		"eslint-config-xo": ">=0.24.1 <1.0.0",
+		"eslint": "^5.12.0",
+		"eslint-config-xo": "^0.26.0",
 		"eslint-plugin-import": "^2.13.0",
-		"eslint-plugin-mocha": "^5.1.0",
+		"eslint-plugin-mocha": "^5.2.1",
+		"fetch-mock": "^7.3.0",
 		"mocha": "^5.2.0",
-		"npm-check": "^5.7.1",
-		"nyc": "^12.0.2",
-		"rimraf": "^2.6.2",
-		"fetch-mock": "^6.4.4"
+		"npm-check": "^5.9.0",
+		"nyc": "^13.1.0",
+		"rimraf": "^2.6.3"
 	},
 	"eslintConfig": {
 		"parser": "babel-eslint",
