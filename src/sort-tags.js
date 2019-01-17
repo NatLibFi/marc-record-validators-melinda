@@ -49,6 +49,7 @@ export default async function (tagPattern) {
 		if (tagPattern) {
 			return sortPatternFields(record, tagPattern);
 		}
+
 		return sortFields(record);
 	}
 }

@@ -238,9 +238,11 @@ export default async function (config) {
 					if (confField === 'valuePattern') {
 						return confObj[confField].test(recordSubObj.value);
 					}
+
 					if (confField === 'leader') {
 						return confObj[confField].test(record.leader);
 					}
+
 					return confObj[confField].test(recordSubObj[confField]);
 				}
 
@@ -263,9 +265,11 @@ export default async function (config) {
 						if (matching.length > val.maxOccurrence) {
 							valid = false;
 						}
+
 						if ((val.required || dependencies) && matching.length === 0) {
 							valid = false;
 						}
+
 						if (val.pattern) {
 							forEach(matching, field => {
 								if (!val.pattern.test(field.value)) {
