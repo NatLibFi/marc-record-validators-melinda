@@ -59,6 +59,7 @@ export default async function (tagPattern, treshold = 0.9) {
 					`Item language code is invalid. Correct language code: ${results.detected}`
 				]};
 			}
+
 			return {valid: true};
 		}
 
@@ -106,6 +107,7 @@ export default async function (tagPattern, treshold = 0.9) {
 						if (a.code > b.code) {
 							return 1;
 						}
+
 						return 0;
 					});
 				}

@@ -37,6 +37,7 @@ export default async function (configuration) {
 			validate
 		};
 	}
+
 	throw new Error('No configuration provided');
 
 	async function validate(record) {
@@ -101,6 +102,7 @@ export default async function (configuration) {
 							const indexes = [...new Array(arg[1] + 1).keys()];
 							return indexes.slice(arg[0], arg[1] + 1);
 						}
+
 						return [arg];
 					}
 				}, []);

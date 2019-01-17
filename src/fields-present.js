@@ -37,6 +37,7 @@ export default async function (tagPatterns) {
 			validate
 		};
 	}
+
 	throw new Error('No tag pattern array provided');
 
 	async function validate(record) {

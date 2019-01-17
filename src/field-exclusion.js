@@ -219,6 +219,7 @@ export default async function (config) {
 
 						// Configuration object not found from found element
 					}
+
 					return false;
 				})) {
 					// All configuration fields match, element should be excluded.
@@ -238,6 +239,7 @@ export default async function (config) {
 			if (res.message.length > 0) {
 				res.valid = false;
 			}
+
 			return res;
 		}
 		// Res.fix.push('Field $' + element.tag + ' excluded');

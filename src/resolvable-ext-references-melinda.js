@@ -38,6 +38,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 			validate
 		};
 	}
+
 	throw new Error('Error in validation parameters');
 
 	async function validate(record) {
@@ -66,6 +67,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 						if (Object.values(fields[key]).filter(value => value === item.code)[0]) {
 							prev.push({tag: current.tag, code: item.code, value: item.value});
 						}
+
 						return prev;
 					});
 				}
@@ -90,6 +92,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 				return result;
 			});
 		}
+
 		return {valid: true, messages: []};
 	}
 

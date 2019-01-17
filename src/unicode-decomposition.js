@@ -128,6 +128,7 @@ export default async function () {
 				return field.subfields.filter(subfield => PATTERN.test(subfield.value))
 					.map(subfield => subfield.code);
 			}
+
 			return null;
 		});
 		return codes.length < 1 ? {valid: true, messages: []} : {valid: false, messages: [`The following subfields are not properly decomposed: ${codes.join(', ')}`]};
@@ -148,9 +149,11 @@ export default async function () {
 			if ('subfields' in field) {
 				return field.subfields.some(subfield => PATTERN.test(subfield.value));
 			}
+
 			return null;
 		});
 	}
+
 	function convert(value) {
 		return Object.keys(MAP_CONVERSION).reduce((result, key) => {
 			return result.includes(key) ? result.replace(new RegExp(key, 'g'), MAP_CONVERSION[key]) : result;
