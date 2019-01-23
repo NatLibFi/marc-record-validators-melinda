@@ -4,6 +4,6 @@ MARC record validators used in Melinda. See [wiki](https://github.com/NatLibFi/m
 
 ## License and copyright
 
-Copyright (c) 2014-2018 **University Of Helsinki (The National Library Of Finland)**
+Copyright (c) 2014-2019 **University Of Helsinki (The National Library Of Finland)**
 
-This project's source code is licensed under the terms of **GNU Affero General Public License Version 3** or any later version.
+This project's source code is licensed under the terms of **GNU Lesser General Public License Version 3** or any later version.
