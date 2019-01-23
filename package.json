@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "6.0.0",
+	"version": "7.0.0",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=7"
@@ -44,7 +44,7 @@
 		"xml2js": ">=0.4.19 <1.0.0"
 	},
 	"peerDependencies": {
-		"@natlibfi/marc-record-validate": "^4.0.0"
+		"@natlibfi/marc-record-validate": "^5.0.0"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
