@@ -27,27 +27,26 @@
 */
 
 /* eslint-disable require-await */
-'use strict';
+
 import {validate as validateISBN, hyphenate as hyphenateIsbnFunc} from 'beautify-isbn';
 import validateISSN from 'issn-verify';
 
-export default async function ({hyphenateISBN = false} = {}) {
+export default async ({hyphenateISBN = false} = {}) => {
 	return {
-		description: 'Validates ISBN and ISSN values',
-		validate,
-		fix
+		validate, fix,
+		description: 'Validates ISBN and ISSN values'
 	};
 
 	function getInvalidFields(record) {
 		return record.get(/^(020|022)$/).filter(field => {
 			if (field.tag === '020') {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
+
 				if (subfield) {
-					return !validateISBN(subfield.value) || (hyphenateISBN && !/-/.test(subfield.value));
+					return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
 				}
 			} else {
-				const subfield = field.subfields
-					.find(sf => sf.code === 'a' || sf.code === 'l');
+				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
 				if (subfield) {
 					return !validateISSN(subfield.value);
@@ -82,8 +81,9 @@ export default async function ({hyphenateISBN = false} = {}) {
 			})
 			.reduce((acc, obj) => {
 				const {name, value} = obj;
-				acc.messages.push(`${name} ${value} is not valid`);
-				return acc;
+				const msg = `${name} ${value} is not valid`;
+
+				return {...acc, messages: acc.messages.concat(msg)};
 			}, {valid: false, messages: []});
 	}
 
@@ -100,12 +100,11 @@ export default async function ({hyphenateISBN = false} = {}) {
 					record.removeSubfield(subfield, field);
 				}
 			} else {
-				const subfield = field.subfields
-					.find(sf => sf.code === 'a' || sf.code === 'l');
+				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
 				field.subfields.push({code: 'y', value: subfield.value});
 				record.removeSubfield(subfield, field);
 			}
 		});
 	}
-}
+};
