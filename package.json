@@ -16,24 +16,28 @@
 	"license": "LGPL-3.0+",
 	"version": "7.0.0",
 	"main": "./dist/index.js",
+	"publishConfig": {
+		"access": "public"
+	},
 	"engines": {
-		"node": ">=7"
+		"node": ">=8"
 	},
 	"scripts": {
-		"prepublishOnly": "npm run build:transpile",
+		"prepare": "npm run build",
 		"check-deps": "npm-check;exit 0",
 		"lint": "eslint --fix src",
-		"test:unit:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require babel-core/register",
+		"test:unit:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require @babel/register",
 		"test:unit": "npm run test:unit:base -- src/**/*.spec.js",
 		"test": "npm run lint && npm run test:unit && npm run coverage",
 		"clean": "rimraf build dist",
 		"coverage": "nyc check-coverage --per-file",
-		"build:transpile": "babel src --source-maps --out-dir=dist",
-		"build": "npm run clean && npm run build:transpile && npm run check-deps",
+		"build": "babel src --source-maps --out-dir=dist",
+		"build:dev": "npm run clean && npm run build:dev && npm run check-deps",
 		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm test && npm run coverage'",
 		"watch:validator": "cross-env DEBUG=1 NODE_ENV=test chokidar src/$VALIDATOR.js src/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js src/$VALIDATOR.spec.js && npm run test:unit:base --  src/$VALIDATOR.spec.js && npm run coverage'"
 	},
 	"dependencies": {
+		"@babel/register": "^7.0.0",
 		"@natlibfi/marc-record": "^4.0.4",
 		"beautify-isbn": "^2.2.0",
 		"cld3-asm": "^1.0.1",
@@ -47,25 +51,24 @@
 		"@natlibfi/marc-record-validate": "^5.0.0"
 	},
 	"devDependencies": {
-		"babel-cli": "^6.26.0",
+		"@babel/cli": "^7.2.0",
+		"@babel/core": "^7.2.0",
+		"@babel/preset-env": "^7.2.0",
 		"babel-eslint": "^10.0.1",
-		"babel-plugin-istanbul": "^5.1.0",
-		"babel-plugin-rewire": "^1.1.0",
-		"babel-preset-env": "^1.6.1",
-		"babel-register": "^6.26.0",
+		"babel-plugin-istanbul": "^5.1.4",
+		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.2.0",
 		"chai-as-promised": "^7.1.1",
 		"chokidar-cli": "^1.2.0",
 		"codeclimate-test-reporter": "^0.5.1",
-		"cross-env": "^5.2.0",
-		"eslint": "^5.12.0",
-		"eslint-config-xo": "^0.26.0",
-		"eslint-plugin-import": "^2.13.0",
-		"eslint-plugin-mocha": "^5.2.1",
+		"cross-env": "^5.1.1",
+		"eslint": "^5.9.0",
+		"eslint-config-xo": ">=0.25.1 <1.0.0",
+		"eslint-plugin-import": "^2.16.0",
 		"fetch-mock": "^7.3.0",
-		"mocha": "^5.2.0",
+		"mocha": "^6.0.2",
 		"npm-check": "^5.9.0",
-		"nyc": "^13.1.0",
+		"nyc": "^14.1.1",
 		"rimraf": "^2.6.3"
 	},
 	"eslintConfig": {
@@ -89,10 +92,10 @@
 	"babel": {
 		"presets": [
 			[
-				"env",
+				"@babel/preset-env",
 				{
 					"targets": {
-						"node": "7"
+						"node": "8"
 					}
 				}
 			]
@@ -100,7 +103,6 @@
 		"env": {
 			"test": {
 				"plugins": [
-					"istanbul",
 					"rewire"
 				]
 			}
@@ -112,7 +114,7 @@
 			"html"
 		],
 		"require": [
-			"babel-register"
+			"@babel/register"
 		],
 		"sourceMap": false,
 		"instrument": false,
