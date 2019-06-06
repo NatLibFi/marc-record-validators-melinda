@@ -140,6 +140,9 @@ describe('isbn-issn', () => {
 				'ISBN 9789519155470 is not valid'
 			]});
 		});
+
+		it.skip('Finds the record invalid (Missing ISBN)');
+		it.skip('Finds the record invalid (Missing ISSN)');
 	});
 
 	describe('#fix', () => {
