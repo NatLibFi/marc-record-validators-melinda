@@ -1465,7 +1465,7 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'kauno/fin'}
 					]
 				}]
 			});
@@ -1576,7 +1576,7 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät.'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'kauno/fin'}
 					]
 				}]
 			});
