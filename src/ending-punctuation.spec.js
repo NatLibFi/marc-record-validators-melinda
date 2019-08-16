@@ -1440,7 +1440,7 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1900-luku'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'yso/swe'}
 					]
 				}]
 			});
@@ -1465,7 +1465,7 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'kauno/fin'}
 					]
 				}]
 			});
@@ -1551,7 +1551,7 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1900-luku.'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'yso/swe'}
 					]
 				}]
 			});
@@ -1576,7 +1576,7 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät.'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'kauno/fin'}
 					]
 				}]
 			});
@@ -1739,7 +1739,7 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kausijulkaisut'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'yso/eng'}
 					]
 				}]
 			});
@@ -1775,7 +1775,7 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kuvaamataidonopettajat'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'slm/eng'}
 					]
 				}]
 			});
@@ -1869,7 +1869,7 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kausijulkaisut.'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'yso/eng'}
 					]
 				}]
 			});
@@ -1905,7 +1905,7 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kuvaamataidonopettajat.'},
-						{code: '2', value: 'ysa'}
+						{code: '2', value: 'slm/eng'}
 					]
 				}]
 			});
