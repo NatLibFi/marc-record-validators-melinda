@@ -45,9 +45,9 @@ const finnishTerms = [
 	/^bella$/,
 	/^musa$/,
 	/^local$/,
-	/^slm\/(fin|eng|swe)$/,
-	/^yso\/(fin|eng|swe)$/,
-	/^kauno\/(fin|eng|swe)$/
+	/^slm\//,
+	/^yso\//,
+	/^kauno\//
 ];
 
 const validPuncMarks = '?"-!,)]';
