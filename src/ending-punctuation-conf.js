@@ -45,9 +45,9 @@ const finnishTerms = [
 	/^bella$/,
 	/^musa$/,
 	/^local$/,
-	new RegExp('^slm/'),
-	new RegExp('^yso/'),
-	new RegExp('^kauno/')
+	/^slm\/(fin|eng|swe)$/,
+	/^yso\/(fin|eng|swe)$/,
+	/^kauno\/(fin|eng|swe)$/
 ];
 
 const validPuncMarks = '?"-!,)]';
