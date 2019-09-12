@@ -298,6 +298,115 @@ describe('field-exclusion', () => {
 		});
 	});
 
+	// Simple multi tag configuration
+	describe('#validate: Simple multi tag configuration (spec)', () => {
+		const config = [{
+			tag: /^(648|650|651|655)$/
+		}];
+
+		const recordValid = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}]
+		});
+
+		const recordInvalid = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}, {
+				tag: '648',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
+					{code: '9', value: 'ALMA<KEEP>'}
+				]
+			}]
+		});
+
+		const recordInvalidDouble = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}, {
+				tag: '648',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo'},
+					{code: '9', value: 'ALMA<KEEP>'}
+				]
+			}, {
+				tag: '650',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Bar'},
+					{code: '9', value: 'ALMA<KEEP>'}
+				]
+			}]
+		});
+
+		const recordInvalidFixed = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}]
+		});
+
+		it('Finds the record valid (spec)', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordValid);
+			expect(result).to.eql({valid: true, message: []});
+		});
+
+		it('Finds the record invalid (spec)', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalid);
+			expect(result).to.eql({valid: false, message: ['Field $648 should be excluded']});
+		});
+
+		it('Finds the record invalid - double', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalidDouble);
+			expect(result).to.eql({valid: false, message: ['Field $648 should be excluded', 'Field $650 should be excluded']});
+		});
+
+		it('Repairs invalid record', async () => {
+			const validator = await validatorFactory(config);
+			await validator.fix(recordInvalid);
+			expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+		});
+
+		it('Repairs invalid record - double', async () => {
+			const validator = await validatorFactory(config);
+			await validator.fix(recordInvalidDouble);
+			expect(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
+		});
+	});
+
 	// Complex configuration https://github.com/NatLibFi/marc-record-validators-melinda/issues/45
 	describe('#validate: Complex configuration (spec)', () => {
 		const config = [{
@@ -369,6 +478,149 @@ describe('field-exclusion', () => {
 			const validator = await validatorFactory(config);
 			const result = await validator.validate(recordInvalid);
 			expect(result).to.eql({valid: false, message: ['Field $500 should be excluded']});
+		});
+
+		it('Repairs invalid record', async () => {
+			const validator = await validatorFactory(config);
+			await validator.fix(recordInvalid);
+			expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+		});
+	});
+
+	// Complex multi tag configuration
+	describe('#validate: Complex multi tag configuration (spec)', () => {
+		const config = [{
+			tag: /^(648|650|651|655)$/,
+			subfields: [
+				{code: /^2$/, value: /^(ysa|musa|allars|cilla)$/}
+			]
+		}];
+
+		const recordValid = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}, {
+				tag: '650',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
+					{code: '2', value: 'yso'}
+				]
+			}]
+		});
+
+		const recordInvalid = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}, {
+				tag: '650',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Foo Bar Foo Bar Foo Bar'},
+					{code: '2', value: 'ysa'}
+				]
+			}]
+		});
+
+		const recordInvalidMulti = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}, {
+				tag: '648',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: '2', value: 'ysa'}
+				]
+			}, {
+				tag: '650',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: '2', value: 'ysa'}
+				]
+			}, {
+				tag: '650',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: '2', value: 'ysa'}
+				]
+			}, {
+				tag: '651',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: '2', value: 'ysa'}
+				]
+			}, {
+				tag: '655',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: '2', value: 'ysa'}
+				]
+			}]
+		});
+
+		const recordInvalidFixed = new MarcRecord({
+			leader: 'foo',
+			fields: [{
+				tag: '245',
+				ind1: ' ',
+				ind2: ' ',
+				subfields: [
+					{code: 'a', value: 'Fubar'}
+				]
+			}]
+		});
+
+		it('Finds the record valid (spec)', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordValid);
+			expect(result).to.eql({valid: true, message: []});
+		});
+
+		it('Finds the record invalid (spec)', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalid);
+			expect(result).to.eql({valid: false, message: ['Field $650 should be excluded']});
+		});
+
+		it('Finds the record invalid (spec)', async () => {
+			const validator = await validatorFactory(config);
+			const result = await validator.validate(recordInvalidMulti);
+			expect(result).to.eql({valid: false, message: ['Field $648 should be excluded',
+				'Field $650 should be excluded',
+				'Field $650 should be excluded',
+				'Field $651 should be excluded',
+				'Field $655 should be excluded']});
+		});
+
+		it('Repairs invalid multi record', async () => {
+			const validator = await validatorFactory(config);
+			await validator.fix(recordInvalidMulti);
+			expect(recordInvalidMulti.equalsTo(recordInvalidFixed)).to.eql(true);
 		});
 
 		it('Repairs invalid record', async () => {
