@@ -42,7 +42,8 @@ chai.use(chaiAsPromised);
 describe('ending-punctuation', () => {
 	// Indicators and subfields validation
 	describe('#validate: Indicators and subfields', () => {
-		const recordValid = new MarcRecord({leader: '',
+		const recordValid = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '245',
 				ind1: ' ',
@@ -71,7 +72,8 @@ describe('ending-punctuation', () => {
 			}]
 		});
 
-		const recordInvalid = new MarcRecord({leader: '',
+		const recordInvalid = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '245',
 				ind1: ' ',
@@ -99,7 +101,8 @@ describe('ending-punctuation', () => {
 				]
 			}]
 		});
-		const recordBroken = new MarcRecord({leader: '',
+		const recordBroken = new MarcRecord({
+			leader: '',
 			fields: [{
 				tag: '245',
 				ind1: ' ',
@@ -160,7 +163,8 @@ describe('ending-punctuation', () => {
 		// Can have subfields a and b, dot only after b
 		describe('#036 TRUE - only after subfield $b', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({leader: '',
+			const recordValid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '036',
 					ind1: ' ',
@@ -172,7 +176,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidOnlyA = new MarcRecord({leader: '',
+			const recordValidOnlyA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '036',
 					ind1: ' ',
@@ -196,7 +201,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({leader: '',
+			const recordInvalid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '036',
 					ind1: ' ',
@@ -208,7 +214,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidOnlyA = new MarcRecord({leader: '',
+			const recordInvalidOnlyA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '036',
 					ind1: ' ',
@@ -264,7 +271,8 @@ describe('ending-punctuation', () => {
 		// "242 KYLLÄ Jos viimeinen osakenttä on $y, piste on ennen sitä" - Eli siis ei kentässä y (ennen sitä)
 		describe('#242 TRUE - if last subfield $y, punc before it', () => {
 			// Valid tests
-			const recordValidOnlyA = new MarcRecord({leader: '',
+			const recordValidOnlyA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -276,7 +284,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidMultiple = new MarcRecord({leader: '',
+			const recordValidMultiple = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -291,7 +300,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// "Suositellaan käytettäväksi myös osakenttää ‡y (käännöksen kielikoodi)." https://www.kiwi.fi/pages/viewpage.action?pageId=51282044
-			const recordValidWithoutY = new MarcRecord({leader: '',
+			const recordValidWithoutY = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -321,7 +331,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidOnlyAMissingA = new MarcRecord({leader: '',
+			const recordInvalidOnlyAMissingA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -333,7 +344,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidOnlyAPuncY = new MarcRecord({leader: '',
+			const recordInvalidOnlyAPuncY = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -345,7 +357,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidOnlyAMissingAPuncY = new MarcRecord({leader: '',
+			const recordInvalidOnlyAMissingAPuncY = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -357,7 +370,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidMultipleMissingP = new MarcRecord({leader: '',
+			const recordValidMultipleMissingP = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -372,7 +386,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// "Suositellaan käytettäväksi myös osakenttää ‡y (käännöksen kielikoodi)." https://www.kiwi.fi/pages/viewpage.action?pageId=51282044
-			const recordValidWithoutYMissingA = new MarcRecord({leader: '',
+			const recordValidWithoutYMissingA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '242',
 					ind1: ' ',
@@ -489,7 +504,8 @@ describe('ending-punctuation', () => {
 		// Punc only if last subfield c
 		describe('#260 TRUE - Punc only if last subfield c', () => {
 			// Valid tests
-			const recordValidEndC = new MarcRecord({leader: '',
+			const recordValidEndC = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '260',
 					ind1: ' ',
@@ -502,7 +518,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidEndG = new MarcRecord({leader: '',
+			const recordValidEndG = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '260',
 					ind1: ' ',
@@ -516,7 +533,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidEndB = new MarcRecord({leader: '',
+			const recordValidEndB = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '260',
 					ind1: ' ',
@@ -548,7 +566,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidEndC = new MarcRecord({leader: '',
+			const recordInvalidEndC = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '260',
 					ind1: ' ',
@@ -561,7 +580,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidEndGDouble = new MarcRecord({leader: '',
+			const recordInvalidEndGDouble = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '260',
 					ind1: ' ',
@@ -630,8 +650,9 @@ describe('ending-punctuation', () => {
 		// 264 #2 ‡a Kouvola : ‡b Nuorisovirasto
 		// 264 #3 ‡a Lahti : ‡b Valtion monistuskeskus, ‡c 1965.  ← loppupiste
 		describe('#264 TRUE - If ind2 === 0, 1, 2 or 3, punc at the end', () => {
-		// Valid tests
-			const recordValidInd2v1 = new MarcRecord({leader: '',
+			// Valid tests
+			const recordValidInd2v1 = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '264',
 					ind1: '#',
@@ -644,7 +665,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidInd2v1Short = new MarcRecord({leader: '',
+			const recordValidInd2v1Short = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '264',
 					ind1: '#',
@@ -657,7 +679,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidInd2v2WithoutC = new MarcRecord({leader: '',
+			const recordValidInd2v2WithoutC = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '264',
 					ind1: '#',
@@ -669,7 +692,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidCopyright = new MarcRecord({leader: '',
+			const recordValidCopyright = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -706,7 +730,8 @@ describe('ending-punctuation', () => {
 				expect(result.valid).to.eql(true);
 			});
 
-			const recordInvalidInd2v1 = new MarcRecord({leader: '',
+			const recordInvalidInd2v1 = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '264',
 					ind1: '#',
@@ -719,7 +744,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidCopyrightCExtra = new MarcRecord({leader: '',
+			const recordInvalidCopyrightCExtra = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '264',
 					ind1: ' ',
@@ -780,7 +806,8 @@ describe('ending-punctuation', () => {
 		// This doesn't match spec at all, but these rules were provided (https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340)
 		describe('#340 TRUE - Punc at $b always and to last of [$a, $d, $e, $f, $h, $i]', () => {
 			// Valid tests
-			const recordValidA = new MarcRecord({leader: '',
+			const recordValidA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
@@ -791,54 +818,58 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValidAB = new MarcRecord({leader: '',
+			const recordValidAB = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'b',	value: '20 cm. folded to 10 x 12 cm.'}
+						{code: 'b', value: '20 cm. folded to 10 x 12 cm.'}
 					]
 				}]
 			});
 
-			const recordValidDD = new MarcRecord({leader: '',
+			const recordValidDD = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'd', value: 'handwritten'},
-						{code: 'd',	value: 'typed.'}
+						{code: 'd', value: 'typed.'}
 					]
 				}]
 			});
 
-			const recordValidComplex = new MarcRecord({leader: '',
+			const recordValidComplex = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'wove paper'},
-						{code: 'c',	value: 'ink'},
-						{code: 'c',	value: 'gouache'},
-						{code: 'd',	value: 'lithography'},
-						{code: 'd',	value: 'collage.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'g',	value: 'polychrome'}
+						{code: 'c', value: 'ink'},
+						{code: 'c', value: 'gouache'},
+						{code: 'd', value: 'lithography'},
+						{code: 'd', value: 'collage.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
+						{code: 'g', value: 'polychrome'}
 					]
 				}]
 			});
 
-			const recordValidJ2 = new MarcRecord({leader: '',
+			const recordValidJ2 = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'j', value: 'original'},
-						{code: '2',	value: 'rda'}
+						{code: '2', value: 'rda'}
 					]
 				}]
 			});
@@ -874,7 +905,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidA = new MarcRecord({leader: '',
+			const recordInvalidA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
@@ -885,54 +917,58 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidAMissingB = new MarcRecord({leader: '',
+			const recordInvalidAMissingB = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'b',	value: '20 cm. folded to 10 x 12 cm.'}
+						{code: 'b', value: '20 cm. folded to 10 x 12 cm.'}
 					]
 				}]
 			});
 
-			const recordInvalidABMissing = new MarcRecord({leader: '',
+			const recordInvalidABMissing = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'b',	value: '20 cm. folded to 10 x 12 cm'}
+						{code: 'b', value: '20 cm. folded to 10 x 12 cm'}
 					]
 				}]
 			});
 
-			const recordInvalidDDMissing = new MarcRecord({leader: '',
+			const recordInvalidDDMissing = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'd', value: 'handwritten'},
-						{code: 'd',	value: 'typed'}
+						{code: 'd', value: 'typed'}
 					]
 				}]
 			});
 
-			const recordInvalidComplexDMissing = new MarcRecord({leader: '',
+			const recordInvalidComplexDMissing = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '340',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'wove paper'},
-						{code: 'c',	value: 'ink'},
-						{code: 'c',	value: 'gouache'},
-						{code: 'd',	value: 'lithography'},
-						{code: 'd',	value: 'collage'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'g',	value: 'polychrome'}
+						{code: 'c', value: 'ink'},
+						{code: 'c', value: 'gouache'},
+						{code: 'd', value: 'lithography'},
+						{code: 'd', value: 'collage'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
+						{code: 'g', value: 'polychrome'}
 					]
 				}]
 			});
@@ -1042,37 +1078,40 @@ describe('ending-punctuation', () => {
 		// "520 KYLLÄ Jos viimeinen osakenttä on $u, piste on ennen sitä" (Sama kuin 242, $y)
 		describe('#520 TRUE - If last subfield $u, punc before it', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({leader: '',
+			const recordValid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '520',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Mediaväkivalta ja sen yleisö.'}
+						{code: 'a', value: 'Mediaväkivalta ja sen yleisö.'}
 					]
 				}]
 			});
 
-			const recordValidWithU = new MarcRecord({leader: '',
+			const recordValidWithU = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '520',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
-						{code: 'u',	value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
+						{code: 'a', value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
+						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
 					]
 				}]
 			});
 
-			const recordValidU = new MarcRecord({leader: '',
+			const recordValidU = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '520',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
-						{code: 'u',	value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm.'}
+						{code: 'a', value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
+						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm.'}
 					]
 				}]
 			});
@@ -1096,25 +1135,27 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({leader: '',
+			const recordInvalid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '520',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Mediaväkivalta ja sen yleisö'}
+						{code: 'a', value: 'Mediaväkivalta ja sen yleisö'}
 					]
 				}]
 			});
 
-			const recordInvalidWithU = new MarcRecord({leader: '',
+			const recordInvalidWithU = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '520',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Abstrakti'},
-						{code: 'u',	value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
+						{code: 'a', value: 'Abstrakti'},
+						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
 					]
 				}]
 			});
@@ -1166,39 +1207,42 @@ describe('ending-punctuation', () => {
 		// (speksin mukaan y->u) https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
 		describe('#538 TRUE - If last subfield $u, punc before it', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({leader: '',
+			const recordValid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '538',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Project methodology for digital version'},
-						{code: 'i',	value: 'Technical details.'}, // This ended to ':' in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
-						{code: 'u',	value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
+						{code: 'a', value: 'Project methodology for digital version'},
+						{code: 'i', value: 'Technical details.'}, // This ended to ':' in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
 					]
 				}]
 			});
 
-			const recordValidPuncU = new MarcRecord({leader: '',
+			const recordValidPuncU = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '538',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Project methodology for digital version'},
-						{code: 'i',	value: 'Technical details.'},
-						{code: 'u',	value: 'http://www.columbia.edu/dlc/linglung/methodology.html.'}
+						{code: 'a', value: 'Project methodology for digital version'},
+						{code: 'i', value: 'Technical details.'},
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html.'}
 					]
 				}]
 			});
 
-			const recordValidOnlyA = new MarcRecord({leader: '',
+			const recordValidOnlyA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '538',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'SECAM-videolaite.'}
+						{code: 'a', value: 'SECAM-videolaite.'}
 					]
 				}]
 			});
@@ -1222,39 +1266,42 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidMissingI = new MarcRecord({leader: '',
+			const recordInvalidMissingI = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '538',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Project methodology for digital version'},
-						{code: 'i',	value: 'Technical details'},
-						{code: 'u',	value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
+						{code: 'a', value: 'Project methodology for digital version'},
+						{code: 'i', value: 'Technical details'},
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
 					]
 				}]
 			});
 
-			const recordInvalidI = new MarcRecord({leader: '',
+			const recordInvalidI = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '538',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Project methodology for digital version'},
-						{code: 'i',	value: 'Technical details:'}, // This is actually like in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
-						{code: 'u',	value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
+						{code: 'a', value: 'Project methodology for digital version'},
+						{code: 'i', value: 'Technical details:'}, // This is actually like in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
 					]
 				}]
 			});
 
-			const recordInvalidOnlyA = new MarcRecord({leader: '',
+			const recordInvalidOnlyA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '538',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'SECAM-videolaite'}
+						{code: 'a', value: 'SECAM-videolaite'}
 					]
 				}]
 			});
@@ -1314,25 +1361,27 @@ describe('ending-punctuation', () => {
 		// Only if last subfield $a
 		describe('#567 TRUE - After subfield $a, FALSE after others', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({leader: '',
+			const recordValid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '567',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Narratiivinen tutkimus.'}
+						{code: 'a', value: 'Narratiivinen tutkimus.'}
 					]
 				}]
 			});
 
-			const recordValidWithoutA = new MarcRecord({leader: '',
+			const recordValidWithoutA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '567',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'b',	value: 'Narrative inquiry'},
-						{code: '2',	value: 'lcsh'}
+						{code: 'b', value: 'Narrative inquiry'},
+						{code: '2', value: 'lcsh'}
 					]
 				}]
 			});
@@ -1350,25 +1399,27 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({leader: '',
+			const recordInvalid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '567',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Narratiivinen tutkimus'}
+						{code: 'a', value: 'Narratiivinen tutkimus'}
 					]
 				}]
 			});
 
-			const recordInvalidWithoutA = new MarcRecord({leader: '',
+			const recordInvalidWithoutA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '567',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'b',	value: 'Narrative inquiry.'},
-						{code: '2',	value: 'lcsh'}
+						{code: 'b', value: 'Narrative inquiry.'},
+						{code: '2', value: 'lcsh'}
 					]
 				}]
 			});
@@ -1420,7 +1471,8 @@ describe('ending-punctuation', () => {
 		// Default TRUE, until more special cases are added
 		describe('#647-651 FALSE - If finnish, else TRUE', () => {
 			// Valid tests
-			const recordValid647FastEndPunc = new MarcRecord({leader: '',
+			const recordValid647FastEndPunc = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '647',
 					ind1: ' ',
@@ -1433,7 +1485,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordVali648dFinNo = new MarcRecord({leader: '',
+			const recordVali648dFinNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '648',
 					ind1: ' ',
@@ -1445,7 +1498,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid648FastNo = new MarcRecord({leader: '',
+			const recordValid648FastNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '648',
 					ind1: ' ',
@@ -1457,7 +1511,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid650FinNo = new MarcRecord({leader: '',
+			const recordValid650FinNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '650',
 					ind1: ' ',
@@ -1470,7 +1525,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid650EngNoControl = new MarcRecord({leader: '',
+			const recordValid650EngNoControl = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '650',
 					ind1: ' ',
@@ -1482,7 +1538,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid650EngControl = new MarcRecord({leader: '',
+			const recordValid650EngControl = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '650',
 					ind1: ' ',
@@ -1531,7 +1588,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid647FastEndPunc = new MarcRecord({leader: '',
+			const recordInvalid647FastEndPunc = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '647',
 					ind1: ' ',
@@ -1544,7 +1602,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvali648dFinYes = new MarcRecord({leader: '',
+			const recordInvali648dFinYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '648',
 					ind1: ' ',
@@ -1556,7 +1615,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid648FastYes = new MarcRecord({leader: '',
+			const recordInvalid648FastYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '648',
 					ind1: ' ',
@@ -1568,7 +1628,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid650FinYes = new MarcRecord({leader: '',
+			const recordInvalid650FinYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '650',
 					ind1: ' ',
@@ -1581,7 +1642,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid650EngNoControl = new MarcRecord({leader: '',
+			const recordInvalid650EngNoControl = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '650',
 					ind1: ' ',
@@ -1593,7 +1655,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid650EngControl = new MarcRecord({leader: '',
+			const recordInvalid650EngControl = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '650',
 					ind1: ' ',
@@ -1732,7 +1795,8 @@ describe('ending-punctuation', () => {
 		// Default TRUE, until more special cases are added
 		describe('#654-662 TRUE - If finnish, else TRUE', () => {
 			// Valid tests
-			const recordValid655FinNo = new MarcRecord({leader: '',
+			const recordValid655FinNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '655',
 					ind1: ' ',
@@ -1744,7 +1808,21 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid655EngYes = new MarcRecord({leader: '',
+			const recordValid655FinNo2 = new MarcRecord({
+				leader: '',
+				fields: [{
+					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{code: 'a', value: 'vironkielinen kirjallisuus'},
+						{code: '2', value: 'local'}
+					]
+				}]
+			});
+
+			const recordValid655EngYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '655',
 					ind1: ' ',
@@ -1757,7 +1835,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid655EngYesNoControl = new MarcRecord({leader: '',
+			const recordValid655EngYesNoControl = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '655',
 					ind1: ' ',
@@ -1768,7 +1847,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid656FinNo = new MarcRecord({leader: '',
+			const recordValid656FinNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '656',
 					ind1: ' ',
@@ -1780,7 +1860,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid657EngYes = new MarcRecord({leader: '',
+			const recordValid657EngYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '657',
 					ind1: ' ',
@@ -1794,7 +1875,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid658EngYes = new MarcRecord({leader: '',
+			const recordValid658EngYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '658',
 					ind1: ' ',
@@ -1807,7 +1889,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordValid662EngYes = new MarcRecord({leader: '',
+			const recordValid662EngYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '662',
 					ind1: ' ',
@@ -1822,6 +1905,12 @@ describe('ending-punctuation', () => {
 			it('Finds record valid - 655 Finnish, no punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordValid655FinNo);
+				expect(result.valid).to.eql(true);
+			});
+
+			it('Finds record valid - 655 Finnish, without punc', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordValid655FinNo2);
 				expect(result.valid).to.eql(true);
 			});
 
@@ -1862,7 +1951,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid655FinYes = new MarcRecord({leader: '',
+			const recordInvalid655FinYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '655',
 					ind1: ' ',
@@ -1874,7 +1964,21 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid655EngNo = new MarcRecord({leader: '',
+			const recordInvalid655FinYes2 = new MarcRecord({
+				leader: '',
+				fields: [{
+					tag: '655',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{code: 'a', value: 'vironkielinen kirjallisuus.'},
+						{code: '2', value: 'local'}
+					]
+				}]
+			});
+
+			const recordInvalid655EngNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '655',
 					ind1: ' ',
@@ -1887,7 +1991,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid655EngNoNoControl = new MarcRecord({leader: '',
+			const recordInvalid655EngNoNoControl = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '655',
 					ind1: ' ',
@@ -1898,7 +2003,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid656FinYes = new MarcRecord({leader: '',
+			const recordInvalid656FinYes = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '656',
 					ind1: ' ',
@@ -1910,7 +2016,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid657EngNo = new MarcRecord({leader: '',
+			const recordInvalid657EngNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '657',
 					ind1: ' ',
@@ -1924,7 +2031,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid658EngNo = new MarcRecord({leader: '',
+			const recordInvalid658EngNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '658',
 					ind1: ' ',
@@ -1937,7 +2045,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalid662EngNo = new MarcRecord({leader: '',
+			const recordInvalid662EngNo = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '662',
 					ind1: ' ',
@@ -1952,6 +2061,15 @@ describe('ending-punctuation', () => {
 			it('Finds record invalid - 655 Finnish, punc $a', async () => {
 				const validator = await validatorFactory();
 				const result = await validator.validate(recordInvalid655FinYes);
+				expect(result).to.eql({
+					message: ['Field 655 has invalid ending punctuation'],
+					valid: false
+				});
+			});
+
+			it('Finds record invalid - 655 Finnish, with punc', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.validate(recordInvalid655FinYes2);
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
 					valid: false
@@ -2017,6 +2135,17 @@ describe('ending-punctuation', () => {
 				const validator = await validatorFactory();
 				const result = await validator.fix(recordInvalid655FinYes);
 				expect(recordInvalid655FinYes.equalsTo(recordValid655FinNo)).to.eql(true);
+				expect(result).to.eql({
+					message: ['Field 655 has invalid ending punctuation'],
+					fix: ['Field 655 - Removed punctuation from $a'],
+					valid: false
+				});
+			});
+
+			it('Repairs the invalid record - 655 Finnish, removes punc $a 2', async () => {
+				const validator = await validatorFactory();
+				const result = await validator.fix(recordInvalid655FinYes2);
+				expect(recordInvalid655FinYes2.equalsTo(recordValid655FinNo2)).to.eql(true);
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
 					fix: ['Field 655 - Removed punctuation from $a'],
@@ -2095,20 +2224,22 @@ describe('ending-punctuation', () => {
 		// Only if last subfield $a
 		describe('#760-787 TRUE - After subfield $a, FALSE after others', () => {
 			// Valid tests
-			const recordValid = new MarcRecord({leader: '',
+			const recordValid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '760',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: 'Mellor, Alec.'},
-						{code: 't',	value: 'Strange masonic stories'},
-						{code: 'e',	value: 'eng'}
+						{code: 'a', value: 'Mellor, Alec.'},
+						{code: 't', value: 'Strange masonic stories'},
+						{code: 'e', value: 'eng'}
 					]
 				}]
 			});
 
-			const recordValidOnlyA = new MarcRecord({leader: '',
+			const recordValidOnlyA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '760',
 					ind1: ' ',
@@ -2132,7 +2263,8 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalid = new MarcRecord({leader: '',
+			const recordInvalid = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '760',
 					ind1: ' ',
@@ -2145,7 +2277,8 @@ describe('ending-punctuation', () => {
 				}]
 			});
 
-			const recordInvalidOnlyA = new MarcRecord({leader: '',
+			const recordInvalidOnlyA = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '760',
 					ind1: ' ',
@@ -2203,29 +2336,31 @@ describe('ending-punctuation', () => {
 		// 880 Samoin kuin vastaavat kentät - Siis tarkistetaan kontrollikentän $6 säännön
 		describe('#880 - Like linked fields', () => {
 			// Valid tests
-			const recordValidSimple = new MarcRecord({leader: '',
+			const recordValidSimple = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '880',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: '平田 篤胤'},
-						{code: 'b',	value: '1776-1843.'},
-						{code: '6',	value: '100-01/$1'} // Tag 100 has value TRUE -> last data subfield should have punc
+						{code: 'a', value: '平田 篤胤'},
+						{code: 'b', value: '1776-1843.'},
+						{code: '6', value: '100-01/$1'} // Tag 100 has value TRUE -> last data subfield should have punc
 					]
 				}]
 			});
 
-			const recordValidComplex = new MarcRecord({leader: '',
+			const recordValidComplex = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '880',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'b',	value: 'ידיעות אחרונות'},
-						{code: 'b',	value: 'ספרי חמד'},
-						{code: 'c',	value: '2006.'},
-						{code: '6',	value: '260-02/(2/r ‡a תל-אביב'} // Tag 260 has value TRUE -> last data subfield should have punc
+						{code: 'b', value: 'ידיעות אחרונות'},
+						{code: 'b', value: 'ספרי חמד'},
+						{code: 'c', value: '2006.'},
+						{code: '6', value: '260-02/(2/r ‡a תל-אביב'} // Tag 260 has value TRUE -> last data subfield should have punc
 					]
 				}]
 			});
@@ -2243,29 +2378,31 @@ describe('ending-punctuation', () => {
 			});
 
 			// Invalid tests
-			const recordInvalidSimple = new MarcRecord({leader: '',
+			const recordInvalidSimple = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '880',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a',	value: '平田 篤胤'},
-						{code: 'b',	value: '1776-1843'},
-						{code: '6',	value: '100-01/$1'} // Tag 100 has value TRUE -> last data subfield should have punc
+						{code: 'a', value: '平田 篤胤'},
+						{code: 'b', value: '1776-1843'},
+						{code: '6', value: '100-01/$1'} // Tag 100 has value TRUE -> last data subfield should have punc
 					]
 				}]
 			});
 
-			const recordInvalidComplex = new MarcRecord({leader: '',
+			const recordInvalidComplex = new MarcRecord({
+				leader: '',
 				fields: [{
 					tag: '880',
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
 						{code: 'b', value: 'ידיעות אחרונות'},
-						{code: 'b',	value: 'ספרי חמד'},
-						{code: 'c',	value: '2006'},
-						{code: '6',	value: '260-02/(2/r ‡a תל-אביב'} // Tag 260 has value TRUE -> last data subfield should have punc
+						{code: 'b', value: 'ספרי חמד'},
+						{code: 'c', value: '2006'},
+						{code: '6', value: '260-02/(2/r ‡a תל-אביב'} // Tag 260 has value TRUE -> last data subfield should have punc
 					]
 				}]
 			});
