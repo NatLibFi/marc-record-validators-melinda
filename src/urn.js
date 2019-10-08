@@ -68,20 +68,5 @@ export default async function () {
 				)
 		}),
 		fix
-	};/* : async record =>
-			record.get(/^856$/).some(f =>
-				f.subfields.filter(sf => sf.code === 'u').forEach(sf => {
-					f020 = record.get(/^020$/);
-					console.log(f020);
-					//if (isbn) {
-					//	sf.value = 'http://urn.fi/URN:ISBN:' + isbn;
-					//} else {
-
-					//const response = await fetch(URN_GENERATOR_URL);
-					const body = "bla";//await response.text();
-					sf.value = body;
-					//sf.value = createURN();
-				})
-			)
-	}; */
+	};
 }
