@@ -89,7 +89,8 @@ describe('urn', () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
-					{tag: '020', 
+				{
+					tag: '020', 
 					ind1: ' ', 
 					ind2: ' ',
 					subfields: [{code: 'a', value: '978-951-9155-47-0'}]
@@ -105,7 +106,10 @@ describe('urn', () => {
 			await validator.fix(record);
 
 			expect(record.fields).to.eql([{
-				tag: '856', ind1: ' ', ind2: ' ', subfields: [
+				tag: '020',	ind1: ' ', ind2: ' ', subfields: [
+					{code: 'a', value: '978-951-9155-47-0'}
+				]},
+				{tag: '856', ind1: ' ', ind2: ' ', subfields: [
 					{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'}
 				]
 			}]);
