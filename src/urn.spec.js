@@ -32,7 +32,7 @@
 
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/isbn-issn';
+import validatorFactory from '../src/urn';
 
 describe('urn', () => {
 	it('Creates a validator', async () => {
