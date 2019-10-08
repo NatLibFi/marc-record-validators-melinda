@@ -45,6 +45,7 @@ import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
 import UnicodeDecomposition from './unicode-decomposition';
+import Urn from './urn';
 
 export {
 	DoubleCommas,
@@ -61,5 +62,6 @@ export {
 	ResolvableExtReferences,
 	SortTags,
 	SubfieldExclusion,
-	UnicodeDecomposition
+	UnicodeDecomposition,
+	Urn
 };
