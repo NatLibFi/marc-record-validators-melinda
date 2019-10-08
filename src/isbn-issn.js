@@ -26,8 +26,6 @@
 *
 */
 
-/* eslint-disable require-await */
-
 import {validate as validateISBN, hyphenate as hyphenateIsbnFunc} from 'beautify-isbn';
 import validateISSN from 'issn-verify';
 
@@ -41,16 +39,17 @@ export default async ({hyphenateISBN = false} = {}) => {
 		return record.get(/^(020|022)$/).filter(field => {
 			if (field.tag === '020') {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
-
-				if (subfield) {
-					return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
+				if (subfield === undefined) {
+					return true;
 				}
-			} else {
-				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
-				if (subfield) {
-					return !validateISSN(subfield.value);
-				}
+				return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
+			}
+
+			const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+
+			if (subfield) {
+				return !validateISSN(subfield.value);
 			}
 
 			return false;
@@ -67,8 +66,12 @@ export default async ({hyphenateISBN = false} = {}) => {
 		return fields
 			.map(field => {
 				if (field.tag === '020') {
-					const {value} = field.subfields.find(sf => sf.code === 'a');
-					return {name: 'ISBN', value};
+					const sfvalue = field.subfields.find(sf => sf.code === 'a');
+					if (sfvalue) {
+						return {name: 'ISBN', value: sfvalue.value};
+					}
+
+					return {name: 'ISBN', value: undefined};
 				}
 
 				return {name: 'ISSN', value: getISSN()};

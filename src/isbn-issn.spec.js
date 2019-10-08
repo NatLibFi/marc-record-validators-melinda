@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
-
 'use strict';
 
 import {expect} from 'chai';
@@ -93,6 +91,25 @@ describe('isbn-issn', () => {
 			expect(result).to.eql({valid: false, messages: [
 				'ISBN foo is not valid',
 				'ISSN bar is not valid'
+			]});
+		});
+
+		it('Finds the invalid 020 field', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'q', value: 'nidottu'}]
+					}
+				]
+			});
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({valid: false, messages: [
+				'ISBN undefined is not valid'
 			]});
 		});
 

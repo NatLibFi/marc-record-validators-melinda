@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
-
 'use strict';
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';

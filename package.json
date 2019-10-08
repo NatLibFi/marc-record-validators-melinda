@@ -62,7 +62,7 @@
 		"chokidar-cli": "^1.2.0",
 		"codeclimate-test-reporter": "^0.5.1",
 		"cross-env": "^5.1.1",
-		"eslint": "^5.9.0",
+		"eslint": "^6.5.1",
 		"eslint-config-xo": ">=0.25.1 <1.0.0",
 		"eslint-plugin-import": "^2.16.0",
 		"fetch-mock": "^7.3.0",

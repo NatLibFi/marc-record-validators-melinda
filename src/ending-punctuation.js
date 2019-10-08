@@ -26,7 +26,7 @@
 *
 */
 
-/* eslint-disable require-await, max-depth, complexity, max-params */
+/* eslint-disable complexity, max-params */
 'use strict';
 import {find} from 'lodash';
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
@@ -188,6 +188,7 @@ export default async function () {
 				try {
 					linkedTag = parseInt(find(field.subfields, {code: res.special.linked}).value.substr(0, 3), 10); // Substring feels stupid, but is used in MarcRecord to extract tag.
 				} catch (e) {
+					console.log('error', e);
 					return false;
 				}
 
@@ -209,6 +210,7 @@ export default async function () {
 				try {
 					tag = parseInt(field.tag, 10);
 				} catch (e) {
+					console.log('error', e);
 					return false;
 				}
 			}
