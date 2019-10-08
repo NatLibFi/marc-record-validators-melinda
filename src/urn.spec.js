@@ -78,9 +78,7 @@ describe('urn', () => {
 			});
 			const result = await validator.validate(record);
 
-			expect(result).to.eql({valid: false, messages: [
-				'URN URN is not valid'
-			]});
+			expect(result).to.eql({valid: false});
 		});
 	});
 
@@ -89,30 +87,31 @@ describe('urn', () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
 				fields: [
-				{
-					tag: '020', 
-					ind1: ' ', 
-					ind2: ' ',
-					subfields: [{code: 'a', value: '978-951-9155-47-0'}]
-				},
-				{
-					tag: '856',
-					ind1: ' ',
-					ind2: ' ',
-					subfields: [{code: 'u', value: 'URN'}]
-				}]
+					{
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: '978-951-9155-47-0'}]
+					},
+					{
+						tag: '856',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'u', value: 'URN'}]
+					}
+				]
 			});
 
 			await validator.fix(record);
 
-			expect(record.fields).to.eql([{
-				tag: '020',	ind1: ' ', ind2: ' ', subfields: [
-					{code: 'a', value: '978-951-9155-47-0'}
-				]},
+			expect(record.fields).to.eql([
+				{tag: '020',	ind1: ' ', ind2: ' ', subfields: [
+					{code: 'a', value: '978-951-9155-47-0'} ]
+				},
 				{tag: '856', ind1: ' ', ind2: ' ', subfields: [
-					{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'}
-				]
-			}]);
+					{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'} ]
+				}
+			]);
 		});
 	});
 });
