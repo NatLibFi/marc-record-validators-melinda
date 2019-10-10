@@ -51,7 +51,7 @@ export default async function () {
 			} else {
 				const response = await fetch(URN_GENERATOR_URL);
 				const body = await response.text();
-				sf.value = body;
+				sf.value = 'http://urn.fi/' + body;
 			}
 
 			return true;
