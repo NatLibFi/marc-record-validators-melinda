@@ -158,7 +158,7 @@ export default async function (tagPattern, treshold = 0.9) {
 			try {
 				Identifier.dispose();
 			} catch (err2) {
-				debug(`Got error disposing identifier: ${err2 instanceof Error ? err2.stack : err2}`);
+				debug(`Got error while parsing tag: ${err2 instanceof Error ? err2.stack : err2}`);
 			}
 
 			/* istanbul ignore next: How to cause errors? */

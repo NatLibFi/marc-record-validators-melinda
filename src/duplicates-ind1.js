@@ -26,7 +26,6 @@
  *
  */
 
-/* eslint-disable require-await */
 'use strict';
 import {omit} from 'lodash';
 

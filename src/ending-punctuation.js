@@ -26,13 +26,16 @@
 *
 */
 
-/* eslint-disable require-await, max-depth, complexity, max-params */
+/* eslint-disable complexity, max-params */
 'use strict';
 import {find} from 'lodash';
+import createDebugLogger from 'debug';
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
 import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf';
 
 export default async function () {
+	const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');
+
 	return {
 		description:
 		'Handles invalid ending punctuation',
@@ -187,7 +190,8 @@ export default async function () {
 				let linkedTag = null;
 				try {
 					linkedTag = parseInt(find(field.subfields, {code: res.special.linked}).value.substr(0, 3), 10); // Substring feels stupid, but is used in MarcRecord to extract tag.
-				} catch (e) {
+				} catch (err) {
+					debug(`Got error while parsing tag: ${err instanceof Error ? err.stack : err}`);
 					return false;
 				}
 
@@ -208,7 +212,8 @@ export default async function () {
 			} else {
 				try {
 					tag = parseInt(field.tag, 10);
-				} catch (e) {
+				} catch (err) {
+					debug(`Got error while parsing tag: ${err instanceof Error ? err.stack : err}`);
 					return false;
 				}
 			}
