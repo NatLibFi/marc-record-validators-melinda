@@ -387,7 +387,7 @@ const confSpec = [
 		rangeStart: 540,
 		rangeEnd: 541,
 		index: null,
-		punc: true,
+		punc: false,
 		special: null
 	}, { //	542	EI
 		rangeStart: null,
