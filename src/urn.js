@@ -36,36 +36,43 @@ const URN_GENERATOR_URL = 'http://generator.urn.fi/cgi-bin/urn_generator.cgi?typ
 
 export default async function () {
 	async function fix(record) {
-		record.get(/^856$/).some(f => f.subfields.filter(sf => sf.code === 'u').forEach(async sf => {
-			const isbn = record.fields.reduce((acc, f) => {
-				if (f.tag === '020') {
-					const a = f.subfields.find(sf => sf.code === 'a');
-					acc = a ? a.value : undefined;
-					return acc;
-				}
-
+		let URN = ''
+		const isbn = record.fields.reduce((acc, f) => {
+			if (f.tag === '020') {
+				const a = f.subfields.find(sf => sf.code === 'a');
+				acc = a ? a.value : undefined;
 				return acc;
-			}, undefined);
-			if (isbn) {
-				sf.value = 'http://urn.fi/URN:ISBN:' + isbn;
-			} else {
-				const response = await fetch(URN_GENERATOR_URL);
-				const body = await response.text();
-				sf.value = 'http://urn.fi/' + body;
 			}
 
-			return true;
-		}));
+			return acc;
+		}, undefined);
+	
+		if (isbn) {
+			URN = 'http://urn.fi/URN:ISBN:' + isbn;
+		} else {
+			const response = await fetch(URN_GENERATOR_URL);
+			const body = await response.text();
+			URN = 'http://urn.fi/' + body;
+		}
+			
+		record.insertField({
+			tag: '856',
+			ind1: '4',
+			ind2: '0',
+			subfields: [
+				{code: 'u', value: URN},
+				{code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
+				{code: '5', value: 'FI-Vapaa'}
+			]
+		});
+
+		return true;
 	}
 
 	return {
-		description: 'Handles URN in 856$u-subfields',
+		description: 'Adds URN for record, to 856-field (if not existing)',
 		validate: async record => ({
-			valid: !record
-				.get(/^856$/)
-				.some(f =>
-					f.subfields.some(sf => sf.code === 'u' && sf.value === 'URN')
-				)
+			valid: !record.get(/^856$/)
 		}),
 		fix
 	};
