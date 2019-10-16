@@ -53,8 +53,8 @@ describe('urn', () => {
 				fields: [
 					{
 						tag: '856',
-						ind1: ' ',
-						ind2: ' ',
+						ind1: '4',
+						ind2: '0',
 						subfields: [{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'}]
 					}
 				]
@@ -69,10 +69,10 @@ describe('urn', () => {
 			const record = new MarcRecord({
 				fields: [
 					{
-						tag: '856',
+						tag: '020',
 						ind1: ' ',
 						ind2: ' ',
-						subfields: [{code: 'u', value: 'URN'}]
+						subfields: [{code: 'a', value: '978-951-9155-47-0'}]
 					}
 				]
 			});
@@ -92,12 +92,6 @@ describe('urn', () => {
 						ind1: ' ',
 						ind2: ' ',
 						subfields: [{code: 'a', value: '978-951-9155-47-0'}]
-					},
-					{
-						tag: '856',
-						ind1: ' ',
-						ind2: ' ',
-						subfields: [{code: 'u', value: 'URN'}]
 					}
 				]
 			});
@@ -106,10 +100,14 @@ describe('urn', () => {
 
 			expect(record.fields).to.eql([
 				{tag: '020',	ind1: ' ', ind2: ' ', subfields: [
-					{code: 'a', value: '978-951-9155-47-0'} ]
+					{code: 'a', value: '978-951-9155-47-0'}
+				]
 				},
-				{tag: '856', ind1: ' ', ind2: ' ', subfields: [
-					{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'} ]
+				{tag: '856', ind1: '4', ind2: '0', subfields: [
+					{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'},
+					{code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
+					{code: '5', value: 'FI-Vapaa'}
+				]
 				}
 			]);
 		});
