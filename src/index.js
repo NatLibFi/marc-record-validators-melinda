@@ -26,8 +26,6 @@
 *
 */
 
-/* eslint-disable no-unused-vars */
-
 'use strict';
 
 import DoubleCommas from './double-commas';

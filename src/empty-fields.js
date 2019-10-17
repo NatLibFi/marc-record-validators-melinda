@@ -26,7 +26,6 @@
 *
 */
 
-/* eslint-disable require-await */
 const ERRORS = {
 	EMPTY_SUBFIELDS: 2,
 	MISSING_SUBFIELD_VALUES: 3

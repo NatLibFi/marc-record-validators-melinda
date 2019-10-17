@@ -26,7 +26,6 @@
  *
  **/
 
-/* eslint-disable require-await */
 const MAP_CONVERSION = {
 	/**
    * @internal Normalizations
