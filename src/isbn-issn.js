@@ -31,7 +31,7 @@
 import {validate as validateISBN, hyphenate as hyphenateIsbnFunc} from 'beautify-isbn';
 import validateISSN from 'issn-verify';
 
-export default async ({hyphenateISBN = false} = {}) => {
+export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 	return {
 		validate, fix,
 		description: 'Validates ISBN and ISSN values'
@@ -41,19 +41,31 @@ export default async ({hyphenateISBN = false} = {}) => {
 		return record.get(/^(020|022)$/).filter(field => {
 			if (field.tag === '020') {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
+				const sfZ = field.subfields.find(sf => sf.code === 'z');
 
-				if (subfield) {
-					return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
-				}
-			} else {
-				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+				if (subfield === undefined) {
+					if (sfZ) {
+						return false;
+					}
 
-				if (subfield) {
-					return !validateISSN(subfield.value);
+					return true;
 				}
+
+				return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
 			}
 
-			return false;
+			const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+			const sfY = field.subfields.find(sf => sf.code === 'y');
+
+			if (subfield === undefined) {
+				if (sfY) {
+					return false;
+				}
+
+				return true;
+			}
+
+			return !validateISSN(subfield.value);
 		});
 	}
 
@@ -67,16 +79,26 @@ export default async ({hyphenateISBN = false} = {}) => {
 		return fields
 			.map(field => {
 				if (field.tag === '020') {
-					const {value} = field.subfields.find(sf => sf.code === 'a');
-					return {name: 'ISBN', value};
+					const sfvalue = field.subfields.find(sf => sf.code === 'a');
+					if (sfvalue) {
+						return {name: 'ISBN', value: sfvalue.value};
+					}
+
+					return {name: 'ISBN', value: undefined};
 				}
 
 				return {name: 'ISSN', value: getISSN()};
 
 				function getISSN() {
-					return field.subfields.find(sf => {
+					const result = field.subfields.find(sf => {
 						return sf.code === 'a' || sf.code === 'l';
-					}).value;
+					});
+
+					if (result) {
+						return result.value;
+					}
+
+					return undefined;
 				}
 			})
 			.reduce((acc, obj) => {
@@ -91,19 +113,21 @@ export default async ({hyphenateISBN = false} = {}) => {
 		getInvalidFields(record).forEach(field => {
 			if (field.tag === '020') {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
-
-				// ISBN is valid but is missing hyphens
-				if (validateISBN(subfield.value) && hyphenateISBN) {
-					subfield.value = hyphenateIsbnFunc(subfield.value);
-				} else {
-					field.subfields.push({code: 'z', value: subfield.value});
-					record.removeSubfield(subfield, field);
+				if (subfield) {
+					// ISBN is valid but is missing hyphens
+					if (validateISBN(subfield.value) && hyphenateISBN) {
+						subfield.value = hyphenateIsbnFunc(subfield.value);
+					} else if (handleInvalid) {
+						field.subfields.push({code: 'z', value: subfield.value});
+						record.removeSubfield(subfield, field);
+					}
 				}
 			} else {
 				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-
-				field.subfields.push({code: 'y', value: subfield.value});
-				record.removeSubfield(subfield, field);
+				if (subfield && handleInvalid) {
+					field.subfields.push({code: 'y', value: subfield.value});
+					record.removeSubfield(subfield, field);
+				}
 			}
 		});
 	}

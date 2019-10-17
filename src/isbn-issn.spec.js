@@ -96,6 +96,48 @@ describe('isbn-issn', () => {
 			]});
 		});
 
+		it('Finds the invalid 020 field', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'q', value: 'nidottu'}]
+					}
+				]
+			});
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({
+				valid: false, messages: [
+					'ISBN undefined is not valid'
+				]
+			});
+		});
+
+		it('Finds the invalid 022 field', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '022',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'z', value: '0000-0000'}]
+					}
+				]
+			});
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({
+				valid: false, messages: [
+					'ISSN undefined is not valid'
+				]
+			});
+		});
+
 		it('Finds the record invalid (ISSN in \'l\'-subfield)', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
@@ -147,7 +189,7 @@ describe('isbn-issn', () => {
 
 	describe('#fix', () => {
 		it('Moves invalid ISBN to z-subfield', async () => {
-			const validator = await validatorFactory();
+			const validator = await validatorFactory({handleInvalid: true});
 			const record = new MarcRecord({
 				fields: [{tag: '020', ind1: ' ', ind2: ' ',
 					subfields: [{code: 'a', value: 'foo'}]
@@ -164,7 +206,7 @@ describe('isbn-issn', () => {
 		});
 
 		it('Moves invalid ISSN to y-subfield', async () => {
-			const validator = await validatorFactory();
+			const validator = await validatorFactory({handleInvalid: true});
 			const record = new MarcRecord({
 				fields: [{tag: '022', ind1: ' ', ind2: ' ',
 					subfields: [{code: 'a', value: 'foo'}]
@@ -181,7 +223,7 @@ describe('isbn-issn', () => {
 		});
 
 		it('Moves invalid ISSN to y-subfield (Origin l-subfield)', async () => {
-			const validator = await validatorFactory();
+			const validator = await validatorFactory({handleInvalid: true});
 			const record = new MarcRecord({
 				fields: [{tag: '022', ind1: ' ', ind2: ' ',
 					subfields: [{code: 'l', value: 'foo'}]
