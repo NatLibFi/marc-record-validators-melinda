@@ -30,6 +30,7 @@
 
 'use strict';
 
+import AccessRights from './access-rights';
 import DoubleCommas from './double-commas';
 import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
@@ -48,6 +49,7 @@ import UnicodeDecomposition from './unicode-decomposition';
 import Urn from './urn';
 
 export {
+	AccessRights,
 	DoubleCommas,
 	DuplicatesInd1,
 	EmptyFields,

@@ -30,47 +30,47 @@
 
 'use strict';
 
-import fetch from 'node-fetch';
-
-const URN_GENERATOR_URL = 'http://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';
-
 export default async function () {
 	async function fix(record) {
-		let URN = '';
-		const isbn = record.fields.reduce((acc, f) => {
-			if (f.tag === '020') {
-				const a = f.subfields.find(sf => sf.code === 'a');
-				acc = a ? a.value : undefined;
-				return acc;
-			}
-
-			return acc;
-		}, undefined);
-
-		if (isbn) {
-			URN = 'http://urn.fi/URN:ISBN:' + isbn;
-		} else {
-			const response = await fetch(URN_GENERATOR_URL);
-			const body = await response.text();
-			URN = 'http://urn.fi/' + body;
-		}
-
 		record.insertField({
-			tag: '856',
-			ind1: '4',
-			ind2: '0',
+			tag: '506',
+			ind1: '1',
 			subfields: [
-				{code: 'u', value: URN}
+				{code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'},
+				{code: 'f', value: 'Online access with authorization.'},
+				{code: '2', value: 'star'},
+				{code: '5', value: 'FI-Vapaa'},
+				{code: '9', value: 'FENNI<KEEP>'}
 			]
 		});
+
+		record.insertField({
+			tag: '540',
+			subfields: [
+				{code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'},
+				{code: 'b', value: 'Kansalliskirjasto;'},
+				{code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä'},
+				{code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433'},
+				{code: '5', value: 'FI-Vapaa'},
+				{code: '9', value: 'FENNI<KEEP>'}
+			]
+		});
+
+		const f856 = record.get(/^856$/).shift();
+		if (f856) {
+			f856.subfields.push(
+				{code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
+				{code: '5', value: 'FI-Vapaa'}
+			);
+		}
 
 		return true;
 	}
 
 	return {
-		description: 'Adds URN for record, to 856-field (if not existing)',
+		description: 'Adds access rights fields for a record (if not existing)',
 		validate: async record => ({
-			valid: record.fields.some(sf => sf.tag === '856')
+			valid: record.fields.some(sf => sf.tag === '506')
 		}),
 		fix
 	};

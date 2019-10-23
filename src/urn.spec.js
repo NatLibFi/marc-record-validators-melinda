@@ -104,9 +104,7 @@ describe('urn', () => {
 				]
 				},
 				{tag: '856', ind1: '4', ind2: '0', subfields: [
-					{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'},
-					{code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
-					{code: '5', value: 'FI-Vapaa'}
+					{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'}
 				]
 				}
 			]);
