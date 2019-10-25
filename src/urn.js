@@ -36,7 +36,6 @@ const URN_GENERATOR_URL = 'http://generator.urn.fi/cgi-bin/urn_generator.cgi?typ
 
 export default async function () {
 	async function fix(record) {
-		let URN = '';
 		const isbn = record.fields.reduce((acc, f) => {
 			if (f.tag === '020') {
 				const a = f.subfields.find(sf => sf.code === 'a');
@@ -47,12 +46,14 @@ export default async function () {
 			return acc;
 		}, undefined);
 
-		if (isbn) {
-			URN = 'http://urn.fi/URN:ISBN:' + isbn;
-		} else {
+		async function createURN(isbn = false) {
+			if (isbn) {
+				return 'http://urn.fi/URN:ISBN:' + isbn;
+			}
+
 			const response = await fetch(URN_GENERATOR_URL);
 			const body = await response.text();
-			URN = 'http://urn.fi/' + body;
+			return 'http://urn.fi/' + body;
 		}
 
 		record.insertField({
@@ -60,7 +61,7 @@ export default async function () {
 			ind1: '4',
 			ind2: '0',
 			subfields: [
-				{code: 'u', value: URN}
+				{code: 'u', value: await createURN(isbn)}
 			]
 		});
 
