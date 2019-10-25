@@ -26,13 +26,15 @@
 *
 */
 
-/* eslint-disable require-await */
 'use strict';
 
 import {loadModule as loadCLD} from 'cld3-asm';
 import LanguageCodes from 'langs';
+import createDebugLogger from 'debug';
 
 export default async function (tagPattern, treshold = 0.9) {
+	const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/item-language');
+
 	if (tagPattern instanceof RegExp) {
 		return {
 			description:
@@ -155,7 +157,9 @@ export default async function (tagPattern, treshold = 0.9) {
 			/* istanbul ignore next: How to cause errors? */
 			try {
 				Identifier.dispose();
-			} catch (err2) {}
+			} catch (err2) {
+				debug(`Got error disposing identifier: ${err2 instanceof Error ? err2.stack : err2}`);
+			}
 
 			/* istanbul ignore next: How to cause errors? */
 			throw err instanceof Error ? err : new Error(err.message);

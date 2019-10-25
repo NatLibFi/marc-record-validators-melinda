@@ -30,7 +30,6 @@
  * This validator de-duplicates identical fields in a record.
  */
 
-/* eslint-disable require-await */
 import {isEqual, uniqWith} from 'lodash';
 
 export default async function () {
