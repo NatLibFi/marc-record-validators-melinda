@@ -46,6 +46,15 @@ export default async function () {
 			return acc;
 		}, undefined);
 
+		record.insertField({
+			tag: '856',
+			ind1: '4',
+			ind2: '0',
+			subfields: [
+				{code: 'u', value: await createURN(isbn)}
+			]
+		});
+
 		async function createURN(isbn = false) {
 			if (isbn) {
 				return 'http://urn.fi/URN:ISBN:' + isbn;
@@ -55,15 +64,6 @@ export default async function () {
 			const body = await response.text();
 			return 'http://urn.fi/' + body;
 		}
-
-		record.insertField({
-			tag: '856',
-			ind1: '4',
-			ind2: '0',
-			subfields: [
-				{code: 'u', value: await createURN(isbn)}
-			]
-		});
 
 		return true;
 	}
