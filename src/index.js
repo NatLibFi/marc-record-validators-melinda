@@ -28,6 +28,7 @@
 
 'use strict';
 
+import AccessRights from './access-rights';
 import DoubleCommas from './double-commas';
 import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
@@ -43,8 +44,10 @@ import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
 import UnicodeDecomposition from './unicode-decomposition';
+import Urn from './urn';
 
 export {
+	AccessRights,
 	DoubleCommas,
 	DuplicatesInd1,
 	EmptyFields,
@@ -59,5 +62,6 @@ export {
 	ResolvableExtReferences,
 	SortTags,
 	SubfieldExclusion,
-	UnicodeDecomposition
+	UnicodeDecomposition,
+	Urn
 };

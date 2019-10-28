@@ -388,7 +388,9 @@ const confSpec = [
 		rangeEnd: 541,
 		index: null,
 		punc: true,
-		special: null
+		special: {
+			secondLastIfLast: '5'
+		}
 	}, { //	542	EI
 		rangeStart: null,
 		rangeEnd: null,
