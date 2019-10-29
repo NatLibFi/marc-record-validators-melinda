@@ -389,7 +389,7 @@ const confSpec = [
 		index: null,
 		punc: true,
 		special: {
-			secondLastIfLast: '5'
+			noPuncIfField: 'u'
 		}
 	}, { //	542	EI
 		rangeStart: null,
