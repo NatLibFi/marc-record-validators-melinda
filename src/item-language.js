@@ -33,7 +33,8 @@ import LanguageCodes from 'langs';
 import createDebugLogger from 'debug';
 
 export default async function (tagPattern, treshold = 0.9) {
-	const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/item-language');
+	const debug = createDebugLogger('@natlnibfi/marc-record-validator-melinda/item-language');
+	const cldFactory = await loadCLD();
 
 	if (tagPattern instanceof RegExp) {
 		return {
@@ -126,7 +127,6 @@ export default async function (tagPattern, treshold = 0.9) {
 		const text = getText(record);
 		const langCode = getLanguageCode(record);
 
-		const cldFactory = await loadCLD();
 		const Identifier = cldFactory.create();
 
 		if (text.length === 0) {
