@@ -6,17 +6,8 @@ import createDebug from 'debug';
 const debug = createDebug('marc-record-punctuation');
 
 export default async function () {
-	let recordType;
-	const rules = readPunctuationRulesFromJSON();
-
-	function readPunctuationRulesFromJSON() {
-		let json;
-		if (recordType === 'z') {
-			json = require('../src/auth-punctuation.json');
-		} else {
-			json = require('../src/bib-punctuation.json');
-		}
-
+	function readPunctuationRulesFromJSON(recordType) {
+		const json = getRules(recordType);
 		const rules = json.filter(row => row.selector !== '').map(row => {
 			const {selector, namePortion, description, portion, preceedingPunctuation, exceptions} = row;
 			return {
@@ -27,6 +18,14 @@ export default async function () {
 		});
 
 		return rules;
+	}
+
+	function getRules(recordType) {
+		if (recordType === 'z') {
+			return require('../src/auth-punctuation.json');
+		}
+
+		return require('../src/bib-punctuation.json');
 	}
 
 	function fieldToString(field) {
@@ -40,24 +39,27 @@ export default async function () {
 		return `${field.tag}    ${field.value}`;
 	}
 
-	function validateField(field) {
-		const testField = _.cloneDeep(field);
-		const punctuated = punctuateField(testField, rules, recordType);
-		if (!punctuated) {
-			return true;
-		}
+	function validateField(recordType = 'a') {
+		return function (element) {
+			const testField = _.cloneDeep(element);
+			const punctuated = punctuateField(testField, recordType);
+			if (!punctuated) {
+				return true;
+			}
 
-		if (_.isEqual(punctuated, field)) {
-			return true;
-		}
+			if (_.isEqual(punctuated, element)) {
+				return true;
+			}
 
-		return false;
+			return false;
+		};
 	}
 
-	function punctuateField(field) {
+	function punctuateField(field, recordType) {
+		const rules = readPunctuationRulesFromJSON(recordType);
 		debug(`Handling field ${field.tag}`);
 		debug(`Field contents: ${fieldToString(field)}`);
-		const rulesForField = getRulesForField(field.tag);
+		const rulesForField = getRulesForField(field.tag, rules);
 		if (rulesForField.length === 0) {
 			debug(`No matching rules for field ${field.tag}`);
 			return;
@@ -119,7 +121,7 @@ export default async function () {
 		return field;
 	}
 
-	function getRulesForField(tag) {
+	function getRulesForField(tag, rules) {
 		return rules.filter(rule => rule.selector.test(tag));
 	}
 
@@ -248,13 +250,11 @@ export default async function () {
 	}
 
 	async function validate(record) {
-		recordType = record.leader[6];
-		return {valid: record.fields.every(validateField)};
+		return {valid: record.fields.every(validateField(record.leader[6]))};
 	}
 
 	async function fix(record) {
-		recordType = record.leader[6];
-		record.fields.map(field => punctuateField(field));
+		record.fields.map(field => punctuateField(field, record.leader[6]));
 		return true;
 	}
 
