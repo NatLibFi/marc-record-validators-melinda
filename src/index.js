@@ -34,13 +34,13 @@ import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
 import EndingPunctuation from './ending-punctuation';
 import FieldsPresent from './fields-present';
-import FieldPunctuation from './field-punctuation';
 import FieldStructure from './field-structure';
 import FixedFields from './fixed-fields';
 import FieldExclusion from './field-exclusion';
 import IdenticalFields from './identical-fields';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
+import Punctuation from './punctuation';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
@@ -55,12 +55,12 @@ export {
 	EndingPunctuation,
 	FieldExclusion,
 	FieldsPresent,
-	FieldPunctuation,
 	FieldStructure,
 	FixedFields,
 	IdenticalFields,
 	IsbnIssn,
 	ItemLanguage,
+	Punctuation,
 	ResolvableExtReferences,
 	SortTags,
 	SubfieldExclusion,
