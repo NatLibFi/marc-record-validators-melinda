@@ -5,15 +5,16 @@ import createDebug from 'debug';
 
 const debug = createDebug('marc-record-punctuation');
 
-export default async function (recordType = 'BIBLIOGRAPHIC') {
+export default async function () {
+	let recordType;
 	const rules = readPunctuationRulesFromJSON();
 
 	function readPunctuationRulesFromJSON() {
 		let json;
-		if (recordType === 'BIBLIOGRAPHIC') {
-			json = require('../src/bib-punctuation.json');
-		} else {
+		if (recordType === 'z') {
 			json = require('../src/auth-punctuation.json');
+		} else {
+			json = require('../src/bib-punctuation.json');
 		}
 
 		const rules = json.filter(row => row.selector !== '').map(row => {
@@ -53,7 +54,7 @@ export default async function (recordType = 'BIBLIOGRAPHIC') {
 		return false;
 	}
 
-	function punctuateField(field, rules, recordType) {
+	function punctuateField(field) {
 		debug(`Handling field ${field.tag}`);
 		debug(`Field contents: ${fieldToString(field)}`);
 		const rulesForField = getRulesForField(field.tag);
@@ -109,7 +110,7 @@ export default async function (recordType = 'BIBLIOGRAPHIC') {
 			preceedingField = subfield;
 		});
 
-		if (recordType === 'BIBLIOGRAPHIC') {
+		if (recordType !== 'z') {
 			addNamePortionPunctuation(preceedingField);
 		}
 
@@ -247,11 +248,13 @@ export default async function (recordType = 'BIBLIOGRAPHIC') {
 	}
 
 	async function validate(record) {
+		recordType = record.leader[6];
 		return {valid: record.fields.every(validateField)};
 	}
 
 	async function fix(record) {
-		record.fields.map(field => punctuateField(field, rules, recordType));
+		recordType = record.leader[6];
+		record.fields.map(field => punctuateField(field));
 		return true;
 	}
 
