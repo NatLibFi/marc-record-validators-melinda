@@ -118,7 +118,7 @@ describe('access-rights', () => {
 			]);
 		});
 	});
-
+	/*
 	describe('#fix', () => {
 		it('Creates punctuation for field 264', async () => {
 			const validator = await validatorFactory();
@@ -151,4 +151,5 @@ describe('access-rights', () => {
 			]);
 		});
 	});
+	*/
 });
