@@ -2,7 +2,7 @@ import includes from 'lodash/includes';
 import head from 'lodash/head';
 import _ from 'lodash';
 import createDebug from 'debug';
-import {authrules, bibrules} from './rules';
+import {autRules, bibRules} from './rules';
 
 const debug = createDebug('marc-record-punctuation');
 
@@ -23,10 +23,10 @@ export default async function () {
 
 	function getRules(recordType) {
 		if (recordType === 'z') {
-			return authrules;
+			return autRules;
 		}
 
-		return bibrules;
+		return bibRules;
 	}
 
 	function fieldToString(field) {
