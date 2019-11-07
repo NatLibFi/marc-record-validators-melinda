@@ -2,8 +2,7 @@ import includes from 'lodash/includes';
 import head from 'lodash/head';
 import _ from 'lodash';
 import createDebug from 'debug';
-import {bibrules} from '../src/bib-punctuation.js';
-import {authrules} from '../src/auth-punctuation.js';
+import {authrules, bibrules} from './rules';
 
 const debug = createDebug('marc-record-punctuation');
 

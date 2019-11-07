@@ -1,4 +1,4 @@
-exports.authrules =
+var authrules =
 [
   {
     "selector": "[1457]00",
@@ -369,3 +369,4 @@ exports.authrules =
     "exceptions": ""
   }
 ]
+export default authrules;

@@ -1,4 +1,4 @@
-exports.bibrules =
+var bibrules =
 [
   {
     "selector": "[1678]00",
@@ -393,3 +393,4 @@ exports.bibrules =
     "exceptions": ""
   }
 ]
+export default bibrules;

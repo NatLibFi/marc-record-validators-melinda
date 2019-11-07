@@ -32,7 +32,7 @@
 
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/punctuation';
+import validatorFactory from '../src/punctuation/index';
 
 describe('access-rights', () => {
 	it('Creates a validator', async () => {
