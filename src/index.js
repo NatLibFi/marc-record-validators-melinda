@@ -40,6 +40,7 @@ import FieldExclusion from './field-exclusion';
 import IdenticalFields from './identical-fields';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
+import Punctuation from './punctuation/';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
@@ -59,6 +60,7 @@ export {
 	IdenticalFields,
 	IsbnIssn,
 	ItemLanguage,
+	Punctuation,
 	ResolvableExtReferences,
 	SortTags,
 	SubfieldExclusion,
