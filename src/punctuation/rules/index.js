@@ -3,5 +3,5 @@ import authrules from './auth';
 
 export {
 	bibrules,
-	authrules,
-}
+	authrules
+};
