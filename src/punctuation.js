@@ -2,6 +2,8 @@ import includes from 'lodash/includes';
 import head from 'lodash/head';
 import _ from 'lodash';
 import createDebug from 'debug';
+import {bibrules} from '../src/bib-punctuation.js';
+import {authrules} from '../src/auth-punctuation.js';
 
 const debug = createDebug('marc-record-punctuation');
 
@@ -22,10 +24,10 @@ export default async function () {
 
 	function getRules(recordType) {
 		if (recordType === 'z') {
-			return require('../src/auth-punctuation.json');
+			return authrules;
 		}
 
-		return require('../src/bib-punctuation.json');
+		return bibrules;
 	}
 
 	function fieldToString(field) {
