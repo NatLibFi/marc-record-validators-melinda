@@ -1,7 +1,7 @@
 import bibRules from './bib';
-import authRules from './aut';
+import autRules from './aut';
 
 export {
 	bibRules,
-	authRules
+	autRules
 };

@@ -1,4 +1,4 @@
-let bibrules =
+let bibRules =
 [
 	{
 		selector: '[1678]00',
@@ -393,4 +393,4 @@ let bibrules =
 		exceptions: ''
 	}
 ];
-export default bibrules;
+export default bibRules;
