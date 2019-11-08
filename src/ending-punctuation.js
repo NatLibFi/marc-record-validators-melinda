@@ -131,7 +131,7 @@ export default async function () {
 			} else if (res.special.noPuncIfField) {
 				if (field.subfields.some(subField => subField.code === res.special.noPuncIfField) === false) {
 					lastSubField = findLastSubfield(field);
-					normalPuncRules(lastSubField, res.punc, tag, true);
+					normalPuncRules(lastSubField, res.punc, tag, true)
 				}
 			} else if (res.special.ifBoth) {
 				lastSubField = findLastSubfield(field);
