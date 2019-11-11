@@ -41,6 +41,14 @@ let bibRules =
 		exceptions: ''
 	},
 	{
+		selector: '264',
+		namePortion: '$b',
+		description: 'Name of producer, publisher, distributor, manufacturer (R)',
+		portion: 'N',
+		preceedingPunctuation: 'none',
+		exceptions: ''
+	},
+	{
 		selector: '[1678]00',
 		namePortion: '$c',
 		description: 'Titles and words associated with a name (R)',
@@ -55,6 +63,14 @@ let bibRules =
 		portion: 'N',
 		preceedingPunctuation: 'comma',
 		exceptions: '- colon if preceded by $d\n- semicolon if preceded by $c'
+	},
+	{
+		selector: '264',
+		namePortion: '$c',
+		description: 'Date of production, publication, distribution, manufacture, or copyright notice (R)',
+		portion: 'N',
+		preceedingPunctuation: 'comma',
+		exceptions: ''
 	},
 	{
 		selector: '[1678]00',
