@@ -323,8 +323,20 @@ const confSpec = [
 		index: 490,
 		punc: false,
 		special: null
-	}, { //	500-509	KYLLÄ
+	}, { //	500-505	KYLLÄ
 		rangeStart: 500,
+		rangeEnd: 505,
+		index: null,
+		punc: true,
+		special: null
+	}, { //	506	KYLLÄ
+		index: 506,
+		punc: true,
+		special: {
+			noPuncIfField: 'f'
+		}
+	}, { //	507-509	KYLLÄ
+		rangeStart: 507,
 		rangeEnd: 509,
 		index: null,
 		punc: true,
