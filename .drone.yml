@@ -1,5 +1,4 @@
 ---
-#foo
 kind: pipeline
 type: docker
 name: Default
