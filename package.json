@@ -40,7 +40,7 @@
 		"beautify-isbn": "^2.2.0",
 		"cld3-asm": "^3.1.1",
 		"debug": "^4.1.1",
-		"issn-verify": "^1.0.0",
+		"issn-verify": "git://github.com/natlibfi-arlehiko/issn-verify.git#fix-minimatch",
 		"langs": "^2.0.0",
 		"lodash": "^4.17.11",
 		"node-fetch": "^2.3.0",
