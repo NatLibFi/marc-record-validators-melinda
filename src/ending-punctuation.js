@@ -4,7 +4,7 @@
 *
 * MARC record validators used in Melinda
 *
-* Copyright (c) 2014-2019 University Of Helsinki (The National Library Of Finland)
+* Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
 *
 * This file is part of marc-record-validators-melinda
 *
@@ -131,7 +131,7 @@ export default async function () {
 			} else if (res.special.noPuncIfField) {
 				if (field.subfields.some(subField => subField.code === res.special.noPuncIfField) === false) {
 					lastSubField = findLastSubfield(field);
-					normalPuncRules(lastSubField, res.punc, tag, true)
+					normalPuncRules(lastSubField, res.punc, tag, true);
 				}
 			} else if (res.special.ifBoth) {
 				lastSubField = findLastSubfield(field);
