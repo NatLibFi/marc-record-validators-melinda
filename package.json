@@ -14,35 +14,33 @@
 		"url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "8.2.2",
+	"version": "8.2.3",
 	"main": "./dist/index.js",
 	"publishConfig": {
 		"access": "public"
 	},
 	"engines": {
-		"node": ">=8"
+		"node": ">=12"
 	},
 	"scripts": {
 		"prepare": "npm run build",
-		"check-deps": "npm-check;exit 0",
-		"lint": "eslint --fix src",
-		"test:unit:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require @babel/register",
-		"test:unit": "npm run test:unit:base -- src/**/*.spec.js",
-		"test": "npm run lint && npm run test:unit && npm run coverage",
-		"clean": "rimraf build dist",
+		"lint": "eslint src",
+		"lint:dev": "eslint --fix src",
+		"test:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require @babel/register",
+		"test": "npm run lint && npm run test:base -- src/**/*.spec.js && npm run coverage",
+		"test:dev": "npm run lint:dev && npm run test:base -- src/**/*.spec.js && npm run coverage",
 		"coverage": "nyc check-coverage --per-file",
-		"build": "babel src --source-maps --out-dir=dist",
-		"build:dev": "npm run clean && npm run build:dev && npm run check-deps",
-		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm test && npm run coverage'",
+		"build": "babel src --source-maps --copy-files --delete-dir-on-start --out-dir=dist",
+		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm run test:dev'",
 		"watch:validator": "cross-env DEBUG=1 NODE_ENV=test chokidar src/$VALIDATOR.js src/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js src/$VALIDATOR.spec.js && npm run test:unit:base --  src/$VALIDATOR.spec.js && npm run coverage'"
 	},
 	"dependencies": {
 		"@babel/register": "^7.6.2",
 		"@natlibfi/marc-record": "^4.0.4",
 		"beautify-isbn": "^2.2.0",
-		"cld3-asm": "^1.0.1",
+		"cld3-asm": "^3.1.1",
 		"debug": "^4.1.1",
-		"issn-verify": "^1.0.0",
+		"issn-verify": "git://github.com/natlibfi-arlehiko/issn-verify.git#fix-minimatch",
 		"langs": "^2.0.0",
 		"lodash": "^4.17.11",
 		"node-fetch": "^2.3.0",
@@ -56,21 +54,19 @@
 		"@babel/core": "^7.6.4",
 		"@babel/preset-env": "^7.2.0",
 		"babel-eslint": "^10.0.1",
-		"babel-plugin-istanbul": "^5.1.4",
+		"babel-plugin-istanbul": "^6.0.0",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.2.0",
 		"chai-as-promised": "^7.1.1",
-		"chokidar-cli": "^1.2.0",
-		"codeclimate-test-reporter": "^0.5.1",
-		"cross-env": "^5.1.1",
-		"eslint": "^6.5.1",
-		"eslint-config-xo": "^0.27.2",
+		"chokidar-cli": "^2.1.0",
+		"cross-env": "^7.0.2",
+		"eslint": "^7.2.0",
+		"eslint-config-xo": ">=0.31.0 <1.0.0",
 		"eslint-plugin-import": "^2.18.2",
-		"fetch-mock": "^7.3.0",
-		"mocha": "^6.0.2",
-		"npm-check": "^5.9.0",
-		"nyc": "^14.1.1",
-		"rimraf": "^2.6.3"
+		"fetch-mock": "^9.10.1",
+		"mocha": "^8.0.1",
+		"npm-check": "^5.9.2",
+		"nyc": "^15.1.0"
 	},
 	"eslintConfig": {
 		"parser": "babel-eslint",
@@ -96,7 +92,7 @@
 				"@babel/preset-env",
 				{
 					"targets": {
-						"node": "8"
+						"node": "12"
 					}
 				}
 			]
