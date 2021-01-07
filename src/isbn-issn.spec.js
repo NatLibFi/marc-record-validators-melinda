@@ -89,8 +89,8 @@ describe('isbn-issn', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false, messages: [
-				'ISBN foo is not valid',
-				'ISSN bar is not valid'
+				'ISBN (foo) is not valid',
+				'ISSN (bar) is not valid'
 			]});
 		});
 
@@ -110,7 +110,7 @@ describe('isbn-issn', () => {
 
 			expect(result).to.eql({
 				valid: false, messages: [
-					'ISBN undefined is not valid'
+					'ISBN (undefined) is not valid'
 				]
 			});
 		});
@@ -131,9 +131,29 @@ describe('isbn-issn', () => {
 
 			expect(result).to.eql({
 				valid: false, messages: [
-					'ISSN undefined is not valid'
+					'ISSN (undefined) is not valid'
 				]
 			});
+		});
+
+		it('Finds the record invalid (Spaces in ISBN)', async () => {
+			const validator = await validatorFactory();
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: ' 9789519155470'}]
+					}
+				]
+			});
+			const result = await validator.validate(record);
+
+			expect(result).to.eql({
+				valid: false, messages: [
+					'ISBN ( 9789519155470) is not valid'
+				]});
 		});
 
 		it('Finds the record invalid (ISSN in \'l\'-subfield)', async () => {
@@ -157,8 +177,8 @@ describe('isbn-issn', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false, messages: [
-				'ISBN foo is not valid',
-				'ISSN bar is not valid'
+				'ISBN (foo) is not valid',
+				'ISSN (bar) is not valid'
 			]});
 		});
 
@@ -177,7 +197,7 @@ describe('isbn-issn', () => {
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false, messages: [
-				'ISBN 9789519155470 is not valid'
+				'ISBN (9789519155470) is not valid'
 			]});
 		});
 
@@ -233,6 +253,27 @@ describe('isbn-issn', () => {
 			expect(record.fields).to.eql([{
 				tag: '022', ind1: ' ', ind2: ' ', subfields: [
 					{code: 'y', value: 'foo'}
+				]
+			}]);
+		});
+
+		it('Trims spaces from value', async () => {
+			const validator = await validatorFactory({hyphenateISBN: true});
+			const record = new MarcRecord({
+				fields: [
+					{
+						tag: '020',
+						ind1: ' ',
+						ind2: ' ',
+						subfields: [{code: 'a', value: ' 9786003770171'}]
+					}
+				]
+			});
+			await validator.fix(record);
+
+			expect(record.fields).to.eql([{
+				tag: '020', ind1: ' ', ind2: ' ', subfields: [
+					{code: 'a', value: '978-600-377-017-1'}
 				]
 			}]);
 		});
