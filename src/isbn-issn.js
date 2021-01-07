@@ -118,19 +118,23 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 				if (subfield) {
 					// ISBN is valid but is missing hyphens
 					if (validateISBN(subfield.value.trim()) && hyphenateISBN) {
-						subfield.value = hyphenateIsbnFunc(subfield.value.trim());
+						subfield.value = hyphenateIsbnFunc(trimSpaces(subfield.value));
 					} else if (handleInvalid) {
-						field.subfields.push({code: 'z', value: subfield.value.trim()});
+						field.subfields.push({code: 'z', value: trimSpaces(subfield.value)});
 						record.removeSubfield(subfield, field);
 					}
 				}
 			} else {
 				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 				if (subfield && handleInvalid) {
-					field.subfields.push({code: 'y', value: subfield.value.trim()});
+					field.subfields.push({code: 'y', value: trimSpaces(subfield.value)});
 					record.removeSubfield(subfield, field);
 				}
 			}
 		});
+
+		function trimSpaces(value) {
+			return value.replace(/\s/gu, '');
+		}
 	}
 };
