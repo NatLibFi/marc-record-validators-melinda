@@ -49,6 +49,10 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					return true;
 				}
 
+				if (subfield.value.indexOf(' ') > -1) {
+					return true;
+				}
+
 				return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
 			}
 
@@ -101,7 +105,7 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 			})
 			.reduce((acc, obj) => {
 				const {name, value} = obj;
-				const msg = `${name} ${value} is not valid`;
+				const msg = `${name} (${value}) is not valid`;
 
 				return {...acc, messages: acc.messages.concat(msg)};
 			}, {valid: false, messages: []});
@@ -113,20 +117,24 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
 				if (subfield) {
 					// ISBN is valid but is missing hyphens
-					if (validateISBN(subfield.value) && hyphenateISBN) {
-						subfield.value = hyphenateIsbnFunc(subfield.value);
+					if (validateISBN(trimSpaces(subfield.value)) && hyphenateISBN) {
+						subfield.value = hyphenateIsbnFunc(trimSpaces(subfield.value));
 					} else if (handleInvalid) {
-						field.subfields.push({code: 'z', value: subfield.value});
+						field.subfields.push({code: 'z', value: trimSpaces(subfield.value)});
 						record.removeSubfield(subfield, field);
 					}
 				}
 			} else {
 				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 				if (subfield && handleInvalid) {
-					field.subfields.push({code: 'y', value: subfield.value});
+					field.subfields.push({code: 'y', value: trimSpaces(subfield.value)});
 					record.removeSubfield(subfield, field);
 				}
 			}
 		});
+
+		function trimSpaces(value) {
+			return value.replace(/\s/gu, '');
+		}
 	}
 };
