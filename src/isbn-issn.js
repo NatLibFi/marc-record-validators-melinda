@@ -117,7 +117,7 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
 				if (subfield) {
 					// ISBN is valid but is missing hyphens
-					if (validateISBN(subfield.value.trim()) && hyphenateISBN) {
+					if (validateISBN(trimSpaces(subfield.value)) && hyphenateISBN) {
 						subfield.value = hyphenateIsbnFunc(trimSpaces(subfield.value));
 					} else if (handleInvalid) {
 						field.subfields.push({code: 'z', value: trimSpaces(subfield.value)});
