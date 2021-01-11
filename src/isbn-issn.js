@@ -49,19 +49,23 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					return true;
 				}
 
+				// If value contains space
 				if (subfield.value.indexOf(' ') > -1) {
 					return true;
 				}
 
-				try {
-					const parsedIsbn = ISBN.parse(subfield.value);
-					const correctlyHyphenated = hyphenateISBN && subfield.value !== parsedIsbn.isbn13h;
-					return !parsedIsbn.isValid || correctlyHyphenated;
-				} catch (error) {
-					console.log('error', `ISBN VALIDATION ERROR: ${JSON.stringify(subfield)}`);
-					console.log(error);
+				const auditedIsbn = ISBN.audit(subfield.value);
+				if (!auditedIsbn.validIsbn) {
+					console.log('Invalid isbn');
 					return true;
 				}
+
+				const parsedIsbn = ISBN.parse(subfield.value);
+				if (hyphenateISBN) {
+					return subfield.value !== parsedIsbn.isbn13h;
+				}
+
+				return subfield.value !== parsedIsbn.isbn13;
 			}
 
 			const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
