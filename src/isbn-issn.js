@@ -56,7 +56,6 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 
 				const auditedIsbn = ISBN.audit(subfield.value);
 				if (!auditedIsbn.validIsbn) {
-					console.log('Invalid isbn');
 					return true;
 				}
 
