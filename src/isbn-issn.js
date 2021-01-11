@@ -127,12 +127,12 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					// ISBN is valid but is missing hyphens
 					if (validateISBN(trimSpaces(subfield.value)) && hyphenateISBN) {
 						const trimmedValue = trimSpaces(subfield.value);
-						console.log(trimmedValue);
 						try {
 							subfield.value = hyphenateIsbnFunc(trimmedValue);
 						} catch (error) {
 							console.log(error);
 							console.log('hypenate error');
+							console.log(trimmedValue);
 							throw error;
 						}
 					} else if (handleInvalid) {
