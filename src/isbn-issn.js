@@ -49,11 +49,17 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					return true;
 				}
 
-				if (subfield.value.indexOf(' ') > -1) {
+				if (subfield.value.indexOf(/\s/ug) > -1) {
 					return true;
 				}
 
-				return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
+				try {
+					const validIsbn = validateISBN(subfield.value);
+					const correctlyHyphenated = hyphenateISBN && !subfield.value.includes('-')
+					return !validIsbn || correctlyHyphenated;
+				} catch (error) {
+					return true;
+				}
 			}
 
 			const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
