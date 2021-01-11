@@ -26,7 +26,7 @@
 *
 */
 
-import {validate as validateISBN, hyphenate as hyphenateIsbnFunc} from 'beautify-isbn';
+import ISBN from 'isbn3';
 import validateISSN from '@natlibfi/issn-verify';
 
 export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
@@ -49,14 +49,14 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					return true;
 				}
 
-				if (subfield.value.indexOf(/\s/ug) > -1) {
+				if (subfield.value.indexOf(' ') > -1) {
 					return true;
 				}
 
 				try {
-					const validIsbn = validateISBN(subfield.value);
-					const correctlyHyphenated = hyphenateISBN && !subfield.value.includes('-');
-					return !validIsbn || correctlyHyphenated;
+					const parsedIsbn = ISBN.parse(subfield.value);
+					const correctlyHyphenated = hyphenateISBN && subfield.value !== parsedIsbn.isbn13h;
+					return !parsedIsbn.isValid || correctlyHyphenated;
 				} catch (error) {
 					console.log('error', `ISBN VALIDATION ERROR: ${JSON.stringify(subfield)}`);
 					console.log(error);
@@ -125,19 +125,18 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
 				if (subfield) {
 					// ISBN is valid but is missing hyphens
-					if (validateISBN(trimSpaces(subfield.value)) && hyphenateISBN) {
-						const trimmedValue = trimSpaces(subfield.value);
-						try {
-							subfield.value = hyphenateIsbnFunc(trimmedValue);
-						} catch (error) {
-							console.log(error);
-							console.log('hypenate error');
-							console.log(trimmedValue);
-							console.log(JSON.stringify(record));
-							throw error;
+					const trimmedValue = trimSpaces(subfield.value);
+					const auditResult = ISBN.audit(trimmedValue);
+					if (auditResult.validIsbn) {
+						const parsedIsbn = ISBN.parse(trimmedValue);
+						if (trimmedValue === parsedIsbn.isbn13 && hyphenateISBN) {
+							subfield.value = parsedIsbn.isbn13h;
+						} else {
+							// Just trim
+							subfield.value = trimmedValue;
 						}
 					} else if (handleInvalid) {
-						field.subfields.push({code: 'z', value: trimSpaces(subfield.value)});
+						field.subfields.push({code: 'z', value: trimmedValue});
 						record.removeSubfield(subfield, field);
 					}
 				}
