@@ -58,6 +58,7 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					const correctlyHyphenated = hyphenateISBN && !subfield.value.includes('-')
 					return !validIsbn || correctlyHyphenated;
 				} catch (error) {
+					console.log('error', `ISBN VALIDATION ERROR: ${JSON.stringify(subfield)}`)
 					return true;
 				}
 			}
