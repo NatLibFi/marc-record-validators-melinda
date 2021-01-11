@@ -26,7 +26,7 @@
 *
 */
 
-import {validate as validateISBN, hyphenate as hyphenateIsbnFunc} from 'beautify-isbn';
+import ISBN from 'isbn3';
 import validateISSN from '@natlibfi/issn-verify';
 
 export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
@@ -49,11 +49,22 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					return true;
 				}
 
+				// If value contains space
 				if (subfield.value.indexOf(' ') > -1) {
 					return true;
 				}
 
-				return !validateISBN(subfield.value) || (hyphenateISBN && !subfield.value.includes('-'));
+				const auditedIsbn = ISBN.audit(subfield.value);
+				if (!auditedIsbn.validIsbn) {
+					return true;
+				}
+
+				const parsedIsbn = ISBN.parse(subfield.value);
+				if (hyphenateISBN) {
+					return subfield.value !== parsedIsbn.isbn13h;
+				}
+
+				return subfield.value !== parsedIsbn.isbn13;
 			}
 
 			const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
@@ -117,10 +128,18 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 				const subfield = field.subfields.find(sf => sf.code === 'a');
 				if (subfield) {
 					// ISBN is valid but is missing hyphens
-					if (validateISBN(trimSpaces(subfield.value)) && hyphenateISBN) {
-						subfield.value = hyphenateIsbnFunc(trimSpaces(subfield.value));
+					const trimmedValue = trimSpaces(subfield.value);
+					const auditResult = ISBN.audit(trimmedValue);
+					if (auditResult.validIsbn) {
+						const parsedIsbn = ISBN.parse(trimmedValue);
+						if (hyphenateISBN) {
+							subfield.value = parsedIsbn.isbn13h;
+						} else {
+							// Just trim
+							subfield.value = parsedIsbn.isbn13;
+						}
 					} else if (handleInvalid) {
-						field.subfields.push({code: 'z', value: trimSpaces(subfield.value)});
+						field.subfields.push({code: 'z', value: trimmedValue});
 						record.removeSubfield(subfield, field);
 					}
 				}
