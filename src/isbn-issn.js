@@ -133,6 +133,7 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 							console.log(error);
 							console.log('hypenate error');
 							console.log(trimmedValue);
+							console.log(JSON.stringify(record));
 							throw error;
 						}
 					} else if (handleInvalid) {
