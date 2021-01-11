@@ -129,11 +129,11 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 					const auditResult = ISBN.audit(trimmedValue);
 					if (auditResult.validIsbn) {
 						const parsedIsbn = ISBN.parse(trimmedValue);
-						if (trimmedValue === parsedIsbn.isbn13 && hyphenateISBN) {
+						if (hyphenateISBN) {
 							subfield.value = parsedIsbn.isbn13h;
 						} else {
 							// Just trim
-							subfield.value = trimmedValue;
+							subfield.value = parsedIsbn.isbn13;
 						}
 					} else if (handleInvalid) {
 						field.subfields.push({code: 'z', value: trimmedValue});
