@@ -37,6 +37,11 @@ const MAP_CONVERSION = {
 	'—': '-',
 	'―': '-',
 	/**
+	 * @internal Normalizations (MELINDA-4172, MELINDA-4175)
+	 **/
+	'Ⓒ': '©',
+	'Ⓟ': '℗',
+	/**
    * @internal Precompose å, ä, ö, Å, Ä and Ö
    **/
 	å: 'å',
@@ -52,6 +57,9 @@ const MAP_CONVERSION = {
 	à: 'à',
 	â: 'â',
 	ã: 'ã',
+	ć: 'ć',
+	č: 'č',
+	ç: 'ç',
 	é: 'é',
 	è: 'è',
 	ê: 'ê',
@@ -68,6 +76,7 @@ const MAP_CONVERSION = {
 	ô: 'ô',
 	õ: 'õ',
 	ś: 'ś',
+	š: 'š',
 	ú: 'ú',
 	ù: 'ù',
 	û: 'û',
@@ -78,6 +87,7 @@ const MAP_CONVERSION = {
 	ŷ: 'ŷ',
 	ỹ: 'ỹ',
 	ÿ: 'ÿ',
+	ž: 'ž',
 	Á: 'Á',
 	À: 'À',
 	Â: 'Â',
