@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "8.2.9",
+	"version": "8.2.10",
 	"main": "./dist/index.js",
 	"publishConfig": {
 		"access": "public"
@@ -87,11 +87,11 @@
 	"babel": {
 		"presets": [
 			[
-        "@babel/preset-env",
-        {
-          "targets": "maintained node versions"
-        }
-      ]
+				"@babel/preset-env",
+				{
+					"targets": "maintained node versions"
+				}
+			]
 		],
 		"env": {
 			"test": {
