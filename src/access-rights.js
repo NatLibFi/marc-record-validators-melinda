@@ -31,47 +31,73 @@
 'use strict';
 
 export default async function () {
-	async function fix(record) {
-		record.insertField({
-			tag: '506',
-			ind1: '1',
-			subfields: [
-				{code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'},
-				{code: 'f', value: 'Online access with authorization.'},
-				{code: '2', value: 'star'},
-				{code: '5', value: 'FI-Vapaa'},
-				{code: '9', value: 'FENNI<KEEP>'}
-			]
-		});
+  const sf506 = [{code: 'a', value: /aineisto on käytettävissä vapaakappalekirjastoissa/i}];
+  const sf540 = [{code: 'c', value: /laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä/i}];
 
-		record.insertField({
-			tag: '540',
-			subfields: [
-				{code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'},
-				{code: 'b', value: 'Kansalliskirjasto;'},
-				{code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä'},
-				{code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433'},
-				{code: '5', value: 'FI-Vapaa'},
-				{code: '9', value: 'FENNI<KEEP>'}
-			]
-		});
+  async function fix(record) {
+    if (!hasTag(record, '506', sf506)) {
+      record.insertField({
+        tag: '506',
+        ind1: '1',
+        subfields: [{
+          code: 'a',
+          value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'
+        }, {
+          code: 'f',
+          value: 'Online access with authorization.'
+        }, {
+          code: '2',
+          value: 'star'
+        }, {
+          code: '5',
+          value: 'FI-Vapaa'
+        }, {
+          code: '9',
+          value: 'FENNI<KEEP>'
+        }]
+      });
+      }
+    
+    if (!hasTag(record, '540', sf540)) {
+      record.insertField({
+        tag: '540',
+        subfields: [{
+          code: 'a',
+          value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'
+        }, {
+          code: 'b',
+          value: 'Kansalliskirjasto;'
+        }, {
+          code: 'c',
+          value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä'
+        }, {
+          code: 'u',
+          value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433'
+        }, {
+          code: '5',
+          value: 'FI-Vapaa'
+        }, {
+          code: '9',
+          value: 'FENNI<KEEP>'
+        }]
+      });
+    }
 
-		const f856 = record.get(/^856$/).shift();
-		if (f856) {
-			f856.subfields.push(
-				{code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
-				{code: '5', value: 'FI-Vapaa'}
-			);
-		}
+    return true;
+  }
 
-		return true;
-	}
+  async function validate(record) {
+    return { valid: hasTag(record, '506', sf506) && hasTag(record, '540', sf540) };
+  }
 
-	return {
-		description: 'Adds access rights fields for a record (if not existing)',
-		validate: async record => ({
-			valid: record.fields.some(sf => sf.tag === '506')
-		}),
-		fix
-	};
+  return {
+    description: 'Adds access rights fields for a record (if not existing)',
+    validate,
+    fix
+  };
+
+
+  function hasTag(rec, tag, sfcv) {
+    return rec.fields.some(f => { return (f.tag === tag) && sfcv.every(({code, value}) => f.subfields.some(sf => { return (sf.code === code) && value.test(sf.value); })); });
+  }
 }

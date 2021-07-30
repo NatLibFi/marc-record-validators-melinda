@@ -34,7 +34,7 @@ import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './punctuation/';
 
-describe('access-rights', () => {
+describe('punctuation', () => {
 	it('Creates a validator', async () => {
 		const validator = await validatorFactory();
 

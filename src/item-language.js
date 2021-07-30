@@ -33,7 +33,7 @@ import LanguageCodes from 'langs';
 import createDebugLogger from 'debug';
 
 export default async function (tagPattern, treshold = 0.9) {
-	const debug = createDebugLogger('@natlnibfi/marc-record-validator-melinda/item-language');
+	const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/item-language');
 	const cldFactory = await loadCLD();
 
 	if (tagPattern instanceof RegExp) {
