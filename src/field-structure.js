@@ -255,36 +255,17 @@ export default async function (config) {
 				if (confField === 'subfields') {
 					const strict = confObj.strict || false; // Defaults to false
 					let	elementsTotal = 0;
-					let	matching = [];
-					let	valid = true;
-
-					forEach(confObj.subfields, ([key, val]) => {
-						matching = recordSubObj.subfields.filter(({code}) => code === key);
+					const valid = !Object.entries(confObj.subfields).some(([key, val]) => {
+						const matching = recordSubObj.subfields.filter(({code}) => code === key);
 						elementsTotal += matching.length; // Calculate amount of record objects matching all confObj objects
 
-						if (matching.length > val.maxOccurrence) {
-							valid = false;
-						}
-
-						if ((val.required || dependencies) && matching.length === 0) {
-							valid = false;
-						}
-
-						if (val.pattern) {
-							matching.forEach(field => {
-								if (!val.pattern.test(field.value)) {
-									valid = false;
-								}
-							});
-						}
+						return (matching.length > val.maxOccurrence) ||
+							((val.required || dependencies) && matching.length === 0) ||
+							(val.pattern && !matching.every(field => val.pattern.test(field.value)));
 					});
 
 					// Check if there is less valid calculated objects than objects in subfield object => some not matching strict
-					if (strict && elementsTotal < recordSubObj.subfields.length) {
-						return false;
-					}
-
-					return valid;
+					return !(strict && elementsTotal < recordSubObj.subfields.length) && valid;
 				}
 
 				// Recursive check for dependicies

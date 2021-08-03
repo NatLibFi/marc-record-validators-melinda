@@ -28,6 +28,8 @@
 
 'use strict';
 
+import {MarcRecord} from '@natlibfi/marc-record';
+
 export default async function (tagPattern) {
 	return {
 		description:
@@ -39,11 +41,7 @@ export default async function (tagPattern) {
 	};
 
 	async function validate(record, tagPattern) {
-		const sortedArray = sort(record.fields, tagPattern);
-		const compareArrays = record.fields.every((f, i) => {
-			return f.tag === sortedArray[i].tag;
-		});
-		return compareArrays ? {valid: true, messages: []} : {valid: false, messages: ['Fields are in incorrect order']};
+		return MarcRecord.isEqual(record.fields, sort(record.fields, tagPattern)) ? {valid: true, messages: []} : {valid: false, messages: ['Fields are in incorrect order']};
 	}
 
 	function sort(record, tagPattern) {
