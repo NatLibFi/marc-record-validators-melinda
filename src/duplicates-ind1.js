@@ -27,7 +27,6 @@
  */
 
 'use strict';
-import {omit} from 'lodash';
 
 export default async function (tagPattern) {
 	if (tagPattern instanceof RegExp) {
@@ -50,7 +49,7 @@ export default async function (tagPattern) {
 	async function fix(record) {
 		iterateFields(record)
 			.filter(item => item.validation === false)
-			.map(item => omit(item, ['validation']))
+			.map(({validation, ...item}) => item)
 			.forEach(field => record.removeField(field));
 	}
 

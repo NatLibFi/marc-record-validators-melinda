@@ -28,8 +28,6 @@
 
 'use strict';
 
-import {filter, forEach} from 'lodash';
-
 // Configuration specification
 const confSpec = {
 	leader: { // Description: Leader pattern
@@ -130,6 +128,10 @@ const depSpec = {
 	}
 };
 
+function forEach(obj, fun) {
+	Object.entries(obj).forEach(fun);
+}
+
 export default async function (config) {
 	if (!Array.isArray(config)) {
 		throw new TypeError('Configuration array not provided');
@@ -148,21 +150,20 @@ export default async function (config) {
 	/// /////////////////////////////////////////
 	// This checks that configuration is valid
 	function configValid(config) {
-		let excluded = [];
 		config.forEach(obj => {
-			excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
+			const excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
 
-			forEach(obj, (val, key) => {
+			forEach(obj, ([key, val]) => {
 				configMatchesSpec(val, key, confSpec);
 
 				// Concat all excluded elements to array
 				if (confSpec[key].excl) {
-					excluded = excluded.concat(confSpec[key].excl);
+					excluded.push(...confSpec[key].excl);
 				}
 			});
 
 			// Check that no excluded elements are in use
-			forEach(obj, (val, key) => {
+			forEach(obj, ([key]) => {
 				if (excluded.includes(key)) {
 					throw new Error('Configuration not valid - excluded element');
 				}
@@ -185,9 +186,9 @@ export default async function (config) {
 
 		// Check subfields/dependencies recursively
 		if (key === 'subfields' || key === 'dependencies') {
-			forEach(data, subObj => {
+			forEach(data, ([, subObj]) => {
 				if (typeof subObj === 'object') {
-					forEach(subObj, (subVal, subKey) => {
+					forEach(subObj, ([subKey, subVal]) => {
 						configMatchesSpec(subVal, subKey, (key === 'subfields') ? subSpec : depSpec);
 					});
 				} else {
@@ -257,8 +258,8 @@ export default async function (config) {
 					let	matching = [];
 					let	valid = true;
 
-					forEach(confObj.subfields, (val, key) => {
-						matching = filter(recordSubObj.subfields, {code: key});
+					forEach(confObj.subfields, ([key, val]) => {
+						matching = recordSubObj.subfields.filter(({code}) => code === key);
 						elementsTotal += matching.length; // Calculate amount of record objects matching all confObj objects
 
 						if (matching.length > val.maxOccurrence) {
@@ -270,7 +271,7 @@ export default async function (config) {
 						}
 
 						if (val.pattern) {
-							forEach(matching, field => {
+							matching.forEach(field => {
 								if (!val.pattern.test(field.value)) {
 									valid = false;
 								}
