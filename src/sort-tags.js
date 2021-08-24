@@ -27,7 +27,8 @@
  */
 
 'use strict';
-import {orderBy, isEqual, reject} from 'lodash';
+
+import {MarcRecord} from '@natlibfi/marc-record';
 
 export default async function (tagPattern) {
 	return {
@@ -40,8 +41,7 @@ export default async function (tagPattern) {
 	};
 
 	async function validate(record, tagPattern) {
-		const compareArrays = isEqual(record.fields, await sort(record.fields, tagPattern));
-		return compareArrays ? {valid: true, messages: []} : {valid: false, messages: ['Fields are in incorrect order']};
+		return MarcRecord.isEqual(record.fields, sort(record.fields, tagPattern)) ? {valid: true, messages: []} : {valid: false, messages: ['Fields are in incorrect order']};
 	}
 
 	function sort(record, tagPattern) {
@@ -58,13 +58,15 @@ function sortPatternFields(record, tagPattern) {
 		return tagPattern.some(pattern => pattern.test(field.tag)) ? field : null;
 	}).filter(tag => tag);
 	const sortedArray = sortFields(record.fields);
-	const fixedArray = reject(sortedArray, (field => tagPattern.some(pattern => pattern.test(field.tag))));
+	const fixedArray = sortedArray.filter(field => !tagPattern.some(pattern => pattern.test(field.tag)));
 	fixedArray.splice(index(sortedArray, tagPattern), 0, ...matchingTags);
 	record.fields = fixedArray;
 }
 
 function sortFields(fields) {
-	return orderBy(fields, ['tag']);
+	return [...fields].sort((a, b) => {
+		return a.tag > b.tag ? 1 : b.tag > a.tag ? -1 : 0;
+	});
 }
 
 function index(fields, tagPattern) {

@@ -28,9 +28,6 @@
 
 'use strict';
 
-import {forEach, every} from 'lodash';
-import {isRegExp} from 'util';
-
 // Tag (RegExp): Pattern to match the field's tags Mandatory
 // ind1 (RegExp): Pattern to match the field's ind1 property
 // ind2 (RegExp): Pattern to match the field's ind2 property
@@ -62,6 +59,14 @@ const confSpec = {
 	}
 };
 
+function forEach(obj, fun) {
+	Object.entries(obj).forEach(fun);
+}
+
+function isRegExp(re) {
+	return re instanceof RegExp;
+}
+
 export default async function (config) {
 	if (!Array.isArray(config)) {
 		throw new TypeError('Configuration array not provided');
@@ -85,7 +90,7 @@ export default async function (config) {
 		config.forEach(obj => {
 			checkMandatory(confSpec, obj);
 
-			forEach(obj, (val, key) => {
+			forEach(obj, ([key, val]) => {
 				configMatchesSpec(val, key, confSpec);
 			});
 		});
@@ -106,12 +111,12 @@ export default async function (config) {
 
 		// Check subfields recursively
 		if (key === 'subfields') {
-			forEach(data, subObj => {
+			forEach(data, ([, subObj]) => {
 				// Console.log("subObj: ", subObj, " type: ", typeof subObj, !(Array.isArray(subObj)))
 				if (typeof subObj === 'object' && !(Array.isArray(subObj))) {
 					checkMandatory(spec[key], subObj);
 
-					forEach(subObj, (subVal, subKey) => {
+					forEach(subObj, ([subKey, subVal]) => {
 						configMatchesSpec(subVal, subKey, spec[key]);
 					});
 				} else {
@@ -123,7 +128,7 @@ export default async function (config) {
 
 	function checkMandatory(spec, obj) {
 		// Check if all mandatory fields are present
-		forEach(spec, (val, key) => {
+		forEach(spec, ([key, val]) => {
 			if (val.mandatory && typeof (obj[key]) === 'undefined') {
 				throw new Error('Configuration not valid - missing mandatory element: ' + key);
 			}
@@ -139,13 +144,13 @@ export default async function (config) {
 		res.valid = true;
 
 		// Parse trough every element of config array
-		forEach(conf, confObj => {
+		conf.forEach(confObj => {
 			var found = record.get(confObj.tag); // Find matching record fields based on mandatory tag
 
 			// Check if some of found record fields matches all configuration fields
-			forEach(found, element => {
+			found.forEach(element => {
 				// Compare each found element against each configuration object
-				if (every(confObj, (confField, confKey) => {
+				if (Object.entries(confObj).every(([confKey, confField]) => {
 					// Tag already checked at .get(), subfields later
 					if (confKey === 'tag' || confKey === 'subfields') {
 						return true;
@@ -160,10 +165,10 @@ export default async function (config) {
 					return false;
 				})) {
 					// All configuration fields match, check if some subfields should be excluded.
-					forEach(confObj.subfields, subField => {
+					confObj.subfields.forEach(subField => {
 						const excluded = [];
 
-						forEach(element.subfields, elemSub => {
+						element.subfields.forEach(elemSub => {
 							// Check if subfield matches configuration spec
 							if (subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
 								(typeof subField.value === 'undefined' || (subField.value && elemSub.value && (subField.value.test(elemSub.value))))) {

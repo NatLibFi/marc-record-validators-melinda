@@ -29,7 +29,6 @@
 /* eslint-disable complexity, max-params */
 
 'use strict';
-import {find} from 'lodash';
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
 import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf';
 import createDebugLogger from 'debug';
@@ -50,9 +49,8 @@ export default async function () {
 
 	// This is used to validate record against configuration
 	function validatePunc(record, fix) {
-		const message = {};
+		const message = {message: []};
 
-		message.message = [];
 		if (fix) {
 			message.fix = [];
 		}
@@ -166,7 +164,7 @@ export default async function () {
 				lastSubField = findLastSubfield(field);
 
 				if (lastSubField) {
-					const languageField = find(field.subfields, {code: res.special.termField});
+					const languageField = field.subfields.find(({code}) => code === res.special.termField);
 					if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
 					// If (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
 						normalPuncRules(lastSubField, res.punc, tag, true);
@@ -195,7 +193,7 @@ export default async function () {
 			} else if (res.special.linked) {
 				let linkedTag = null;
 				try {
-					linkedTag = parseInt(find(field.subfields, {code: res.special.linked}).value.substr(0, 3), 10); // Substring feels stupid, but is used in MarcRecord to extract tag.
+					linkedTag = parseInt(field.subfields.find(({code}) => code === res.special.linked).value.substr(0, 3), 10); // Substring feels stupid, but is used in MarcRecord to extract tag.
 				} catch (err) {
 					debug(`Got error while parsing tag: ${err instanceof Error ? err.stack : err}`);
 					return false;
@@ -225,7 +223,7 @@ export default async function () {
 			}
 
 			// Find configuration object matching tag:
-			res = find(confSpec, o => {
+			res = Object.values(confSpec).find(o => {
 				return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag);
 			});
 

@@ -28,9 +28,6 @@
 
 'use strict';
 
-import {forEach, every, some} from 'lodash';
-import {isRegExp} from 'util';
-
 // Configuration specification
 const confSpec = {
 	tag: { // Pattern to match the field's tags
@@ -72,6 +69,14 @@ const confSpec = {
 	}
 };
 
+function forEach(obj, fun) {
+	Object.entries(obj).forEach(fun);
+}
+
+function isRegExp(re) {
+	return re instanceof RegExp;
+}
+
 export default async function (config) {
 	if (!Array.isArray(config)) {
 		throw new TypeError('Configuration array not provided');
@@ -95,22 +100,21 @@ export default async function (config) {
 	/// /////////////////////////////////////////
 	// These check that configuration is valid
 	function configValid(config) {
-		let excluded = [];
 		config.forEach(obj => {
-			excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
+			const excluded = []; // Validate fields: check that they are valid to confSpec (exists, correct data type), concat excluded elements
 
 			checkMandatory(confSpec, obj);
 
-			forEach(obj, (val, key) => {
+			forEach(obj, ([key, val]) => {
 				configMatchesSpec(val, key, confSpec);
 				// Concat all excluded elements to array
 				if (confSpec[key].excl) {
-					excluded = excluded.concat(confSpec[key].excl);
+					excluded.push(...confSpec[key].excl);
 				}
 			});
 
 			// Check that no excluded elements are in use
-			forEach(obj, (val, key) => {
+			forEach(obj, ([key]) => {
 				if (excluded.includes(key)) {
 					throw new Error('Configuration not valid - excluded element');
 				}
@@ -133,12 +137,12 @@ export default async function (config) {
 
 		// Check subfields recursively
 		if (key === 'subfields') {
-			forEach(data, subObj => {
+			forEach(data, ([, subObj]) => {
 				// Console.log("subObj: ", subObj, " type: ", typeof subObj, !(Array.isArray(subObj)))
 				if (typeof subObj === 'object' && !(Array.isArray(subObj))) {
 					checkMandatory(spec[key], subObj);
 
-					forEach(subObj, (subVal, subKey) => {
+					forEach(subObj, ([subKey, subVal]) => {
 						configMatchesSpec(subVal, subKey, spec[key]);
 					});
 				} else {
@@ -148,7 +152,7 @@ export default async function (config) {
 		}
 
 		if (key === 'dependencies') {
-			forEach(data, subObj => {
+			forEach(data, ([, subObj]) => {
 				if (!(typeof subObj === 'object' && !Array.isArray(subObj) && Object.keys(subObj).length === 1 && isRegExp(subObj.leader))) {
 					throw new TypeError('Configuration not valid - Invalid dependencies config');
 				}
@@ -158,7 +162,7 @@ export default async function (config) {
 
 	function checkMandatory(spec, obj) {
 		// Check if all mandatory fields are present
-		forEach(spec, (val, key) => {
+		forEach(spec, ([key, val]) => {
 			if (val.mandatory && typeof (obj[key]) === 'undefined') {
 				throw new Error('Configuration not valid - missing mandatory element: ' + key);
 			}
@@ -170,31 +174,27 @@ export default async function (config) {
 	// These check that record is valid
 	function subFieldCheck(confField, element) {
 		// Parse trough every configuration subfield, check if one matches some subobjects fields
-		return some(confField, subField => {
-			return some(element.subfields, elemSub => {
+		return Object.values(confField).some(subField => {
+			return Object.values(element.subfields).some(elemSub => {
 				// Check if subfield matches configuration spec
-				if (subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
-					subField.value && elemSub.value && (subField.value.test(elemSub.value))) {
-					return true;
-				}
+				return subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
+				subField.value && elemSub.value && (subField.value.test(elemSub.value));
 			});
 		});
 	}
 
 	function excludeFields(record, conf, fix) {
-		var res = {};
-		res.message = [];
-		res.valid = true;
+		const res = {message: [], valid: true};
 
 		// Parse trough every element of config array
-		forEach(conf, confObj => {
-			var found = record.get(confObj.tag); // Find matching record fields based on mandatory tag
+		forEach(conf, ([, confObj]) => {
+			const found = record.get(confObj.tag); // Find matching record fields based on mandatory tag
 			const excluded = [];
 
 			// Check if some of found record fields matches all configuration fields
-			forEach(found, element => {
+			found.forEach(element => {
 				// Compare each found element against each configuration object
-				if (every(confObj, (confField, confKey) => {
+				if (Object.entries(confObj).every(([confKey, confField]) => {
 					// This is already checked on .get()
 					if (confKey === 'tag') {
 						return true;

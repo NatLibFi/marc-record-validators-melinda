@@ -1,10 +1,14 @@
-import includes from 'lodash/includes';
-import head from 'lodash/head';
-import _ from 'lodash';
+import {MarcRecord} from '@natlibfi/marc-record';
 import createDebug from 'debug';
 import {autRules, bibRules} from './rules';
 
 const debug = createDebug('marc-record-punctuation');
+
+function cloneDeep(field) {
+	const r = new MarcRecord();
+	r.appendField(field);
+	return r.get(field.tag)?.[0];
+}
 
 export default async function () {
 	function readPunctuationRulesFromJSON(recordType) {
@@ -42,13 +46,13 @@ export default async function () {
 
 	function validateField(recordType = 'a') {
 		return function (element) {
-			const testField = _.cloneDeep(element);
+			const testField = cloneDeep(element);
 			const punctuated = punctuateField(testField, recordType);
 			if (!punctuated) {
 				return true;
 			}
 
-			if (_.isEqual(punctuated, element)) {
+			if (MarcRecord.isEqual(punctuated, element)) {
 				return true;
 			}
 
@@ -81,7 +85,7 @@ export default async function () {
 				return;
 			}
 
-			if (inNamePortion && includes('T', 'S', portion)) {
+			if (inNamePortion && portion.includes('T', 'S')) {
 				debug(`Portion changed to ${portion}. Not in name portion anymore`);
 				inNamePortion = false;
 			}
@@ -128,13 +132,13 @@ export default async function () {
 
 	function getPortion(subfield, rules) {
 		debug(`Looking for namePortion for ${subfield.code}`);
-		const portions = rules.filter(rule => rule.namePortion === subfield.code).map(rule => rule.portion);
+		const [portion] = rules.filter(rule => rule.namePortion === subfield.code).map(rule => rule.portion);
 
-		if (portions.length === 0) {
+		if (portion === undefined) {
 			throw new Error(`Unknown subfield code ${subfield.code}`);
 		}
 
-		return head(portions).toUpperCase();
+		return portion.toUpperCase();
 	}
 
 	function addNamePortionPunctuation(preceedingSubfield) {
@@ -191,23 +195,23 @@ export default async function () {
 	}
 
 	function getPrecedingPunctuation(subfield, rules) {
-		const punct = rules.filter(rule => rule.namePortion === subfield.code).map(rule => rule.preceedingPunctuation);
+		const [punct] = rules.filter(rule => rule.namePortion === subfield.code).map(rule => rule.preceedingPunctuation);
 
-		if (punct.length === 0) {
+		if (punct === undefined) {
 			throw new Error(`Unknown subfield code ${subfield.code}`);
 		}
 
-		return head(punct).toUpperCase();
+		return punct.toUpperCase();
 	}
 
 	function getExceptions(subfield, rules) {
-		const exceptions = rules.filter(rule => rule.namePortion === subfield.code).map(rule => parseExceptions(rule.exceptions));
+		const [exception] = rules.filter(rule => rule.namePortion === subfield.code).map(rule => parseExceptions(rule.exceptions));
 
-		if (exceptions.length === 0) {
+		if (exception === undefined) {
 			throw new Error(`Unknown subfield code ${subfield.code}`);
 		}
 
-		return head(exceptions);
+		return exception;
 	}
 
 	function parseExceptions(expectionsString) {

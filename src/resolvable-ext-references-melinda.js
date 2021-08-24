@@ -28,7 +28,6 @@
 
 import {parseString} from 'xml2js';
 import fetch from 'node-fetch';
-import {last} from 'lodash';
 
 export default async function ({endpoint, prefixPattern, fields}) {
 	if (typeof endpoint === 'string' && prefixPattern instanceof RegExp && typeof fields === 'object') {
@@ -118,8 +117,8 @@ export default async function ({endpoint, prefixPattern, fields}) {
 
 		return new Promise(resolve => {
 			parseString(xml, (err, result) => {
-				const record = last(result['zs:searchRetrieveResponse']['zs:records']);
-				const position = parseInt(last(record['zs:record'])['zs:recordPosition'][0], 10);
+				const record = result['zs:searchRetrieveResponse']['zs:records'].slice(-1)?.[0];
+				const position = parseInt(record?.['zs:record'].slice(-1)?.[0]['zs:recordPosition'][0], 10);
 				resolve(position === 1 && !err);
 			});
 		});
