@@ -61,7 +61,7 @@ export default async function () {
 		}
 
 		record.fields.forEach(field => {
-			validateField(field);
+			validateField(field, false, fix, message);
 		});
 
 		message.valid = !(message.message.length >= 1);
@@ -203,7 +203,7 @@ function validateField(field, linkedTag, fix, message) {
 				return false;
 			}
 
-			validateField(field, linkedTag);
+			validateField(field, linkedTag, fix, message);
 		}
 	}
 
