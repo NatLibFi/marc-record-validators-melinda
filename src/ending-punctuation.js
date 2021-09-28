@@ -33,9 +33,9 @@
 import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf';
 import createDebugLogger from 'debug';
 
-export default async function () {
-	const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');
+const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');
 
+export default async function () {
 	return {
 		description:
 		'Handles invalid ending punctuation',
@@ -71,7 +71,6 @@ export default async function () {
 
 // Field validation with punctuation rules for normal and special cases in subfunction (to reduce complexity to please travisci)
 function validateField(field, linkedTag, fix, message) {
-
 	// This is used to find last subfield that should have punctuation
 	function findLastSubfield(field) {
 		const subfields = field.subfields.filter(sf => isNaN(sf.code) && 'value' in sf);
@@ -257,13 +256,14 @@ function validateField(field, linkedTag, fix, message) {
 }
 
 export function validateSingleField(field, linkedTag, fix) {
-    const message = {};
-    // process.stdout.write("validateSingleField()");
-    message.message = [];
-    if (fix) {
+	const message = {};
+	message.message = [];
+	if (fix) {
 		message.fix = [];
-    }
-    validateField(field, linkedTag, fix, message);
-    message.valid = !(message.message.length >= 1);
-    return message;
+	}
+
+	validateField(field, linkedTag, fix, message);
+	message.valid = !(message.message.length >= 1);
+	return message;
 }
+
