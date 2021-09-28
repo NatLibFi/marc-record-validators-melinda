@@ -161,10 +161,30 @@ const confSpec = [
 		index: 250,
 		punc: true,
 		special: null
-	}, { //	254-258	KYLLÄ
+	}, { // 251	EI
+		rangeStart: null,
+		rangeEnd: null,
+		index: 251,
+		punc: false,
+		special: null
+	}, { //	254-256	KYLLÄ
 		rangeStart: 254,
-		rangeEnd: 258,
+		rangeEnd: 256,
 		index: null,
+		punc: true,
+		special: null
+	}, { //	257
+		rangeStart: null,
+		rangeEnd: null,
+		index: 257,
+		punc: true,
+		special: {
+			noPuncIfField: '2'
+		}
+	}, { //	258	KYLLÄ
+		rangeStart: null,
+		rangeEnd: null,
+		index: 258,
 		punc: true,
 		special: null
 	}, { //	260	KYLLÄ	Pääsääntö: $a : $b, $c. Tarkista eri poikkeukset ja välimerkitys MARC 21 Full -versiosta
