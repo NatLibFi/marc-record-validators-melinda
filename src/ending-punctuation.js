@@ -4,7 +4,7 @@
 *
 * MARC record validators used in Melinda
 *
-* Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+* Copyright (c) 2014-2021 University Of Helsinki (The National Library Of Finland)
 *
 * This file is part of marc-record-validators-melinda
 *
@@ -66,191 +66,204 @@ export default async function () {
 
 		message.valid = !(message.message.length >= 1);
 		return message;
+	}
+}
 
-		// This is used to find last subfield that should have punctuation
-		function findLastSubfield(field) {
-			const subfields = field.subfields.filter(sf => isNaN(sf.code) && 'value' in sf);
-			return subfields.slice(-1).shift();
-		}
+// Field validation with punctuation rules for normal and special cases in subfunction (to reduce complexity to please travisci)
+function validateField(field, linkedTag, fix, message) {
 
-		// Punctuation rule (Boolean), Check no ending dot strict (Boolean)
-		function normalPuncRules(subfield, punc, tag, checkEnd, overrideValidPuncMarks) {
-			const puncMarks = overrideValidPuncMarks || validPuncMarks;
-			const lastPuncMark = puncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
-			const lastPuncDot = '.'.includes(subfield.value.slice(-1)); // If string ends to dot
+	// This is used to find last subfield that should have punctuation
+	function findLastSubfield(field) {
+		const subfields = field.subfields.filter(sf => isNaN(sf.code) && 'value' in sf);
+		return subfields.slice(-1).shift();
+	}
 
-			// Last char should be punc, but its not one of marks nor dot
-			if (punc && !(lastPuncMark || lastPuncDot)) {
-				// Console.log("1. Invalid punctuation - missing")
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				if (fix) {
-					subfield.value = subfield.value.concat('.');
-					message.fix.push('Field ' + tag + ' - Added punctuation to $' + subfield.code);
-				}
+	// Punctuation rule (Boolean), Check no ending dot strict (Boolean)
+	function normalPuncRules(subfield, punc, tag, checkEnd, overrideValidPuncMarks) {
+		const puncMarks = overrideValidPuncMarks || validPuncMarks;
+		const lastPuncMark = puncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
+		const lastPuncDot = '.'.includes(subfield.value.slice(-1)); // If string ends to dot
 
-				// Last char is dot, but previous char is one of punc marks, like 'Question?.'
-			} else if (lastPuncDot && subfield.value.length > 1 && puncMarks.includes(subfield.value.charAt(subfield.value.length - 2))) {
-				// Console.log("2. Invalid punctuation - duplicate, like '?.'")
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				if (fix) {
-					subfield.value = subfield.value.slice(0, -1);
-					message.fix.push('Field ' + tag + ' - Removed double punctuation from $' + subfield.code);
-				}
-
-				// Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
-			} else if (checkEnd && (!punc && lastPuncDot)) {
-				// Console.log("3. Invalid punctuation - Shouldn't be dot, is")
-				message.message.push('Field ' + tag + ' has invalid ending punctuation');
-				if (fix) {
-					subfield.value = subfield.value.slice(0, -1);
-					message.fix.push('Field ' + tag + ' - Removed punctuation from $' + subfield.code);
-				}
-			}
-		}
-
-		// Special cases from here on
-		function specialCases(res, field, tag) {
-			let lastSubField = null;
-			// Punctuation should be only after specific field
-			if (res.special.afterOnly) {
-				lastSubField = findLastSubfield(field);
-
-				if (lastSubField) {
-					if (typeof (res.special.strict) === 'undefined') { // Just to be safe
-						res.special.strict = true;
-					}
-
-					if (lastSubField.code === res.special.afterOnly) {
-						normalPuncRules(lastSubField, res.punc, tag, res.special.strict, false);
-					} else {
-						normalPuncRules(lastSubField, !res.punc, tag, true, false);
-					}
-				}
-			} else if (res.special.noPuncIfField) {
-				if (field.subfields.some(subField => subField.code === res.special.noPuncIfField) === false) {
-					lastSubField = findLastSubfield(field);
-					normalPuncRules(lastSubField, res.punc, tag, true, false);
-				}
-			} else if (res.special.ifBoth) {
-				lastSubField = findLastSubfield(field);
-				if (lastSubField && lastSubField.code === res.special.puncSubField) {
-					// Ind2 match, check second if at punc rules with special punc char override
-					if ((res.special.ifInd2 && res.special.ifInd2.includes(field.ind2))) {
-						normalPuncRules(lastSubField, res.special.ifBoth, tag, true, res.special.ifLastCharNot);
-
-					// Matches execption to special rule, noPuncIfInd2 (likely with value 4, that indicates copyright mark)
-					} else if (res.special.noPuncIfInd2 && field.ind2 && res.special.noPuncIfInd2.includes(field.ind2)) {
-						normalPuncRules(lastSubField, !res.special.ifBoth, tag, true, res.special.ifLastCharNot);
-
-					// Does not match rules -> shouldn't have punc
-					} else {
-						normalPuncRules(lastSubField, !res.special.ifBoth, tag, true, res.special.ifLastCharNot);
-					}
-				}
-			} else if (res.special.secondLastIfLast) {
-				field.subfields.forEach(subField => {
-					if (isNaN(subField.code) && res.special.secondLastIfLast !== subField.code) {
-						lastSubField = subField;
-					} // Not control field
-
-					if (typeof (res.special.last) !== 'undefined' && res.special.secondLastIfLast === subField.code) {
-						normalPuncRules(subField, res.special.last, tag, true, false);
-					} // Strict because this field should not be abbreviation
-				});
-				normalPuncRules(lastSubField, res.punc, tag, false, false);
-
-				// Search for Finnish terms
-			} else if (res.special.termField) {
-				lastSubField = findLastSubfield(field);
-
-				if (lastSubField) {
-					const languageField = field.subfields.find(({code}) => code === res.special.termField);
-					if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
-					// If (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
-						normalPuncRules(lastSubField, res.punc, tag, true, false);
-					} else {
-						normalPuncRules(lastSubField, res.special.else, tag, false, false); // Strict because of years etc (648, 650)
-					}
-				}
-				// Search last of array in subfields and check if it has punc
-			} else if (res.special.lastOf) {
-				lastSubField = null;
-				field.subfields.filter(subField => 'value' in subField).forEach(subField => {
-					if (isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) {
-						lastSubField = subField;
-					} // Not control field
-
-					if (res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1) {
-						normalPuncRules(subField, res.punc, tag, true, false);
-					} // Strict because of mandatory
-				});
-
-				if (lastSubField) {
-					normalPuncRules(lastSubField, res.punc, tag, false, false);
-				}
-
-				// If field has linked rules (tag: 880), find rules and re-validate
-			} else if (res.special.linked) {
-				let linkedTag = null;
-				try {
-					linkedTag = parseInt(field.subfields.find(({code}) => code === res.special.linked).value.substr(0, 3), 10); // Substring feels stupid, but is used in MarcRecord to extract tag.
-				} catch (err) {
-					debug(`Got error while parsing tag: ${err instanceof Error ? err.stack : err}`);
-					return false;
-				}
-
-				validateField(field, linkedTag);
-			}
-		}
-
-		// Field validation with punctuation rules for normal and special cases in subfunction (to reduce complexity to please travisci)
-		function validateField(field, linkedTag) {
-			let res = null;
-
-			let tag = null;
-
-			let lastSubField = null;
-
-			if (linkedTag) {
-				tag = linkedTag;
-			} else {
-				try {
-					tag = parseInt(field.tag, 10);
-				} catch (err) {
-					debug(`Got error while parsing tag: ${err instanceof Error ? err.stack : err}`);
-					return false;
-				}
+		// Last char should be punc, but its not one of marks nor dot
+		if (punc && !(lastPuncMark || lastPuncDot)) {
+			// Console.log("1. Invalid punctuation - missing")
+			message.message.push('Field ' + tag + ' has invalid ending punctuation');
+			if (fix) {
+				subfield.value = subfield.value.concat('.');
+				message.fix.push('Field ' + tag + ' - Added punctuation to $' + subfield.code);
 			}
 
-			// Find configuration object matching tag:
-			res = Object.values(confSpec).find(o => {
-				return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag);
-			});
-
-			if (!res) {
-				return;
-			} // Configuration not found, pass field without error
-
-			// Field does not have subfields; invalid
-			if (typeof (field.subfields) === 'undefined' || field.subfields === null) {
-				message.message.push('Field ' + field.tag + ' has invalid ending punctuation');
-				return;
+			// Last char is dot, but previous char is one of punc marks, like 'Question?.'
+		} else if (lastPuncDot && subfield.value.length > 1 && puncMarks.includes(subfield.value.charAt(subfield.value.length - 2))) {
+			// Console.log("2. Invalid punctuation - duplicate, like '?.'")
+			message.message.push('Field ' + tag + ' has invalid ending punctuation');
+			if (fix) {
+				subfield.value = subfield.value.slice(0, -1);
+				message.fix.push('Field ' + tag + ' - Removed double punctuation from $' + subfield.code);
 			}
 
-			// Normal rules
-			if (typeof (res.special) === 'undefined' || res.special === null) {
-				lastSubField = findLastSubfield(field);
-
-				if (lastSubField) {
-					normalPuncRules(lastSubField, res.punc, field.tag, false, false);
-				}
-			} else {
-				try {
-					specialCases(res, field, field.tag);
-				} catch (e) {
-					console.error('Catched error from special case: ', e);
-				}
+			// Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
+		} else if (checkEnd && (!punc && lastPuncDot)) {
+			// Console.log("3. Invalid punctuation - Shouldn't be dot, is")
+			message.message.push('Field ' + tag + ' has invalid ending punctuation');
+			if (fix) {
+				subfield.value = subfield.value.slice(0, -1);
+				message.fix.push('Field ' + tag + ' - Removed punctuation from $' + subfield.code);
 			}
 		}
 	}
+
+	// Special cases from here on
+	function specialCases(res, field, tag) {
+		let lastSubField = null;
+		// Punctuation should be only after specific field
+		if (res.special.afterOnly) {
+			lastSubField = findLastSubfield(field);
+
+			if (lastSubField) {
+				if (typeof (res.special.strict) === 'undefined') { // Just to be safe
+					res.special.strict = true;
+				}
+
+				if (lastSubField.code === res.special.afterOnly) {
+					normalPuncRules(lastSubField, res.punc, tag, res.special.strict, false);
+				} else {
+					normalPuncRules(lastSubField, !res.punc, tag, true, false);
+				}
+			}
+		} else if (res.special.noPuncIfField) {
+			if (field.subfields.some(subField => subField.code === res.special.noPuncIfField) === false) {
+				lastSubField = findLastSubfield(field);
+				normalPuncRules(lastSubField, res.punc, tag, true, false);
+			}
+		} else if (res.special.ifBoth) {
+			lastSubField = findLastSubfield(field);
+			if (lastSubField && lastSubField.code === res.special.puncSubField) {
+				// Ind2 match, check second if at punc rules with special punc char override
+				if ((res.special.ifInd2 && res.special.ifInd2.includes(field.ind2))) {
+					normalPuncRules(lastSubField, res.special.ifBoth, tag, true, res.special.ifLastCharNot);
+
+				// Matches execption to special rule, noPuncIfInd2 (likely with value 4, that indicates copyright mark)
+				} else if (res.special.noPuncIfInd2 && field.ind2 && res.special.noPuncIfInd2.includes(field.ind2)) {
+					normalPuncRules(lastSubField, !res.special.ifBoth, tag, true, res.special.ifLastCharNot);
+
+				// Does not match rules -> shouldn't have punc
+				} else {
+					normalPuncRules(lastSubField, !res.special.ifBoth, tag, true, res.special.ifLastCharNot);
+				}
+			}
+		} else if (res.special.secondLastIfLast) {
+			field.subfields.forEach(subField => {
+				if (isNaN(subField.code) && res.special.secondLastIfLast !== subField.code) {
+					lastSubField = subField;
+				} // Not control field
+
+				if (typeof (res.special.last) !== 'undefined' && res.special.secondLastIfLast === subField.code) {
+					normalPuncRules(subField, res.special.last, tag, true, false);
+				} // Strict because this field should not be abbreviation
+			});
+			normalPuncRules(lastSubField, res.punc, tag, false, false);
+
+			// Search for Finnish terms
+		} else if (res.special.termField) {
+			lastSubField = findLastSubfield(field);
+
+			if (lastSubField) {
+				const languageField = field.subfields.find(({code}) => code === res.special.termField);
+				if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
+				// If (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
+					normalPuncRules(lastSubField, res.punc, tag, true, false);
+				} else {
+					normalPuncRules(lastSubField, res.special.else, tag, false, false); // Strict because of years etc (648, 650)
+				}
+			}
+			// Search last of array in subfields and check if it has punc
+		} else if (res.special.lastOf) {
+			lastSubField = null;
+			field.subfields.filter(subField => 'value' in subField).forEach(subField => {
+				if (isNaN(subField.code) && res.special.lastOf.indexOf(subField.code) > -1) {
+					lastSubField = subField;
+				} // Not control field
+
+				if (res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1) {
+					normalPuncRules(subField, res.punc, tag, true, false);
+				} // Strict because of mandatory
+			});
+
+			if (lastSubField) {
+				normalPuncRules(lastSubField, res.punc, tag, false, false);
+			}
+
+			// If field has linked rules (tag: 880), find rules and re-validate
+		} else if (res.special.linked) {
+			let linkedTag = null;
+			try {
+				linkedTag = parseInt(field.subfields.find(({code}) => code === res.special.linked).value.substr(0, 3), 10); // Substring feels stupid, but is used in MarcRecord to extract tag.
+			} catch (err) {
+				debug(`Got error while parsing tag: ${err instanceof Error ? err.stack : err}`);
+				return false;
+			}
+
+			validateField(field, linkedTag);
+		}
+	}
+
+	let res = null;
+
+	let tag = null;
+
+	let lastSubField = null;
+
+	if (linkedTag) {
+		tag = linkedTag;
+	} else {
+		try {
+			tag = parseInt(field.tag, 10);
+		} catch (err) {
+			debug(`Got error while parsing tag: ${err instanceof Error ? err.stack : err}`);
+			return false;
+		}
+	}
+
+	// Find configuration object matching tag:
+	res = Object.values(confSpec).find(o => {
+		return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag);
+	});
+
+	if (!res) {
+		return;
+	} // Configuration not found, pass field without error
+
+	// Field does not have subfields; invalid
+	if (typeof (field.subfields) === 'undefined' || field.subfields === null) {
+		message.message.push('Field ' + field.tag + ' has invalid ending punctuation');
+		return;
+	}
+
+	// Normal rules
+	if (typeof (res.special) === 'undefined' || res.special === null) {
+		lastSubField = findLastSubfield(field);
+
+		if (lastSubField) {
+			normalPuncRules(lastSubField, res.punc, field.tag, false, false, fix, message);
+		}
+	} else {
+		try {
+			specialCases(res, field, field.tag);
+		} catch (e) {
+			console.error('Catched error from special case: ', e);
+		}
+	}
+}
+
+export function validateSingleField(field, linkedTag, fix) {
+    const message = {};
+    // process.stdout.write("validateSingleField()");
+    message.message = [];
+    if (fix) {
+		message.fix = [];
+    }
+    validateField(field, linkedTag, fix, message);
+    message.valid = !(message.message.length >= 1);
+    return message;
 }
