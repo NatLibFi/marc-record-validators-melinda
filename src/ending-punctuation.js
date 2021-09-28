@@ -121,15 +121,15 @@ export default async function () {
 					}
 
 					if (lastSubField.code === res.special.afterOnly) {
-						normalPuncRules(lastSubField, res.punc, tag, res.special.strict);
+						normalPuncRules(lastSubField, res.punc, tag, res.special.strict, false);
 					} else {
-						normalPuncRules(lastSubField, !res.punc, tag, true);
+						normalPuncRules(lastSubField, !res.punc, tag, true, false);
 					}
 				}
 			} else if (res.special.noPuncIfField) {
 				if (field.subfields.some(subField => subField.code === res.special.noPuncIfField) === false) {
 					lastSubField = findLastSubfield(field);
-					normalPuncRules(lastSubField, res.punc, tag, true);
+					normalPuncRules(lastSubField, res.punc, tag, true, false);
 				}
 			} else if (res.special.ifBoth) {
 				lastSubField = findLastSubfield(field);
@@ -154,10 +154,10 @@ export default async function () {
 					} // Not control field
 
 					if (typeof (res.special.last) !== 'undefined' && res.special.secondLastIfLast === subField.code) {
-						normalPuncRules(subField, res.special.last, tag, true);
+						normalPuncRules(subField, res.special.last, tag, true, false);
 					} // Strict because this field should not be abbreviation
 				});
-				normalPuncRules(lastSubField, res.punc, tag, false);
+				normalPuncRules(lastSubField, res.punc, tag, false, false);
 
 				// Search for Finnish terms
 			} else if (res.special.termField) {
@@ -167,9 +167,9 @@ export default async function () {
 					const languageField = field.subfields.find(({code}) => code === res.special.termField);
 					if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
 					// If (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
-						normalPuncRules(lastSubField, res.punc, tag, true);
+						normalPuncRules(lastSubField, res.punc, tag, true, false);
 					} else {
-						normalPuncRules(lastSubField, res.special.else, tag, false); // Strict because of years etc (648, 650)
+						normalPuncRules(lastSubField, res.special.else, tag, false, false); // Strict because of years etc (648, 650)
 					}
 				}
 				// Search last of array in subfields and check if it has punc
@@ -181,12 +181,12 @@ export default async function () {
 					} // Not control field
 
 					if (res.special.mandatory && res.special.mandatory.indexOf(subField.code) > -1) {
-						normalPuncRules(subField, res.punc, tag, true);
+						normalPuncRules(subField, res.punc, tag, true, false);
 					} // Strict because of mandatory
 				});
 
 				if (lastSubField) {
-					normalPuncRules(lastSubField, res.punc, tag, false);
+					normalPuncRules(lastSubField, res.punc, tag, false, false);
 				}
 
 				// If field has linked rules (tag: 880), find rules and re-validate
@@ -242,7 +242,7 @@ export default async function () {
 				lastSubField = findLastSubfield(field);
 
 				if (lastSubField) {
-					normalPuncRules(lastSubField, res.punc, field.tag, false);
+					normalPuncRules(lastSubField, res.punc, field.tag, false, false);
 				}
 			} else {
 				try {
