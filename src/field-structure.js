@@ -33,63 +33,63 @@ const confSpec = {
 	leader: { // Description: Leader pattern
 		type: 'RegExp',
 		excl: [
-			'tag', 'valuePattern', 'subfields', 'ind1', 'ind2'
-		]
+			'tag', 'valuePattern', 'subfields', 'ind1', 'ind2',
+		],
 	},
 	tag: { // Description: Field tag pattern
 		type: 'RegExp',
-		excl: ['leader']
+		excl: ['leader'],
 	},
 	valuePattern: { // Description: Pattern to which the field's value must match against
 		type: 'RegExp',
 		excl: [
-			'leader', 'subfields', 'ind1', 'ind2'
-		]
+			'leader', 'subfields', 'ind1', 'ind2',
+		],
 	},
 	ind1: { // Description: Indicator-specific configuration object
 		type: 'RegExp', // Array<Indicator>
 		excl: [
-			'leader', 'value'
-		]
+			'leader', 'value',
+		],
 	},
 	ind2: { // Description: Indicator-specific configuration object
 		type: 'RegExp', // Array<Indicator>
 		excl: [
-			'leader', 'value'
-		]
+			'leader', 'value',
+		],
 	},
 	strict: { // Description: Only the specified subfields are allowed if set to true. Defaults to false.
 		type: 'boolean',
 		excl: [
-			'leader', 'valuePattern'
-		]
+			'leader', 'valuePattern',
+		],
 	},
 	subfields: { // Description: Subfields configuration
 		type: 'object', // Object<String, Subfield> (Keys are subfield codes)
 		contains: [
-			'String', 'subfieldSpec'
+			'String', 'subfieldSpec',
 		],
 		excl: [
-			'leader', 'value'
-		]
+			'leader', 'value',
+		],
 	},
 	dependencies: { // Description: Dependencies configuration
 		type: 'array', // Array<Dependency>
-		contains: 'dependencySpec'
-	}
+		contains: 'dependencySpec',
+	},
 };
 
 // Subfiled specification
 const subSpec = {
 	pattern: { // Description: Pattern to which the subfield's value must match against
-		type: 'RegExp'
+		type: 'RegExp',
 	},
 	required: { // Description: Whether the subfield is mandatory or not. Defaults to false
-		type: 'boolean'
+		type: 'boolean',
 	},
 	maxOccurrence: { // Description: Maximum number of times this subfield can occur. Defaults to unlimited if omitted. The value 0 means that the subfield cannot exist.
-		type: 'number'
-	}
+		type: 'number',
+	},
 };
 
 // Dependency specification
@@ -97,35 +97,35 @@ const depSpec = {
 	leader: { // Description: Leader pattern
 		type: 'RegExp',
 		excl: [
-			'tag', 'valuePattern', 'subfields', 'ind1', 'ind2'
-		]
+			'tag', 'valuePattern', 'subfields', 'ind1', 'ind2',
+		],
 	},
 	tag: { // Description: Field tag pattern
 		type: RegExp,
-		excl: ['leader']
+		excl: ['leader'],
 	},
 	ind1: { // Description: Pattern to which the indicator must match against
 		type: RegExp,
 		excl: [
-			'value', 'leader'
-		]
+			'value', 'leader',
+		],
 	},
 	ind2: { // Description: Pattern to which the indicator must match against
 		type: RegExp,
 		excl: [
-			'value', 'leader'
-		]
+			'value', 'leader',
+		],
 	},
 	valuePattern: { // Description: Pattern to which the field's value must match agains
 		type: RegExp,
 		excl: [
-			'subfields', 'ind1', 'ind2', 'leader'
-		]
+			'subfields', 'ind1', 'ind2', 'leader',
+		],
 	},
 	subfields: { // Description: An object with subfield codes as keys and RegExp patterns as values. The subfield value must this pattern.
 		type: Object, // [String, RegExp]
-		required: false
-	}
+		required: false,
+	},
 };
 
 function forEach(obj, fun) {
@@ -143,8 +143,8 @@ export default async function (config) {
 		description:
 			'Check whether the configured fields have valid structure',
 		validate: async record => ({
-			valid: recordMatchesConfig(record, config, false)
-		})
+			valid: recordMatchesConfig(record, config, false),
+		}),
 	};
 
 	/// /////////////////////////////////////////
@@ -179,8 +179,8 @@ export default async function (config) {
 		}
 
 		// If configuration type does not match type in configuration spec
-		if (typeof data !== spec[key].type &&
-			(spec[key].type === 'RegExp' && !(data instanceof RegExp))) {
+		if (typeof data !== spec[key].type
+			&& (spec[key].type === 'RegExp' && !(data instanceof RegExp))) {
 			throw new Error('Configuration not valid - invalid data type for: ' + key);
 		}
 
@@ -205,9 +205,7 @@ export default async function (config) {
 		// Parse trough every element of config array
 		const res = conf.every(confObj => {
 			if (confObj.dependencies) {
-				if (confObj.dependencies.every(dependency => {
-					return recordMatchesConfigElement(record, dependency.tag, dependency, dependencies);
-				})) {
+				if (confObj.dependencies.every(dependency => recordMatchesConfigElement(record, dependency.tag, dependency, dependencies))) {
 					return recordMatchesConfigElement(record, confObj.tag, confObj, dependencies);
 				}
 
@@ -229,9 +227,9 @@ export default async function (config) {
 		}
 
 		// Parse trough record objects matching provided configuration object
-		return foundFields.every(recordSubObj => {
+		return foundFields.every(recordSubObj =>
 			// Check that every configuration field exists in record and matches configuration
-			return Object.keys(confObj).every(confField => {
+			Object.keys(confObj).every(confField => {
 				// If configuration field is RegExp, test that record field matches it (valuePattern, leader, tag, ind*)
 				if (confObj[confField] instanceof RegExp) {
 					// 'valuePattern' RegExp in conf spec is used to validate 'value' in marc
@@ -259,9 +257,9 @@ export default async function (config) {
 						const matching = recordSubObj.subfields.filter(({code}) => code === key);
 						elementsTotal += matching.length; // Calculate amount of record objects matching all confObj objects
 
-						return (matching.length > val.maxOccurrence) ||
-							((val.required || dependencies) && matching.length === 0) ||
-							(val.pattern && !matching.every(field => val.pattern.test(field.value)));
+						return (matching.length > val.maxOccurrence)
+							|| ((val.required || dependencies) && matching.length === 0)
+							|| (val.pattern && !matching.every(field => val.pattern.test(field.value)));
 					});
 
 					// Check if there is less valid calculated objects than objects in subfield object => some not matching strict
@@ -277,8 +275,8 @@ export default async function (config) {
 
 				console.log('!!! Configuration field not identified: ', recordSubObj[confField], ' | ', typeof recordSubObj[confField]);
 				return false;
-			});
-		});
+			}),
+		);
 	}
 	/// /////////////////////////////////////////
 }

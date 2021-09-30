@@ -42,7 +42,7 @@ const queryParam = '?operation=searchRetrieve&maximumRecords=2&version=1&query=r
 const prefixPattern = /^\(FOOBAR\)/;
 const fields = {
 	773: ['w'],
-	833: ['w', 'p']
+	833: ['w', 'p'],
 };
 
 describe('resolvable-ext-references-melinda', () => {
@@ -79,40 +79,40 @@ describe('resolvable-ext-references-melinda', () => {
 				fields: [
 					{
 						tag: '001',
-						value: '123456'
+						value: '123456',
 					},
 					{
 						tag: '035',
 						subfields: [
 							{
 								code: 'a',
-								value: '(FI-MELINDA)123456'
-							}
-						]
+								value: '(FI-MELINDA)123456',
+							},
+						],
 					},
 					{
 						tag: '773',
 						subfields: [
 							{
 								code: 'w',
-								value: '(FOOBAR)5000'
-							}
-						]
+								value: '(FOOBAR)5000',
+							},
+						],
 					},
 					{
 						tag: '833',
 						subfields: [
 							{
 								code: 'p',
-								value: '(FOOBAR)9550'
+								value: '(FOOBAR)9550',
 							},
 							{
 								code: 'c',
-								value: '(FI-MELINDA)8850'
-							}
-						]
-					}
-				]
+								value: '(FI-MELINDA)8850',
+							},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -131,40 +131,40 @@ describe('resolvable-ext-references-melinda', () => {
 				fields: [
 					{
 						tag: '001',
-						value: '123456'
+						value: '123456',
 					},
 					{
 						tag: '035',
 						subfields: [
 							{
 								code: 'a',
-								value: '(FI-MELINDA)123456'
-							}
-						]
+								value: '(FI-MELINDA)123456',
+							},
+						],
 					},
 					{
 						tag: '773',
 						subfields: [
 							{
 								code: 'w',
-								value: '(FI-MELINDA)123456'
-							}
-						]
+								value: '(FI-MELINDA)123456',
+							},
+						],
 					},
 					{
 						tag: '833',
 						subfields: [
 							{
 								code: 'p',
-								value: '(FI-MELINDA)2620'
+								value: '(FI-MELINDA)2620',
 							},
 							{
 								code: 'w',
-								value: '(FI-MELINDA)8850'
-							}
-						]
-					}
-				]
+								value: '(FI-MELINDA)8850',
+							},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -182,27 +182,27 @@ describe('resolvable-ext-references-melinda', () => {
 				fields: [
 					{
 						tag: '001',
-						value: '123456'
+						value: '123456',
 					},
 					{
 						tag: '035',
 						subfields: [
 							{
 								code: 'a',
-								value: '(FI-MELINDA)123456'
-							}
-						]
+								value: '(FI-MELINDA)123456',
+							},
+						],
 					},
 					{
 						tag: '773',
 						subfields: [
 							{
 								code: 'w',
-								value: '(FOOBAR)1000'
-							}
-						]
-					}
-				]
+								value: '(FOOBAR)1000',
+							},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 

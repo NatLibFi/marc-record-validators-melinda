@@ -117,18 +117,16 @@ const MAP_CONVERSION = {
 	Ỳ: 'Ỳ',
 	Ŷ: 'Ŷ',
 	Ỹ: 'Ỹ',
-	Ÿ: 'Ÿ'
+	Ÿ: 'Ÿ',
 };
 
 export default async function () {
-	const PATTERN = Object.keys(MAP_CONVERSION).reduce((result, key, index, list) => {
-		return index === list.length - 1 ? new RegExp(`${result}${key})`) : `${result}${key}|`;
-	}, '(');
+	const PATTERN = Object.keys(MAP_CONVERSION).reduce((result, key, index, list) => index === list.length - 1 ? new RegExp(`${result}${key})`) : `${result}${key}|`, '(');
 
 	return {
 		description: 'Unicode decomposer',
 		validate,
-		fix
+		fix,
 	};
 
 	async function validate(record) {
@@ -164,8 +162,6 @@ export default async function () {
 	}
 
 	function convert(value) {
-		return Object.keys(MAP_CONVERSION).reduce((result, key) => {
-			return result.includes(key) ? result.replace(new RegExp(key, 'g'), MAP_CONVERSION[key]) : result;
-		}, value);
+		return Object.keys(MAP_CONVERSION).reduce((result, key) => result.includes(key) ? result.replace(new RegExp(key, 'g'), MAP_CONVERSION[key]) : result, value);
 	}
 }

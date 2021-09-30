@@ -36,8 +36,8 @@ export default async function (tagPattern) {
 				'Handles field ordering',
 		validate,
 		fix: async record => ({
-			fix: await sort(record, tagPattern)
-		})
+			fix: await sort(record, tagPattern),
+		}),
 	};
 
 	async function validate(record, tagPattern) {
@@ -54,9 +54,7 @@ export default async function (tagPattern) {
 }
 
 function sortPatternFields(record, tagPattern) {
-	const matchingTags = record.fields.map(field => {
-		return tagPattern.some(pattern => pattern.test(field.tag)) ? field : null;
-	}).filter(tag => tag);
+	const matchingTags = record.fields.map(field => tagPattern.some(pattern => pattern.test(field.tag)) ? field : null).filter(tag => tag);
 	const sortedArray = sortFields(record.fields);
 	const fixedArray = sortedArray.filter(field => !tagPattern.some(pattern => pattern.test(field.tag)));
 	fixedArray.splice(index(sortedArray, tagPattern), 0, ...matchingTags);
@@ -64,13 +62,9 @@ function sortPatternFields(record, tagPattern) {
 }
 
 function sortFields(fields) {
-	return [...fields].sort((a, b) => {
-		return a.tag > b.tag ? 1 : b.tag > a.tag ? -1 : 0;
-	});
+	return [...fields].sort((a, b) => a.tag > b.tag ? 1 : b.tag > a.tag ? -1 : 0);
 }
 
 function index(fields, tagPattern) {
-	return fields.findIndex(field => {
-		return tagPattern.some(pattern => pattern.test(field.tag));
-	});
+	return fields.findIndex(field => tagPattern.some(pattern => pattern.test(field.tag)));
 }

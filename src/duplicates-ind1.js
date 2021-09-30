@@ -34,7 +34,7 @@ export default async function (tagPattern) {
 			description:
 				'Handles data fields that only differ in the first indicator',
 			validate,
-			fix
+			fix,
 		};
 	}
 
@@ -54,9 +54,7 @@ export default async function (tagPattern) {
 	}
 
 	function iterateFields(record) {
-		return record.fields.map(obj => {
-			return {validation: matches(obj, record.fields), obj};
-		});
+		return record.fields.map(obj => ({validation: matches(obj, record.fields), obj}));
 	}
 
 	function matches(field, fields) {
@@ -66,15 +64,15 @@ export default async function (tagPattern) {
 	function hasDuplicate(fieldA, fields) {
 		return fields.some(
 			fieldB =>
-				fieldA !== fieldB &&
-				fieldA.tag === fieldB.tag &&
-				fieldA.ind1 !== fieldB.ind1 &&
-				fieldA.subfields.length === fieldB.subfields.length &&
-				fieldA.subfields.every(aSf =>
+				fieldA !== fieldB
+				&& fieldA.tag === fieldB.tag
+				&& fieldA.ind1 !== fieldB.ind1
+				&& fieldA.subfields.length === fieldB.subfields.length
+				&& fieldA.subfields.every(aSf =>
 					fieldB.subfields.some(
-						bSf => aSf.code === bSf.code && aSf.value === bSf.value
-					)
-				)
+						bSf => aSf.code === bSf.code && aSf.value === bSf.value,
+					),
+				),
 		);
 	}
 }

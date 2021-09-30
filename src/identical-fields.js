@@ -47,7 +47,7 @@ export default async function () {
 	return {
 		description: 'Handles identical duplicate in record fields',
 		validate,
-		fix
+		fix,
 	};
 
 	async function validate(record) {

@@ -44,7 +44,7 @@ export default async function () {
 		),
 		fix: async record => (
 			validatePunc(record, true) // Record (Object), fix (boolean)
-		)
+		),
 	};
 
 	// This is used to validate record against configuration
@@ -225,9 +225,7 @@ function validateField(field, linkedTag, fix, message) {
 	}
 
 	// Find configuration object matching tag:
-	res = Object.values(confSpec).find(o => {
-		return o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag);
-	});
+	res = Object.values(confSpec).find(o => o.index === tag || (o.rangeStart <= tag && o.rangeEnd >= tag));
 
 	if (!res) {
 		return;

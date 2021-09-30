@@ -3,5 +3,5 @@ import autRules from './aut';
 
 export {
 	bibRules,
-	autRules
+	autRules,
 };

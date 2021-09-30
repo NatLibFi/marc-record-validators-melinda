@@ -48,7 +48,7 @@ describe('double-commas', () => {
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				fields: [{tag: '700', subfields: [{code: 'e', value: 'foo,bar'}]}]
+				fields: [{tag: '700', subfields: [{code: 'e', value: 'foo,bar'}]}],
 			});
 			const result = await validator.validate(record);
 
@@ -57,7 +57,7 @@ describe('double-commas', () => {
 		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				fields: [{tag: '700', subfields: [{code: 'e', value: 'foo,,bar'}]}]
+				fields: [{tag: '700', subfields: [{code: 'e', value: 'foo,,bar'}]}],
 			});
 			const result = await validator.validate(record);
 
@@ -69,7 +69,7 @@ describe('double-commas', () => {
 		it('Fixes the record', async () => {
 			const validator = await validatorFactory();
 			const record = new MarcRecord({
-				fields: [{tag: '700', subfields: [{code: 'e', value: 'foo,,bar'}]}]
+				fields: [{tag: '700', subfields: [{code: 'e', value: 'foo,,bar'}]}],
 			});
 			await validator.fix(record);
 
@@ -78,8 +78,8 @@ describe('double-commas', () => {
 					tag: '700',
 					ind1: ' ',
 					ind2: ' ',
-					subfields: [{code: 'e', value: 'foo,bar'}]
-				}
+					subfields: [{code: 'e', value: 'foo,bar'}],
+				},
 			]);
 		});
 	});

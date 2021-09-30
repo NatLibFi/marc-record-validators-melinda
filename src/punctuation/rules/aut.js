@@ -1,12 +1,12 @@
-let autRules =
-[
+const autRules
+= [
 	{
 		selector: '[1457]00',
 		namePortion: '$a',
 		description: 'Personal name (NR)',
 		portion: 'N',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]10',
@@ -14,7 +14,7 @@ let autRules =
 		description: 'Corporate name or jurisdiction name as entry element (NR)',
 		portion: 'N',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]11',
@@ -22,7 +22,7 @@ let autRules =
 		description: 'Meeting name or jurisdiction name as entry element (NR)',
 		portion: 'N',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]00',
@@ -30,7 +30,7 @@ let autRules =
 		description: 'Numeration (NR)',
 		portion: 'N',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]10',
@@ -38,7 +38,7 @@ let autRules =
 		description: 'Subordinate unit (R)',
 		portion: 'N',
 		preceedingPunctuation: 'period',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]00',
@@ -46,7 +46,7 @@ let autRules =
 		description: 'Titles and words associated with a name (R)',
 		portion: 'N',
 		preceedingPunctuation: 'comma',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](10|11)',
@@ -54,7 +54,7 @@ let autRules =
 		description: 'Location of meeting (R)',
 		portion: 'N',
 		preceedingPunctuation: 'comma',
-		exceptions: '- colon if preceded by $d\n- semicolon if preceded by $c'
+		exceptions: '- colon if preceded by $d\n- semicolon if preceded by $c',
 	},
 	{
 		selector: '[1457]00',
@@ -62,7 +62,7 @@ let autRules =
 		description: 'Dates associated with a name (NR)',
 		portion: 'N',
 		preceedingPunctuation: 'comma',
-		exceptions: '- colon if preceded by $n'
+		exceptions: '- colon if preceded by $n',
 	},
 	{
 		selector: '[1457]11',
@@ -70,7 +70,7 @@ let autRules =
 		description: 'Date of meeting (NR)',
 		portion: 'N',
 		preceedingPunctuation: '',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10)',
@@ -78,7 +78,7 @@ let autRules =
 		description: 'Relator term (R)',
 		portion: 'N',
 		preceedingPunctuation: 'cond_comma',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]11',
@@ -86,7 +86,7 @@ let autRules =
 		description: 'Subordinate unit (R)',
 		portion: 'N',
 		preceedingPunctuation: 'period',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]11',
@@ -94,7 +94,7 @@ let autRules =
 		description: 'Relator term (R)',
 		portion: 'N',
 		preceedingPunctuation: 'comma',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]00',
@@ -102,7 +102,7 @@ let autRules =
 		description: 'Attribution qualifier (R)',
 		portion: 'N',
 		preceedingPunctuation: 'comma',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]00',
@@ -110,7 +110,7 @@ let autRules =
 		description: 'Fuller form of name (NR)',
 		portion: 'N',
 		preceedingPunctuation: 'comma',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457]11',
@@ -118,7 +118,7 @@ let autRules =
 		description: 'Name of meeting following jurisdiction name entry element (NR)',
 		portion: 'N',
 		preceedingPunctuation: '',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|11)',
@@ -126,7 +126,7 @@ let autRules =
 		description: 'Affiliation (NR)',
 		portion: 'N',
 		preceedingPunctuation: 'period',
-		exceptions: '?'
+		exceptions: '?',
 	},
 	{
 		selector: '[1457]10',
@@ -134,7 +134,7 @@ let autRules =
 		description: 'Affiliation (NR) or Address',
 		portion: 'N',
 		preceedingPunctuation: 'period',
-		exceptions: '- period, if address'
+		exceptions: '- period, if address',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -142,7 +142,7 @@ let autRules =
 		description: 'Relator code (R)',
 		portion: 'NC',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -150,7 +150,7 @@ let autRules =
 		description: 'Date of a work (NR)',
 		portion: 'T',
 		preceedingPunctuation: 'period',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -158,7 +158,7 @@ let autRules =
 		description: 'Medium (NR)',
 		portion: 'T',
 		preceedingPunctuation: 'period',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[457](00|10|11)',
@@ -166,7 +166,7 @@ let autRules =
 		description: 'Relationship information (R)',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -174,7 +174,7 @@ let autRules =
 		description: 'Form subheading (R)',
 		portion: 'T',
 		preceedingPunctuation: 'period',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -182,7 +182,7 @@ let autRules =
 		description: 'Language of a work (NR)',
 		portion: 'T',
 		preceedingPunctuation: 'comma / period',
-		exceptions: '- Finnish MARC21 comma,\n- MARC21 period'
+		exceptions: '- Finnish MARC21 comma,\n- MARC21 period',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -190,7 +190,7 @@ let autRules =
 		description: 'Medium of performance for music',
 		portion: 'T',
 		preceedingPunctuation: 'comma',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -198,7 +198,7 @@ let autRules =
 		description: 'Number of part/section of a work (R)',
 		portion: 'T',
 		preceedingPunctuation: 'comma, period',
-		exceptions: ' - depends on data?\n- period, if preceded by $k, $m, $t\n- comma, if preceded by $b, $m'
+		exceptions: ' - depends on data?\n- period, if preceded by $k, $m, $t\n- comma, if preceded by $b, $m',
 	},
 	{
 		selector: '[1457](00|10)',
@@ -206,7 +206,7 @@ let autRules =
 		description: 'Arranged statement for music (NR)',
 		portion: 'T',
 		preceedingPunctuation: 'semicolon',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -214,7 +214,7 @@ let autRules =
 		description: 'Name of part/section of a work (R)',
 		portion: 'T',
 		preceedingPunctuation: 'comma, period, none',
-		exceptions: '- depends on data?\n- period if preceded by $t, $n, $p\n- comma, if preceded by $n\n- none, if preceded by $k'
+		exceptions: '- depends on data?\n- period if preceded by $t, $n, $p\n- comma, if preceded by $n\n- none, if preceded by $k',
 	},
 	{
 		selector: '[1457](00|10)',
@@ -222,7 +222,7 @@ let autRules =
 		description: 'Key for music (NR)',
 		portion: 'T',
 		preceedingPunctuation: 'comma',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -230,7 +230,7 @@ let autRules =
 		description: 'Version (NR)',
 		portion: 'T',
 		preceedingPunctuation: 'period',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -238,7 +238,7 @@ let autRules =
 		description: 'Title of a work (NR)',
 		portion: 'T',
 		preceedingPunctuation: 'none',
-		exceptions: '- usually first in section -> period'
+		exceptions: '- usually first in section -> period',
 	},
 	{
 		selector: '[1457](10|11)',
@@ -246,7 +246,7 @@ let autRules =
 		description: 'Date of meeting or treaty signing (R)',
 		portion: 'NT',
 		preceedingPunctuation: '',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -254,7 +254,7 @@ let autRules =
 		description: 'Miscellaneous information (NR)',
 		portion: 'NT',
 		preceedingPunctuation: 'comma',
-		exceptions: '- colon, if preceded by $d'
+		exceptions: '- colon, if preceded by $d',
 	},
 	{
 		selector: '[1457]10',
@@ -262,7 +262,7 @@ let autRules =
 		description: 'Miscellaneous information (NR), other party to treaties.',
 		portion: 'NT',
 		preceedingPunctuation: 'comma',
-		exceptions: '- colon, if preceded by $d\n- period, if preceded by $t'
+		exceptions: '- colon, if preceded by $d\n- period, if preceded by $t',
 	},
 	{
 		selector: '[1457](10|11)',
@@ -270,7 +270,7 @@ let autRules =
 		description: 'Number of part/section/meeting (R)',
 		portion: 'NT',
 		preceedingPunctuation: '',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -278,7 +278,7 @@ let autRules =
 		description: 'Form subdivision (R)   [600]',
 		portion: 'S',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -286,7 +286,7 @@ let autRules =
 		description: 'General subdivision (R)   [600]',
 		portion: 'S',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -294,7 +294,7 @@ let autRules =
 		description: 'Chronological subdivision (R)   [600]',
 		portion: 'S',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -302,7 +302,7 @@ let autRules =
 		description: 'Geographic subdivision (R)   [600]',
 		portion: 'S',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[457](00|10|11)',
@@ -310,7 +310,7 @@ let autRules =
 		description: '',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -318,7 +318,7 @@ let autRules =
 		description: 'Authority record control number (R)',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '7(00|10|11)',
@@ -326,7 +326,7 @@ let autRules =
 		description: 'Source of heading or term (NR)',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -334,7 +334,7 @@ let autRules =
 		description: 'Institution to which field applies (NR)',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -342,7 +342,7 @@ let autRules =
 		description: 'Linkage (NR)',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -350,7 +350,7 @@ let autRules =
 		description: 'Control subfield (NR)',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -358,7 +358,7 @@ let autRules =
 		description: 'Field link and sequence number (R)',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
+		exceptions: '',
 	},
 	{
 		selector: '[1457](00|10|11)',
@@ -366,7 +366,7 @@ let autRules =
 		description: 'Local control subfield',
 		portion: 'cf',
 		preceedingPunctuation: 'none',
-		exceptions: ''
-	}
+		exceptions: '',
+	},
 ];
 export default autRules;

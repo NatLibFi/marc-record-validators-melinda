@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable require-await */
-
 'use strict';
 
 export default async function () {
@@ -41,20 +39,20 @@ export default async function () {
 				ind1: '1',
 				subfields: [{
 					code: 'a',
-					value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'
+					value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.',
 				}, {
 					code: 'f',
-					value: 'Online access with authorization.'
+					value: 'Online access with authorization.',
 				}, {
 					code: '2',
-					value: 'star'
+					value: 'star',
 				}, {
 					code: '5',
-					value: 'FI-Vapaa'
+					value: 'FI-Vapaa',
 				}, {
 					code: '9',
-					value: 'FENNI<KEEP>'
-				}]
+					value: 'FENNI<KEEP>',
+				}],
 			});
 		}
 
@@ -63,23 +61,23 @@ export default async function () {
 				tag: '540',
 				subfields: [{
 					code: 'a',
-					value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'
+					value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;',
 				}, {
 					code: 'b',
-					value: 'Kansalliskirjasto;'
+					value: 'Kansalliskirjasto;',
 				}, {
 					code: 'c',
-					value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä'
+					value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä',
 				}, {
 					code: 'u',
-					value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433'
+					value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433',
 				}, {
 					code: '5',
-					value: 'FI-Vapaa'
+					value: 'FI-Vapaa',
 				}, {
 					code: '9',
-					value: 'FENNI<KEEP>'
-				}]
+					value: 'FENNI<KEEP>',
+				}],
 			});
 		}
 
@@ -93,14 +91,10 @@ export default async function () {
 	return {
 		description: 'Adds access rights fields for a record (if not existing)',
 		validate,
-		fix
+		fix,
 	};
 
 	function hasTag(rec, tag, sfcv) {
-		return rec.fields.some(f => {
-			return (f.tag === tag) && sfcv.every(({code, value}) => f.subfields.some(sf => {
-				return (sf.code === code) && value.test(sf.value);
-			}));
-		});
+		return rec.fields.some(f => (f.tag === tag) && sfcv.every(({code, value}) => f.subfields.some(sf => (sf.code === code) && value.test(sf.value))));
 	}
 }

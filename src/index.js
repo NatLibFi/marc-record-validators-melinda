@@ -65,5 +65,5 @@ export {
 	SortTags,
 	SubfieldExclusion,
 	UnicodeDecomposition,
-	Urn
+	Urn,
 };

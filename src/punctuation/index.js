@@ -18,7 +18,7 @@ export default async function () {
 			return {
 				selector: new RegExp(selector.replace(/X/g, '.')),
 				namePortion: namePortion.replace(/\$/g, '').trim(),
-				description, portion, preceedingPunctuation, exceptions
+				description, portion, preceedingPunctuation, exceptions,
 			};
 		});
 
@@ -47,12 +47,17 @@ export default async function () {
 	function validateField(recordType = 'a') {
 		return function (element) {
 			const testField = cloneDeep(element);
+			debug(`Original field: ${JSON.stringify(element)}`);
 			const punctuated = punctuateField(testField, recordType);
+			debug(`Punctuation result: ${JSON.stringify(punctuated)}`);
 			if (!punctuated) {
+				debug('No punctuation result -> true');
 				return true;
 			}
 
 			if (MarcRecord.isEqual(punctuated, element)) {
+				debug(`Original field (element): ${JSON.stringify(element)}`);
+				debug('Punctuation result equals original field');
 				return true;
 			}
 
@@ -154,9 +159,7 @@ export default async function () {
 		const punctType = getPrecedingPunctuation(currentSubfield, rules);
 		const exceptionsFunctions = getExceptions(currentSubfield, rules);
 
-		const isExceptionCase = exceptionsFunctions.some(fn => {
-			return fn(preceedingSubfield);
-		});
+		const isExceptionCase = exceptionsFunctions.some(fn => fn(preceedingSubfield));
 
 		if (isExceptionCase) {
 			return;
@@ -266,6 +269,6 @@ export default async function () {
 	return {
 		description: 'Fixes punctuation of fields',
 		validate,
-		fix
+		fix,
 	};
 }

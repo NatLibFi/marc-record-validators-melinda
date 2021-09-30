@@ -62,15 +62,15 @@ describe('fields-present', () => {
 						tag: '500',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 'a', value: 'foo'}],
 					},
 					{
 						tag: 'FOO',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
-					}
-				]
+						subfields: [{code: 'a', value: 'foo'}],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -85,20 +85,20 @@ describe('fields-present', () => {
 						tag: '001',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 'a', value: 'foo'}],
 					},
 					{
 						tag: 'BAR',
 						ind1: '1',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
-					}
-				]
+						subfields: [{code: 'a', value: 'foo'}],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
 			expect(result).to.eql({valid: false, messages: [
-				'The following tag patterns are not present in the record tag field:  /^5..$/ /^FOO$/'
+				'The following tag patterns are not present in the record tag field:  /^5..$/ /^FOO$/',
 			]});
 		});
 	});

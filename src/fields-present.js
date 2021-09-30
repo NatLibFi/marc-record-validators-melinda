@@ -33,7 +33,7 @@ export default async function (tagPatterns) {
 		return {
 			description:
 				'Checks whether the configured fields are present in the record',
-			validate
+			validate,
 		};
 	}
 

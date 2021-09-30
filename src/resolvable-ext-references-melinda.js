@@ -33,7 +33,7 @@ export default async function ({endpoint, prefixPattern, fields}) {
 	if (typeof endpoint === 'string' && prefixPattern instanceof RegExp && typeof fields === 'object') {
 		return {
 			description: 'Checks if Melinda entity references are resolvable',
-			validate
+			validate,
 		};
 	}
 
@@ -86,20 +86,14 @@ export default async function ({endpoint, prefixPattern, fields}) {
 	function resolveValidation(removedPrefixes) {
 		// If matching prefixPatterns found make an API call
 		if (removedPrefixes.length > 0) {
-			return validateMatchingTags(removedPrefixes).then(result => {
-				return result;
-			});
+			return validateMatchingTags(removedPrefixes).then(result => result);
 		}
 
 		return {valid: true, messages: []};
 	}
 
 	async function validateMatchingTags(tags) {
-		const resolved = await Promise.all(tags.map(obj => {
-			return getData(obj.value).then(valid => {
-				return Object.assign({valid}, obj);
-			});
-		}));
+		const resolved = await Promise.all(tags.map(obj => getData(obj.value).then(valid => ({valid, ...obj}))));
 
 		if (resolved.every(value => value.valid === true)) {
 			return {valid: true, messages: []};

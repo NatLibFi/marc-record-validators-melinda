@@ -39,24 +39,24 @@
 const confSpec = {
 	tag: { // Pattern to match the field's tags
 		type: 'RegExp',
-		mandatory: true
+		mandatory: true,
 	},
 	ind1: { // Pattern to match the field's ind1 property.
-		type: 'RegExp' // Array<Indicator>
+		type: 'RegExp', // Array<Indicator>
 	},
 	ind2: { // Pattern to match the field's ind2 property.
-		type: 'RegExp' // Array<Indicator>
+		type: 'RegExp', // Array<Indicator>
 	},
 	subfields: { // An array of objects with the following properties
 		code: {
 			type: 'RegExp',
-			mandatory: true
+			mandatory: true,
 		},
 		value: {
-			type: 'RegExp'
+			type: 'RegExp',
 		},
-		mandatory: true
-	}
+		mandatory: true,
+	},
 };
 
 function forEach(obj, fun) {
@@ -81,7 +81,7 @@ export default async function (config) {
 			excludeFields(record, config, false)
 		),
 		fix: async record =>
-			excludeFields(record, config, true)
+			excludeFields(record, config, true),
 	};
 
 	/// /////////////////////////////////////////
@@ -104,8 +104,8 @@ export default async function (config) {
 		}
 
 		// If configuration type does not match type in configuration spec
-		if (typeof data !== spec[key].type &&
-			(spec[key].type === 'RegExp' && !(isRegExp(data)))) {
+		if (typeof data !== spec[key].type
+			&& (spec[key].type === 'RegExp' && !(isRegExp(data)))) {
 			throw new Error('Configuration not valid - invalid data type for: ' + key);
 		}
 
@@ -139,13 +139,13 @@ export default async function (config) {
 	/// /////////////////////////////////////////
 	// These check that record is valid
 	function excludeFields(record, conf, fix) {
-		var res = {};
+		const res = {};
 		res.message = [];
 		res.valid = true;
 
 		// Parse trough every element of config array
 		conf.forEach(confObj => {
-			var found = record.get(confObj.tag); // Find matching record fields based on mandatory tag
+			const found = record.get(confObj.tag); // Find matching record fields based on mandatory tag
 
 			// Check if some of found record fields matches all configuration fields
 			found.forEach(element => {
@@ -170,8 +170,8 @@ export default async function (config) {
 
 						element.subfields.forEach(elemSub => {
 							// Check if subfield matches configuration spec
-							if (subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
-								(typeof subField.value === 'undefined' || (subField.value && elemSub.value && (subField.value.test(elemSub.value))))) {
+							if (subField.code && elemSub.code && (subField.code.test(elemSub.code))
+								&& (typeof subField.value === 'undefined' || (subField.value && elemSub.value && (subField.value.test(elemSub.value))))) {
 								if (fix) {
 									excluded.push(elemSub);
 								} else {

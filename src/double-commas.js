@@ -35,14 +35,14 @@ export default async function () {
 			valid: !record
 				.get(/^700$/)
 				.some(f =>
-					f.subfields.every(sf => sf.code === 'e' && /,,/.test(sf.value))
-				)
+					f.subfields.every(sf => sf.code === 'e' && /,,/.test(sf.value)),
+				),
 		}),
 		fix: async record =>
 			record.get(/^700$/).forEach(f =>
 				f.subfields.filter(sf => sf.code === 'e').forEach(sf => {
 					sf.value = sf.value.replace(/,,/, ',');
-				})
-			)
+				}),
+			),
 	};
 }

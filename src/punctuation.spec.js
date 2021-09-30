@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
-
 'use strict';
 
 import {expect} from 'chai';
@@ -56,10 +54,10 @@ describe('punctuation', () => {
 						ind2: ' ',
 						subfields: [
 							{code: 'a', value: 'Sukunimi, Etunimi,'},
-							{code: 'c', value: 'kirjoittaja.'}
-						]
-					}
-				]
+							{code: 'c', value: 'kirjoittaja.'},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -75,10 +73,10 @@ describe('punctuation', () => {
 						ind2: ' ',
 						subfields: [
 							{code: 'a', value: 'Sukunimi, Etunimi'},
-							{code: 'c', value: 'kirjoittaja.'}
-						]
-					}
-				]
+							{code: 'c', value: 'kirjoittaja.'},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -97,10 +95,10 @@ describe('punctuation', () => {
 						ind2: ' ',
 						subfields: [
 							{code: 'a', value: 'Sukunimi, Etunimi'},
-							{code: 'c', value: 'kirjoittaja'}
-						]
-					}
-				]
+							{code: 'c', value: 'kirjoittaja'},
+						],
+					},
+				],
 			});
 
 			await validator.fix(record);
@@ -112,9 +110,9 @@ describe('punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Sukunimi, Etunimi,'},
-						{code: 'c', value: 'kirjoittaja.'}
-					]
-				}
+						{code: 'c', value: 'kirjoittaja.'},
+					],
+				},
 			]);
 		});
 	});

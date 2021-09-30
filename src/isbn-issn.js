@@ -32,7 +32,7 @@ import validateISSN from '@natlibfi/issn-verify';
 export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 	return {
 		validate, fix,
-		description: 'Validates ISBN and ISSN values'
+		description: 'Validates ISBN and ISSN values',
 	};
 
 	function getInvalidFields(record) {
@@ -103,9 +103,7 @@ export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 				return {name: 'ISSN', value: getISSN()};
 
 				function getISSN() {
-					const result = field.subfields.find(sf => {
-						return sf.code === 'a' || sf.code === 'l';
-					});
+					const result = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
 					if (result) {
 						return result.value;

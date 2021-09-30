@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable require-await */
-
 'use strict';
 
 import fetch from 'node-fetch';
@@ -44,14 +42,12 @@ export default async function (isLegalDeposit = false) {
 				tag: '856',
 				ind1: '4',
 				ind2: '0',
-				subfields: [await createURNSubfield(record), ...ldSubfields]
+				subfields: [await createURNSubfield(record), ...ldSubfields],
 			});
 		} else if (isLegalDeposit) {
 			f856sUrn.forEach(f => {
 				ldSubfields.forEach(ldsf => {
-					if (!f.subfields.some(sf => {
-						return (sf.code === ldsf.code) && (sf.value === ldsf.value);
-					})) {
+					if (!f.subfields.some(sf => (sf.code === ldsf.code) && (sf.value === ldsf.value))) {
 						f.subfields.push(ldsf);
 					}
 				});
@@ -73,7 +69,7 @@ export default async function (isLegalDeposit = false) {
 
 			return {
 				code: 'u',
-				value: await createURN(isbn)
+				value: await createURN(isbn),
 			};
 
 			async function createURN(isbn = false) {
@@ -91,12 +87,12 @@ export default async function (isLegalDeposit = false) {
 			return [
 				{
 					code: 'z',
-					value: 'Käytettävissä vapaakappalekirjastoissa'
+					value: 'Käytettävissä vapaakappalekirjastoissa',
 				},
 				{
 					code: '5',
-					value: 'FI-Vapaa'
-				}
+					value: 'FI-Vapaa',
+				},
 			];
 		}
 	}
@@ -105,15 +101,11 @@ export default async function (isLegalDeposit = false) {
 		return {valid: record.fields.some(hasURN) && !isLegalDeposit};
 	}
 
-	const hasURN = f => {
-		return (f.tag === '856') && f.subfields.some(({code, value}) => {
-			return (code === 'u') && /urn.fi/.test(value);
-		});
-	};
+	const hasURN = f => (f.tag === '856') && f.subfields.some(({code, value}) => (code === 'u') && /urn.fi/.test(value));
 
 	return {
 		description: 'Adds URN for record, to 856-field (if not existing)',
 		validate,
-		fix
+		fix,
 	};
 }

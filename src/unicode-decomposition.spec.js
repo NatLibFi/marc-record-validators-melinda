@@ -57,10 +57,10 @@ describe('unicode-decomposition', () => {
 						tag: '245',
 						subfields: [{
 							code: 'a',
-							value: 'Föö, Bär'
-						}]
-					}
-				]
+							value: 'Föö, Bär',
+						}],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 			expect(result).to.eql({valid: true, messages: []});
@@ -76,10 +76,10 @@ describe('unicode-decomposition', () => {
 						ind2: '0',
 						subfields: [{
 							code: 'a',
-							value: 'Föö, Bär'
-						}]
-					}
-				]
+							value: 'Föö, Bär',
+						}],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -96,14 +96,14 @@ describe('unicode-decomposition', () => {
 						subfields: [
 							{
 								code: 'a',
-								value: 'Föö, Bär'
+								value: 'Föö, Bär',
 							},
 							{
 								code: 'b',
-								value: '== Fubar'
-							}
-						]
-					}]
+								value: '== Fubar',
+							},
+						],
+					}],
 				});
 
 				const recordOriginal = record.toObject();
@@ -114,13 +114,13 @@ describe('unicode-decomposition', () => {
 					subfields: [
 						{
 							code: 'a',
-							value: 'Föö, Bär'
+							value: 'Föö, Bär',
 						},
 						{
 							code: 'b',
-							value: '== Fubar'
-						}
-					]
+							value: '== Fubar',
+						},
+					],
 				};
 				await validator.fix(record);
 

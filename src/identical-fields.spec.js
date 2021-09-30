@@ -54,11 +54,11 @@ describe('identical-fields', () => {
 						subfields: [
 							{
 								code: 'e',
-								value: 'foo'
-							}
-						]
-					}
-				]
+								value: 'foo',
+							},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -74,38 +74,38 @@ describe('identical-fields', () => {
 						subfields: [
 							{
 								code: 'e',
-								value: 'foo'
-							}
-						]
+								value: 'foo',
+							},
+						],
 					},
 					{
 						tag: '800',
 						subfields: [
 							{
 								code: 'e',
-								value: 'foo'
-							}
-						]
+								value: 'foo',
+							},
+						],
 					},
 					{
 						tag: '800',
 						subfields: [
 							{
 								code: 'e',
-								value: 'foo'
-							}
-						]
+								value: 'foo',
+							},
+						],
 					},
 					{
 						tag: '700',
 						subfields: [
 							{
 								code: 'e',
-								value: 'foo'
-							}
-						]
-					}
-				]
+								value: 'foo',
+							},
+						],
+					},
+				],
 			});
 
 			const result = await validator.validate(record);
@@ -124,20 +124,20 @@ describe('identical-fields', () => {
 						subfields: [
 							{
 								code: 'e',
-								value: 'dest'
-							}
-						]
+								value: 'dest',
+							},
+						],
 					},
 					{
 						tag: '700',
 						subfields: [
 							{
 								code: 'e',
-								value: 'dest'
-							}
-						]
-					}
-				]
+								value: 'dest',
+							},
+						],
+					},
+				],
 			});
 			await validator.fix(record);
 
@@ -149,10 +149,10 @@ describe('identical-fields', () => {
 					subfields: [
 						{
 							code: 'e',
-							value: 'dest'
-						}
-					]
-				}
+							value: 'dest',
+						},
+					],
+				},
 			]);
 		});
 	});

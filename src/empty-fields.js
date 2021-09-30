@@ -28,14 +28,14 @@
 
 const ERRORS = {
 	EMPTY_SUBFIELDS: 2,
-	MISSING_SUBFIELD_VALUES: 3
+	MISSING_SUBFIELD_VALUES: 3,
 };
 
 export default async function () {
 	return {
 		description: 'Handles empty fields',
 		validate,
-		fix
+		fix,
 	};
 
 	async function validate(record) {
@@ -51,7 +51,7 @@ export default async function () {
 							return `Field ${error.field.tag} has missing subfield values: ${error.emptySubfields.map(sf => sf.code).join()}`;
 						default:
 					}
-				})
+				}),
 			};
 		}
 
@@ -82,15 +82,13 @@ export default async function () {
 					return errors.concat({field, code: ERRORS.EMPTY_SUBFIELDS});
 				}
 
-				const subfieldsWithoutValue = field.subfields.filter(sf => {
-					return !sf.value;
-				});
+				const subfieldsWithoutValue = field.subfields.filter(sf => !sf.value);
 
 				if (subfieldsWithoutValue.length > 0) {
 					return errors.concat({
 						field,
 						emptySubfields: subfieldsWithoutValue,
-						code: ERRORS.MISSING_SUBFIELD_VALUES
+						code: ERRORS.MISSING_SUBFIELD_VALUES,
 					});
 				}
 			}

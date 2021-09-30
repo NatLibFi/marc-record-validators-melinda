@@ -56,33 +56,33 @@ describe('language', () => {
 		it('Finds the record valid', async () => {
 			const validator = await validatorFactory([
 				{leader: true, length: 6, rules: [
-					{position: [0, 6], pattern: /[abcdefg]/}
+					{position: [0, 6], pattern: /[abcdefg]/},
 				]},
 				{tag: /^FOO$/, length: 12, rules: [
-					{position: 0, pattern: /f/}
+					{position: 0, pattern: /f/},
 				]},
 				{tag: /^BAR$/, length: 6, rules: [
 					{position: 0, pattern: /[fb]/},
 					{position: 1, pattern: /a/, dependencies: [
-						{position: 0, pattern: /b/}
+						{position: 0, pattern: /b/},
 					]},
 					{position: [2, 3], pattern: /u/, dependencies: [
-						{position: 0, pattern: /[^b]/}
-					]}
-				]}
+						{position: 0, pattern: /[^b]/},
+					]},
+				]},
 			]);
 			const record = new MarcRecord({
 				leader: 'bacgfe',
 				fields: [
 					{
 						tag: 'FOO',
-						value: 'foobarfoobar'
+						value: 'foobarfoobar',
 					},
 					{
 						tag: 'BAR',
-						value: 'bauuoo'
-					}
-				]
+						value: 'bauuoo',
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -92,38 +92,38 @@ describe('language', () => {
 		it('Finds the record invalid', async () => {
 			const validator = await validatorFactory([
 				{leader: true, length: 6, rules: [
-					{position: [0, 6], pattern: /[abcdefg]/}
+					{position: [0, 6], pattern: /[abcdefg]/},
 				]},
 				{tag: /^FOO$/, length: 12, rules: [
-					{position: 0, pattern: /f/}
+					{position: 0, pattern: /f/},
 				]},
 				{tag: /^BAR$/, length: 6, rules: [
 					{position: 0, pattern: /[fb]/},
 					{position: 1, pattern: /a/, dependencies: [
-						{position: 0, pattern: /b/}
+						{position: 0, pattern: /b/},
 					]},
 					{position: [2, 3], pattern: /u/, dependencies: [
-						{position: 0, pattern: /[^a]/}
-					]}
+						{position: 0, pattern: /[^a]/},
+					]},
 				]},
-				{tag: /^FUBAR$/, length: 5}
+				{tag: /^FUBAR$/, length: 5},
 			]);
 			const record = new MarcRecord({
 				leader: 'bacxfe',
 				fields: [
 					{
 						tag: 'FOO',
-						value: 'barfoofoobar'
+						value: 'barfoofoobar',
 					},
 					{
 						tag: 'BAR',
-						value: 'burfoo'
+						value: 'burfoo',
 					},
 					{
 						tag: 'FUBAR',
-						value: 'foo'
-					}
-				]
+						value: 'foo',
+					},
+				],
 			});
 
 			const result = await validator.validate(record);
@@ -133,7 +133,7 @@ describe('language', () => {
 				'Field FOO has invalid values at positions: 0 (Rule index 0)',
 				'Field BAR has invalid values at positions: 1 (Rule index 1)',
 				'Field BAR has invalid values at positions: 2,3 (Rule index 2)',
-				'Field FUBAR has invalid length'
+				'Field FUBAR has invalid length',
 			]});
 		});
 	});

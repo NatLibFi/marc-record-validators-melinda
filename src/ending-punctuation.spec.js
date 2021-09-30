@@ -49,8 +49,8 @@ describe('ending-punctuation', () => {
 				subfields: [
 					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
 					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'},
-					{code: '6', value: 'FOO'}
-				]
+					{code: '6', value: 'FOO'},
+				],
 			}, {
 				tag: '337', // Range 336-338
 				ind1: ' ',
@@ -58,16 +58,16 @@ describe('ending-punctuation', () => {
 				subfields: [
 					{code: 'a', value: 'käytettävissä ilman laitetta'},
 					{code: 'b', value: 'n'},
-					{code: '2', value: 'rdamedia'}
-				]
+					{code: '2', value: 'rdamedia'},
+				],
 			}, {
 				tag: '500', // Range 500-509
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'FOO (Bar)'}
-				]
-			}]
+					{code: 'a', value: 'FOO (Bar)'},
+				],
+			}],
 		});
 
 		const recordInvalid = new MarcRecord({
@@ -79,8 +79,8 @@ describe('ending-punctuation', () => {
 				subfields: [
 					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
 					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
-					{code: '6', value: 'FOO'}
-				]
+					{code: '6', value: 'FOO'},
+				],
 			}, {
 				tag: '337',
 				ind1: ' ',
@@ -88,16 +88,16 @@ describe('ending-punctuation', () => {
 				subfields: [
 					{code: 'a', value: 'käytettävissä ilman laitetta'},
 					{code: 'b', value: 'n.'}, // This can be abbreviation -> does not generate error
-					{code: '2', value: 'rdamedia'}
-				]
+					{code: '2', value: 'rdamedia'},
+				],
 			}, {
 				tag: '500',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'FOO (Bar).'}
-				]
-			}]
+					{code: 'a', value: 'FOO (Bar).'},
+				],
+			}],
 		});
 		const recordBroken = new MarcRecord({
 			leader: '',
@@ -108,8 +108,8 @@ describe('ending-punctuation', () => {
 				subfields: [
 					{code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
 					{code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
-					{code: '6', value: 'FOO'}
-				]
+					{code: '6', value: 'FOO'},
+				],
 			}, {
 				tag: '337',
 				ind1: ' ',
@@ -117,16 +117,16 @@ describe('ending-punctuation', () => {
 				subfields: [
 					{code: 'a', value: 'käytettävissä ilman laitetta'},
 					{code: 'b', value: 'n'}, // Dot removed from possible abbreviation as it cannot be removed in fixing
-					{code: '2', value: 'rdamedia'}
-				]
+					{code: '2', value: 'rdamedia'},
+				],
 			}, {
 				tag: '500',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'FOO (Bar).'}
-				]
-			}]
+					{code: 'a', value: 'FOO (Bar).'},
+				],
+			}],
 		});
 
 		it('Finds the record valid', async () => {
@@ -140,7 +140,7 @@ describe('ending-punctuation', () => {
 			const result = await validator.validate(recordInvalid);
 			expect(result).to.eql({
 				message: ['Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation'],
-				valid: false
+				valid: false,
 			});
 		});
 
@@ -151,7 +151,7 @@ describe('ending-punctuation', () => {
 			expect(result).to.eql({
 				message: ['Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation'],
 				fix: ['Field 245 - Added punctuation to $c', 'Field 500 - Removed double punctuation from $a'],
-				valid: false
+				valid: false,
 			});
 		});
 	});
@@ -169,9 +169,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'CNRS 84115'},
-						{code: 'b', value: 'Centre national de la recherche scientifique.'}
-					]
-				}]
+						{code: 'b', value: 'Centre national de la recherche scientifique.'},
+					],
+				}],
 			});
 
 			const recordValidOnlyA = new MarcRecord({
@@ -181,9 +181,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'CNRS 84115'}
-					]
-				}]
+						{code: 'a', value: 'CNRS 84115'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $b', async () => {
@@ -207,9 +207,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'CNRS 84115'},
-						{code: 'b', value: 'Centre national de la recherche scientifique'}
-					]
-				}]
+						{code: 'b', value: 'Centre national de la recherche scientifique'},
+					],
+				}],
 			});
 
 			const recordInvalidOnlyA = new MarcRecord({
@@ -219,9 +219,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'CNRS 84115.'} // $a is register number, no change for abbreviation
-					]
-				}]
+						{code: 'a', value: 'CNRS 84115.'}, // $a is register number, no change for abbreviation
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc $b', async () => {
@@ -229,7 +229,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid);
 				expect(result).to.eql({
 					message: ['Field 036 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -238,7 +238,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidOnlyA);
 				expect(result).to.eql({
 					message: ['Field 036 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -250,7 +250,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 036 has invalid ending punctuation'],
 					fix: ['Field 036 - Added punctuation to $b'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -261,7 +261,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 036 has invalid ending punctuation'],
 					fix: ['Field 036 - Removed punctuation from $a'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -277,9 +277,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art.'},
-						{code: 'y', value: 'eng'}
-					]
-				}]
+						{code: 'y', value: 'eng'},
+					],
+				}],
 			});
 
 			const recordValidMultiple = new MarcRecord({
@@ -292,9 +292,9 @@ describe('ending-punctuation', () => {
 						{code: 'a', value: 'Annals of chemistry.'},
 						{code: 'n', value: 'Series C,'},
 						{code: 'p', value: 'Organic chemistry and biochemistry.'},
-						{code: 'y', value: 'eng'}
-					]
-				}]
+						{code: 'y', value: 'eng'},
+					],
+				}],
 			});
 
 			// "Suositellaan käytettäväksi myös osakenttää ‡y (käännöksen kielikoodi)." https://www.kiwi.fi/pages/viewpage.action?pageId=51282044
@@ -305,9 +305,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'World of art.'}
-					]
-				}]
+						{code: 'a', value: 'World of art.'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $a', async () => {
@@ -337,9 +337,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art'},
-						{code: 'y', value: 'eng'}
-					]
-				}]
+						{code: 'y', value: 'eng'},
+					],
+				}],
 			});
 
 			const recordInvalidOnlyAPuncY = new MarcRecord({
@@ -350,9 +350,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art.'},
-						{code: 'y', value: 'eng.'} // $y is also checked as rule is explicit
-					]
-				}]
+						{code: 'y', value: 'eng.'}, // $y is also checked as rule is explicit
+					],
+				}],
 			});
 
 			const recordInvalidOnlyAMissingAPuncY = new MarcRecord({
@@ -363,9 +363,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'World of art'},
-						{code: 'y', value: 'eng.'} // $y is also checked as rule is explicit
-					]
-				}]
+						{code: 'y', value: 'eng.'}, // $y is also checked as rule is explicit
+					],
+				}],
 			});
 
 			const recordValidMultipleMissingP = new MarcRecord({
@@ -378,9 +378,9 @@ describe('ending-punctuation', () => {
 						{code: 'a', value: 'Annals of chemistry.'},
 						{code: 'n', value: 'Series C,'},
 						{code: 'p', value: 'Organic chemistry and biochemistry'},
-						{code: 'y', value: 'eng'}
-					]
-				}]
+						{code: 'y', value: 'eng'},
+					],
+				}],
 			});
 
 			// "Suositellaan käytettäväksi myös osakenttää ‡y (käännöksen kielikoodi)." https://www.kiwi.fi/pages/viewpage.action?pageId=51282044
@@ -391,9 +391,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'World of art'}
-					]
-				}]
+						{code: 'a', value: 'World of art'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc at $a (only before $y)', async () => {
@@ -401,7 +401,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidOnlyAMissingA);
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -410,7 +410,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidOnlyAPuncY);
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -419,7 +419,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidOnlyAMissingAPuncY);
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -428,7 +428,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordValidMultipleMissingP);
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -437,7 +437,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordValidWithoutYMissingA);
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -449,7 +449,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
 					fix: ['Field 242 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -460,7 +460,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
 					fix: ['Field 242 - Removed punctuation from $y'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -471,7 +471,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation'],
 					fix: ['Field 242 - Removed punctuation from $y', 'Field 242 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -482,7 +482,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
 					fix: ['Field 242 - Added punctuation to $p'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -493,7 +493,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 242 has invalid ending punctuation'],
 					fix: ['Field 242 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -511,9 +511,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Suomen atk-kustannus,'},
-						{code: 'c', value: '1982.'}
-					]
-				}]
+						{code: 'c', value: '1982.'},
+					],
+				}],
 			});
 
 			const recordValidEndG = new MarcRecord({
@@ -526,9 +526,9 @@ describe('ending-punctuation', () => {
 						{code: 'a', value: 'London'},
 						{code: 'b', value: 'Macmillan,'},
 						{code: 'c', value: '1971'},
-						{code: 'g', value: '(1973 printing)'}
-					]
-				}]
+						{code: 'g', value: '(1973 printing)'},
+					],
+				}],
 			});
 
 			const recordValidEndB = new MarcRecord({
@@ -540,9 +540,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: '3', value: 'June 1993-'},
 						{code: 'a', value: 'London'},
-						{code: 'b', value: 'Elle'}
-					]
-				}]
+						{code: 'b', value: 'Elle'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $c', async () => {
@@ -573,9 +573,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Suomen atk-kustannus,'},
-						{code: 'c', value: '1982'}
-					]
-				}]
+						{code: 'c', value: '1982'},
+					],
+				}],
 			});
 
 			const recordInvalidEndGDouble = new MarcRecord({
@@ -588,9 +588,9 @@ describe('ending-punctuation', () => {
 						{code: 'a', value: 'London'},
 						{code: 'b', value: 'Macmillan,'},
 						{code: 'c', value: '1971'},
-						{code: 'g', value: '(1973 printing).'}
-					]
-				}]
+						{code: 'g', value: '(1973 printing).'},
+					],
+				}],
 			});
 
 			it('Finds record invalid', async () => {
@@ -598,7 +598,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidEndC);
 				expect(result).to.eql({
 					message: ['Field 260 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -607,7 +607,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidEndGDouble);
 				expect(result).to.eql({
 					message: ['Field 260 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -619,7 +619,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 260 has invalid ending punctuation'],
 					fix: ['Field 260 - Added punctuation to $c'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -630,7 +630,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 260 has invalid ending punctuation'],
 					fix: ['Field 260 - Removed double punctuation from $g'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -658,9 +658,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Helsingin yliopisto'},
-						{code: 'c', value: '1995-2006.'}
-					]
-				}]
+						{code: 'c', value: '1995-2006.'},
+					],
+				}],
 			});
 
 			const recordValidInd2v1Short = new MarcRecord({
@@ -672,9 +672,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Helsingin yliopisto'},
-						{code: 'c', value: '1995-'}
-					]
-				}]
+						{code: 'c', value: '1995-'},
+					],
+				}],
 			});
 
 			const recordValidInd2v2WithoutC = new MarcRecord({
@@ -685,9 +685,9 @@ describe('ending-punctuation', () => {
 					ind2: '2',
 					subfields: [
 						{code: 'a', value: 'Kouvola'},
-						{code: 'b', value: 'Nuorisovirasto'}
-					]
-				}]
+						{code: 'b', value: 'Nuorisovirasto'},
+					],
+				}],
 			});
 
 			const recordValidCopyright = new MarcRecord({
@@ -699,9 +699,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Helsinki : '},
 						{code: 'b', value: 'Suomen poliisikoirayhdistys.'},
-						{code: 'c', value: '© 1974'}
-					]
-				}]
+						{code: 'c', value: '© 1974'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Ind2 = 1, $c 1995-2006.', async () => {
@@ -737,9 +737,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Helsinki'},
 						{code: 'b', value: 'Helsingin yliopisto'},
-						{code: 'c', value: '1995-2006'}
-					]
-				}]
+						{code: 'c', value: '1995-2006'},
+					],
+				}],
 			});
 
 			const recordInvalidCopyrightCExtra = new MarcRecord({
@@ -751,9 +751,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Helsinki : '},
 						{code: 'b', value: 'Suomen poliisikoirayhdistys.'},
-						{code: 'c', value: '© 1974.'}
-					]
-				}]
+						{code: 'c', value: '© 1974.'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc $c', async () => {
@@ -761,7 +761,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidInd2v1);
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -770,7 +770,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidCopyrightCExtra);
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -782,7 +782,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
 					fix: ['Field 264 - Added punctuation to $c'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -793,7 +793,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 264 has invalid ending punctuation'],
 					fix: ['Field 264 - Removed punctuation from $c'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -811,9 +811,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'marble.'}
-					]
-				}]
+						{code: 'a', value: 'marble.'},
+					],
+				}],
 			});
 
 			const recordValidAB = new MarcRecord({
@@ -824,9 +824,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'b', value: '20 cm. folded to 10 x 12 cm.'}
-					]
-				}]
+						{code: 'b', value: '20 cm. folded to 10 x 12 cm.'},
+					],
+				}],
 			});
 
 			const recordValidDD = new MarcRecord({
@@ -837,9 +837,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'd', value: 'handwritten'},
-						{code: 'd', value: 'typed.'}
-					]
-				}]
+						{code: 'd', value: 'typed.'},
+					],
+				}],
 			});
 
 			const recordValidComplex = new MarcRecord({
@@ -854,9 +854,9 @@ describe('ending-punctuation', () => {
 						{code: 'c', value: 'gouache'},
 						{code: 'd', value: 'lithography'},
 						{code: 'd', value: 'collage.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'g', value: 'polychrome'}
-					]
-				}]
+						{code: 'g', value: 'polychrome'},
+					],
+				}],
 			});
 
 			const recordValidJ2 = new MarcRecord({
@@ -867,9 +867,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'j', value: 'original'},
-						{code: '2', value: 'rda'}
-					]
-				}]
+						{code: '2', value: 'rda'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $a (only)', async () => {
@@ -910,9 +910,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'marble'}
-					]
-				}]
+						{code: 'a', value: 'marble'},
+					],
+				}],
 			});
 
 			const recordInvalidAMissingB = new MarcRecord({
@@ -923,9 +923,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'b', value: '20 cm. folded to 10 x 12 cm.'}
-					]
-				}]
+						{code: 'b', value: '20 cm. folded to 10 x 12 cm.'},
+					],
+				}],
 			});
 
 			const recordInvalidABMissing = new MarcRecord({
@@ -936,9 +936,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'parchment.'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'b', value: '20 cm. folded to 10 x 12 cm'}
-					]
-				}]
+						{code: 'b', value: '20 cm. folded to 10 x 12 cm'},
+					],
+				}],
 			});
 
 			const recordInvalidDDMissing = new MarcRecord({
@@ -949,9 +949,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'd', value: 'handwritten'},
-						{code: 'd', value: 'typed'}
-					]
-				}]
+						{code: 'd', value: 'typed'},
+					],
+				}],
 			});
 
 			const recordInvalidComplexDMissing = new MarcRecord({
@@ -966,9 +966,9 @@ describe('ending-punctuation', () => {
 						{code: 'c', value: 'gouache'},
 						{code: 'd', value: 'lithography'},
 						{code: 'd', value: 'collage'}, // This punc doesn't match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/3XX.htm#340
-						{code: 'g', value: 'polychrome'}
-					]
-				}]
+						{code: 'g', value: 'polychrome'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc $a (only)', async () => {
@@ -976,7 +976,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidA);
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -985,7 +985,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidAMissingB);
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -994,7 +994,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidABMissing);
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1003,7 +1003,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidDDMissing);
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1012,7 +1012,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidComplexDMissing);
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1024,7 +1024,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
 					fix: ['Field 340 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1035,7 +1035,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
 					fix: ['Field 340 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1046,7 +1046,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
 					fix: ['Field 340 - Added punctuation to $b'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1057,7 +1057,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
 					fix: ['Field 340 - Added punctuation to $d'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1068,7 +1068,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 340 has invalid ending punctuation'],
 					fix: ['Field 340 - Added punctuation to $d'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -1083,9 +1083,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Mediaväkivalta ja sen yleisö.'}
-					]
-				}]
+						{code: 'a', value: 'Mediaväkivalta ja sen yleisö.'},
+					],
+				}],
 			});
 
 			const recordValidWithU = new MarcRecord({
@@ -1096,9 +1096,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
-						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
-					]
-				}]
+						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'},
+					],
+				}],
 			});
 
 			const recordValidU = new MarcRecord({
@@ -1109,9 +1109,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Abstrakti.'}, // This does not match example: https://www.kansalliskirjasto.fi/extra/marc21/bib/50X-53X.htm#520
-						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm.'}
-					]
-				}]
+						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm.'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $a (without $u)', async () => {
@@ -1140,9 +1140,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Mediaväkivalta ja sen yleisö'}
-					]
-				}]
+						{code: 'a', value: 'Mediaväkivalta ja sen yleisö'},
+					],
+				}],
 			});
 
 			const recordInvalidWithU = new MarcRecord({
@@ -1153,9 +1153,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Abstrakti'},
-						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'}
-					]
-				}]
+						{code: 'u', value: 'http://www.ojp.usdoj.gov/bjs/abstract/cchrie98.htm'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc $a (without $u)', async () => {
@@ -1163,7 +1163,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid);
 				expect(result).to.eql({
 					message: ['Field 520 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1172,7 +1172,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidWithU);
 				expect(result).to.eql({
 					message: ['Field 520 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1184,7 +1184,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 520 has invalid ending punctuation'],
 					fix: ['Field 520 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1195,7 +1195,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 520 has invalid ending punctuation'],
 					fix: ['Field 520 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -1214,9 +1214,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Project methodology for digital version'},
 						{code: 'i', value: 'Technical details.'}, // This ended to ':' in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
-						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
-					]
-				}]
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'},
+					],
+				}],
 			});
 
 			const recordValidPuncU = new MarcRecord({
@@ -1228,9 +1228,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Project methodology for digital version'},
 						{code: 'i', value: 'Technical details.'},
-						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html.'}
-					]
-				}]
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html.'},
+					],
+				}],
 			});
 
 			const recordValidOnlyA = new MarcRecord({
@@ -1240,9 +1240,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'SECAM-videolaite.'}
-					]
-				}]
+						{code: 'a', value: 'SECAM-videolaite.'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $i (last before $u)', async () => {
@@ -1273,9 +1273,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Project methodology for digital version'},
 						{code: 'i', value: 'Technical details'},
-						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
-					]
-				}]
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'},
+					],
+				}],
 			});
 
 			const recordInvalidI = new MarcRecord({
@@ -1287,9 +1287,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Project methodology for digital version'},
 						{code: 'i', value: 'Technical details:'}, // This is actually like in examples, but it doesn't match statet rules: https://www.kansalliskirjasto.fi/extra/marc21/bib/53X-58X.htm#538
-						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'}
-					]
-				}]
+						{code: 'u', value: 'http://www.columbia.edu/dlc/linglung/methodology.html'},
+					],
+				}],
 			});
 
 			const recordInvalidOnlyA = new MarcRecord({
@@ -1299,9 +1299,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'SECAM-videolaite'}
-					]
-				}]
+						{code: 'a', value: 'SECAM-videolaite'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc $i (last before $u)', async () => {
@@ -1309,7 +1309,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidMissingI);
 				expect(result).to.eql({
 					message: ['Field 538 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1318,7 +1318,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidI);
 				expect(result).to.eql({
 					message: ['Field 538 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1327,7 +1327,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidOnlyA);
 				expect(result).to.eql({
 					message: ['Field 538 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1339,7 +1339,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 538 has invalid ending punctuation'],
 					fix: ['Field 538 - Added punctuation to $i'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1350,7 +1350,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 538 has invalid ending punctuation'],
 					fix: ['Field 538 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -1366,9 +1366,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Narratiivinen tutkimus.'}
-					]
-				}]
+						{code: 'a', value: 'Narratiivinen tutkimus.'},
+					],
+				}],
 			});
 
 			const recordValidWithoutA = new MarcRecord({
@@ -1379,9 +1379,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'b', value: 'Narrative inquiry'},
-						{code: '2', value: 'lcsh'}
-					]
-				}]
+						{code: '2', value: 'lcsh'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $a (only)', async () => {
@@ -1404,9 +1404,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Narratiivinen tutkimus'}
-					]
-				}]
+						{code: 'a', value: 'Narratiivinen tutkimus'},
+					],
+				}],
 			});
 
 			const recordInvalidWithoutA = new MarcRecord({
@@ -1417,9 +1417,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'b', value: 'Narrative inquiry.'},
-						{code: '2', value: 'lcsh'}
-					]
-				}]
+						{code: '2', value: 'lcsh'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc $a (only)', async () => {
@@ -1427,7 +1427,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid);
 				expect(result).to.eql({
 					message: ['Field 567 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1436,7 +1436,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidWithoutA);
 				expect(result).to.eql({
 					message: ['Field 567 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1448,7 +1448,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 567 has invalid ending punctuation'],
 					fix: ['Field 567 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1459,7 +1459,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 567 has invalid ending punctuation'],
 					fix: ['Field 567 - Removed punctuation from $b'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -1478,9 +1478,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Hurricane Katrina'},
 						{code: 'd', value: '(2005)'},
-						{code: '2', value: 'fast'}
-					]
-				}]
+						{code: '2', value: 'fast'},
+					],
+				}],
 			});
 
 			const recordVali648dFinNo = new MarcRecord({
@@ -1491,9 +1491,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1900-luku'},
-						{code: '2', value: 'yso/swe'}
-					]
-				}]
+						{code: '2', value: 'yso/swe'},
+					],
+				}],
 			});
 
 			const recordValid648FastNo = new MarcRecord({
@@ -1504,9 +1504,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1862'},
-						{code: '2', value: 'fast'} // https://www.kansalliskirjasto.fi/extra/marc21/bib/6XX.htm#648
-					]
-				}]
+						{code: '2', value: 'fast'}, // https://www.kansalliskirjasto.fi/extra/marc21/bib/6XX.htm#648
+					],
+				}],
 			});
 
 			const recordValid650FinNo = new MarcRecord({
@@ -1518,9 +1518,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät'},
-						{code: '2', value: 'kauno/fin'}
-					]
-				}]
+						{code: '2', value: 'kauno/fin'},
+					],
+				}],
 			});
 
 			const recordValid650EngNoControl = new MarcRecord({
@@ -1531,9 +1531,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Flour industry'},
-						{code: 'v', value: 'Periodicals.'}
-					]
-				}]
+						{code: 'v', value: 'Periodicals.'},
+					],
+				}],
 			});
 
 			const recordValid650EngControl = new MarcRecord({
@@ -1544,9 +1544,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Career Exploration.'},
-						{code: '2', value: 'ericd'}
-					]
-				}]
+						{code: '2', value: 'ericd'},
+					],
+				}],
 			});
 
 			it('Finds record valid - 647 Fast, punc char at end', async () => {
@@ -1595,9 +1595,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Hurricane Katrina'},
 						{code: 'd', value: '(2005).'},
-						{code: '2', value: 'fast'}
-					]
-				}]
+						{code: '2', value: 'fast'},
+					],
+				}],
 			});
 
 			const recordInvali648dFinYes = new MarcRecord({
@@ -1608,9 +1608,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1900-luku.'},
-						{code: '2', value: 'yso/swe'}
-					]
-				}]
+						{code: '2', value: 'yso/swe'},
+					],
+				}],
 			});
 
 			const recordInvalid648FastYes = new MarcRecord({
@@ -1621,9 +1621,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: '1862.'},
-						{code: '2', value: 'fast'}
-					]
-				}]
+						{code: '2', value: 'fast'},
+					],
+				}],
 			});
 
 			const recordInvalid650FinYes = new MarcRecord({
@@ -1635,9 +1635,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'kirjastot'},
 						{code: 'x', value: 'atk-järjestelmät.'},
-						{code: '2', value: 'kauno/fin'}
-					]
-				}]
+						{code: '2', value: 'kauno/fin'},
+					],
+				}],
 			});
 
 			const recordInvalid650EngNoControl = new MarcRecord({
@@ -1648,9 +1648,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Flour industry'},
-						{code: 'v', value: 'Periodicals'}
-					]
-				}]
+						{code: 'v', value: 'Periodicals'},
+					],
+				}],
 			});
 
 			const recordInvalid650EngControl = new MarcRecord({
@@ -1661,9 +1661,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Career Exploration'},
-						{code: '2', value: 'ericd'}
-					]
-				}]
+						{code: '2', value: 'ericd'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - 647 Fast, dot at end', async () => {
@@ -1671,7 +1671,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid647FastEndPunc);
 				expect(result).to.eql({
 					message: ['Field 647 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1680,7 +1680,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvali648dFinYes);
 				expect(result).to.eql({
 					message: ['Field 648 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1689,7 +1689,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid648FastYes);
 				expect(result).to.eql({
 					message: ['Field 648 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1698,7 +1698,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid650FinYes);
 				expect(result).to.eql({
 					message: ['Field 650 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1707,7 +1707,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid650EngNoControl);
 				expect(result).to.eql({
 					message: ['Field 650 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1716,7 +1716,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid650EngControl);
 				expect(result).to.eql({
 					message: ['Field 650 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1728,7 +1728,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 647 has invalid ending punctuation'],
 					fix: ['Field 647 - Removed double punctuation from $d'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1739,7 +1739,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 648 has invalid ending punctuation'],
 					fix: ['Field 648 - Removed punctuation from $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1750,7 +1750,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 648 has invalid ending punctuation'],
 					fix: ['Field 648 - Removed punctuation from $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1761,7 +1761,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 650 has invalid ending punctuation'],
 					fix: ['Field 650 - Removed punctuation from $x'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1772,7 +1772,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 650 has invalid ending punctuation'],
 					fix: ['Field 650 - Added punctuation to $v'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -1783,7 +1783,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 650 has invalid ending punctuation'],
 					fix: ['Field 650 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -1801,9 +1801,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kausijulkaisut'},
-						{code: '2', value: 'yso/eng'}
-					]
-				}]
+						{code: '2', value: 'yso/eng'},
+					],
+				}],
 			});
 
 			const recordValid655FinNo2 = new MarcRecord({
@@ -1814,9 +1814,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'vironkielinen kirjallisuus'},
-						{code: '2', value: 'local'}
-					]
-				}]
+						{code: '2', value: 'local'},
+					],
+				}],
 			});
 
 			const recordValid655EngYes = new MarcRecord({
@@ -1828,9 +1828,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Bird\'s-eye views'},
 						{code: 'y', value: '1874.'},
-						{code: '2', value: 'gmgpc'}
-					]
-				}]
+						{code: '2', value: 'gmgpc'},
+					],
+				}],
 			});
 
 			const recordValid655EngYesNoControl = new MarcRecord({
@@ -1840,9 +1840,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Diaries.'}
-					]
-				}]
+						{code: 'a', value: 'Diaries.'},
+					],
+				}],
 			});
 
 			const recordValid656FinNo = new MarcRecord({
@@ -1853,9 +1853,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kuvaamataidonopettajat'},
-						{code: '2', value: 'slm/eng'}
-					]
-				}]
+						{code: '2', value: 'slm/eng'},
+					],
+				}],
 			});
 
 			const recordValid657EngYes = new MarcRecord({
@@ -1868,9 +1868,9 @@ describe('ending-punctuation', () => {
 						{code: 'a', value: 'Personnel benefits management'},
 						{code: 'x', value: 'Vital statistics'},
 						{code: 'z', value: 'Love Canal, New York.'},
-						{code: '2', value: 'New York State Management Functions Index'}
-					]
-				}]
+						{code: '2', value: 'New York State Management Functions Index'},
+					],
+				}],
 			});
 
 			const recordValid658EngYes = new MarcRecord({
@@ -1882,9 +1882,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Math manipulatives'},
 						{code: 'd', value: 'highly correlated.'},
-						{code: '2', value: '[source code]'}
-					]
-				}]
+						{code: '2', value: '[source code]'},
+					],
+				}],
 			});
 
 			const recordValid662EngYes = new MarcRecord({
@@ -1895,9 +1895,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Antarctica.'},
-						{code: '2', value: 'lcsh/naf'}
-					]
-				}]
+						{code: '2', value: 'lcsh/naf'},
+					],
+				}],
 			});
 
 			it('Finds record valid - 655 Finnish, no punc $a', async () => {
@@ -1957,9 +1957,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kausijulkaisut.'},
-						{code: '2', value: 'yso/eng'}
-					]
-				}]
+						{code: '2', value: 'yso/eng'},
+					],
+				}],
 			});
 
 			const recordInvalid655FinYes2 = new MarcRecord({
@@ -1970,9 +1970,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'vironkielinen kirjallisuus.'},
-						{code: '2', value: 'local'}
-					]
-				}]
+						{code: '2', value: 'local'},
+					],
+				}],
 			});
 
 			const recordInvalid655EngNo = new MarcRecord({
@@ -1984,9 +1984,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Bird\'s-eye views'},
 						{code: 'y', value: '1874'},
-						{code: '2', value: 'gmgpc'}
-					]
-				}]
+						{code: '2', value: 'gmgpc'},
+					],
+				}],
 			});
 
 			const recordInvalid655EngNoNoControl = new MarcRecord({
@@ -1996,9 +1996,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Diaries'}
-					]
-				}]
+						{code: 'a', value: 'Diaries'},
+					],
+				}],
 			});
 
 			const recordInvalid656FinYes = new MarcRecord({
@@ -2009,9 +2009,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'kuvaamataidonopettajat.'},
-						{code: '2', value: 'slm/eng'}
-					]
-				}]
+						{code: '2', value: 'slm/eng'},
+					],
+				}],
 			});
 
 			const recordInvalid657EngNo = new MarcRecord({
@@ -2024,9 +2024,9 @@ describe('ending-punctuation', () => {
 						{code: 'a', value: 'Personnel benefits management'},
 						{code: 'x', value: 'Vital statistics'},
 						{code: 'z', value: 'Love Canal, New York'},
-						{code: '2', value: 'New York State Management Functions Index'}
-					]
-				}]
+						{code: '2', value: 'New York State Management Functions Index'},
+					],
+				}],
 			});
 
 			const recordInvalid658EngNo = new MarcRecord({
@@ -2038,9 +2038,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Math manipulatives'},
 						{code: 'd', value: 'highly correlated'},
-						{code: '2', value: '[source code]'}
-					]
-				}]
+						{code: '2', value: '[source code]'},
+					],
+				}],
 			});
 
 			const recordInvalid662EngNo = new MarcRecord({
@@ -2051,9 +2051,9 @@ describe('ending-punctuation', () => {
 					ind2: ' ',
 					subfields: [
 						{code: 'a', value: 'Antarctica'},
-						{code: '2', value: 'lcsh/naf'}
-					]
-				}]
+						{code: '2', value: 'lcsh/naf'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - 655 Finnish, punc $a', async () => {
@@ -2061,7 +2061,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid655FinYes);
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2070,7 +2070,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid655FinYes2);
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2079,7 +2079,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid655EngNo);
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2088,7 +2088,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid655EngNoNoControl);
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2097,7 +2097,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid656FinYes);
 				expect(result).to.eql({
 					message: ['Field 656 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2106,7 +2106,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid657EngNo);
 				expect(result).to.eql({
 					message: ['Field 657 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2115,7 +2115,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid658EngNo);
 				expect(result).to.eql({
 					message: ['Field 658 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2124,7 +2124,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid662EngNo);
 				expect(result).to.eql({
 					message: ['Field 662 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2136,7 +2136,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
 					fix: ['Field 655 - Removed punctuation from $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2147,7 +2147,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
 					fix: ['Field 655 - Removed punctuation from $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2158,7 +2158,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
 					fix: ['Field 655 - Added punctuation to $y'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2169,7 +2169,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 655 has invalid ending punctuation'],
 					fix: ['Field 655 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2180,7 +2180,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 656 has invalid ending punctuation'],
 					fix: ['Field 656 - Removed punctuation from $a'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2191,7 +2191,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 657 has invalid ending punctuation'],
 					fix: ['Field 657 - Added punctuation to $z'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2202,7 +2202,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 658 has invalid ending punctuation'],
 					fix: ['Field 658 - Added punctuation to $d'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2213,7 +2213,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 662 has invalid ending punctuation'],
 					fix: ['Field 662 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -2231,9 +2231,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Mellor, Alec.'},
 						{code: 't', value: 'Strange masonic stories'},
-						{code: 'e', value: 'eng'}
-					]
-				}]
+						{code: 'e', value: 'eng'},
+					],
+				}],
 			});
 
 			const recordValidOnlyA = new MarcRecord({
@@ -2243,9 +2243,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Mellor, Alec.'}
-					]
-				}]
+						{code: 'a', value: 'Mellor, Alec.'},
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $a, but following fields, $e no punc (last)', async () => {
@@ -2270,9 +2270,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: 'Mellor, Alec.'},
 						{code: 't', value: 'Strange masonic stories'},
-						{code: 'e', value: 'eng.'}
-					]
-				}]
+						{code: 'e', value: 'eng.'},
+					],
+				}],
 			});
 
 			const recordInvalidOnlyA = new MarcRecord({
@@ -2282,9 +2282,9 @@ describe('ending-punctuation', () => {
 					ind1: ' ',
 					ind2: ' ',
 					subfields: [
-						{code: 'a', value: 'Mellor, Alec'}
-					]
-				}]
+						{code: 'a', value: 'Mellor, Alec'},
+					],
+				}],
 			});
 
 			it('Finds record invalid - Punc $e (language field, strict)', async () => {
@@ -2292,7 +2292,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalid);
 				expect(result).to.eql({
 					message: ['Field 760 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2301,7 +2301,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidOnlyA);
 				expect(result).to.eql({
 					message: ['Field 760 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2313,7 +2313,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 760 has invalid ending punctuation'],
 					fix: ['Field 760 - Removed punctuation from $e'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2324,7 +2324,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 760 has invalid ending punctuation'],
 					fix: ['Field 760 - Added punctuation to $a'],
-					valid: false
+					valid: false,
 				});
 			});
 		});
@@ -2343,9 +2343,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: '平田 篤胤'},
 						{code: 'b', value: '1776-1843.'},
-						{code: '6', value: '100-01/$1'} // Tag 100 has value TRUE -> last data subfield should have punc
-					]
-				}]
+						{code: '6', value: '100-01/$1'}, // Tag 100 has value TRUE -> last data subfield should have punc
+					],
+				}],
 			});
 
 			const recordValidComplex = new MarcRecord({
@@ -2358,9 +2358,9 @@ describe('ending-punctuation', () => {
 						{code: 'b', value: 'ידיעות אחרונות'},
 						{code: 'b', value: 'ספרי חמד'},
 						{code: 'c', value: '2006.'},
-						{code: '6', value: '260-02/(2/r ‡a תל-אביב'} // Tag 260 has value TRUE -> last data subfield should have punc
-					]
-				}]
+						{code: '6', value: '260-02/(2/r ‡a תל-אביב'}, // Tag 260 has value TRUE -> last data subfield should have punc
+					],
+				}],
 			});
 
 			it('Finds record valid - Punc $b', async () => {
@@ -2385,9 +2385,9 @@ describe('ending-punctuation', () => {
 					subfields: [
 						{code: 'a', value: '平田 篤胤'},
 						{code: 'b', value: '1776-1843'},
-						{code: '6', value: '100-01/$1'} // Tag 100 has value TRUE -> last data subfield should have punc
-					]
-				}]
+						{code: '6', value: '100-01/$1'}, // Tag 100 has value TRUE -> last data subfield should have punc
+					],
+				}],
 			});
 
 			const recordInvalidComplex = new MarcRecord({
@@ -2400,9 +2400,9 @@ describe('ending-punctuation', () => {
 						{code: 'b', value: 'ידיעות אחרונות'},
 						{code: 'b', value: 'ספרי חמד'},
 						{code: 'c', value: '2006'},
-						{code: '6', value: '260-02/(2/r ‡a תל-אביב'} // Tag 260 has value TRUE -> last data subfield should have punc
-					]
-				}]
+						{code: '6', value: '260-02/(2/r ‡a תל-אביב'}, // Tag 260 has value TRUE -> last data subfield should have punc
+					],
+				}],
 			});
 
 			it('Finds record invalid - No punc $b', async () => {
@@ -2410,7 +2410,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidSimple);
 				expect(result).to.eql({
 					message: ['Field 880 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2419,7 +2419,7 @@ describe('ending-punctuation', () => {
 				const result = await validator.validate(recordInvalidComplex);
 				expect(result).to.eql({
 					message: ['Field 880 has invalid ending punctuation'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2431,7 +2431,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 880 has invalid ending punctuation'],
 					fix: ['Field 880 - Added punctuation to $b'],
-					valid: false
+					valid: false,
 				});
 			});
 
@@ -2442,7 +2442,7 @@ describe('ending-punctuation', () => {
 				expect(result).to.eql({
 					message: ['Field 880 has invalid ending punctuation'],
 					fix: ['Field 880 - Added punctuation to $c'],
-					valid: false
+					valid: false,
 				});
 			});
 		});

@@ -33,7 +33,7 @@ export default async function (configuration) {
 		return {
 			description:
 			'Validates fixed fields',
-			validate
+			validate,
 		};
 	}
 
@@ -51,9 +51,7 @@ export default async function (configuration) {
 			}
 
 			if (results && results.length > 0) {
-				return messages.concat(...results).reduce((acc, item) => {
-					return acc.includes(item) ? acc : acc.concat(item);
-				}, []);
+				return messages.concat(...results).reduce((acc, item) => acc.includes(item) ? acc : acc.concat(item), []);
 			}
 
 			return messages;
@@ -84,9 +82,7 @@ export default async function (configuration) {
 
 						function checkDependency(dependency) {
 							const indexes = getIndexes(dependency.position);
-							return value.split('').every((char, index) => {
-								return !indexes.includes(index) || dependency.pattern.test(char);
-							});
+							return value.split('').every((char, index) => !indexes.includes(index) || dependency.pattern.test(char));
 						}
 					}, []);
 

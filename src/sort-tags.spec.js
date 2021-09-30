@@ -50,11 +50,11 @@ describe('sort-tags', () => {
 				fields: [
 					{
 						tag: '001',
-						value: '100'
+						value: '100',
 					},
 					{
 						tag: '008',
-						value: 'bar'
+						value: 'bar',
 					},
 					{
 						tag: '100',
@@ -63,9 +63,9 @@ describe('sort-tags', () => {
 						subfields: [
 							{
 								code: 'a',
-								value: 'Foo Bar'
-							}
-						]
+								value: 'Foo Bar',
+							},
+						],
 					},
 					{
 						tag: '245',
@@ -74,12 +74,12 @@ describe('sort-tags', () => {
 						subfields: [
 							{
 								code: 'a',
-								value: 'Fubar'
-							}
-						]
-					}
-				]
-			}
+								value: 'Fubar',
+							},
+						],
+					},
+				],
+			},
 			);
 			const result = await validator.validate(record);
 
@@ -92,11 +92,11 @@ describe('sort-tags', () => {
 					fields: [
 						{
 							tag: '008',
-							value: 'bar'
+							value: 'bar',
 						},
 						{
 							tag: '001',
-							value: '100'
+							value: '100',
 						},
 						{
 							tag: '245',
@@ -105,9 +105,9 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'a',
-									value: 'Fubar'
-								}
-							]
+									value: 'Fubar',
+								},
+							],
 						},
 						{
 							tag: '100',
@@ -116,12 +116,12 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'a',
-									value: 'Foo Bar'
-								}
-							]
-						}
-					]
-				}
+									value: 'Foo Bar',
+								},
+							],
+						},
+					],
+				},
 			);
 			const result = await validator.validate(record);
 			expect(result).to.eql({valid: false, messages: ['Fields are in incorrect order']});
@@ -136,15 +136,15 @@ describe('sort-tags', () => {
 					fields: [
 						{
 							tag: '001',
-							value: '100'
+							value: '100',
 						},
 						{
 							tag: '530',
-							value: 'bar'
+							value: 'bar',
 						},
 						{
 							tag: '30',
-							value: 'bar'
+							value: 'bar',
 						},
 						{
 							tag: 'c',
@@ -153,9 +153,9 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'a',
-									value: 'Fubar'
-								}
-							]
+									value: 'Fubar',
+								},
+							],
 						},
 						{
 							tag: '520',
@@ -164,9 +164,9 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'a',
-									value: 'asdassdaasdsadsasad'
-								}
-							]
+									value: 'asdassdaasdsadsasad',
+								},
+							],
 						},
 						{
 							tag: 'a',
@@ -175,9 +175,9 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'a',
-									value: 'qweweqewqqweweqwq'
-								}
-							]
+									value: 'qweweqewqqweweqwq',
+								},
+							],
 						},
 						{
 							tag: '700',
@@ -186,9 +186,9 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'a',
-									value: 'Bar Foo'
-								}
-							]
+									value: 'Bar Foo',
+								},
+							],
 						},
 						{
 							tag: '711',
@@ -197,9 +197,9 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'a',
-									value: 'Foo'
-								}
-							]
+									value: 'Foo',
+								},
+							],
 						},
 						{
 							tag: '710',
@@ -208,26 +208,26 @@ describe('sort-tags', () => {
 							subfields: [
 								{
 									code: 'w',
-									value: 'Bar'
-								}
-							]
-						}
-					]
-				}
+									value: 'Bar',
+								},
+							],
+						},
+					],
+				},
 			);
 			await validator.fix(record);
 			expect(record.fields).to.eql([
 				{
 					tag: '001',
-					value: '100'
+					value: '100',
 				},
 				{
 					tag: '30',
-					value: 'bar'
+					value: 'bar',
 				},
 				{
 					tag: '530',
-					value: 'bar'
+					value: 'bar',
 				},
 				{
 					tag: '520',
@@ -236,9 +236,9 @@ describe('sort-tags', () => {
 					subfields: [
 						{
 							code: 'a',
-							value: 'asdassdaasdsadsasad'
-						}
-					]
+							value: 'asdassdaasdsadsasad',
+						},
+					],
 				},
 				{
 					tag: '700',
@@ -247,9 +247,9 @@ describe('sort-tags', () => {
 					subfields: [
 						{
 							code: 'a',
-							value: 'Bar Foo'
-						}
-					]
+							value: 'Bar Foo',
+						},
+					],
 				},
 				{
 					tag: '711',
@@ -258,9 +258,9 @@ describe('sort-tags', () => {
 					subfields: [
 						{
 							code: 'a',
-							value: 'Foo'
-						}
-					]
+							value: 'Foo',
+						},
+					],
 				},
 				{
 					tag: '710',
@@ -269,9 +269,9 @@ describe('sort-tags', () => {
 					subfields: [
 						{
 							code: 'w',
-							value: 'Bar'
-						}
-					]
+							value: 'Bar',
+						},
+					],
 				},
 				{
 					tag: 'a',
@@ -280,9 +280,9 @@ describe('sort-tags', () => {
 					subfields: [
 						{
 							code: 'a',
-							value: 'qweweqewqqweweqwq'
-						}
-					]
+							value: 'qweweqewqqweweqwq',
+						},
+					],
 				},
 				{
 					tag: 'c',
@@ -291,10 +291,10 @@ describe('sort-tags', () => {
 					subfields: [
 						{
 							code: 'a',
-							value: 'Fubar'
-						}
-					]
-				}
+							value: 'Fubar',
+						},
+					],
+				},
 			]);
 		});
 	});

@@ -53,15 +53,15 @@ describe('duplicates-ind1', () => {
 						tag: '500',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 'a', value: 'foo'}],
 					},
 					{
 						tag: '500',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
-					}
-				]
+						subfields: [{code: 'a', value: 'foo'}],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -75,15 +75,15 @@ describe('duplicates-ind1', () => {
 						tag: '500',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 'a', value: 'foo'}],
 					},
 					{
 						tag: '500',
 						ind1: '1',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
-					}
-				]
+						subfields: [{code: 'a', value: 'foo'}],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -100,15 +100,15 @@ describe('duplicates-ind1', () => {
 						tag: '500',
 						ind1: ' ',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
+						subfields: [{code: 'a', value: 'foo'}],
 					},
 					{
 						tag: '500',
 						ind1: '1',
 						ind2: '0',
-						subfields: [{code: 'a', value: 'foo'}]
-					}
-				]
+						subfields: [{code: 'a', value: 'foo'}],
+					},
+				],
 			});
 			await validator.fix(record);
 			expect(record.fields).to.eql([
@@ -116,8 +116,8 @@ describe('duplicates-ind1', () => {
 					tag: '500',
 					ind1: ' ',
 					ind2: '0',
-					subfields: [{code: 'a', value: 'foo'}]
-				}
+					subfields: [{code: 'a', value: 'foo'}],
+				},
 			]);
 		});
 	});

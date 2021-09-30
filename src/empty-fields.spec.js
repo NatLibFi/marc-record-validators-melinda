@@ -62,11 +62,11 @@ describe('empty-fields', () => {
 						subfields: [
 							{
 								code: 'a',
-								value: 'foo'
-							}
-						]
-					}
-				]
+								value: 'foo',
+							},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 			expect(result).to.to.have.property('valid', true);
@@ -80,11 +80,11 @@ describe('empty-fields', () => {
 						tag: '245',
 						subfields: [
 							{
-								code: 'a'
-							}
-						]
-					}
-				]
+								code: 'a',
+							},
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -98,9 +98,9 @@ describe('empty-fields', () => {
 					{
 						tag: '500',
 						subfields: [
-						]
-					}
-				]
+						],
+					},
+				],
 			});
 			const result = await validator.validate(record);
 
@@ -118,14 +118,14 @@ describe('empty-fields', () => {
 						subfields: [
 							{
 								code: 'a',
-								value: 'foo'
+								value: 'foo',
 							},
 							{
-								code: 'b'
-							}
-						]
-					}
-				]
+								code: 'b',
+							},
+						],
+					},
+				],
 			});
 			await validator.fix(record);
 
@@ -138,10 +138,10 @@ describe('empty-fields', () => {
 						subfields: [
 							{
 								code: 'a',
-								value: 'foo'
-							}
-						]
-					}
+								value: 'foo',
+							},
+						],
+					},
 				]);
 		});
 
@@ -151,21 +151,21 @@ describe('empty-fields', () => {
 				fields: [
 					{
 						tag: '001',
-						value: '1234567'
+						value: '1234567',
 					},
 					{
 						tag: '500',
-						subfields: []
-					}
-				]
+						subfields: [],
+					},
+				],
 			});
 			await validator.fix(record);
 
 			expect(record.fields).to.eql([
 				{
 					tag: '001',
-					value: '1234567'
-				}
+					value: '1234567',
+				},
 			]);
 		});
 	});

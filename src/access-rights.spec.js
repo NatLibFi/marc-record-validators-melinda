@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
-
 'use strict';
 
 import {expect} from 'chai';
@@ -45,8 +43,8 @@ describe('access-rights', async () => {
 			{code: 'f', value: 'Online access with authorization.'},
 			{code: '2', value: 'star'},
 			{code: '5', value: 'FI-Vapaa'},
-			{code: '9', value: 'FENNI<KEEP>'}
-		]
+			{code: '9', value: 'FENNI<KEEP>'},
+		],
 	};
 	const ldf540 = {
 		tag: '540',
@@ -58,8 +56,8 @@ describe('access-rights', async () => {
 			{code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä'},
 			{code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433'},
 			{code: '5', value: 'FI-Vapaa'},
-			{code: '9', value: 'FENNI<KEEP>'}
-		]
+			{code: '9', value: 'FENNI<KEEP>'},
+		],
 	};
 	const f5060 = {
 		tag: '506',
@@ -69,16 +67,16 @@ describe('access-rights', async () => {
 			{code: 'a', value: 'Aineisto on vapaasti saatavissa.'},
 			{code: 'f', value: 'Unrestricted online access'},
 			{code: '2', value: 'star'},
-			{code: '9', value: 'FENNI<KEEP>'}
-		]
+			{code: '9', value: 'FENNI<KEEP>'},
+		],
 	};
 	const f540 = {
 		tag: '540',
 		ind1: ' ',
 		ind2: ' ',
 		subfields: [
-			{code: 'c', value: 'This publication is copyrighted. You may download, display and print it for Your own personal use. Commercial use is prohibited.'}
-		]
+			{code: 'c', value: 'This publication is copyrighted. You may download, display and print it for Your own personal use. Commercial use is prohibited.'},
+		],
 	};
 
 	it('Creates a validator', async () => {
@@ -98,14 +96,14 @@ describe('access-rights', async () => {
 		return {
 			validate: async (valid, ...recfields) => {
 				const result = await validator.validate(new MarcRecord({fields: recfields}));
-				expect(result).to.eql({valid: valid});
+				expect(result).to.eql({valid});
 			},
 
 			fix: async (recfields, resfields) => {
 				const record = new MarcRecord({fields: recfields});
 				await validator.fix(record);
 				expect(record.fields).to.eql(resfields);
-			}
+			},
 		};
 	})();
 

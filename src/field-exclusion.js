@@ -32,41 +32,41 @@
 const confSpec = {
 	tag: { // Pattern to match the field's tags
 		type: 'RegExp',
-		mandatory: true
+		mandatory: true,
 	},
 	value: { // Regular expression object for matching a controlfields value. Mutual exclusive with
 		type: 'RegExp',
 		excl: [
-			'subfields', 'ind1', 'ind2'
-		]
+			'subfields', 'ind1', 'ind2',
+		],
 	},
 	ind1: { // Pattern to match the field's ind1 property.
 		type: 'RegExp', // Array<Indicator>
 		excl: [
-			'value'
-		]
+			'value',
+		],
 	},
 	ind2: { // Pattern to match the field's ind2 property.
 		type: 'RegExp', // Array<Indicator>
 		excl: [
-			'value'
-		]
+			'value',
+		],
 	},
 	subfields: { // An array of objects with the following properties
 		code: {
 			type: 'RegExp',
-			mandatory: true
+			mandatory: true,
 		},
 		value: {
 			type: 'RegExp',
-			mandatory: true
-		}
+			mandatory: true,
+		},
 	},
 	dependencies: {
 		leader: {
-			type: 'RegExp'
-		}
-	}
+			type: 'RegExp',
+		},
+	},
 };
 
 function forEach(obj, fun) {
@@ -94,7 +94,7 @@ export default async function (config) {
 			excludeFields(record, config, false)
 		),
 		fix: async record =>
-			excludeFields(record, config, true)
+			excludeFields(record, config, true),
 	};
 
 	/// /////////////////////////////////////////
@@ -130,8 +130,8 @@ export default async function (config) {
 		}
 
 		// If configuration type does not match type in configuration spec
-		if (typeof data !== spec[key].type &&
-			(spec[key].type === 'RegExp' && !(isRegExp(data)))) {
+		if (typeof data !== spec[key].type
+			&& (spec[key].type === 'RegExp' && !(isRegExp(data)))) {
 			throw new Error('Configuration not valid - invalid data type for: ' + key);
 		}
 
@@ -174,13 +174,11 @@ export default async function (config) {
 	// These check that record is valid
 	function subFieldCheck(confField, element) {
 		// Parse trough every configuration subfield, check if one matches some subobjects fields
-		return Object.values(confField).some(subField => {
-			return Object.values(element.subfields).some(elemSub => {
-				// Check if subfield matches configuration spec
-				return subField.code && elemSub.code && (subField.code.test(elemSub.code)) &&
-				subField.value && elemSub.value && (subField.value.test(elemSub.value));
-			});
-		});
+		return Object.values(confField).some(subField => Object.values(element.subfields).some(elemSub =>
+		// Check if subfield matches configuration spec
+			subField.code && elemSub.code && (subField.code.test(elemSub.code))
+				&& subField.value && elemSub.value && (subField.value.test(elemSub.value)),
+		));
 	}
 
 	function excludeFields(record, conf, fix) {
@@ -201,9 +199,7 @@ export default async function (config) {
 					}
 
 					if (confKey === 'dependencies') {
-						return confObj.dependencies.every(dependency => {
-							return dependency.leader.test(record.leader);
-						});
+						return confObj.dependencies.every(dependency => dependency.leader.test(record.leader));
 					}
 
 					// Check subfield configurations

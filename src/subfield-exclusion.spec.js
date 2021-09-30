@@ -42,7 +42,7 @@ describe('subfield-exclusion', () => {
 		it('Creates a validator from simple config', async () => {
 			const config = [{
 				tag: /^500$/,
-				subfields: [{code: /4/}]
+				subfields: [{code: /4/}],
 			}];
 
 			const validator = await validatorFactory(config);
@@ -60,8 +60,8 @@ describe('subfield-exclusion', () => {
 				ind2: /\s/,
 				subfields: [{
 					code: /2/,
-					value: /.+/
-				}]
+					value: /.+/,
+				}],
 			}];
 
 			const validator = await validatorFactory(config);
@@ -75,7 +75,7 @@ describe('subfield-exclusion', () => {
 
 		it('Fails to create a validator from invalid config - subfields missing', async () => {
 			const config = [{
-				tag: /^210$/
+				tag: /^210$/,
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - missing mandatory element: subfields');
@@ -85,8 +85,8 @@ describe('subfield-exclusion', () => {
 			const config = [{
 				tag: '500',
 				subfields: [
-					{code: /9/, value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{code: /9/, value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: tag');
@@ -96,8 +96,8 @@ describe('subfield-exclusion', () => {
 			const config = {
 				tag: '500',
 				subfields: [
-					{code: /9/, value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{code: /9/, value: /^(?!FENNI<KEEP>).*$/},
+				],
 			};
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration array not provided');
@@ -107,8 +107,8 @@ describe('subfield-exclusion', () => {
 			const config = [{
 				tag: /^500$/,
 				subfields: [
-					{code: 9, value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{code: 9, value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: code');
@@ -118,8 +118,8 @@ describe('subfield-exclusion', () => {
 			const config = [{
 				tag: /^500$/,
 				subfields: [
-					{code: /9/, value: 'Fenni'}
-				]
+					{code: /9/, value: 'Fenni'},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - invalid data type for: value');
@@ -129,8 +129,8 @@ describe('subfield-exclusion', () => {
 			const config = [{
 				value: /^500$/,
 				subfields: [
-					{code: /9/, value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{code: /9/, value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - missing mandatory element: tag');
@@ -140,8 +140,8 @@ describe('subfield-exclusion', () => {
 			const config = [{
 				value: /^500$/,
 				subfields: [
-					{code: /9/, value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{code: /9/, value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - missing mandatory element: tag');
@@ -152,8 +152,8 @@ describe('subfield-exclusion', () => {
 				tag: /^500$/,
 				subfields: [
 					['/9/', '/^(?!FENNI<KEEP>).*$/'],
-					{value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - subfield: /9/,/^(?!FENNI<KEEP>).*$/ not object');
@@ -165,8 +165,8 @@ describe('subfield-exclusion', () => {
 				subfields: [
 					'/9/',
 					'/^(?!FENNI<KEEP>).*$/',
-					{value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - subfield: /9/ not object');
@@ -177,8 +177,8 @@ describe('subfield-exclusion', () => {
 				tag: /^500$/,
 				subfields: [
 					{code: /9/, value: /^(?!FENNI<KEEP>).*$/},
-					{value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - missing mandatory element: code');
@@ -190,8 +190,8 @@ describe('subfield-exclusion', () => {
 				unidentified: /^500$/,
 				subfields: [
 					{code: /9/, value: /^(?!FENNI<KEEP>).*$/},
-					{value: /^(?!FENNI<KEEP>).*$/}
-				]
+					{value: /^(?!FENNI<KEEP>).*$/},
+				],
 			}];
 
 			await expect(validatorFactory(config)).to.be.rejectedWith(Error, 'Configuration not valid - unidentified value: unidentified');
@@ -202,7 +202,7 @@ describe('subfield-exclusion', () => {
 	describe('#validate: Simple configuration (spec)', () => {
 		const config = [{
 			tag: /^100$/,
-			subfields: [{code: /4/}]
+			subfields: [{code: /4/}],
 		}];
 
 		const recordValid = new MarcRecord({
@@ -212,16 +212,16 @@ describe('subfield-exclusion', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Foo Bar'}
-				]
+					{code: 'a', value: 'Foo Bar'},
+				],
 			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
-			}]
+					{code: 'a', value: 'Fubar'},
+				],
+			}],
 		});
 
 		const recordInvalid = new MarcRecord({
@@ -232,16 +232,16 @@ describe('subfield-exclusion', () => {
 				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Foo Bar'},
-					{code: '4', value: 'att'}
-				]
+					{code: '4', value: 'att'},
+				],
 			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
-			}]
+					{code: 'a', value: 'Fubar'},
+				],
+			}],
 		});
 
 		const recordInvalidFixed = new MarcRecord({
@@ -251,16 +251,16 @@ describe('subfield-exclusion', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Foo Bar'}
-				]
+					{code: 'a', value: 'Foo Bar'},
+				],
 			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
-			}]
+					{code: 'a', value: 'Fubar'},
+				],
+			}],
 		});
 
 		it('Finds the record valid (spec)', async () => {
@@ -288,8 +288,8 @@ describe('subfield-exclusion', () => {
 			tag: /^210$/,
 			ind2: /\s/,
 			subfields: [
-				{code: /2/, value: /.+/}
-			]
+				{code: /2/, value: /.+/},
+			],
 		}];
 
 		const recordValid = new MarcRecord({
@@ -299,16 +299,16 @@ describe('subfield-exclusion', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Foo'}
-				]
+					{code: 'a', value: 'Foo'},
+				],
 			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
-			}]
+					{code: 'a', value: 'Fubar'},
+				],
+			}],
 		});
 
 		const recordInvalid = new MarcRecord({
@@ -319,16 +319,16 @@ describe('subfield-exclusion', () => {
 				ind2: ' ',
 				subfields: [
 					{code: 'a', value: 'Foo'},
-					{code: '2', value: 'dnlm'}
-				]
+					{code: '2', value: 'dnlm'},
+				],
 			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
-			}]
+					{code: 'a', value: 'Fubar'},
+				],
+			}],
 		});
 
 		const recordInvalidFixed = new MarcRecord({
@@ -338,16 +338,16 @@ describe('subfield-exclusion', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Foo'}
-				]
+					{code: 'a', value: 'Foo'},
+				],
 			}, {
 				tag: '245',
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
-			}]
+					{code: 'a', value: 'Fubar'},
+				],
+			}],
 		});
 
 		it('Finds the record valid (spec)', async () => {
@@ -376,8 +376,8 @@ describe('subfield-exclusion', () => {
 			ind1: /^8$/,
 			ind2: /^4$/,
 			subfields: [
-				{code: /2/, value: /.+/}
-			]
+				{code: /2/, value: /.+/},
+			],
 		}];
 
 		const recordValid = new MarcRecord({
@@ -387,15 +387,15 @@ describe('subfield-exclusion', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Foo'}
-				]
+					{code: 'a', value: 'Foo'},
+				],
 			}, {
 				tag: '500',
 				subfields: [
 					{code: 'a', value: 'Foo'},
-					{code: '2', value: 'dnlm'}
-				]
-			}]
+					{code: '2', value: 'dnlm'},
+				],
+			}],
 		});
 
 		const recordIndInvalid = new MarcRecord({
@@ -405,17 +405,17 @@ describe('subfield-exclusion', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
+					{code: 'a', value: 'Fubar'},
+				],
 			}, {
 				tag: '500',
 				ind1: '8',
 				ind2: '4',
 				subfields: [
 					{code: 'a', value: 'Foo'},
-					{code: '2', value: 'dnlm'}
-				]
-			}]
+					{code: '2', value: 'dnlm'},
+				],
+			}],
 		});
 
 		const recordIndInvalidFixed = new MarcRecord({
@@ -425,16 +425,16 @@ describe('subfield-exclusion', () => {
 				ind1: ' ',
 				ind2: ' ',
 				subfields: [
-					{code: 'a', value: 'Fubar'}
-				]
+					{code: 'a', value: 'Fubar'},
+				],
 			}, {
 				tag: '500',
 				ind1: '8',
 				ind2: '4',
 				subfields: [
-					{code: 'a', value: 'Foo'}
-				]
-			}]
+					{code: 'a', value: 'Foo'},
+				],
+			}],
 		});
 
 		it('Finds the record valid - Ind1&Ind2', async () => {

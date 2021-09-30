@@ -41,7 +41,7 @@ export default async function (tagPattern, treshold = 0.9) {
 			description:
       'Handles invalid/missing item language code',
 			validate,
-			fix
+			fix,
 		};
 	}
 
@@ -52,14 +52,14 @@ export default async function (tagPattern, treshold = 0.9) {
 
 		if (results.failed) {
 			return {valid: Boolean(results.currentCode), messages: [
-				'Language detection failed'
+				'Language detection failed',
 			]};
 		}
 
 		if (results.detected) {
 			if (results.detected !== results.currentCode) {
 				return {valid: false, messages: [
-					`Item language code is invalid. Correct language code: ${results.detected}`
+					`Item language code is invalid. Correct language code: ${results.detected}`,
 				]};
 			}
 
@@ -68,7 +68,7 @@ export default async function (tagPattern, treshold = 0.9) {
 
 		if (results.suggested) {
 			return {valid: Boolean(results.currentCode), messages: [
-				`Item language code is invalid. Current code: ${results.currentCode}, suggestions: ${results.suggested.join()}`
+				`Item language code is invalid. Current code: ${results.currentCode}, suggestions: ${results.suggested.join()}`,
 			]};
 		}
 	}
@@ -117,7 +117,7 @@ export default async function (tagPattern, treshold = 0.9) {
 			} else {
 				record.insertField({tag: '041', ind1: ' ', ind2: ' ', subfields: [{
 					code: 'a',
-					value: results.detected
+					value: results.detected,
 				}]});
 			}
 		}
@@ -142,13 +142,13 @@ export default async function (tagPattern, treshold = 0.9) {
 				if (results.probability >= treshold) {
 					return {
 						detected: get2TLangCode(results.language),
-						currentCode: langCode
+						currentCode: langCode,
 					};
 				}
 
 				return {
 					currentCode: langCode,
-					suggested: [get2TLangCode(results.language)]
+					suggested: [get2TLangCode(results.language)],
 				};
 			}
 

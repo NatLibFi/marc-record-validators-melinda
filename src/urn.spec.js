@@ -26,8 +26,6 @@
  *
  */
 
-/* eslint-disable no-undef, max-nested-callbacks, no-unused-expressions */
-
 'use strict';
 
 import {expect} from 'chai';
@@ -43,32 +41,32 @@ describe('urn', async () => {
 		subfields: [
 			{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'},
 			{code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
-			{code: '5', value: 'FI-Vapaa'}
-		]
+			{code: '5', value: 'FI-Vapaa'},
+		],
 	};
 	const f856URN = {
 		tag: '856',
 		ind1: '4',
 		ind2: '0',
 		subfields: [
-			{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'}
-		]
+			{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'},
+		],
 	};
 	const f856URL = {
 		tag: '856',
 		ind1: '4',
 		ind2: '0',
 		subfields: [
-			{code: 'u', value: 'http://foo.bar/'}
-		]
+			{code: 'u', value: 'http://foo.bar/'},
+		],
 	};
 	const f020 = {
 		tag: '020',
 		ind1: ' ',
 		ind2: ' ',
 		subfields: [
-			{code: 'a', value: '978-951-9155-47-0'}
-		]
+			{code: 'a', value: '978-951-9155-47-0'},
+		],
 	};
 
 	it('Creates a validator', async () => {
@@ -88,14 +86,14 @@ describe('urn', async () => {
 		return {
 			validate: async (valid, ...recfields) => {
 				const result = await validator.validate(new MarcRecord({fields: recfields}));
-				expect(result).to.eql({valid: valid});
+				expect(result).to.eql({valid});
 			},
 
 			fix: async (recfields, resfields) => {
 				const record = new MarcRecord({fields: recfields});
 				await validator.fix(record);
 				expect(record.fields).to.eql(resfields);
-			}
+			},
 		};
 	};
 
