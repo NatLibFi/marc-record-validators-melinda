@@ -2,7 +2,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebug from 'debug';
 import {autRules, bibRules} from './rules';
 
-const debug = createDebug('marc-record-punctuation');
+const debug = createDebug('@natlibfi/marc-record-validator-melinda/punctuation');
 
 function cloneDeep(field) {
 	const r = new MarcRecord();
