@@ -265,6 +265,12 @@ const confSpec = [
 			lastOf: ['a', 'd', 'e', 'f', 'h', 'i'],
 			mandatory: ['b']
 		}
+	}, { //	341	EI
+		rangeStart: null,
+		rangeEnd: null,
+		index: 341,
+		punc: false,
+		special: null
 	}, { //	342	EI
 		rangeStart: null,
 		rangeEnd: null,
