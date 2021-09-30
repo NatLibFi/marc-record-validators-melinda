@@ -265,10 +265,10 @@ const confSpec = [
 			lastOf: ['a', 'd', 'e', 'f', 'h', 'i'],
 			mandatory: ['b']
 		}
-	}, { //	342	EI
-		rangeStart: null,
-		rangeEnd: null,
-		index: 342,
+	}, { //	341-342	EI
+		rangeStart: 341,
+		rangeEnd: 342,
+		index: null,
 		punc: false,
 		special: null
 	}, { //	343	KYLLÄ
