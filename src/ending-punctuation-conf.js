@@ -394,6 +394,12 @@ const confSpec = [
 		index: 530,
 		punc: true,
 		special: null
+	}, { //	532	EI
+		rangeStart: null,
+		rangeEnd: null,
+		index: 532,
+		punc: false,
+		special: null
 	}, { //	533-534	KYLLÄ
 		rangeStart: 533,
 		rangeEnd: 534,
