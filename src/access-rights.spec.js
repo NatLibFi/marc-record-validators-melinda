@@ -40,7 +40,7 @@ describe('access-rights', async () => {
 		ind2: ' ',
 		subfields: [
 			{code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'},
-			{code: 'f', value: 'Online access with authorization.'},
+			{code: 'f', value: 'Online access with authorization'},
 			{code: '2', value: 'star'},
 			{code: '5', value: 'FI-Vapaa'},
 			{code: '9', value: 'FENNI<KEEP>'},

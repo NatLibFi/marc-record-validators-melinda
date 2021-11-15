@@ -42,7 +42,7 @@ export default async function () {
 					value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.',
 				}, {
 					code: 'f',
-					value: 'Online access with authorization.',
+					value: 'Online access with authorization',
 				}, {
 					code: '2',
 					value: 'star',
