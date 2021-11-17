@@ -263,12 +263,12 @@ const confSpec = [
 		punc: true,
 		special: {
 			lastOf: ['a', 'd', 'e', 'f', 'h', 'i'],
-			mandatory: ['b'],
-		},
-	}, { //	342	EI
-		rangeStart: null,
-		rangeEnd: null,
-		index: 342,
+			mandatory: ['b']
+		}
+	}, { //	341-342	EI
+		rangeStart: 341,
+		rangeEnd: 342,
+		index: null,
 		punc: false,
 		special: null,
 	}, { //	343	KYLLÄ
@@ -393,7 +393,13 @@ const confSpec = [
 		rangeEnd: null,
 		index: 530,
 		punc: true,
-		special: null,
+		special: null
+	}, { //	532	EI
+		rangeStart: null,
+		rangeEnd: null,
+		index: 532,
+		punc: false,
+		special: null
 	}, { //	533-534	KYLLÄ
 		rangeStart: 533,
 		rangeEnd: 534,
