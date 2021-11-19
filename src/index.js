@@ -26,7 +26,6 @@
 *
 */
 
-'use strict';
 
 import AccessRights from './access-rights';
 import DoubleCommas from './double-commas';
@@ -48,22 +47,22 @@ import UnicodeDecomposition from './unicode-decomposition';
 import Urn from './urn';
 
 export {
-	AccessRights,
-	DoubleCommas,
-	DuplicatesInd1,
-	EmptyFields,
-	EndingPunctuation,
-	FieldExclusion,
-	FieldsPresent,
-	FieldStructure,
-	FixedFields,
-	IdenticalFields,
-	IsbnIssn,
-	ItemLanguage,
-	Punctuation,
-	ResolvableExtReferences,
-	SortTags,
-	SubfieldExclusion,
-	UnicodeDecomposition,
-	Urn
+  AccessRights,
+  DoubleCommas,
+  DuplicatesInd1,
+  EmptyFields,
+  EndingPunctuation,
+  FieldExclusion,
+  FieldsPresent,
+  FieldStructure,
+  FixedFields,
+  IdenticalFields,
+  IsbnIssn,
+  ItemLanguage,
+  Punctuation,
+  ResolvableExtReferences,
+  SortTags,
+  SubfieldExclusion,
+  UnicodeDecomposition,
+  Urn
 };

@@ -1,119 +1,113 @@
 {
-	"name": "@natlibfi/marc-record-validators-melinda",
-	"description": "MARC record validators used in Melinda",
-	"author": {
-		"name": "The National Library of Finland"
-	},
-	"keywords": [],
-	"homepage": "https://github.com/natlibfi/marc-record-validators-melinda",
-	"bugs": {
-		"url": "https://github.com/natlibfi/marc-record-validators-melinda/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
-	},
-	"license": "LGPL-3.0+",
-	"version": "8.4.4",
-	"main": "./dist/index.js",
-	"publishConfig": {
-		"access": "public"
-	},
-	"engines": {
-		"node": ">=12"
-	},
-	"scripts": {
-		"prepare": "npm run build",
-		"lint": "eslint src",
-		"lint:dev": "eslint --fix src",
-		"test:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require @babel/register",
-		"test": "npm run lint && npm run test:base -- src/**/*.spec.js && npm run coverage",
-		"test:dev": "npm run lint:dev && npm run test:base -- src/**/*.spec.js && npm run coverage",
-		"coverage": "nyc check-coverage --per-file",
-		"build": "babel src --source-maps --copy-files --delete-dir-on-start --out-dir=dist",
-		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm run test:dev'",
-		"watch:validator": "cross-env DEBUG=1 NODE_ENV=test chokidar src/$VALIDATOR.js src/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js src/$VALIDATOR.spec.js && npm run test:unit:base --  src/$VALIDATOR.spec.js && npm run coverage'"
-	},
-	"dependencies": {
-		"@babel/register": "^7.14.5",
-		"@natlibfi/issn-verify": "^1.0.0",
-		"@natlibfi/marc-record": "^6.1.1",
-		"cld3-asm": "^3.1.1",
-		"debug": "^4.3.2",
-		"isbn3": "^1.1.13",
-		"langs": "^2.0.0",
-		"node-fetch": "^2.6.1",
-		"xml2js": ">=0.4.23 <1.0.0"
-	},
-	"peerDependencies": {
-		"@natlibfi/marc-record-validate": "^6.0.1"
-	},
-	"devDependencies": {
-		"@babel/cli": "^7.14.8",
-		"@babel/core": "^7.14.8",
-		"@babel/preset-env": "^7.14.8",
-		"@babel/eslint-parser": "^7.14.7",
-		"babel-plugin-istanbul": "^6.0.0",
-		"babel-plugin-rewire": "^1.2.0",
-		"chai": "^4.3.4",
-		"chai-as-promised": "^7.1.1",
-		"chokidar-cli": "^2.1.0",
-		"cross-env": "^7.0.3",
-		"eslint": "^7.31.0",
-		"eslint-config-xo": "0.31.0",
-		"eslint-plugin-import": "^2.23.4",
-		"fetch-mock": "^9.11.0",
-		"mocha": "^9.0.2",
-		"nyc": "^15.1.0"
-	},
-	"eslintConfig": {
-		"plugins": [
-			"import"
-		],
-		"extends": [
-			"xo",
-			"plugin:import/errors"
-		],
-		"rules": {
-			"prefer-arrow-callback": [
-				"error"
-			]
-		},
-		"env": {
-			"mocha": true
-		}
-	},
-	"babel": {
-		"presets": [
-			[
-				"@babel/preset-env",
-				{
-					"targets": "maintained node versions"
-				}
-			]
-		],
-		"env": {
-			"test": {
-				"plugins": [
-					"rewire",
-					"istanbul"
-				]
-			}
-		}
-	},
-	"nyc": {
-		"reporter": [
-			"lcov",
-			"html"
-		],
-		"require": [
-			"@babel/register"
-		],
-		"sourceMap": false,
-		"instrument": false,
-		"lines": 80,
-		"statements": 80,
-		"functions": 80,
-		"branches": 80
-	}
+  "name": "@natlibfi/marc-record-validators-melinda",
+  "description": "MARC record validators used in Melinda",
+  "author": {
+    "name": "The National Library of Finland"
+  },
+  "keywords": [],
+  "homepage": "https://github.com/natlibfi/marc-record-validators-melinda",
+  "bugs": {
+    "url": "https://github.com/natlibfi/marc-record-validators-melinda/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
+  },
+  "license": "LGPL-3.0+",
+  "version": "8.4.4",
+  "main": "./dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "prepare": "npm run build",
+    "lint": "eslint src",
+    "lint:dev": "eslint --fix src",
+    "test:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require @babel/register",
+    "test": "npm run lint && npm run test:base -- src/**/*.spec.js && npm run coverage",
+    "test:dev": "npm run lint:dev && npm run test:base -- src/**/*.spec.js && npm run coverage",
+    "coverage": "nyc check-coverage --per-file",
+    "build": "babel src --source-maps --copy-files --delete-dir-on-start --out-dir=dist",
+    "watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm run test:dev'",
+    "watch:validator": "cross-env DEBUG=1 NODE_ENV=test chokidar src/$VALIDATOR.js src/$VALIDATOR.spec.js -c 'npm run lint src/$VALIDATOR.js src/$VALIDATOR.spec.js && npm run test:unit:base --  src/$VALIDATOR.spec.js && npm run coverage'"
+  },
+  "dependencies": {
+    "@babel/register": "^7.15.3",
+    "@natlibfi/issn-verify": "^1.0.0",
+    "@natlibfi/marc-record": "^6.1.1",
+    "cld3-asm": "^3.1.1",
+    "debug": "^4.3.2",
+    "isbn3": "^1.1.14",
+    "langs": "^2.0.0",
+    "node-fetch": "^2.6.1",
+    "xml2js": ">=0.4.23 <1.0.0"
+  },
+  "peerDependencies": {
+    "@natlibfi/marc-record-validate": "^6.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.6",
+    "@babel/eslint-parser": "^7.15.7",
+    "@natlibfi/eslint-config-melinda-backend": "^1.1.1",
+    "babel-plugin-istanbul": "^6.0.0",
+    "babel-plugin-rewire": "^1.2.0",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chokidar-cli": "^2.1.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "fetch-mock": "^9.11.0",
+    "mocha": "^9.1.2",
+    "nyc": "^15.1.0"
+  },
+  "eslintConfig": {
+    "parser": "@babel/eslint-parser",
+    "extends": [
+      "@natlibfi/melinda-backend"
+    ],
+    "env": {
+      "mocha": true
+    }
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": "maintained node versions"
+        }
+      ]
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "rewire",
+          "istanbul"
+        ]
+      }
+    }
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "html"
+    ],
+    "require": [
+      "@babel/register"
+    ],
+    "exclude": [
+      "src/punctuation/*.js"
+    ],
+    "sourceMap": false,
+    "instrument": false,
+    "lines": 80,
+    "statements": 80,
+    "functions": 80,
+    "branches": 80
+  }
 }

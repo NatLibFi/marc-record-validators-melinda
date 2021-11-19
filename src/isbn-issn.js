@@ -29,131 +29,129 @@
 import ISBN from 'isbn3';
 import validateISSN from '@natlibfi/issn-verify';
 
-export default async ({hyphenateISBN = false, handleInvalid = false} = {}) => {
-	return {
-		validate, fix,
-		description: 'Validates ISBN and ISSN values'
-	};
+export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
+  return {
+    validate, fix,
+    description: 'Validates ISBN and ISSN values'
+  };
 
-	function getInvalidFields(record) {
-		return record.get(/^(020|022)$/).filter(field => {
-			if (field.tag === '020') {
-				const subfield = field.subfields.find(sf => sf.code === 'a');
-				const sfZ = field.subfields.find(sf => sf.code === 'z');
+  function getInvalidFields(record) {
+    return record.get(/^(020|022)$/u).filter(field => { // eslint-disable-line prefer-named-capture-group
+      if (field.tag === '020') {
+        const subfield = field.subfields.find(sf => sf.code === 'a');
+        const sfZ = field.subfields.find(sf => sf.code === 'z');
 
-				if (subfield === undefined) {
-					if (sfZ) {
-						return false;
-					}
+        if (subfield === undefined) {
+          if (sfZ) {
+            return false;
+          }
 
-					return true;
-				}
+          return true;
+        }
 
-				// If value contains space
-				if (subfield.value.indexOf(' ') > -1) {
-					return true;
-				}
+        // If value contains space
+        if (subfield.value.indexOf(' ') > -1) {
+          return true;
+        }
 
-				const auditedIsbn = ISBN.audit(subfield.value);
-				if (!auditedIsbn.validIsbn) {
-					return true;
-				}
+        const auditedIsbn = ISBN.audit(subfield.value);
+        if (!auditedIsbn.validIsbn) {
+          return true;
+        }
 
-				const parsedIsbn = ISBN.parse(subfield.value);
-				if (hyphenateISBN) {
-					return subfield.value !== parsedIsbn.isbn13h;
-				}
+        const parsedIsbn = ISBN.parse(subfield.value);
+        if (hyphenateISBN) {
+          return subfield.value !== parsedIsbn.isbn13h;
+        }
 
-				return subfield.value !== parsedIsbn.isbn13;
-			}
+        return subfield.value !== parsedIsbn.isbn13;
+      }
 
-			const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-			const sfY = field.subfields.find(sf => sf.code === 'y');
+      const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+      const sfY = field.subfields.find(sf => sf.code === 'y');
 
-			if (subfield === undefined) {
-				if (sfY) {
-					return false;
-				}
+      if (subfield === undefined) {
+        if (sfY) {
+          return false;
+        }
 
-				return true;
-			}
+        return true;
+      }
 
-			return !validateISSN(subfield.value);
-		});
-	}
+      return !validateISSN(subfield.value);
+    });
+  }
 
-	async function validate(record) {
-		const fields = getInvalidFields(record);
+  function validate(record) {
+    const fields = getInvalidFields(record);
 
-		if (fields.length === 0) {
-			return {valid: true};
-		}
+    if (fields.length === 0) {
+      return {valid: true};
+    }
 
-		return fields
-			.map(field => {
-				if (field.tag === '020') {
-					const sfvalue = field.subfields.find(sf => sf.code === 'a');
-					if (sfvalue) {
-						return {name: 'ISBN', value: sfvalue.value};
-					}
+    return fields
+      .map(field => {
+        if (field.tag === '020') {
+          const sfvalue = field.subfields.find(sf => sf.code === 'a');
+          if (sfvalue) {
+            return {name: 'ISBN', value: sfvalue.value};
+          }
 
-					return {name: 'ISBN', value: undefined};
-				}
+          return {name: 'ISBN', value: undefined};
+        }
 
-				return {name: 'ISSN', value: getISSN()};
+        return {name: 'ISSN', value: getISSN()};
 
-				function getISSN() {
-					const result = field.subfields.find(sf => {
-						return sf.code === 'a' || sf.code === 'l';
-					});
+        function getISSN() {
+          const result = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
-					if (result) {
-						return result.value;
-					}
+          if (result) {
+            return result.value;
+          }
 
-					return undefined;
-				}
-			})
-			.reduce((acc, obj) => {
-				const {name, value} = obj;
-				const msg = `${name} (${value}) is not valid`;
+          return undefined;
+        }
+      })
+      .reduce((acc, obj) => {
+        const {name, value} = obj;
+        const msg = `${name} (${value}) is not valid`;
 
-				return {...acc, messages: acc.messages.concat(msg)};
-			}, {valid: false, messages: []});
-	}
+        return {...acc, messages: acc.messages.concat(msg)};
+      }, {valid: false, messages: []});
+  }
 
-	async function fix(record) {
-		getInvalidFields(record).forEach(field => {
-			if (field.tag === '020') {
-				const subfield = field.subfields.find(sf => sf.code === 'a');
-				if (subfield) {
-					// ISBN is valid but is missing hyphens
-					const trimmedValue = trimSpaces(subfield.value);
-					const auditResult = ISBN.audit(trimmedValue);
-					if (auditResult.validIsbn) {
-						const parsedIsbn = ISBN.parse(trimmedValue);
-						if (hyphenateISBN) {
-							subfield.value = parsedIsbn.isbn13h;
-						} else {
-							// Just trim
-							subfield.value = parsedIsbn.isbn13;
-						}
-					} else if (handleInvalid) {
-						field.subfields.push({code: 'z', value: trimmedValue});
-						record.removeSubfield(subfield, field);
-					}
-				}
-			} else {
-				const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-				if (subfield && handleInvalid) {
-					field.subfields.push({code: 'y', value: trimSpaces(subfield.value)});
-					record.removeSubfield(subfield, field);
-				}
-			}
-		});
+  function fix(record) {
+    getInvalidFields(record).forEach(field => {
+      if (field.tag === '020') {
+        const subfield = field.subfields.find(sf => sf.code === 'a');
+        if (subfield) {
+          // ISBN is valid but is missing hyphens
+          const trimmedValue = trimSpaces(subfield.value);
+          const auditResult = ISBN.audit(trimmedValue);
+          if (auditResult.validIsbn) {
+            const parsedIsbn = ISBN.parse(trimmedValue);
+            if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
+              subfield.value = parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
+            } else { // eslint-disable-line functional/no-conditional-statement
+              // Just trim
+              subfield.value = parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
+            }
+          } else if (handleInvalid) { // eslint-disable-line functional/no-conditional-statement
+            field.subfields.push({code: 'z', value: trimmedValue}); // eslint-disable-line functional/immutable-data
+            record.removeSubfield(subfield, field);
+          }
+        }
+      } else {
+        const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+        if (subfield && handleInvalid) { // eslint-disable-line functional/no-conditional-statement
+          field.subfields.push({code: 'y', value: trimSpaces(subfield.value)}); // eslint-disable-line functional/immutable-data
+          record.removeSubfield(subfield, field);
+        }
+      }
+    });
 
-		function trimSpaces(value) {
-			return value.replace(/\s/gu, '');
-		}
-	}
+    function trimSpaces(value) {
+      return value.replace(/\s/gu, '');
+    }
+  }
 };

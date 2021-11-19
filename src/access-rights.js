@@ -26,81 +26,78 @@
  *
  */
 
-/* eslint-disable require-await */
 
-'use strict';
+export default function () {
+  const sf506 = [{code: 'a', value: /aineisto on käytettävissä vapaakappalekirjastoissa/ui}];
+  const sf540 = [{code: 'c', value: /laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä/ui}];
 
-export default async function () {
-	const sf506 = [{code: 'a', value: /aineisto on käytettävissä vapaakappalekirjastoissa/i}];
-	const sf540 = [{code: 'c', value: /laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä/i}];
+  function fix(record) {
+    if (!hasTag(record, '506', sf506)) { // eslint-disable-line functional/no-conditional-statement
+      record.insertField({
+        tag: '506',
+        ind1: '1',
+        subfields: [
+          {
+            code: 'a',
+            value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'
+          }, {
+            code: 'f',
+            value: 'Online access with authorization'
+          }, {
+            code: '2',
+            value: 'star'
+          }, {
+            code: '5',
+            value: 'FI-Vapaa'
+          }, {
+            code: '9',
+            value: 'FENNI<KEEP>'
+          }
+        ]
+      });
+    }
 
-	async function fix(record) {
-		if (!hasTag(record, '506', sf506)) {
-			record.insertField({
-				tag: '506',
-				ind1: '1',
-				subfields: [{
-					code: 'a',
-					value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'
-				}, {
-					code: 'f',
-					value: 'Online access with authorization.'
-				}, {
-					code: '2',
-					value: 'star'
-				}, {
-					code: '5',
-					value: 'FI-Vapaa'
-				}, {
-					code: '9',
-					value: 'FENNI<KEEP>'
-				}]
-			});
-		}
+    if (!hasTag(record, '540', sf540)) { // eslint-disable-line functional/no-conditional-statement
+      record.insertField({
+        tag: '540',
+        subfields: [
+          {
+            code: 'a',
+            value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'
+          }, {
+            code: 'b',
+            value: 'Kansalliskirjasto;'
+          }, {
+            code: 'c',
+            value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä'
+          }, {
+            code: 'u',
+            value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433'
+          }, {
+            code: '5',
+            value: 'FI-Vapaa'
+          }, {
+            code: '9',
+            value: 'FENNI<KEEP>'
+          }
+        ]
+      });
+    }
 
-		if (!hasTag(record, '540', sf540)) {
-			record.insertField({
-				tag: '540',
-				subfields: [{
-					code: 'a',
-					value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'
-				}, {
-					code: 'b',
-					value: 'Kansalliskirjasto;'
-				}, {
-					code: 'c',
-					value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä'
-				}, {
-					code: 'u',
-					value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433'
-				}, {
-					code: '5',
-					value: 'FI-Vapaa'
-				}, {
-					code: '9',
-					value: 'FENNI<KEEP>'
-				}]
-			});
-		}
+    return true;
+  }
 
-		return true;
-	}
+  function validate(record) {
+    return {valid: hasTag(record, '506', sf506) && hasTag(record, '540', sf540)};
+  }
 
-	async function validate(record) {
-		return {valid: hasTag(record, '506', sf506) && hasTag(record, '540', sf540)};
-	}
+  return {
+    description: 'Adds access rights fields for a record (if not existing)',
+    validate,
+    fix
+  };
 
-	return {
-		description: 'Adds access rights fields for a record (if not existing)',
-		validate,
-		fix
-	};
-
-	function hasTag(rec, tag, sfcv) {
-		return rec.fields.some(f => {
-			return (f.tag === tag) && sfcv.every(({code, value}) => f.subfields.some(sf => {
-				return (sf.code === code) && value.test(sf.value);
-			}));
-		});
-	}
+  function hasTag(rec, tag, sfcv) {
+    return rec.fields.some(f => f.tag === tag && sfcv.every(({code, value}) => f.subfields.some(sf => sf.code === code && value.test(sf.value))));
+  }
 }

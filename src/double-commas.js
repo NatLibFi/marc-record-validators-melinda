@@ -26,23 +26,17 @@
  *
  */
 
-'use strict';
 
-export default async function () {
-	return {
-		description: 'Handle double commas in 700$e-subfields',
-		validate: async record => ({
-			valid: !record
-				.get(/^700$/)
-				.some(f =>
-					f.subfields.every(sf => sf.code === 'e' && /,,/.test(sf.value))
-				)
-		}),
-		fix: async record =>
-			record.get(/^700$/).forEach(f =>
-				f.subfields.filter(sf => sf.code === 'e').forEach(sf => {
-					sf.value = sf.value.replace(/,,/, ',');
-				})
-			)
-	};
+export default function () {
+  return {
+    description: 'Handle double commas in 700$e-subfields',
+    validate: record => ({
+      valid: !record
+        .get(/^700$/u)
+        .some(f => f.subfields.every(sf => sf.code === 'e' && (/,,/u).test(sf.value)))
+    }),
+    fix: record => record.get(/^700$/u).forEach(f => f.subfields.filter(sf => sf.code === 'e').forEach(sf => {
+      sf.value = sf.value.replace(/,,/u, ','); // eslint-disable-line functional/immutable-data
+    }))
+  };
 }
