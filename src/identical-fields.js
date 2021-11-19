@@ -32,36 +32,35 @@
 
 import {MarcRecord} from '@natlibfi/marc-record';
 
-function uniqWith(fields) {
-	return fields.reduce(
-		(uniq, field) => {
-			if (!uniq.some(f => MarcRecord.isEqual(f, field))) {
-				uniq.push(field);
-			}
+export default function () {
+  return {
+    description: 'Handles identical duplicate in record fields',
+    validate,
+    fix
+  };
 
-			return uniq;
-		}, []);
-}
+  function validate(record) {
+    const uniq = uniqWith(record.fields);
+    const valid = uniq.length === record.fields.length;
+    const messages = record.fields.filter(tag => !uniq.includes(tag))
+      .map(obj => `Field ${obj.tag} has duplicates`);
 
-export default async function () {
-	return {
-		description: 'Handles identical duplicate in record fields',
-		validate,
-		fix,
-	};
+    return valid ? {valid, messages: []} : {valid, messages};
+  }
 
-	async function validate(record) {
-		const uniq = uniqWith(record.fields);
-		const valid = uniq.length === record.fields.length;
-		const messages = record.fields.filter(tag => !uniq.includes(tag))
-			.map(obj => `Field ${obj.tag} has duplicates`);
+  function fix(record) {
+    record.fields
+      .filter(tag => !uniqWith(record.fields).includes(tag))
+      .forEach(tag => record.removeField(tag));
+  }
 
-		return valid ? {valid, messages: []} : {valid, messages};
-	}
+  function uniqWith(fields) {
+    return fields.reduce((uniq, field) => {
+      if (!uniq.some(f => MarcRecord.isEqual(f, field))) { // eslint-disable-line functional/no-conditional-statement
+        uniq.push(field); // eslint-disable-line functional/immutable-data
+      }
 
-	async function fix(record) {
-		record.fields
-			.filter(tag => !uniqWith(record.fields).includes(tag))
-			.forEach(tag => record.removeField(tag));
-	}
+      return uniq;
+    }, []);
+  }
 }
