@@ -79,6 +79,29 @@ describe('fields-present', () => {
 
       expect(result).to.eql({valid: true, messages: []});
     });
+    it('Finds the record valid', async () => {
+      const tagPatterns = [/^(020|022|024)$/u]; // eslint-disable-line
+      const validator = await validatorFactory(tagPatterns);
+      const record = new MarcRecord({
+        fields: [
+          {
+            tag: '020',
+            ind1: ' ',
+            ind2: '0',
+            subfields: [{code: 'a', value: 'foo'}]
+          },
+          {
+            tag: '040',
+            ind1: ' ',
+            ind2: '0',
+            subfields: [{code: 'a', value: 'foo'}]
+          }
+        ]
+      });
+      const result = await validator.validate(record);
+
+      expect(result).to.eql({valid: true, messages: []});
+    });
     it('Finds the record invalid', async () => {
       const tagPatterns = [/^5..$/u, /^FOO$/u];
       const validator = await validatorFactory(tagPatterns);
@@ -86,6 +109,12 @@ describe('fields-present', () => {
         fields: [
           {
             tag: '001',
+            ind1: ' ',
+            ind2: '0',
+            subfields: [{code: 'a', value: 'foo'}]
+          },
+          {
+            tag: '500',
             ind1: ' ',
             ind2: '0',
             subfields: [{code: 'a', value: 'foo'}]
@@ -100,7 +129,7 @@ describe('fields-present', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['The following tag patterns are not present in the record tag field:  /^5..$/u /^FOO$/u']});
+      expect(result).to.eql({valid: false, messages: ['The following tag patterns are not present in the record tag field:   /^FOO$/u']});
     });
   });
 });
