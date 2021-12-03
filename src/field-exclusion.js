@@ -67,7 +67,8 @@ function forEach(obj, fun) {
 }
 
 function isRegExp(re) {
-  return re instanceof RegExp;
+  const result = re instanceof RegExp;
+  return result;
 }
 
 export default function (config) {
@@ -76,13 +77,14 @@ export default function (config) {
   }
 
   // Transform RegExp-only elements to objects
-  configValid(config.map(e => isRegExp(e) ? {tag: e} : e));
+  const objOnlyConfigs = config.map(e => isRegExp(e) ? {tag: e} : e);
+  configValid(objOnlyConfigs);
 
   return {
     description:
       'Checks that the record does not contain the configured fields',
-    validate: record => excludeFields(record, config, false),
-    fix: record => excludeFields(record, config, true)
+    validate: record => excludeFields(record, objOnlyConfigs, false),
+    fix: record => excludeFields(record, objOnlyConfigs, true)
   };
 
   /// /////////////////////////////////////////
