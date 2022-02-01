@@ -29,7 +29,7 @@
 import ISBN from 'isbn3';
 import validateISSN from '@natlibfi/issn-verify';
 
-export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
+export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} = {}) => {
   return {
     validate, fix,
     description: 'Validates ISBN and ISSN values'
@@ -63,10 +63,18 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         if (!auditedIsbn.validIsbn) {
           return true;
         }
-
+        // Should we refactor code by adding a function that returns legal set of values,
+        // and then we compare subfield.value against that list?
         const parsedIsbn = ISBN.parse(subfield.value);
         if (hyphenateISBN) {
+          if (keep10 && subfield.value === parsedIsbn.isbn10h) {
+            return false;
+          }
           return subfield.value !== parsedIsbn.isbn13h;
+        }
+
+        if (keep10 && subfield.value === parsedIsbn.isbn10) {
+          return false;
         }
 
         return subfield.value !== parsedIsbn.isbn13;
@@ -164,7 +172,7 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         const subfield = field.subfields.find(sf => sf.code === 'a');
         if (subfield) {
           // ISBN is valid but is missing hyphens
-          const trimmedValue = trimSpaces(subfield.value);
+          const trimmedValue = trimSpaces(subfield.value); // NB! This might lose information that should be stored in $q...
           const auditResult = ISBN.audit(trimmedValue);
           if (auditResult.validIsbn) {
             const parsedIsbn = ISBN.parse(trimmedValue);
