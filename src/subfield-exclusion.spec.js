@@ -4,7 +4,7 @@
  *
  * MARC record validators used in Melinda
  *
- * Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+ * Copyright (c) 2014-2022 University Of Helsinki (The National Library Of Finland)
  *
  * This file is part of marc-record-validators-melinda
  *
@@ -319,6 +319,57 @@ describe('subfield-exclusion', () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
       expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+    });
+  });
+
+
+  describe('#validate: Remove only subfield -> remove field as well', () => {
+    const config = [
+      {
+        tag: /^041$/u,
+        subfields: [{code: /^[ad]$/u, value: /^zxx$/u}]
+      }
+    ];
+
+    const recordOriginal = new MarcRecord({
+      leader: 'foo',
+      fields: [
+        {
+          tag: '041',
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'zxx'}]
+        }, {
+          tag: '245',
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Fubar'}]
+        }
+      ]
+    });
+
+    const recordModified = new MarcRecord({
+      leader: 'foo',
+      fields: [
+        {
+          tag: '245',
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Fubar'}]
+        }
+      ]
+    });
+
+    it('Finds the record with 041$a zxx invalid (spec)', async () => {
+      const validator = await validatorFactory(config);
+      const result = await validator.validate(recordOriginal);
+      expect(result).to.eql({valid: false, message: ['Subfield $041$$ashould be excluded']});
+    });
+
+    it('Repairs invalid record', async () => {
+      const validator = await validatorFactory(config);
+      await validator.fix(recordOriginal);
+      expect(recordOriginal.equalsTo(recordModified)).to.eql(true);
     });
   });
 
