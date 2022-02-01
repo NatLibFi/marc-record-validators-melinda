@@ -29,7 +29,7 @@
 import ISBN from 'isbn3';
 import validateISSN from '@natlibfi/issn-verify';
 
-export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} = {}) => {
+export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = {}) => {
   return {
     validate, fix,
     description: 'Validates ISBN and ISSN values'
