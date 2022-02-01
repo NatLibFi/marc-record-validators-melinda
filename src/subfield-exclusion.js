@@ -4,7 +4,7 @@
  *
  * MARC record validators used in Melinda
  *
- * Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+ * Copyright (c) 2014-2022 University Of Helsinki (The National Library Of Finland)
  *
  * This file is part of marc-record-validators-melinda
  *
@@ -176,6 +176,10 @@ export default function (config) {
             });
 
             excluded.forEach(sf => record.removeSubfield(sf, element));
+            // If no subfields remains, the whole field will be removed as well:
+            if (element.subfields && element.subfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
+              record.removeField(element);
+            }
           });
         }
       });
