@@ -172,7 +172,7 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} =
         const subfield = field.subfields.find(sf => sf.code === 'a');
         if (subfield) {
           // ISBN is valid but is missing hyphens
-          const trimmedValue = trimSpaces(subfield.value); // NB! This might lose information that should be stored in $q...
+          const trimmedValue = trimISBN(subfield.value); // NB! This might lose information that should be stored in $q...
           const auditResult = ISBN.audit(trimmedValue);
           if (auditResult.validIsbn) {
             const parsedIsbn = ISBN.parse(trimmedValue);
@@ -198,6 +198,10 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} =
 
     function trimSpaces(value) {
       return value.replace(/\s/gu, '');
+    }
+
+    function trimISBN(value) {
+      return trimSpaces(value.replace(/\s\D+$/gu, '')); // handle "1234567890 (nid.)" => "1234567890" as well as spaces
     }
   }
 };
