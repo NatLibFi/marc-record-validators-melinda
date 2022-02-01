@@ -76,8 +76,8 @@ export default function (config) {
   return {
     description:
       'Checks that the record does not contain the configured subfields',
-    validate: record => excludeFields(record, config, false),
-    fix: record => excludeFields(record, config, true)
+    validate: record => excludeSubfields(record, config, false),
+    fix: record => excludeSubfields(record, config, true)
   };
 
   /// /////////////////////////////////////////
@@ -134,7 +134,7 @@ export default function (config) {
 
   /// /////////////////////////////////////////
   // These check that record is valid
-  function excludeFields(record, conf, fix) {
+  function excludeSubfields(record, conf, fix) {
     const res = {message: [], valid: true};
 
     // Parse trough every element of config array
