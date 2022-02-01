@@ -35,17 +35,22 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
     description: 'Validates ISBN and ISSN values'
   };
 
+
   function getInvalidFields(record) {
     return record.get(/^(020|022)$/u).filter(field => { // eslint-disable-line prefer-named-capture-group
+      // Check ISBN:
       if (field.tag === '020') {
+        if (invalidField020(field)) {
+          return true;
+        }
+
         const subfield = field.subfields.find(sf => sf.code === 'a');
-        const sfZ = field.subfields.find(sf => sf.code === 'z');
 
         if (subfield === undefined) {
+          const sfZ = field.subfields.find(sf => sf.code === 'z');
           if (sfZ) {
             return false;
           }
-
           return true;
         }
 
@@ -66,20 +71,53 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 
         return subfield.value !== parsedIsbn.isbn13;
       }
+      // Check ISSN:
+      if (invalidField022(field)) {
+        return true;
+      }
 
       const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-      const sfY = field.subfields.find(sf => sf.code === 'y');
+
+      return !validateISSN(subfield.value);
+    });
+
+    function invalidField020(field) {
+      if (field.tag !== '020') {
+        return false;
+      }
+      const subfield = field.subfields.find(sf => sf.code === 'a');
 
       if (subfield === undefined) {
+        const sfZ = field.subfields.find(sf => sf.code === 'z');
+        if (sfZ) {
+          return false;
+        }
+        return true;
+      }
+
+      // If value contains space, it's not ok (it's typically something like "1234567890 (nid.)")
+      if (subfield.value.indexOf(' ') > -1) {
+        return true;
+      }
+      return false;
+    }
+
+    function invalidField022(field) {
+      if (field.tag !== '022') {
+        return false;
+      }
+      const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+
+      if (subfield === undefined) {
+        const sfY = field.subfields.find(sf => sf.code === 'y');
         if (sfY) {
           return false;
         }
 
         return true;
       }
-
-      return !validateISSN(subfield.value);
-    });
+      return false;
+    }
   }
 
   function validate(record) {
