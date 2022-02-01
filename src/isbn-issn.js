@@ -35,7 +35,6 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} =
     description: 'Validates ISBN and ISSN values'
   };
 
-
   function getInvalidFields(record) {
     return record.get(/^(020|022)$/u).filter(field => { // eslint-disable-line prefer-named-capture-group
       // Check ISBN:
@@ -45,20 +44,6 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} =
         }
 
         const subfield = field.subfields.find(sf => sf.code === 'a');
-
-        if (subfield === undefined) {
-          const sfZ = field.subfields.find(sf => sf.code === 'z');
-          if (sfZ) {
-            return false;
-          }
-          return true;
-        }
-
-        // If value contains space
-        if (subfield.value.indexOf(' ') > -1) {
-          return true;
-        }
-
         const auditedIsbn = ISBN.audit(subfield.value);
         if (!auditedIsbn.validIsbn) {
           return true;
@@ -172,17 +157,11 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} =
         const subfield = field.subfields.find(sf => sf.code === 'a');
         if (subfield) {
           // ISBN is valid but is missing hyphens
-          const trimmedValue = trimISBN(subfield.value); // NB! This might lose information that should be stored in $q...
-          const auditResult = ISBN.audit(trimmedValue);
-          if (auditResult.validIsbn) {
-            const parsedIsbn = ISBN.parse(trimmedValue);
-            if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
-              subfield.value = parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
-            } else { // eslint-disable-line functional/no-conditional-statement
-              // Just trim
-              subfield.value = parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
-            }
+          const normalizedValue = normalizeIsbnValue(subfield.value);
+          if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statement
+            subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
           } else if (handleInvalid) { // eslint-disable-line functional/no-conditional-statement
+            const trimmedValue = trimISBN(subfield.value);
             field.subfields.push({code: 'z', value: trimmedValue}); // eslint-disable-line functional/immutable-data
             record.removeSubfield(subfield, field);
           }
@@ -195,6 +174,20 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = false} =
         }
       }
     });
+
+    function normalizeIsbnValue(value) {
+      const trimmedValue = trimISBN(value); // NB! This might lose information that should be stored in $q...
+      const auditResult = ISBN.audit(trimmedValue);
+      if (auditResult.validIsbn) {
+        const parsedIsbn = ISBN.parse(trimmedValue);
+        if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
+          return trimmedValue.length === 10 && keep10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
+        }
+        // Just trim
+        return trimmedValue.length === 10 && keep10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
+      }
+      return undefined;
+    }
 
     function trimSpaces(value) {
       return value.replace(/\s/gu, '');
