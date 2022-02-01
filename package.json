@@ -36,6 +36,7 @@
     "@babel/register": "^7.16.9",
     "@natlibfi/issn-verify": "^1.0.0",
     "@natlibfi/marc-record": "^7.0.0",
+    "@natlibfi/marc-record-validate": "^7.0.1",
     "cld3-asm": "^3.1.1",
     "debug": "^4.3.3",
     "isbn3": "^1.1.18",
