@@ -161,8 +161,7 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = 
           if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statement
             subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
           } else if (handleInvalid) { // eslint-disable-line functional/no-conditional-statement
-            const trimmedValue = trimISBN(subfield.value);
-            field.subfields.push({code: 'z', value: trimmedValue}); // eslint-disable-line functional/immutable-data
+            field.subfields.push({code: 'z', value: subfield.value}); // eslint-disable-line functional/immutable-data
             record.removeSubfield(subfield, field);
           }
         }
