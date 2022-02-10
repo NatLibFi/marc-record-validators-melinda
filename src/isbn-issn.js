@@ -29,7 +29,7 @@
 import ISBN from 'isbn3';
 import validateISSN from '@natlibfi/issn-verify';
 
-export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = {}) => {
+export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
   return {
     validate, fix,
     description: 'Validates ISBN and ISSN values'
@@ -52,17 +52,10 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = 
         // and then we compare subfield.value against that list?
         const parsedIsbn = ISBN.parse(subfield.value);
         if (hyphenateISBN) {
-          if (keep10 && subfield.value === parsedIsbn.isbn10h) {
-            return false;
-          }
-          return subfield.value !== parsedIsbn.isbn13h;
+          return !(subfield.value === parsedIsbn.isbn10h || subfield.value === parsedIsbn.isbn13h);
         }
 
-        if (keep10 && subfield.value === parsedIsbn.isbn10) {
-          return false;
-        }
-
-        return subfield.value !== parsedIsbn.isbn13;
+        return !(subfield.value === parsedIsbn.isbn10 || subfield.value === parsedIsbn.isbn13);
       }
       // Check ISSN:
       if (invalidField022(field)) {
@@ -75,35 +68,29 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = 
     });
 
     function invalidField020(field) {
-      if (field.tag !== '020') {
-        return false;
-      }
-      const subfield = field.subfields.find(sf => sf.code === 'a');
+      const subfieldA = field.subfields.find(sf => sf.code === 'a');
 
-      if (subfield === undefined) {
-        const sfZ = field.subfields.find(sf => sf.code === 'z');
-        if (sfZ) {
+      if (subfieldA === undefined) {
+        const subfieldZ = field.subfields.find(sf => sf.code === 'z');
+        if (subfieldZ !== undefined) {
           return false;
         }
         return true;
       }
 
       // If value contains space, it's not ok (it's typically something like "1234567890 (nid.)")
-      if (subfield.value.indexOf(' ') > -1) {
+      if (subfieldA.value.indexOf(' ') > -1) {
         return true;
       }
       return false;
     }
 
     function invalidField022(field) {
-      if (field.tag !== '022') {
-        return false;
-      }
-      const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+      const subfieldAorL = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
-      if (subfield === undefined) {
-        const sfY = field.subfields.find(sf => sf.code === 'y');
-        if (sfY) {
+      if (subfieldAorL === undefined) {
+        const subfieldY = field.subfields.find(sf => sf.code === 'y');
+        if (subfieldY) {
           return false;
         }
 
@@ -123,9 +110,9 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = 
     return fields
       .map(field => {
         if (field.tag === '020') {
-          const sfvalue = field.subfields.find(sf => sf.code === 'a');
-          if (sfvalue) {
-            return {name: 'ISBN', value: sfvalue.value};
+          const subfieldA = field.subfields.find(sf => sf.code === 'a');
+          if (subfieldA) {
+            return {name: 'ISBN', value: subfieldA.value};
           }
 
           return {name: 'ISBN', value: undefined};
@@ -134,10 +121,10 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = 
         return {name: 'ISSN', value: getISSN()};
 
         function getISSN() {
-          const result = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+          const subfieldAorL = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
-          if (result) {
-            return result.value;
+          if (subfieldAorL) {
+            return subfieldAorL.value;
           }
 
           return undefined;
@@ -180,10 +167,10 @@ export default ({hyphenateISBN = false, handleInvalid = false, keep10 = true} = 
       if (auditResult.validIsbn) {
         const parsedIsbn = ISBN.parse(trimmedValue);
         if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
-          return trimmedValue.length === 10 && keep10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
+          return trimmedValue.length === 10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
         }
         // Just trim
-        return trimmedValue.length === 10 && keep10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
+        return trimmedValue.length === 10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
       }
       return undefined;
     }
