@@ -363,29 +363,5 @@ describe('isbn-issn', () => {
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '3-86006-004-X'}]}
       ]);
     });
-
-    it('Adds hyphens to ISBN, resize isbn10', async () => {
-      const validator = await validatorFactory({hyphenateISBN: true, keep10: false});
-      const record = new MarcRecord({
-        fields: [
-          {
-            tag: '020', ind1: ' ', ind2: ' ',
-            subfields: [{code: 'a', value: '9789916605325 (sid.)'}]
-          },
-          {
-            tag: '020', ind1: ' ', ind2: ' ',
-            subfields: [{code: 'a', value: '0334020816'}]
-          }
-        ]
-      });
-
-      await validator.fix(record);
-
-      expect(record.fields).to.eql([
-        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-9916-605-32-5'}]},
-        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-0-334-02081-3'}]}
-      ]);
-    });
-
   });
 });
