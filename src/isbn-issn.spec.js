@@ -55,6 +55,12 @@ describe('isbn-issn', () => {
             subfields: [{code: 'a', value: '978-600-377-017-1'}]
           },
           {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'a', value: '90-6831-372-X'}]
+          },
+          {
             tag: '022',
             ind1: ' ',
             ind2: ' ',
@@ -142,13 +148,22 @@ describe('isbn-issn', () => {
             ind1: ' ',
             ind2: ' ',
             subfields: [{code: 'a', value: ' 9789519155470'}]
+          },
+          {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'a', value: '978-600-377-017-1 (nid.)'}]
           }
         ]
       });
       const result = await validator.validate(record);
 
       expect(result).to.eql({
-        valid: false, messages: ['ISBN ( 9789519155470) is not valid']
+        valid: false, messages: [
+          'ISBN ( 9789519155470) is not valid',
+          'ISBN (978-600-377-017-1 (nid.)) is not valid'
+        ]
       });
     });
 
@@ -180,7 +195,7 @@ describe('isbn-issn', () => {
       });
     });
 
-    it('Finds the record invalid (ISBN without hyphens)', async () => {
+    it('Finds the record invalid (valid ISBN without hyphens)', async () => {
       const validator = await validatorFactory({hyphenateISBN: true});
       const record = new MarcRecord({
         fields: [
@@ -189,12 +204,21 @@ describe('isbn-issn', () => {
             ind1: ' ',
             ind2: ' ',
             subfields: [{code: 'a', value: '9789519155470'}]
+          },
+          {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'a', value: '386006004X'}]
           }
         ]
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['ISBN (9789519155470) is not valid']});
+      expect(result).to.eql({valid: false, messages: [
+        'ISBN (9789519155470) is not valid',
+        'ISBN (386006004X) is not valid'
+      ]});
     });
 
     it.skip('Finds the record invalid (Missing ISBN)');
@@ -209,6 +233,10 @@ describe('isbn-issn', () => {
           {
             tag: '020', ind1: ' ', ind2: ' ',
             subfields: [{code: 'a', value: 'foo'}]
+          },
+          {
+            tag: '020', ind1: ' ', ind2: ' ',
+            subfields: [{code: 'a', value: 'crappy val'}]
           }
         ]
       });
@@ -216,9 +244,8 @@ describe('isbn-issn', () => {
       await validator.fix(record);
 
       expect(record.fields).to.eql([
-        {
-          tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'foo'}]
-        }
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'foo'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'crappy val'}]}
       ]);
     });
 
@@ -271,15 +298,20 @@ describe('isbn-issn', () => {
             ind1: ' ',
             ind2: ' ',
             subfields: [{code: 'a', value: ' 9786003770171'}]
+          },
+          {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'a', value: '9786003770171 (nid.)'}]
           }
         ]
       });
       await validator.fix(record);
 
       expect(record.fields).to.eql([
-        {
-          tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '9786003770171'}]
-        }
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '9786003770171'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '9786003770171'}]}
       ]);
     });
 
@@ -311,6 +343,14 @@ describe('isbn-issn', () => {
           {
             tag: '020', ind1: ' ', ind2: ' ',
             subfields: [{code: 'a', value: '9789916605325'}]
+          },
+          {
+            tag: '020', ind1: ' ', ind2: ' ',
+            subfields: [{code: 'a', value: '917153086X'}]
+          },
+          {
+            tag: '020', ind1: ' ', ind2: ' ',
+            subfields: [{code: 'a', value: '386006004X (nid.)'}]
           }
         ]
       });
@@ -318,9 +358,9 @@ describe('isbn-issn', () => {
       await validator.fix(record);
 
       expect(record.fields).to.eql([
-        {
-          tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-9916-605-32-5'}]
-        }
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-9916-605-32-5'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '91-7153-086-X'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '3-86006-004-X'}]}
       ]);
     });
   });

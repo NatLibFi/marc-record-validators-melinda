@@ -37,49 +37,67 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 
   function getInvalidFields(record) {
     return record.get(/^(020|022)$/u).filter(field => { // eslint-disable-line prefer-named-capture-group
+      // Check ISBN:
       if (field.tag === '020') {
+        if (invalidField020(field)) {
+          return true;
+        }
+
         const subfield = field.subfields.find(sf => sf.code === 'a');
-        const sfZ = field.subfields.find(sf => sf.code === 'z');
-
-        if (subfield === undefined) {
-          if (sfZ) {
-            return false;
-          }
-
-          return true;
-        }
-
-        // If value contains space
-        if (subfield.value.indexOf(' ') > -1) {
-          return true;
-        }
-
         const auditedIsbn = ISBN.audit(subfield.value);
         if (!auditedIsbn.validIsbn) {
           return true;
         }
-
+        // Should we refactor code by adding a function that returns legal set of values,
+        // and then we compare subfield.value against that list?
         const parsedIsbn = ISBN.parse(subfield.value);
         if (hyphenateISBN) {
-          return subfield.value !== parsedIsbn.isbn13h;
+          return !(subfield.value === parsedIsbn.isbn10h || subfield.value === parsedIsbn.isbn13h);
         }
 
-        return subfield.value !== parsedIsbn.isbn13;
+        return !(subfield.value === parsedIsbn.isbn10 || subfield.value === parsedIsbn.isbn13);
+      }
+      // Check ISSN:
+      if (invalidField022(field)) {
+        return true;
       }
 
       const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-      const sfY = field.subfields.find(sf => sf.code === 'y');
 
-      if (subfield === undefined) {
-        if (sfY) {
+      return !validateISSN(subfield.value);
+    });
+
+    function invalidField020(field) {
+      const subfieldA = field.subfields.find(sf => sf.code === 'a');
+
+      if (subfieldA === undefined) {
+        const subfieldZ = field.subfields.find(sf => sf.code === 'z');
+        if (subfieldZ !== undefined) {
+          return false;
+        }
+        return true;
+      }
+
+      // If value contains space, it's not ok (it's typically something like "1234567890 (nid.)")
+      if (subfieldA.value.indexOf(' ') > -1) {
+        return true;
+      }
+      return false;
+    }
+
+    function invalidField022(field) {
+      const subfieldAorL = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+
+      if (subfieldAorL === undefined) {
+        const subfieldY = field.subfields.find(sf => sf.code === 'y');
+        if (subfieldY) {
           return false;
         }
 
         return true;
       }
-
-      return !validateISSN(subfield.value);
-    });
+      return false;
+    }
   }
 
   function validate(record) {
@@ -92,9 +110,9 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
     return fields
       .map(field => {
         if (field.tag === '020') {
-          const sfvalue = field.subfields.find(sf => sf.code === 'a');
-          if (sfvalue) {
-            return {name: 'ISBN', value: sfvalue.value};
+          const subfieldA = field.subfields.find(sf => sf.code === 'a');
+          if (subfieldA) {
+            return {name: 'ISBN', value: subfieldA.value};
           }
 
           return {name: 'ISBN', value: undefined};
@@ -103,10 +121,10 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         return {name: 'ISSN', value: getISSN()};
 
         function getISSN() {
-          const result = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+          const subfieldAorL = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
 
-          if (result) {
-            return result.value;
+          if (subfieldAorL) {
+            return subfieldAorL.value;
           }
 
           return undefined;
@@ -126,18 +144,11 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         const subfield = field.subfields.find(sf => sf.code === 'a');
         if (subfield) {
           // ISBN is valid but is missing hyphens
-          const trimmedValue = trimSpaces(subfield.value);
-          const auditResult = ISBN.audit(trimmedValue);
-          if (auditResult.validIsbn) {
-            const parsedIsbn = ISBN.parse(trimmedValue);
-            if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
-              subfield.value = parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
-            } else { // eslint-disable-line functional/no-conditional-statement
-              // Just trim
-              subfield.value = parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
-            }
+          const normalizedValue = normalizeIsbnValue(subfield.value);
+          if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statement
+            subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
           } else if (handleInvalid) { // eslint-disable-line functional/no-conditional-statement
-            field.subfields.push({code: 'z', value: trimmedValue}); // eslint-disable-line functional/immutable-data
+            field.subfields.push({code: 'z', value: subfield.value}); // eslint-disable-line functional/immutable-data
             record.removeSubfield(subfield, field);
           }
         }
@@ -150,8 +161,26 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
       }
     });
 
+    function normalizeIsbnValue(value) {
+      const trimmedValue = trimISBN(value); // NB! This might lose information that should be stored in $q...
+      const auditResult = ISBN.audit(trimmedValue);
+      if (auditResult.validIsbn) {
+        const parsedIsbn = ISBN.parse(trimmedValue);
+        if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
+          return trimmedValue.length === 10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
+        }
+        // Just trim
+        return trimmedValue.length === 10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
+      }
+      return undefined;
+    }
+
     function trimSpaces(value) {
       return value.replace(/\s/gu, '');
+    }
+
+    function trimISBN(value) {
+      return trimSpaces(value.replace(/\s\D+$/gu, '')); // handle "1234567890 (nid.)" => "1234567890" as well as spaces
     }
   }
 };
