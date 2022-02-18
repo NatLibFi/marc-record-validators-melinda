@@ -4,7 +4,7 @@
  *
  * MARC record validators used in Melinda
  *
- * Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+ * Copyright (c) 2014-2022 University Of Helsinki (The National Library Of Finland)
  *
  * This file is part of marc-record-validators-melinda
  *
@@ -76,8 +76,8 @@ export default function (config) {
   return {
     description:
       'Checks that the record does not contain the configured subfields',
-    validate: record => excludeFields(record, config, false),
-    fix: record => excludeFields(record, config, true)
+    validate: record => excludeSubfields(record, config, false),
+    fix: record => excludeSubfields(record, config, true)
   };
 
   /// /////////////////////////////////////////
@@ -134,7 +134,7 @@ export default function (config) {
 
   /// /////////////////////////////////////////
   // These check that record is valid
-  function excludeFields(record, conf, fix) {
+  function excludeSubfields(record, conf, fix) {
     const res = {message: [], valid: true};
 
     // Parse trough every element of config array
@@ -176,6 +176,10 @@ export default function (config) {
             });
 
             excluded.forEach(sf => record.removeSubfield(sf, element));
+            // If no subfields remains, the whole field will be removed as well:
+            if (element.subfields && element.subfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
+              record.removeField(element);
+            }
           });
         }
       });
