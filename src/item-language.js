@@ -4,7 +4,7 @@
 *
 * MARC record validators used in Melinda
 *
-* Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+* Copyright (c) 2014-2022 University Of Helsinki (The National Library Of Finland)
 *
 * This file is part of marc-record-validators-melinda
 *
@@ -172,7 +172,7 @@ export default async function (tagPattern, treshold = 0.9) {
 
       if (f008) {
         const code = f008.value.slice(35, 38);
-        if ((/^[^ |^]+$/u).test(code) && code !== 'zzzx') {
+        if ((/^[a-z][a-z][a-z]$/u).test(code) && code !== 'zxx') {
           return code;
         }
       }
