@@ -60,6 +60,7 @@ describe('isbn-issn', () => {
             ind2: ' ',
             subfields: [{code: 'a', value: '90-6831-372-X'}]
           },
+          {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '978-600-377-017-1'}]},
           {
             tag: '022',
             ind1: ' ',
@@ -101,7 +102,7 @@ describe('isbn-issn', () => {
       });
     });
 
-    it('Finds the invalid 020 field', async () => {
+    it('020 field without $a and $z is ok in this context (= no invalid ISBNs)', async () => {
       const validator = await validatorFactory();
       const record = new MarcRecord({
         fields: [
@@ -116,7 +117,7 @@ describe('isbn-issn', () => {
       const result = await validator.validate(record);
 
       expect(result).to.eql({
-        valid: false, messages: ['ISBN (undefined) is not valid']
+        valid: true
       });
     });
 
@@ -237,7 +238,10 @@ describe('isbn-issn', () => {
           {
             tag: '020', ind1: ' ', ind2: ' ',
             subfields: [{code: 'a', value: 'crappy val'}]
-          }
+          },
+          {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '97895234216609'}]},
+          // Just a sanity check due to earlier issues:
+          {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '97895234216609'}]}
         ]
       });
 
@@ -245,7 +249,9 @@ describe('isbn-issn', () => {
 
       expect(record.fields).to.eql([
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'foo'}]},
-        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'crappy val'}]}
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'crappy val'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '97895234216609'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '97895234216609'}]}
       ]);
     });
 
@@ -323,7 +329,7 @@ describe('isbn-issn', () => {
             tag: '020',
             ind1: ' ',
             ind2: ' ',
-            subfields: [{code: 'a', value: ' 9786003770171'}]
+            subfields: [{code: 'a', value: '9786003770171 (nid.)'}, {code: 'z', value: '9786003770171 (nid.)'}]
           }
         ]
       });
@@ -331,7 +337,7 @@ describe('isbn-issn', () => {
 
       expect(record.fields).to.eql([
         {
-          tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-600-377-017-1'}]
+          tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-600-377-017-1'}, {code: 'z', value: '978-600-377-017-1'}]
         }
       ]);
     });
@@ -360,7 +366,7 @@ describe('isbn-issn', () => {
       ]);
     });
 
-    it('Adds hyphens to ISBN', async () => {
+    it('Add hyphens to ISBN', async () => {
       const validator = await validatorFactory({hyphenateISBN: true});
       const record = new MarcRecord({
         fields: [
@@ -375,7 +381,12 @@ describe('isbn-issn', () => {
           {
             tag: '020', ind1: ' ', ind2: ' ',
             subfields: [{code: 'a', value: '386006004X (nid.)'}]
-          }
+          },
+          {
+            tag: '020', ind1: ' ', ind2: ' ',
+            subfields: [{code: 'z', value: '9789916605325'}]
+          },
+          {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '9789916605325 (sid.)'}]}
         ]
       });
 
@@ -384,7 +395,9 @@ describe('isbn-issn', () => {
       expect(record.fields).to.eql([
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-9916-605-32-5'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '91-7153-086-X'}]},
-        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '3-86006-004-X'}]}
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '3-86006-004-X'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '978-9916-605-32-5'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '978-9916-605-32-5'}]}
       ]);
     });
   });
