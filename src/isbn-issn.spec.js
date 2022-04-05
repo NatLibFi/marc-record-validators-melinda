@@ -329,7 +329,11 @@ describe('isbn-issn', () => {
             tag: '020',
             ind1: ' ',
             ind2: ' ',
-            subfields: [{code: 'a', value: '9786003770171 (nid.)'}, {code: 'z', value: '9786003770171 (nid.)'}]
+            subfields: [
+              {code: 'a', value: '9786003770171 (nid.)'},
+              {code: 'z', value: '9786003770171 (nid.)'},
+              {code: 'z', value: 'foo bar'}
+            ]
           }
         ]
       });
@@ -337,7 +341,14 @@ describe('isbn-issn', () => {
 
       expect(record.fields).to.eql([
         {
-          tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-600-377-017-1'}, {code: 'z', value: '978-600-377-017-1'}]
+          tag: '020',
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [
+            {code: 'a', value: '978-600-377-017-1'},
+            {code: 'z', value: '978-600-377-017-1'},
+            {code: 'z', value: 'foo bar'}
+          ]
         }
       ]);
     });
