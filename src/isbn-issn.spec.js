@@ -336,6 +336,30 @@ describe('isbn-issn', () => {
       ]);
     });
 
+    it('No relevant data', async () => {
+      const validator = await validatorFactory({hyphenateISBN: true});
+      const record = new MarcRecord({
+        fields: [
+          {
+            tag: '005',
+            value: 'whatever'
+          },
+          {
+            tag: '024',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'a', value: ' 9786003770171'}]
+          }
+        ]
+      });
+      await validator.fix(record);
+
+      expect(record.fields).to.eql([
+        {tag: '005', value: 'whatever'},
+        {tag: '024', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: ' 9786003770171'}]}
+      ]);
+    });
+
     it('Adds hyphens to ISBN', async () => {
       const validator = await validatorFactory({hyphenateISBN: true});
       const record = new MarcRecord({
