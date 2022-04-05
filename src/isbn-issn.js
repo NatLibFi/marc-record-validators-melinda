@@ -4,7 +4,7 @@
 *
 * MARC record validators used in Melinda
 *
-* Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+* Copyright (c) 2014-2022 University Of Helsinki (The National Library Of Finland)
 *
 * This file is part of marc-record-validators-melinda
 *
@@ -36,7 +36,11 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
   };
 
   function getInvalidFields(record) {
-    return record.get(/^(020|022)$/u).filter(field => { // eslint-disable-line prefer-named-capture-group
+    //return record.get(/^(?:020|022)$/u).filter(field => {
+    return record.fields.filter(field => {
+      if (!field.subfields) {
+        return false;
+      }
       // Check ISBN:
       if (field.tag === '020') {
         if (invalidField020(field)) {
@@ -58,18 +62,22 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         return !(subfield.value === parsedIsbn.isbn10 || subfield.value === parsedIsbn.isbn13);
       }
       // Check ISSN:
-      if (invalidField022(field)) {
-        return true;
+      if (field.tag === '022') {
+        if (invalidField022(field)) {
+          return true;
+        }
+
+        const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+
+        return !validateISSN(subfield.value);
       }
-
-      const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-
-      return !validateISSN(subfield.value);
+      return false;
     });
 
     function invalidField020(field) {
       const subfieldA = field.subfields.find(sf => sf.code === 'a');
 
+      // The 'z' subfields are apparently marked for deletion:
       if (subfieldA === undefined) {
         const subfieldZ = field.subfields.find(sf => sf.code === 'z');
         if (subfieldZ !== undefined) {
