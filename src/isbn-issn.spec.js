@@ -85,6 +85,12 @@ describe('isbn-issn', () => {
             subfields: [{code: 'a', value: 'foo'}]
           },
           {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'a', value: '90-68-31-372-X'}] // contains an extra hyphen
+          },
+          {
             tag: '022',
             ind1: ' ',
             ind2: ' ',
@@ -199,6 +205,12 @@ describe('isbn-issn', () => {
             tag: '020',
             ind1: ' ',
             ind2: ' ',
+            subfields: [{code: 'a', value: '9068-31-372-X'}] // legal digits, but bad hyphenation
+          },
+          {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
             subfields: [{code: 'a', value: '386006004X'}]
           }
         ]
@@ -207,6 +219,7 @@ describe('isbn-issn', () => {
 
       expect(result).to.eql({valid: false, messages: [
         'ISBN (9789519155470) is not valid',
+        'ISBN (9068-31-372-X) is not valid',
         'ISBN (386006004X) is not valid'
       ]});
     });
@@ -389,6 +402,12 @@ describe('isbn-issn', () => {
             subfields: [{code: 'a', value: '917153086X'}]
           },
           {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'a', value: '9068-31-372-X'}] // legal digits, but bad hyphenation
+          },
+          {
             tag: '020', ind1: ' ', ind2: ' ',
             subfields: [{code: 'a', value: '386006004X (nid.)'}]
           },
@@ -405,6 +424,7 @@ describe('isbn-issn', () => {
       expect(record.fields).to.eql([
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-9916-605-32-5'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '91-7153-086-X'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '90-6831-372-X'}]}, // corrected hyphens
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '3-86006-004-X'}, {code: 'q', value: '(nid.)'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '978-9916-605-32-5'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '978-9916-605-32-5'}]}
