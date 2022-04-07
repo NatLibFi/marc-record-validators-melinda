@@ -211,7 +211,6 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 
 
     function fixField020Subfield(field, subfield) {
-      console.info(`fixField020Subfield ${subfield.code} '${subfield.value}'`); // eslint-disable-line no-console
       split020A(); // subfield and field are in the scope
       addHyphens(subfield);
       handleInvalidIsbn(field, subfield); // remove 020$a, add 020$z, Do this last, as it uses deletion
@@ -221,12 +220,10 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         if (!subfieldsIsbnRequiresHyphenation(subfield)) {
           return;
         }
-        console.info(`  ADD HYPHENS?\t${subfield.code} '${subfield.value}'`); // eslint-disable-line no-console
         // ISBN is valid but is missing hyphens
         const normalizedValue = normalizeIsbnValue(subfield.value);
         if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statement
           subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
-          console.info(`  ADDED HYPHENS!\t${subfield.code} '${subfield.value}'`); // eslint-disable-line no-console
         }
       }
 
@@ -238,7 +235,6 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         if (!invalidISBN(head)) {
           return;
         }
-        console.info(`  MOVE $a to $z\t${subfield.code} '${subfield.value}'`); // eslint-disable-line no-console
         // $a => $z (bit overkill to add $z and remove $a instead of just renaming, but too lazy to fix/test thorougly)
         field.subfields.push({code: 'z', value: subfield.value}); // eslint-disable-line functional/immutable-data
         record.removeSubfield(subfield, field);
@@ -249,7 +245,6 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         if (subfield.code !== 'a') {
           return;
         }
-        console.info(`  SPLIT?\t${subfield.code} '${subfield.value}'`); // eslint-disable-line no-console
         const value = trimSpaces(subfield.value);
         const position = value.indexOf(' ');
         if (position === -1) {
@@ -260,7 +255,6 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
           return;
         }
         const tail = value.substring(position + 1);
-        console.info(`  SPLIT $a => $a$q\t${subfield.code} '${subfield.value}'`); // eslint-disable-line no-console
         subfield.value = head; // eslint-disable-line functional/immutable-data
         field.subfields.push({code: 'q', value: tail}); // eslint-disable-line functional/immutable-data
       }
