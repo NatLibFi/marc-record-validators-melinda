@@ -4,7 +4,7 @@
  *
  * MARC record validators used in Melinda
  *
- * Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+ * Copyright (c) 2014-2022 University Of Helsinki (The National Library Of Finland)
  *
  * This file is part of marc-record-validators-melinda
  *
@@ -140,16 +140,10 @@ describe('isbn-issn', () => {
       });
     });
 
-    it('Finds the record invalid (Spaces in ISBN)', async () => {
+    it('Finds the record invalid (reason: multiword)', async () => {
       const validator = await validatorFactory();
       const record = new MarcRecord({
         fields: [
-          {
-            tag: '020',
-            ind1: ' ',
-            ind2: ' ',
-            subfields: [{code: 'a', value: ' 9789519155470'}]
-          },
           {
             tag: '020',
             ind1: ' ',
@@ -160,12 +154,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({
-        valid: false, messages: [
-          'ISBN ( 9789519155470) is not valid',
-          'ISBN (978-600-377-017-1 (nid.)) is not valid'
-        ]
-      });
+      expect(result).to.eql({valid: false, messages: ['ISBN (978-600-377-017-1 (nid.)) is not valid']});
     });
 
     it('Finds the record invalid (ISSN in \'l\'-subfield)', async () => {
@@ -309,15 +298,16 @@ describe('isbn-issn', () => {
             tag: '020',
             ind1: ' ',
             ind2: ' ',
-            subfields: [{code: 'a', value: '9786003770171 (nid.)'}]
+            subfields: [{code: 'a', value: '9786003770171 (nidottu)'}]
           }
         ]
       });
       await validator.fix(record);
 
       expect(record.fields).to.eql([
-        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '9786003770171'}]},
-        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '9786003770171'}, {code: 'q', value: '(nid.)'}]}
+        // NB! Initial space does not need to be removed. It's crap, but not this fixer's crap.
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: ' 9786003770171'}]},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '9786003770171'}, {code: 'q', value: '(nidottu)'}]}
       ]);
     });
 
@@ -364,6 +354,12 @@ describe('isbn-issn', () => {
             value: 'whatever'
           },
           {
+            tag: '020',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [{code: 'q', value: 'sidottu'}]
+          },
+          {
             tag: '024',
             ind1: ' ',
             ind2: ' ',
@@ -375,6 +371,7 @@ describe('isbn-issn', () => {
 
       expect(record.fields).to.eql([
         {tag: '005', value: 'whatever'},
+        {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'q', value: 'sidottu'}]},
         {tag: '024', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: ' 9786003770171'}]}
       ]);
     });
