@@ -169,6 +169,10 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
           if (subfieldA) {
             return {name: 'ISBN', value: subfieldA.value};
           }
+          const subfieldZ = field.subfields.find(sf => sf.code === 'z');
+          if (subfieldZ) {
+            return {name: 'ISBN (subfield Z)', value: subfieldZ.value};
+          }
 
           return {name: 'ISBN', value: undefined};
         }
