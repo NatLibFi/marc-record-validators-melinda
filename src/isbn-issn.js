@@ -4,7 +4,7 @@
 *
 * MARC record validators used in Melinda
 *
-* Copyright (c) 2014-2020 University Of Helsinki (The National Library Of Finland)
+* Copyright (c) 2014-2022 University Of Helsinki (The National Library Of Finland)
 *
 * This file is part of marc-record-validators-melinda
 *
@@ -29,60 +29,115 @@
 import ISBN from 'isbn3';
 import validateISSN from '@natlibfi/issn-verify';
 
+// handleInvalid: move invalid 020$a to 020$z, and invalid 022$a to 022$y
 export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
   return {
     validate, fix,
     description: 'Validates ISBN and ISSN values'
   };
 
-  function getInvalidFields(record) {
-    return record.get(/^(020|022)$/u).filter(field => { // eslint-disable-line prefer-named-capture-group
+  function stringHasSpace(str) {
+    return str.indexOf(' ') > -1;
+  }
+
+  function trimSpaces(value) {
+    return value.replace(/^\s+/u, '').replace(/\s+$/u, '').replace(/\s+/gu, ' ');
+  }
+
+  function isMultiWord(inputString) {
+    const trimmedString = trimSpaces(inputString);
+    return stringHasSpace(trimmedString);
+  }
+
+  function getFirstWord(inputString) {
+    const trimmedString = trimSpaces(inputString);
+    const arr = trimmedString.split(' ');
+    return arr[0];
+  }
+
+  function invalidISBN(isbn) {
+    const isbnOnly = getFirstWord(isbn);
+    const auditedIsbn = ISBN.audit(isbnOnly);
+    return !auditedIsbn.validIsbn;
+  }
+
+  function invalidSubfield(subfield) {
+    if (subfield.code !== 'a') {
+      return false;
+    }
+    return invalidISBN(subfield.value) || isMultiWord(subfield.value);
+  }
+
+
+  function invalidField020(field) {
+    if (field.subfields && field.subfields.some(sf => invalidSubfield(sf))) {
+      return true;
+    }
+    return false;
+  }
+
+  function subfieldsIsbnRequiresHyphenation(subfield) {
+    if (!hyphenateISBN || !['a', 'z'].includes(subfield.code)) {
+      return false;
+    }
+
+    const isbn = getFirstWord(subfield.value);
+    if (subfield.code === 'a') {
+      return requiresHyphenation(isbn);
+    }
+
+    // $z is a bit hacky: hyphenation is required only iff valid and no '-' chars
+    if (isbn.indexOf('-') > -1) {
+      return false;
+    }
+    return !invalidISBN(isbn);
+
+    function requiresHyphenation(isbn) {
+      if (!hyphenateISBN) {
+        return false;
+      }
+      // Handle old notation such as "978-952-396-001-5 (nid.)"
+      const isbn2 = getFirstWord(isbn);
+
+      if (invalidISBN(isbn2)) {
+        return false;
+      }
+
+      const parsedIsbn = ISBN.parse(isbn2);
+      // Return true only if existing ISBN is a valid and hyphenated 10 or 13 digit ISBN:
+      return !(isbn2 === parsedIsbn.isbn10h || isbn2 === parsedIsbn.isbn13h);
+    }
+  }
+
+  function getRelevantFields(record) {
+    //return record.get(/^(?:020|022)$/u).filter(field => {
+    return record.fields.filter(field => {
+      if (!field.subfields) {
+        return false;
+      }
       // Check ISBN:
       if (field.tag === '020') {
-        if (invalidField020(field)) {
+        if (invalidField020(field)) { // checks multiwordness
           return true;
         }
-
-        const subfield = field.subfields.find(sf => sf.code === 'a');
-        const auditedIsbn = ISBN.audit(subfield.value);
-        if (!auditedIsbn.validIsbn) {
-          return true;
-        }
-        // Should we refactor code by adding a function that returns legal set of values,
-        // and then we compare subfield.value against that list?
-        const parsedIsbn = ISBN.parse(subfield.value);
-        if (hyphenateISBN) {
-          return !(subfield.value === parsedIsbn.isbn10h || subfield.value === parsedIsbn.isbn13h);
-        }
-
-        return !(subfield.value === parsedIsbn.isbn10 || subfield.value === parsedIsbn.isbn13);
+        return fieldsIsbnRequiresHyphenation(field);
       }
+
       // Check ISSN:
-      if (invalidField022(field)) {
-        return true;
-      }
-
-      const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-
-      return !validateISSN(subfield.value);
-    });
-
-    function invalidField020(field) {
-      const subfieldA = field.subfields.find(sf => sf.code === 'a');
-
-      if (subfieldA === undefined) {
-        const subfieldZ = field.subfields.find(sf => sf.code === 'z');
-        if (subfieldZ !== undefined) {
-          return false;
+      if (field.tag === '022') {
+        if (invalidField022(field)) {
+          return true;
         }
-        return true;
-      }
 
-      // If value contains space, it's not ok (it's typically something like "1234567890 (nid.)")
-      if (subfieldA.value.indexOf(' ') > -1) {
-        return true;
+        const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+
+        return !validateISSN(subfield.value);
       }
       return false;
+    });
+
+    function fieldsIsbnRequiresHyphenation(field) {
+      return field.subfields && field.subfields.some(sf => subfieldsIsbnRequiresHyphenation(sf));
     }
 
     function invalidField022(field) {
@@ -101,7 +156,7 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
   }
 
   function validate(record) {
-    const fields = getInvalidFields(record);
+    const fields = getRelevantFields(record);
 
     if (fields.length === 0) {
       return {valid: true};
@@ -113,6 +168,10 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
           const subfieldA = field.subfields.find(sf => sf.code === 'a');
           if (subfieldA) {
             return {name: 'ISBN', value: subfieldA.value};
+          }
+          const subfieldZ = field.subfields.find(sf => sf.code === 'z');
+          if (subfieldZ) {
+            return {name: 'ISBN (subfield Z)', value: subfieldZ.value};
           }
 
           return {name: 'ISBN', value: undefined};
@@ -138,49 +197,86 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
       }, {valid: false, messages: []});
   }
 
+
   function fix(record) {
-    getInvalidFields(record).forEach(field => {
+    getRelevantFields(record).forEach(field => {
       if (field.tag === '020') {
-        const subfield = field.subfields.find(sf => sf.code === 'a');
-        if (subfield) {
-          // ISBN is valid but is missing hyphens
-          const normalizedValue = normalizeIsbnValue(subfield.value);
-          if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statement
-            subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
-          } else if (handleInvalid) { // eslint-disable-line functional/no-conditional-statement
-            field.subfields.push({code: 'z', value: subfield.value}); // eslint-disable-line functional/immutable-data
-            record.removeSubfield(subfield, field);
-          }
-        }
-      } else {
-        const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-        if (subfield && handleInvalid) { // eslint-disable-line functional/no-conditional-statement
-          field.subfields.push({code: 'y', value: trimSpaces(subfield.value)}); // eslint-disable-line functional/immutable-data
-          record.removeSubfield(subfield, field);
-        }
+        field.subfields.forEach(subfield => fixField020Subfield(field, subfield));
+        return;
+      }
+      // 022 ISSN:
+      const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
+      if (subfield && handleInvalid) { // eslint-disable-line functional/no-conditional-statement
+        // $a/$l => $y (bit overkill to add $z and remove $a/$l instead of just renaming)
+        field.subfields.push({code: 'y', value: subfield.value}); // eslint-disable-line functional/immutable-data
+        record.removeSubfield(subfield, field);
       }
     });
 
-    function normalizeIsbnValue(value) {
-      const trimmedValue = trimISBN(value); // NB! This might lose information that should be stored in $q...
-      const auditResult = ISBN.audit(trimmedValue);
-      if (auditResult.validIsbn) {
+
+    function fixField020Subfield(field, subfield) {
+      split020A(); // subfield and field are in the scope
+      addHyphens(subfield);
+      handleInvalidIsbn(field, subfield); // remove 020$a, add 020$z, Do this last, as it uses deletion
+      return;
+
+      function addHyphens(subfield) {
+        if (!subfieldsIsbnRequiresHyphenation(subfield)) {
+          return;
+        }
+        // ISBN is valid but is missing hyphens
+        const normalizedValue = normalizeIsbnValue(subfield.value);
+        if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statement
+          subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
+        }
+      }
+
+      function handleInvalidIsbn(field, subfield) {
+        if (subfield.code !== 'a' || !handleInvalid) {
+          return;
+        }
+        const head = getFirstWord(subfield.value);
+        if (!invalidISBN(head)) {
+          return;
+        }
+        // $a => $z (bit overkill to add $z and remove $a instead of just renaming, but too lazy to fix/test thorougly)
+        field.subfields.push({code: 'z', value: subfield.value}); // eslint-disable-line functional/immutable-data
+        record.removeSubfield(subfield, field);
+      }
+
+      function split020A() {
+        // Move non-initial words from $a to $q:
+        if (subfield.code !== 'a') {
+          return;
+        }
+        const value = trimSpaces(subfield.value);
+        const position = value.indexOf(' ');
+        if (position === -1) {
+          return;
+        }
+        const head = getFirstWord(value);
+        if (invalidISBN(head)) { // Don't split, if first word ain't ISBN
+          return;
+        }
+        const tail = value.substring(position + 1);
+        subfield.value = head; // eslint-disable-line functional/immutable-data
+        field.subfields.push({code: 'q', value: tail}); // eslint-disable-line functional/immutable-data
+      }
+
+      function normalizeIsbnValue(value) {
+        const trimmedValue = getFirstWord(value);
+        //const trimmedValue = trimISBN(value); // NB! This might lose information that should be stored in $q...
+        const auditResult = ISBN.audit(trimmedValue);
+        if (!auditResult.validIsbn) {
+          return undefined;
+        }
+        const numbersOnly = trimmedValue.replace(/[^0-9Xx]+/ug, '');
         const parsedIsbn = ISBN.parse(trimmedValue);
         if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
-          return trimmedValue.length === 10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
+          return numbersOnly.length === 10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
         }
-        // Just trim
-        return trimmedValue.length === 10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
+        return numbersOnly.length === 10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
       }
-      return undefined;
-    }
-
-    function trimSpaces(value) {
-      return value.replace(/\s/gu, '');
-    }
-
-    function trimISBN(value) {
-      return trimSpaces(value.replace(/\s\D+$/gu, '')); // handle "1234567890 (nid.)" => "1234567890" as well as spaces
     }
   }
 };
