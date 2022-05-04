@@ -194,6 +194,20 @@ export default function () {
       }
     }
 
+    if (punctType === 'SPACECOLON') {
+      if (!(/:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+        const nextValue = `${preceedingSubfield.value} :`;
+        debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
+        preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
+      }
+      if ((/[^ ]:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+        const nextValue = `${preceedingSubfield.value.slice(0, -1)} :`;
+        debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
+        preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
+      }
+
+    }
+
     debug('addSubfieldPunctuation -- end');
   }
 
