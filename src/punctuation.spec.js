@@ -116,9 +116,8 @@ describe('punctuation', () => {
     });
   });
 
-  /*
-  Describe('#fix', () => {
-    it('Creates punctuation for field 264', async () => {
+  describe('#fix', () => {
+    it('Creates punctuation for field 264$bc', async () => {
       const validator = await validatorFactory();
       const record = new MarcRecord({
         fields: [
@@ -147,5 +146,58 @@ describe('punctuation', () => {
       ]);
     });
   });
-  */
+
+  describe('#fix', () => {
+    it('Creates punctuation for field 264$bc', async () => {
+      const validator = await validatorFactory();
+      const record = new MarcRecord({
+        fields: [
+          {
+            tag: '264',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [
+              {code: 'a', value: 'Paikka'},
+              {code: 'b', value: 'Julkaisija'},
+              {code: 'c', value: '2019'}
+            ]
+          },
+          {
+            tag: '264',
+            ind1: ' ',
+            ind2: ' ',
+            subfields: [
+              {code: 'a', value: 'Paikka:'},
+              {code: 'b', value: 'Julkaisija'},
+              {code: 'c', value: '2019'}
+            ]
+          }
+        ]
+      });
+      await validator.fix(record);
+      expect(record.fields).to.eql([
+        {
+          tag: '264',
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [
+            {code: 'a', value: 'Paikka :'},
+            {code: 'b', value: 'Julkaisija,'},
+            {code: 'c', value: '2019.'}
+          ]
+        },
+        {
+          tag: '264',
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [
+            {code: 'a', value: 'Paikka :'},
+            {code: 'b', value: 'Julkaisija,'},
+            {code: 'c', value: '2019.'}
+          ]
+        }
+      ]);
+    });
+  });
+
 });
