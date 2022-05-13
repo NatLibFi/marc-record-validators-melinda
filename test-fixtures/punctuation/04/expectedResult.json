@@ -1,0 +1,21 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    {
+      "tag": "264",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "b",
+          "value": "Julkaisija,"
+        },
+        {
+          "code": "c",
+          "value": "2019."
+        }
+      ]
+    }
+  ]
+}

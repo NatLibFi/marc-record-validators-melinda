@@ -1,0 +1,21 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    {
+      "tag": "100",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Sukunimi, Etunimi,"
+        },
+        {
+          "code": "c",
+          "value": "kirjoittaja."
+        }
+      ]
+    }
+  ]
+}
