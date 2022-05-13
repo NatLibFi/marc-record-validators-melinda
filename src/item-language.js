@@ -143,7 +143,7 @@ export default async function (tagPattern, treshold = 0.9) {
 
       if (f008) {
         const code = f008.value.slice(35, 38);
-        if ((/^[^ |^]+$/u).test(code) && code !== 'zzzx') {
+        if ((/^[a-z][a-z][a-z]$/u).test(code) && code !== 'zxx') {
           return code;
         }
       }
