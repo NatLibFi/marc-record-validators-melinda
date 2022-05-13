@@ -86,6 +86,10 @@ export default function () {
       debug(`Handling subfield ${subfield.code}`);
       let portion = getPortion(subfield, rulesForField); // eslint-disable-line functional/no-let
 
+      if (portion === false) {
+        return;
+      }
+
       if (portion === 'CF' || portion === 'NC') {
         return;
       }
@@ -140,7 +144,7 @@ export default function () {
     const [portion] = rules.filter(rule => rule.namePortion === subfield.code).map(rule => rule.portion);
 
     if (portion === undefined) {
-      throw new Error(`Unknown subfield code ${subfield.code}`);
+      return false;
     }
 
     return portion.toUpperCase();

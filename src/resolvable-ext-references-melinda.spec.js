@@ -63,7 +63,8 @@ describe('resolvable-ext-references-melinda', () => {
 
   it('Throws an error when prefixPattern not provided', async () => {
     const validator = await testContext.default({endpoint, prefixPattern, fields});
-    await expect(validator.validate()).to.be.rejectedWith(Error, 'Cannot read property \'fields\' of undefined');
+    // Cannot read property 'fields' of undefined or Cannot read properties of undefined (reading 'fields')'
+    await expect(validator.validate()).to.be.rejectedWith(Error, /^Cannot read propert/u);
   });
 
   describe('#validate', () => {
