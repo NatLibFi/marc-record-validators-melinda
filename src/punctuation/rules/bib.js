@@ -25,6 +25,14 @@ const bibRules =
     exceptions: ''
   },
   {
+    selector: '264',
+    namePortion: '$a',
+    description: 'Place of producer, publisher, distributor, manufacturer (R)',
+    portion: 'N',
+    preceedingPunctuation: 'none',
+    exceptions: ''
+  },
+  {
     selector: '[1678]00',
     namePortion: '$b',
     description: 'Numeration (NR)',
@@ -45,7 +53,7 @@ const bibRules =
     namePortion: '$b',
     description: 'Name of producer, publisher, distributor, manufacturer (R)',
     portion: 'N',
-    preceedingPunctuation: 'none',
+    preceedingPunctuation: 'spacecolon',
     exceptions: ''
   },
   {

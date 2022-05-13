@@ -1,0 +1,42 @@
+{
+  "fields": [
+    {
+      "tag": "264",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Paikka"
+        },
+        {
+          "code": "b",
+          "value": "Julkaisija"
+        },
+        {
+          "code": "c",
+          "value": "2019"
+        }
+      ]
+    },
+    {
+      "tag": "264",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Paikka:"
+        },
+        {
+          "code": "b",
+          "value": "Julkaisija"
+        },
+        {
+          "code": "c",
+          "value": "2019"
+        }
+      ]
+    }
+  ]
+}

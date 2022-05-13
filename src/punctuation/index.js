@@ -86,6 +86,10 @@ export default function () {
       debug(`Handling subfield ${subfield.code}`);
       let portion = getPortion(subfield, rulesForField); // eslint-disable-line functional/no-let
 
+      if (portion === false) {
+        return;
+      }
+
       if (portion === 'CF' || portion === 'NC') {
         return;
       }
@@ -140,7 +144,7 @@ export default function () {
     const [portion] = rules.filter(rule => rule.namePortion === subfield.code).map(rule => rule.portion);
 
     if (portion === undefined) {
-      throw new Error(`Unknown subfield code ${subfield.code}`);
+      return false;
     }
 
     return portion.toUpperCase();
@@ -192,6 +196,20 @@ export default function () {
         debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
         preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
       }
+    }
+
+    if (punctType === 'SPACECOLON') {
+      if (!(/:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+        const nextValue = `${preceedingSubfield.value} :`;
+        debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
+        preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
+      }
+      if ((/[^ ]:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+        const nextValue = `${preceedingSubfield.value.slice(0, -1)} :`;
+        debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
+        preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
+      }
+
     }
 
     debug('addSubfieldPunctuation -- end');
