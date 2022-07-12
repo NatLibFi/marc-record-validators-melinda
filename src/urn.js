@@ -20,7 +20,7 @@ export default function (isLegalDeposit = false) {
         tag: '856',
         ind1: '4',
         ind2: '0',
-        subfields: [await createURNSubfield(record), ...ldSubfields]
+        subfields: [...await createURNSubfield(record), ...ldSubfields]
       });
     } else if (isLegalDeposit) { // eslint-disable-line functional/no-conditional-statement
       f856sUrn.forEach(f => {
@@ -44,10 +44,14 @@ export default function (isLegalDeposit = false) {
         return acc;
       }, undefined);
 
-      return {
-        code: 'u',
-        value: await createURN(isbn)
-      };
+      if (isbn) {
+        return [{code: 'u', value: await createURN(isbn)}];
+      }
+
+      return [
+        {code: 'u', value: await createURN(false)},
+        {code: '9', value: 'MELINDA<TEMP>'}
+      ];
 
       async function createURN(isbn = false) {
         if (isbn) {

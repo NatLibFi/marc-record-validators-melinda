@@ -26,10 +26,12 @@
     "prepare": "npm run build",
     "lint": "eslint src",
     "lint:dev": "eslint --fix src",
-    "test:base": "cross-env NODE_ENV=test nyc -x test-fixtures -x src/**/*.spec.js mocha --require @babel/register",
-    "test": "npm run lint && npm run test:base -- src/**/*.spec.js && npm run coverage",
-    "test:dev": "npm run lint:dev && npm run test:base -- src/**/*.spec.js && npm run coverage",
-    "coverage": "nyc check-coverage --per-file",
+    "test:base": "cross-env NODE_ENV=test mocha --require @babel/register --reporter-option maxDiffSize=15000 --recursive --extension .spec.js src",
+    "test": "npm run lint && npm run test:base",
+    "test:dev": "npm run lint:dev && npm run coverage",
+		"coverage": "npm run cover:unit && npm run cover:report",
+		"cover:unit": "nyc --silent npm run test:base",
+		"cover:report": "nyc report",
     "build": "babel src --source-maps --copy-files --delete-dir-on-start --out-dir=dist"
   },
   "dependencies": {
@@ -93,21 +95,21 @@
     }
   },
   "nyc": {
-    "reporter": [
-      "lcov",
-      "html"
-    ],
-    "require": [
-      "@babel/register"
-    ],
-    "exclude": [
-      "src/punctuation/*.js"
-    ],
-    "sourceMap": false,
-    "instrument": false,
-    "lines": 80,
-    "statements": 80,
-    "functions": 80,
-    "branches": 80
-  }
+		"exclude": [
+			"src/*.spec.js",
+			"src/**/*.spec.js"
+		],
+		"reporter": [
+			"text"
+		],
+		"require": [
+			"@babel/register"
+		],
+		"sourceMap": false,
+		"instrument": false,
+		"lines": 80,
+		"statements": 80,
+		"functions": 80,
+		"branches": 80
+	}
 }
