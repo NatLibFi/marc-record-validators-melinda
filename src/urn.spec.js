@@ -4,6 +4,16 @@ import validatorFactory from '../src/urn';
 
 describe('urn', async () => {
   // Fields
+  const f337 = {
+    tag: '337',
+    ind1: ' ',
+    ind2: ' ',
+    subfields: [
+      {code: 'b', value: 'c'},
+      {code: '2', value: 'rdamedia'}
+    ]
+  };
+
   const ldf856 = {
     tag: '856',
     ind1: '4',
@@ -14,18 +24,21 @@ describe('urn', async () => {
       {code: '5', value: 'FI-Vapaa'}
     ]
   };
+
   const f856URN = {
     tag: '856',
     ind1: '4',
     ind2: '0',
     subfields: [{code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'}]
   };
+
   const f856URL = {
     tag: '856',
     ind1: '4',
     ind2: '0',
     subfields: [{code: 'u', value: 'http://foo.bar/'}]
   };
+
   const f020 = {
     tag: '020',
     ind1: ' ',
@@ -68,28 +81,28 @@ describe('urn', async () => {
   describe('#validate', () => {
     // Validate non-legal deposit
     it('Finds the record valid; 856 with urn, and is non-legal deposit', async () => {
-      await nonld.validate(true, f856URN);
+      await nonld.validate(true, f337, f856URN);
     });
 
     it('Finds the record invalid; 856 without urn, and is non-legal deposit', async () => {
-      await nonld.validate(false, f856URL);
+      await nonld.validate(false, f337, f856URL);
     });
 
     it('Finds the record invalid; Missing 856, and is non-legal deposit', async () => {
-      await nonld.validate(false, f020);
+      await nonld.validate(false, f337, f020);
     });
 
     // Validate legal deposit
     it('Finds the record invalid; 856 with urn, and is legal deposit', async () => {
-      await ld.validate(false, f020, f856URN);
+      await ld.validate(false, f020, f337, f856URN);
     });
 
     it('Finds the record invalid; 856 without urn, and is legal deposit', async () => {
-      await ld.validate(false, f020, f856URL);
+      await ld.validate(false, f020, f337, f856URL);
     });
 
     it('Finds the record invalid; Missing 856, and is legal deposit', async () => {
-      await ld.validate(false, f020);
+      await ld.validate(false, f337, f020);
     });
   });
 

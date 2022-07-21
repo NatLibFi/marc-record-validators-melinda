@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import {isElectronicMaterial} from './utils';
 
 const URN_GENERATOR_URL = 'http://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';
 
@@ -87,6 +88,11 @@ export default function (isLegalDeposit = false) {
   }
 
   function validate(record) {
+    // if not electronic skip this validator
+    if (!isElectronicMaterial(record)) {
+      return {valid: true};
+    }
+
     return {valid: record.fields.some(hasURN) && !isLegalDeposit};
   }
 }
