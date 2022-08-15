@@ -1,0 +1,41 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "100",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Ålander, Väinö"
+        },
+        {
+          "code": "e",
+          "value": "kirjoittaja."
+        }
+      ]
+    },
+    {
+      "tag": "245",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Örkkejä /"
+        },
+        {
+          "code": "c",
+          "value": "Väinö Ålander."
+        }
+      ]
+    }
+
+  ]
+}
