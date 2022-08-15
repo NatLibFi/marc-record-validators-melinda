@@ -1,5 +1,5 @@
 {
-  "description": "Fix precomposed -> decomposed",
+  "description": "Fix using fallback (245$a contains diacritics in both latin and cyrillic letters",
   "enabled": true,
   "fix": true
 }
