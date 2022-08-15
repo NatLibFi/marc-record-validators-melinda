@@ -1,0 +1,5 @@
+{
+  "description": "Fix precomposed -> decomposed",
+  "enabled": true,
+  "fix": true
+}

@@ -1,0 +1,7 @@
+{
+  "message": [
+    "'100    ‡aSirén, Matti‡ekirjoittaja.' requires normalization",
+    "'245    ‡aÁÈÏÔŨ áèïôũ‡cMatti Sirén.' requires normalization"
+  ],
+  "valid": false
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Validate diacritics: success, since only normalized diacritics are used",
+  "enabled": true,
+  "fix": false
+}
