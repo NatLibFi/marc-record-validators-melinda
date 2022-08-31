@@ -14,6 +14,17 @@ describe('urn', async () => {
     ]
   };
 
+  const f337nonElectronic = {
+    tag: '337',
+    ind1: ' ',
+    ind2: ' ',
+    subfields: [
+      {code: 'b', value: 'n'},
+      {code: '2', value: 'rdamedia'}
+    ]
+  };
+
+
   const ldf856 = {
     tag: '856',
     ind1: '4',
@@ -24,6 +35,17 @@ describe('urn', async () => {
       {code: '5', value: 'FI-Vapaa'}
     ]
   };
+
+  const ldf856partial = {
+    tag: '856',
+    ind1: '4',
+    ind2: '0',
+    subfields: [
+      {code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'},
+      {code: '5', value: 'FI-Vapaa'}
+    ]
+  };
+
 
   const f856URN = {
     tag: '856',
@@ -45,6 +67,14 @@ describe('urn', async () => {
     ind2: ' ',
     subfields: [{code: 'a', value: '978-951-9155-47-0'}]
   };
+
+  const f020second = {
+    tag: '020',
+    ind1: ' ',
+    ind2: ' ',
+    subfields: [{code: 'a', value: '9789519155470'}]
+  };
+
 
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
@@ -79,6 +109,11 @@ describe('urn', async () => {
   const ld = await test(true);
 
   describe('#validate', () => {
+    // Validate non-electoronic
+    it('Finds the record valid; non-electronic record', async () => {
+      await nonld.validate(true, f337nonElectronic);
+    });
+
     // Validate non-legal deposit
     it('Finds the record valid; 856 with urn, and is non-legal deposit', async () => {
       await nonld.validate(true, f337, f856URN);
@@ -104,10 +139,25 @@ describe('urn', async () => {
     it('Finds the record invalid; Missing 856, and is legal deposit', async () => {
       await ld.validate(false, f337, f020);
     });
+
+    it('Finds the record valid; 856 with URN and legal deposit subfields, and is legal deposit', async () => {
+      await ld.validate(true, f337, f020, ldf856);
+    });
+
+    it('Finds the record valid; 856 with URN and legal deposit subfields and other f856s, and is legal deposit', async () => {
+      await ld.validate(true, f337, f020, ldf856partial, ldf856, f856URL);
+    });
+
+
+    it('Finds the record invalid; 856 with URN and partial legal deposit subfields, and is legal deposit', async () => {
+      await ld.validate(false, f337, f020, ldf856partial);
+    });
+
+
   });
 
   describe('#fix', () => {
-    // Validate non-legal deposit
+    // Fix non-legal deposit
     it('856 with urn, and is non-legal deposit; Nothing to add', async () => {
       await nonld.fix([f020, f856URL, f856URN], [f020, f856URL, f856URN]);
     });
@@ -120,7 +170,16 @@ describe('urn', async () => {
       await nonld.fix([f020], [f020, f856URN]);
     });
 
-    // Validate legal deposit
+    it('Missing 856, and is non-legal deposit, two 020 fields; Adds 856 with urn from second 020', async () => {
+      await nonld.fix([f020second, f020], [f020second, f020, f856URN]);
+    });
+
+    it.skip('Missing 856, and is non-legal deposit, two 020 fields; Adds 856 with urn from first 020', async () => {
+      await nonld.fix([f020, f020second], [f020, f020second, f856URN]);
+    });
+
+
+    // Fix legal deposit
     it('856 with urn and legal deposit fields, and is legal deposit; Nothing to add', async () => {
       await ld.fix([f020, f856URL, ldf856], [f020, f856URL, ldf856]);
     });
@@ -133,8 +192,8 @@ describe('urn', async () => {
       await ld.fix([f020], [f020, ldf856]);
     });
 
-    it('856 with urn, and is legal deposit; Adds legal deposit fields', async () => {
-      await ld.fix([f020, f856URL, f856URN], [f020, f856URL, ldf856]);
+    it.skip('856 with urn, and is legal deposit; Adds another f856 with URN and legal deposit fields', async () => {
+      await ld.fix([f020, f856URL, f856URN], [f020, f856URL, f856URN, ldf856]);
     });
   });
 });
