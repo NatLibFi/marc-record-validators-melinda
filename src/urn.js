@@ -29,6 +29,7 @@ export default function (isLegalDeposit = false) {
     debugData(`IsLegalDeposit: ${isLegalDeposit}, LegalDepositSubfields: ${JSON.stringify(ldSubfields)}`);
 
     // We add the URN even if we're not getting the legalDeposit - where does this URN resolve?
+    // We probably should not do these additions
 
     if (f856sUrn.length === 0) { // eslint-disable-line functional/no-conditional-statement
       const {code, value, generated} = await createURNSubfield(record);
