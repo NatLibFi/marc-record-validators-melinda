@@ -4,7 +4,7 @@ import createDebugLogger from 'debug';
 
 const URN_GENERATOR_URL = 'http://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';
 
-export default function (isLegalDeposit = false) {
+export default function (isLegalDeposit = false, useMelindaTemp = true) {
   const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:urn');
   const debugData = debug.extend('data');
 
@@ -16,7 +16,7 @@ export default function (isLegalDeposit = false) {
   const hasURN = f => f.tag === '856' && f.subfields.some(({code, value}) => code === 'u' && (/urn.fi/u).test(value));
 
   return {
-    description: 'Adds URN for record, to 856-field (if not existing)',
+    description: 'Adds URN for record, to 856-field (if not existing). If isLegalDeposit is active, adds legal deposit subfields to the f856s with URN.',
     validate,
     fix
   };
@@ -33,8 +33,10 @@ export default function (isLegalDeposit = false) {
 
     if (f856sUrn.length === 0) { // eslint-disable-line functional/no-conditional-statement
       const {code, value, generated} = await createURNSubfield(record);
-      const tempSubField = {code: '9', value: 'MELINDA<TEMP>'};
-      if (generated) {
+
+      if (generated && useMelindaTemp) {
+        const tempSubField = {code: '9', value: 'MELINDA<TEMP>'};
+
         record.insertField({
           tag: '856',
           ind1: '4',
@@ -74,6 +76,7 @@ export default function (isLegalDeposit = false) {
 
     async function createURNSubfield(rec) {
       // isbn is picked from the last 020 $a in the record
+      // what should we do in case of several 020 $a:s
       const isbn = rec.fields.reduce((acc, f) => {
         if (f.tag === '020') {
           const a = f.subfields.find(sf => sf.code === 'a');
@@ -96,7 +99,7 @@ export default function (isLegalDeposit = false) {
         const response = await fetch(URN_GENERATOR_URL);
         const body = await response.text();
 
-        // If we generated URN we should also add it to the 024
+        // If we generated URN we could also add it to the 024
         // generated 024 should also have $9 MELINDA<TEMP>
         return {generated: true, value: `http://urn.fi/${body}`};
       }
