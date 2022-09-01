@@ -165,7 +165,6 @@ describe('urn', async () => {
       await ld.validate(true, f337, f020, ldf856partial, ldf856, f856URL);
     });
 
-
     it('Finds the record invalid; 856 with URN and partial legal deposit subfields, and is legal deposit', async () => {
       await ld.validate(false, f337, f020, ldf856partial);
     });
@@ -219,7 +218,7 @@ describe('urn', async () => {
       await ld.fix([f020], [f020, ldf856]);
     });
 
-    // We should actually do this
+    // We should actually do this instead of locking the original non-legal deposit URN for legal deposit use
     it.skip('856 with urn, and is legal deposit; Adds another f856 with URN and legal deposit fields', async () => {
       await ld.fix([f020, f856URL, f856URN], [f020, f856URL, f856URN, ldf856]);
     });
