@@ -224,7 +224,7 @@ describe('urn', async () => {
     });
 
     // We should actually add a new urn in case of a non-resource URN
-    it('856 with non-resource-urn, and is legal deposit; Adds another f856 with URN and legal deposit fields', async () => {
+    it.skip('856 with non-resource-urn, and is legal deposit; Adds another f856 with URN and legal deposit fields', async () => {
       await ld.fix([f020, f856URL, f856URNnotResource], [f020, f856URL, f856URNnotResource, ldf856]);
     });
 
