@@ -58,7 +58,8 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
     } else if (isLegalDeposit) { // eslint-disable-line functional/no-conditional-statement
 
       // We add here legal deposit information to all URN-f856s - we probably should not do this
-      // We should add extra f856 URNs for legal deposits that already have open URN
+      // We should add extra f856 URN / URNs for legal deposits that already have a open (non-legal-deposit) URN
+      // How do we decide which URN to use as a template if there are several URNs
       // We should check for existence of a legal deposit URN anyways
 
       f856sUrn.forEach(f => {
