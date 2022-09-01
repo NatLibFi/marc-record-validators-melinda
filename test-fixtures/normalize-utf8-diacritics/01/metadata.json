@@ -1,0 +1,5 @@
+{
+  "description": "Validate diacritics: fail, since decomposed should precomposed",
+  "enabled": true,
+  "fix": false
+}
