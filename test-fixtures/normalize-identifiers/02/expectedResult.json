@@ -1,0 +1,92 @@
+{
+  "_validationOptions": {},
+  "fields": [
+      {
+        "tag": "005",
+        "value": "20220202020202.0"
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "code": "z",
+            "value": "(FIN12)001234321"
+          }
+        ],
+        "tag": "035"
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "code": "z",
+            "value": "(FIN12)009876789"
+          }
+        ],
+        "tag": "035"
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "code": "a",
+            "value": "Sirén, Matti"
+          },
+          {
+            "code": "e",
+            "value": "kirjoittaja."
+          },
+          {
+            "code": "0",
+            "value": "(FIN11)000654321"
+          }
+        ],
+        "tag": "100"
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "code": "a",
+            "value": "title"
+          }
+        ],
+        "tag": "245"
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "code": "w",
+            "value": "(FIN01)000123456"
+          },
+          {
+            "code": "t",
+            "value": "whatever"
+          }
+        ],
+        "tag": "773"
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "subfields": [
+          {
+            "code": "w",
+            "value": "(FIN01)000666666"
+          },
+          {
+            "code": "t",
+            "value": "whatever 2"
+          }
+        ],
+        "tag": "773"
+      }
+  ],
+  "leader": ""
+}

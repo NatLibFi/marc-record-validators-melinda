@@ -1,0 +1,92 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "035",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "z",
+          "value": "(FIN12)001234321"
+        }
+      ]
+    },
+    {
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "z",
+          "value": "(FI-ASTERI-A)009876789"
+        }
+      ],
+      "tag": "035"
+    },
+    {
+      "tag": "100",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Sirén, Matti"
+        },
+        {
+          "code": "e",
+          "value": "kirjoittaja."
+        },
+        {
+          "code": "0",
+          "value": "(FI-ASTERI-N)000654321"
+        }
+      ]
+    },
+    {
+      "tag": "245",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "title"
+        }        
+      ]
+
+    },
+    {
+      "tag": "773",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "w",
+          "value": "FCC000123456"
+        },
+        {
+          "code": "t",
+          "value": "whatever"
+        }
+      ]
+    },
+    {
+      "tag": "773",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "w",
+          "value": "(FI-MELINDA)000666666"
+        },
+        {
+          "code": "t",
+          "value": "whatever 2"
+        }
+      ]
+    }
+
+  ]
+}
