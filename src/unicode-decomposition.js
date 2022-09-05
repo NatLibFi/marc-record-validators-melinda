@@ -136,8 +136,9 @@ export default function () {
       return null;
     });
   }
-
-  function convert(value) {
-    return Object.keys(MAP_CONVERSION).reduce((result, key) => result.includes(key) ? result.replace(new RegExp(key, 'ug'), MAP_CONVERSION[key]) : result, value);
-  }
 }
+
+export function convert(value) {
+  return Object.keys(MAP_CONVERSION).reduce((result, key) => result.includes(key) ? result.replace(new RegExp(key, 'ug'), MAP_CONVERSION[key]) : result, value);
+}
+
