@@ -39,7 +39,7 @@
     "@natlibfi/marc-record-validate": "^7.0.1",
     "cld3-asm": "^3.1.1",
     "debug": "^4.3.3",
-    "isbn3": "^1.1.18",
+    "isbn3": "^1.1.26",
     "langs": "^2.0.0",
     "node-fetch": "^2.6.7",
     "xml2js": ">=0.4.23 <1.0.0",
