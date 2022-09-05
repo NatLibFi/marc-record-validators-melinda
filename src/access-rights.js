@@ -1,8 +1,13 @@
+import {isElectronicMaterial} from './utils';
+
 export default function () {
   const sf506 = [{code: 'a', value: /aineisto on käytettävissä vapaakappalekirjastoissa/ui}];
   const sf540 = [{code: 'c', value: /laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä/ui}];
 
   function fix(record) {
+    // If printed do nothing
+
+    // If material is electronic add theis if missing
     if (!hasTag(record, '506', sf506)) { // eslint-disable-line functional/no-conditional-statement
       record.insertField({
         tag: '506',
@@ -59,6 +64,11 @@ export default function () {
   }
 
   function validate(record) {
+    // if not electronic skip this validator
+    if (!isElectronicMaterial(record)) {
+      return {valid: true};
+    }
+
     return {valid: hasTag(record, '506', sf506) && hasTag(record, '540', sf540)};
   }
 

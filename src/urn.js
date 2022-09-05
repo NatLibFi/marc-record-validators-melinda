@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import {isElectronicMaterial} from './utils';
 
 const URN_GENERATOR_URL = 'http://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';
 
@@ -14,14 +15,28 @@ export default function (isLegalDeposit = false) {
   async function fix(record) {
     const f856sUrn = record.fields.filter(hasURN);
     const ldSubfields = isLegalDeposit ? createLDSubfields() : [];
-
     if (f856sUrn.length === 0) { // eslint-disable-line functional/no-conditional-statement
+      const {code, value, generated} = await createURNSubfield(record);
+      const tempSubField = {code: '9', value: 'MELINDA<TEMP>'};
+      if (generated) {
+        record.insertField({
+          tag: '856',
+          ind1: '4',
+          ind2: '0',
+          subfields: [{code, value}, ...ldSubfields, tempSubField]
+        });
+
+        return true;
+      }
+
       record.insertField({
         tag: '856',
         ind1: '4',
         ind2: '0',
-        subfields: [await createURNSubfield(record), ...ldSubfields]
+        subfields: [{code, value}, ...ldSubfields]
       });
+
+      return true;
     } else if (isLegalDeposit) { // eslint-disable-line functional/no-conditional-statement
       f856sUrn.forEach(f => {
         ldSubfields.forEach(ldsf => {
@@ -44,19 +59,17 @@ export default function (isLegalDeposit = false) {
         return acc;
       }, undefined);
 
-      return {
-        code: 'u',
-        value: await createURN(isbn)
-      };
+      const {generated, value} = await createURN(isbn);
+      return {code: 'u', value, generated};
 
       async function createURN(isbn = false) {
         if (isbn) {
-          return `http://urn.fi/URN:ISBN:${isbn}`;
+          return {generated: false, value: `http://urn.fi/URN:ISBN:${isbn}`};
         }
 
         const response = await fetch(URN_GENERATOR_URL);
         const body = await response.text();
-        return `http://urn.fi/${body}`;
+        return {generated: true, value: `http://urn.fi/${body}`};
       }
     }
 
@@ -75,6 +88,11 @@ export default function (isLegalDeposit = false) {
   }
 
   function validate(record) {
+    // if not electronic skip this validator
+    if (!isElectronicMaterial(record)) {
+      return {valid: true};
+    }
+
     return {valid: record.fields.some(hasURN) && !isLegalDeposit};
   }
 }

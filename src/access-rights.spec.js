@@ -4,6 +4,16 @@ import validatorFactory from '../src/access-rights';
 
 describe('access-rights', async () => {
   // Fields
+  const f337 = {
+    tag: '337',
+    ind1: ' ',
+    ind2: ' ',
+    subfields: [
+      {code: 'b', value: 'c'},
+      {code: '2', value: 'rdamedia'}
+    ]
+  };
+
   const ldf5061 = {
     tag: '506',
     ind1: '1',
@@ -81,15 +91,15 @@ describe('access-rights', async () => {
     });
 
     it('Finds the record invalid; Missing 5061', async () => {
-      await test.validate(false, f5060, ldf540);
+      await test.validate(false, f337, f5060, ldf540);
     });
 
     it('Finds the record invalid; Missing 540', async () => {
-      await test.validate(false, ldf5061, f540);
+      await test.validate(false, f337, ldf5061, f540);
     });
 
     it('Finds the record invalid; Missing 5061 and 540', async () => {
-      await test.validate(false, f5060, f540);
+      await test.validate(false, f337, f5060, f540);
     });
   });
 
