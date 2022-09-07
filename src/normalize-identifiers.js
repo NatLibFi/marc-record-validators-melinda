@@ -83,6 +83,8 @@ export default function () {
   }
 }
 
+// We could have option to normalize to AlephInternal (FIN01) or to Standardized (FI-MELINDA) format depending on options?
+
 const defaultFIN01 = '(FIN01)';
 const defaultFIN10 = '(FIN10)';
 const defaultFIN11 = '(FIN11)';
@@ -137,6 +139,7 @@ export function mayContainControlNumberIdentifier(tag, sf) {
     return true;
   }
 
+  // Note: 035 $a and $z should be always mapped to standard (ISIL)<number> -format, in both AlephInternal and Standardized formats
   if (tag === '035' && ['a', 'z'].includes(sf.code)) {
     return true;
   }
@@ -146,6 +149,7 @@ export function mayContainControlNumberIdentifier(tag, sf) {
 export function fieldNormalizeControlNumbers(field) {
   // Rename "Prefixes" as "ControlNumberIdentifiers"?
   // No, since isni etc...  however, just "ControlNumber" would do...
+  // "identifiers" ?
   if (!field.subfields) {
     return;
   }
