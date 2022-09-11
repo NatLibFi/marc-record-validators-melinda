@@ -1,9 +1,8 @@
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeIdentifiers');
-//import {fieldToString} from './utils.js';
-//import { nvdebug} from './utils.js';
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalizeIdentifiers');
+
 
 function fieldToString(f) {
   return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
@@ -13,6 +12,15 @@ function fieldToString(f) {
     return field.subfields.map(sf => `${sf.code}${sf.value}`).join(' ‡');
   }
 }
+
+/*
+function nvdebug(message, func) {
+  if (func) { // eslint-disable-line functional/no-conditional-statement
+    func(message);
+  }
+  console.info(message); // eslint-disable-line no-console
+}
+*/
 
 export default function () {
 
@@ -83,32 +91,41 @@ export default function () {
   }
 }
 
-const defaultFIN01 = '(FIN01)';
-const defaultFIN10 = '(FIN10)';
-const defaultFIN11 = '(FIN11)';
-const defaultFIN12 = '(FIN12)';
-const defaultFIN13 = '(FIN13)';
+const alephInternal01 = '(FIN01)';
+const alephInternal10 = '(FIN10)';
+const alephInternal11 = '(FIN11)';
+const alephInternal12 = '(FIN12)';
+const alephInternal13 = '(FIN13)';
 
-// Using default consts allow us to change the default value trivially.
-// Note that som mappings map to themselves, for example, '(FIN01)' maps to itself '(FIN01)' on purpose.
+const standard01 = '(FI-MELINDA)';
+const standard10 = '(FI-ASTERI-S)';
+const standard11 = '(FI-ASTERI-N)';
+const standard12 = '(FI-ASTERI-A)';
+const standard13 = '(FI-ASTERI-W)';
 
-const prefixMappings = {
-  'FCC': defaultFIN01,
-  '(FI-ASTERI-A)': defaultFIN12,
-  '(FI-ASTERI-N)': defaultFIN11,
-  '(FI-ASTERI-S)': defaultFIN10,
-  '(FI-ASTERI-W)': defaultFIN13,
-  '(FI-MELINDA)': defaultFIN01,
-  '(FIN01)': defaultFIN01,
-  '(FIN10)': defaultFIN10,
-  '(FIN11)': defaultFIN11,
-  '(FIN12)': defaultFIN12,
-  '(FIN13)': defaultFIN13,
-  'http://urn.fi/URN:NBN:fi:au:finaf:': defaultFIN11,
-  'https://urn.fi/URN:NBN:fi:au:finaf:': defaultFIN11
+const both01 = {ALEPH_INTERNAL: alephInternal01, STANDARD: standard01};
+const both10 = {ALEPH_INTERNAL: alephInternal10, STANDARD: standard10};
+const both11 = {ALEPH_INTERNAL: alephInternal11, STANDARD: standard11};
+const both12 = {ALEPH_INTERNAL: alephInternal12, STANDARD: standard12};
+const both13 = {ALEPH_INTERNAL: alephInternal13, STANDARD: standard13};
+
+const mappings = {
+  'FCC': both01,
+  '(FI-ASTERI-A)': both12,
+  '(FI-ASTERI-N)': both11,
+  '(FI-ASTERI-S)': both10,
+  '(FI-ASTERI-W)': both13,
+  '(FI-MELINDA)': both01,
+  '(FIN01)': both01,
+  '(FIN10)': both10,
+  '(FIN11)': both11,
+  '(FIN12)': both12,
+  '(FIN13)': both13,
+  'http://urn.fi/URN:NBN:fi:au:finaf:': both11,
+  'https://urn.fi/URN:NBN:fi:au:finaf:': both11
 };
 
-function normalizeNineDigitIDs(value) {
+function normalizeNineDigitIDs(value, targetFormat = 'ALEPH_INTERNAL') {
   // $value should be prefix + nine-digits. Do nothing if nine-digit tail condition is not met:
   const nineDigitTail = value.slice(-9);
   if (!(/^[0-9]{9}$/u).test(nineDigitTail)) {
@@ -116,14 +133,17 @@ function normalizeNineDigitIDs(value) {
   }
   // Normalize prefix:
   const currPrefix = value.slice(0, -9);
-  if (currPrefix in prefixMappings) {
-    return `${prefixMappings[currPrefix]}${value.slice(-9)}`;
+
+  if (currPrefix in mappings) {
+    //nvdebug(`${currPrefix}, TF:${targetFormat}...`);
+    //nvdebug(`${JSON.stringify(mappings[currPrefix])}`);
+    return `${mappings[currPrefix][targetFormat]}${nineDigitTail}`;
   }
   return value;
 }
 
-export function normalizeControlSubfieldValue(value = '') {
-  const normalizedValue = normalizeNineDigitIDs(value);
+export function normalizeControlSubfieldValue(value = '', targetFormat = 'ALEPH_INTERNAL') {
+  const normalizedValue = normalizeNineDigitIDs(value, targetFormat);
   if (normalizedValue !== value) {
     return normalizedValue;
   }
@@ -132,15 +152,16 @@ export function normalizeControlSubfieldValue(value = '') {
 }
 
 //export function normalizableSubfieldPrefix(tag, sf) {
-export function mayContainControlNumberIdentifier(tag, sf) {
-  if (sf.code === '0' || sf.code === '1' || sf.code === 'w') {
-    return true;
+export function normalizeAs(tag, subfieldCode) {
+  //nvdebug(`nAs ${tag}, ${subfieldCode}`);
+  if (subfieldCode === '0' || subfieldCode === '1' || subfieldCode === 'w') {
+    return 'ALEPH_INTERNAL';
   }
 
-  if (tag === '035' && ['a', 'z'].includes(sf.code)) {
-    return true;
+  if (tag === '035' && ['a', 'z'].includes(subfieldCode)) {
+    return 'STANDARD';
   }
-  return false;
+  return undefined;
 }
 
 export function fieldNormalizeControlNumbers(field) {
@@ -151,9 +172,10 @@ export function fieldNormalizeControlNumbers(field) {
   }
 
   field.subfields.forEach(sf => {
-    if (mayContainControlNumberIdentifier(field.tag, sf)) {
-      //nvdebug(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`, debug);
-      sf.value = normalizeControlSubfieldValue(sf.value); // eslint-disable-line functional/immutable-data
+    const targetFormat = normalizeAs(field.tag, sf.code);
+    if (targetFormat !== undefined) {
+      //nvdebug(`NORMALIZE SUBFIELD $${sf.code} IN FIELD: '${fieldToString(field)}' TO ${targetFormat}`);
+      sf.value = normalizeControlSubfieldValue(sf.value, targetFormat); // eslint-disable-line functional/immutable-data
       return;
     }
   });
