@@ -11,7 +11,7 @@
         "subfields": [
           {
             "code": "z",
-            "value": "(FIN12)001234321"
+            "value": "(FI-ASTERI-A)001234321"
           }
         ],
         "tag": "035"
@@ -22,7 +22,7 @@
         "subfields": [
           {
             "code": "z",
-            "value": "(FIN12)009876789"
+            "value": "(FI-ASTERI-A)009876789"
           }
         ],
         "tag": "035"
