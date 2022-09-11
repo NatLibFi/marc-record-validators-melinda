@@ -142,11 +142,34 @@ function normalizeNineDigitIDs(value, targetFormat = 'ALEPH_INTERNAL') {
   return value;
 }
 
+function isIsni(value) {
+  if ((/^\(isni\)(?: ?[0-9]{4}){4}$/u).test(value)) {
+    return true;
+  }
+  if ((/^https:\/\/isni.org\/isni\/[0-9]{16}$/u).test(value)) {
+    return true;
+  }
+  return false;
+}
+
+function normalizeIsni(value) {
+  if (isIsni(value)) {
+    return `https://isni.org/isni/${value.replace(/[^0-9]/gu, '')}`;
+  }
+  return value;
+}
+
+
 export function normalizeControlSubfieldValue(value = '', targetFormat = 'ALEPH_INTERNAL') {
+  if (isIsni(value)) {
+    return normalizeIsni(value);
+  }
+
   const normalizedValue = normalizeNineDigitIDs(value, targetFormat);
   if (normalizedValue !== value) {
     return normalizedValue;
   }
+
   // Something for isni IDs?
   return value;
 }
