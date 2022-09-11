@@ -1,5 +1,5 @@
 {
-  "description": "SKIP: Normalize 035 $a and $z always to standardized (ISIL)<sysnro> format",
+  "description": "Normalize 035 $a and $z always to standardized (ISIL)<sysnro> format",
   "enabled": true,
   "fix": true
 }
