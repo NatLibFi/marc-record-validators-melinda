@@ -167,6 +167,7 @@ export function normalizeAs(tag, subfieldCode) {
 export function fieldNormalizeControlNumbers(field) {
   // Rename "Prefixes" as "ControlNumberIdentifiers"?
   // No, since isni etc...  however, just "ControlNumber" would do...
+  // "identifiers" ?
   if (!field.subfields) {
     return;
   }
