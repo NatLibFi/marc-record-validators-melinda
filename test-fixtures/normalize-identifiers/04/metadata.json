@@ -1,0 +1,5 @@
+{
+  "description": "Normalize $0 ISNI values",
+  "enabled": true,
+  "fix": true
+}

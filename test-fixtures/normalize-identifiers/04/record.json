@@ -1,0 +1,77 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "100",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Sirén, Matti"
+        },
+        {
+          "code": "e",
+          "value": "kirjoittaja."
+        },
+        {
+          "code": "0",
+          "value": "(isni) 0123 4567 8901 2345"
+        }
+      ]
+    },
+    {
+      "tag": "245",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "title"
+        }        
+      ]
+
+    },
+    {
+      "tag": "700",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Sukunimi, Etunimi"
+        },
+        {
+          "code": "e",
+          "value": "kirjoittaja."
+        },
+        {
+          "code": "0",
+          "value": "(isni)1111 2222 3333 4444"
+        }
+      ]
+    },
+    {
+      "tag": "700",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Meikäläinen, Matti,"
+        },
+        {
+          "code": "e",
+          "value": "kirjoittaja."
+        },
+        {
+          "code": "0",
+          "value": "https://isni.org/isni/9876543210123456"
+        }
+      ]
+    }
+  ]
+}
