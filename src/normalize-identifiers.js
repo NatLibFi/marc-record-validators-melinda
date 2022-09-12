@@ -142,7 +142,7 @@ function normalizeNineDigitIDs(value, targetFormat = 'ALEPH_INTERNAL') {
   return value;
 }
 
-function isIsni(value) {
+export function isIsni(value) {
   if ((/^\(isni\)(?: ?[0-9]{4}){4}$/u).test(value)) {
     return true;
   }
@@ -152,7 +152,7 @@ function isIsni(value) {
   return false;
 }
 
-function normalizeIsni(value) {
+export function normalizeIsni(value) {
   if (isIsni(value)) {
     return `https://isni.org/isni/${value.replace(/[^0-9]/gu, '')}`;
   }
