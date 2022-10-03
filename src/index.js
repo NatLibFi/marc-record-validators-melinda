@@ -10,6 +10,7 @@ import FieldExclusion from './field-exclusion';
 import IdenticalFields from './identical-fields';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
+import NormalizeUTF8Diacritics from './normalize-utf8-diacritics';
 import Punctuation from './punctuation/';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SortTags from './sort-tags';
@@ -30,6 +31,7 @@ export {
   IdenticalFields,
   IsbnIssn,
   ItemLanguage,
+  NormalizeUTF8Diacritics,
   Punctuation,
   ResolvableExtReferences,
   SortTags,

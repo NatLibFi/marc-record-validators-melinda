@@ -24,7 +24,6 @@ describe('urn', async () => {
     ]
   };
 
-
   const ldf856 = {
     tag: '856',
     ind1: '4',
@@ -45,7 +44,6 @@ describe('urn', async () => {
       {code: '5', value: 'FI-Vapaa'}
     ]
   };
-
 
   const f856URN = {
     tag: '856',

@@ -35,16 +35,17 @@
     "build": "babel src --source-maps --copy-files --delete-dir-on-start --out-dir=dist"
   },
   "dependencies": {
-    "@babel/register": "^7.16.9",
+    "@babel/register": "^7.18.9",
     "@natlibfi/issn-verify": "^1.0.0",
-    "@natlibfi/marc-record": "^7.0.0",
-    "@natlibfi/marc-record-validate": "^7.0.1",
+    "@natlibfi/marc-record": "^7.2.1",
+    "@natlibfi/marc-record-validate": "^7.0.2",
     "cld3-asm": "^3.1.1",
-    "debug": "^4.3.3",
-    "isbn3": "^1.1.18",
+    "debug": "^4.3.4",
+    "isbn3": "^1.1.27",
     "langs": "^2.0.0",
     "node-fetch": "^2.6.7",
-    "xml2js": ">=0.4.23 <1.0.0"
+    "xml2js": ">=0.4.23 <1.0.0",
+    "clone": "^2.1.2"
   },
   "peerDependencies": {
     "@natlibfi/marc-record-validate": "^7.0.1"
