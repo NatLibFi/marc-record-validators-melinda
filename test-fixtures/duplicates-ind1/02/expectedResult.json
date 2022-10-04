@@ -1,0 +1,6 @@
+{
+  "valid": false,
+  "messages": [
+    "Multiple 500 fields which only differ in the first indicator"
+  ]
+}
