@@ -1,0 +1,54 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "041",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "eng"
+        }
+      ]
+    },
+    {
+      "tag": "245",
+      "ind1": "0",
+      "ind2": "3",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "An Example"
+        }        
+      ]
+
+    },
+    {
+      "tag": "490",
+      "ind1": "0",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "A Tale of Two Cities"
+        }
+      ]
+    },
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "A Tale of Two Cities Revisited"
+        }
+      ]
+    }
+  ],
+  "leader": ""
+}
