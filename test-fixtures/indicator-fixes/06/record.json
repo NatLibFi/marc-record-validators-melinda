@@ -1,0 +1,74 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "041",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "swe"
+        },
+        {
+          "code": "a",
+          "value": "fre"
+        },
+        {
+          "code": "a",
+          "value": "ger"
+        }
+        
+      ]
+    },
+    {
+      "tag": "130",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Ett Exempel."
+        }
+      ]
+    },
+    {
+      "tag": "245",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "L'Occitane"
+        }        
+      ]
+
+    },
+    {
+      "tag": "730",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Der Alte"
+        }
+      ]
+    },
+    {
+      "tag": "730",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "The Fallback that handles 'The'"
+        }
+      ]
+    }
+  ],
+  "leader": ""
+}
