@@ -1,0 +1,6 @@
+{
+  "description": "merge 500 Lisäpainokset fields. 3 fields that get merged. Fenni-kept field remains an island.",
+  "only": false,
+  "fix": true
+
+}

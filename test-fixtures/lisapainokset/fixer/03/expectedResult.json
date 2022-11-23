@@ -1,0 +1,21 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainokset: 2. p. 2002. - 3. painos 2003. - 4. p. 2004. - 6. p. 2006. - 7. uppl. 2007."
+        }        
+      ]
+    }
+  ],
+  "leader": ""
+}

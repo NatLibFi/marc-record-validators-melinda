@@ -1,0 +1,37 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainokset: 7. p. 2007."
+        },
+        {
+          "code": "9",
+          "value": "FENNI<KEEP>"
+        }          
+      ]
+
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainos: 2. p. 2002."
+        }        
+      ]
+
+    }
+  ],
+  "leader": ""
+}

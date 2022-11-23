@@ -1,0 +1,6 @@
+{
+  "description": "validate 500 Lisäpainokset fields: nothing to merge",
+  "only": false,
+  "fix": false
+
+}
