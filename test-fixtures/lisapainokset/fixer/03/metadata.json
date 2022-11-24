@@ -1,5 +1,5 @@
 {
-  "description": "merge 500 Lisäpainokset fields: fail due to data mismatch",
+  "description": "merge 500 Lisäpainokset fields: more complex pairs: p. > uppl. and 2004 > [2004]",
   "only": false,
   "fix": true
 
