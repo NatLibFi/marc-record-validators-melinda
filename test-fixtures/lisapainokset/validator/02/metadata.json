@@ -1,0 +1,6 @@
+{
+  "description": "Validate 500 Lisäpainokset fields. Validator finds things that can be fixed",
+  "only": false,
+  "fix": false
+
+}

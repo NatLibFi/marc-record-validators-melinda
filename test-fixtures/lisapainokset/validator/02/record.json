@@ -1,0 +1,61 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainokset: 7. p. 2007."
+        },
+        {
+          "code": "9",
+          "value": "FENNI<KEEP>"
+        }          
+      ]
+
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainos: 2. p. 2002."
+        }        
+      ]
+
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainokset: 3. p. 2003. - 4. p. 2004."
+        }        
+      ]
+
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainokset: 2. p. 2002. - 4. p. 2004. - 6. p. 2006."
+        }        
+      ]
+
+    }
+  ],
+  "leader": ""
+}

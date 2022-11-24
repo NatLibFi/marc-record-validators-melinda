@@ -1,0 +1,6 @@
+{
+  "description": "validate 500 Lisäpainokset fields: fail due to data mismatch",
+  "only": false,
+  "fix": false
+
+}
