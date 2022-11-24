@@ -2,7 +2,7 @@ export default function () {
 
   // NB! We should and could handle ISNIs here as well.
   return {
-    description: 'Normalizes identifiers such as subfield $0 values',
+    description: 'Merge 500 $a Lisäpainokset fields',
     validate, fix
   };
 
