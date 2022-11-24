@@ -26,6 +26,7 @@ describe('access-rights', async () => {
       {code: '9', value: 'FENNI<KEEP>'}
     ]
   };
+
   const ldf540 = {
     tag: '540',
     ind1: ' ',
@@ -39,6 +40,7 @@ describe('access-rights', async () => {
       {code: '9', value: 'FENNI<KEEP>'}
     ]
   };
+
   const f5060 = {
     tag: '506',
     ind1: '0',
@@ -50,6 +52,7 @@ describe('access-rights', async () => {
       {code: '9', value: 'FENNI<KEEP>'}
     ]
   };
+
   const f540 = {
     tag: '540',
     ind1: ' ',
@@ -113,11 +116,11 @@ describe('access-rights', async () => {
     });
 
     it('5061 but missing 540; Adds 540', async () => {
-      await test.fix([ldf5061, f540], [ldf5061, f540, ldf540]);
+      await test.fix([ldf5061, f540], [ldf5061, ldf540, f540]);
     });
 
     it('Both, 5061 and 540, missing; Adds 5061 and 540', async () => {
-      await test.fix([f5060, f540], [f5060, ldf5061, f540, ldf540]);
+      await test.fix([f5060, f540], [f5060, ldf5061, ldf540, f540]);
     });
   });
 });

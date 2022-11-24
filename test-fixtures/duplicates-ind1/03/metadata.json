@@ -1,0 +1,6 @@
+{
+  "only": false,
+  "description": "Removes duplicate values",
+  "tagPattern": "^500$",
+  "fix": true
+}
