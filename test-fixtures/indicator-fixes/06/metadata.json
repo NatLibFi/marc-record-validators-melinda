@@ -1,0 +1,5 @@
+{
+  "description": "06: Fix indicators (swe, fre, ger)",
+  "enabled": true,
+  "fix": true
+}

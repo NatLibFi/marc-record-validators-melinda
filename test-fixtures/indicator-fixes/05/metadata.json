@@ -1,0 +1,5 @@
+{
+  "description": "05: Fix field 490 indicators (2x490 vs 2x8XX fields)",
+  "enabled": true,
+  "fix": true
+}
