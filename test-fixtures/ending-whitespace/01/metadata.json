@@ -1,0 +1,5 @@
+{
+  "description": "Finds the record valid when there are no subfields that end with whitespace",
+  "enabled": true,
+  "fix": false
+}

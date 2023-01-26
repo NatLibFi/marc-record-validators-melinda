@@ -1,0 +1,5 @@
+{
+  "description": "Fixes the record subfield that ends with whitespace",
+  "enabled": true,
+  "fix": true
+}
