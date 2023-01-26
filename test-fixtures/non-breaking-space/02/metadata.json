@@ -1,0 +1,5 @@
+{
+  "description": "Finds the record not valid when there is a subfield that contains a non-breaking space character",
+  "enabled": true,
+  "fix": false
+}
