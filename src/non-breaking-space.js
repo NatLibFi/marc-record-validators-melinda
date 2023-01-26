@@ -23,7 +23,7 @@ export default function () {
     record.fields.forEach(({subfields}) => {
       subfields.forEach(subfield => {
         if (valueContainsNonBreakingSpace(subfield)) {
-          subfield.value = subfield.value.replaceAll(/\u00A0/gu, '');
+          subfield.value = subfield.value.replaceAll(/\u00A0/gu, ' ');
         }
       });
     });

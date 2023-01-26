@@ -1,5 +1,5 @@
 {
-  "description": "Fixes the record subfield that contains non-breaking space characters",
+  "description": "Fixes the record subfield that contains non-breaking space characters by replacing characters with space",
   "enabled": true,
   "fix": true
 }
