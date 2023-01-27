@@ -3,7 +3,6 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './non-breaking-space';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import createDebugLogger from 'debug';
 
 generateTests({
   callback,
@@ -17,7 +16,6 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/non-breaking-space:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
@@ -30,12 +28,7 @@ async function testValidatorFactory() {
   expect(validator.validate).to.be.a('function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
-  if (enabled === false) {
-    debug('TEST SKIPPED!');
-    return;
-  }
-
+async function callback({getFixture, fix = false}) {
   const validator = await validatorFactory();
   const record = new MarcRecord(getFixture('record.json'));
   const expectedResult = getFixture('expectedResult.json');

@@ -21,6 +21,10 @@ export default function () {
   /* eslint-disable functional/immutable-data,functional/no-conditional-statement */
   function fix(record) {
     record.fields.forEach(({subfields}) => {
+      if (subfields === undefined) {
+        return;
+      }
+
       subfields.forEach(subfield => {
         if (valueEndsWithWhitespace(subfield)) {
           subfield.value = subfield.value.trimEnd();
