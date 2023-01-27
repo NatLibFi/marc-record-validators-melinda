@@ -1,0 +1,6 @@
+{
+  "description": "Fixes the record controlfield and subfield that contains non-breaking space characters by replacing characters with space",
+  "skip": false,
+  "only": false,
+  "fix": true
+}

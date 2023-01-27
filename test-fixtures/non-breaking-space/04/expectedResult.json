@@ -1,0 +1,21 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    {
+      "tag": "008",
+      "value": "Foo Foo "
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Foo Foo "
+        }
+      ]
+    }
+  ],
+  "leader": ""
+}

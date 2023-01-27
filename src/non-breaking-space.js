@@ -10,18 +10,31 @@ export default function () {
   };
 
   function validate(record) {
-    const nonValidFields = record.fields.filter(({subfields}) => subfields.filter(valueContainsNonBreakingSpace).length > 0);
+    const nonValidFields = record.fields.filter((field) => collectNonValidFields(field));
 
     const valid = nonValidFields.length === 0;
     const messages = nonValidFields.flatMap(({tag, subfields}) => subfields.map(sf => `Field ${tag} subfield $${sf.code} contains non-breaking space character(s)`));
 
     return valid ? {valid, messages: []} : {valid, messages};
+
+    function collectNonValidFields(field) {
+      if (field.value) {
+        return (/\u00A0/u).test(field.value);
+      }
+
+      return field.subfields.filter(valueContainsNonBreakingSpace).length > 0;
+    }
   }
 
   /* eslint-disable functional/immutable-data,functional/no-conditional-statement */
   function fix(record) {
-    record.fields.forEach(({subfields}) => {
-      subfields.forEach(subfield => {
+    record.fields.forEach((field) => {
+      if (field.value) {
+        field.value = field.value.replaceAll(/\u00A0/gu, ' ');
+        return;
+      }
+
+      field.subfields.forEach(subfield => {
         if (valueContainsNonBreakingSpace(subfield)) {
           subfield.value = subfield.value.replaceAll(/\u00A0/gu, ' ');
         }
