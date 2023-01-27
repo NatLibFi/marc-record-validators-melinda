@@ -10,7 +10,7 @@ export default function () {
   };
 
   function validate(record) {
-    const nonValidFields = record.fields.filter(({subfields}) => subfields && subfields.filter(valueEndsWithWhitespace).length > 0);
+    const nonValidFields = record.fields.filter(({subfields}) => subfields !== undefined && subfields.filter(valueEndsWithWhitespace).length > 0);
 
     const valid = nonValidFields.length === 0;
     const messages = nonValidFields.flatMap(({tag, subfields}) => subfields.map(sf => `Field ${tag} subfield $${sf.code} ends with whitespace`));
