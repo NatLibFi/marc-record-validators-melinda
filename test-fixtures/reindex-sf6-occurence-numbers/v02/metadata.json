@@ -1,5 +1,5 @@
 {
-  "description": "01: $6 has gaps in occurence numebers",
+  "description": "Validate-02: $6 has gaps in occurrence numbers",
   "enabled": true,
   "fix": false,
   "only": false
