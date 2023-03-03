@@ -62,7 +62,7 @@ export function fieldHasValidSubfield6AndIsNotAnAlternateGraphicRepresentation(f
 }
 */
 
-export function subfield6GetOccurenceNumber(subfield) {
+export function subfield6GetOccurrenceNumber(subfield) {
   if (isValidSubfield6(subfield)) {
     // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
     return subfield.value.substring(4).replace(/\D.*$/u, '');
@@ -70,8 +70,12 @@ export function subfield6GetOccurenceNumber(subfield) {
   return undefined;
 }
 
-export function subfield6GetOccurenceNumberAsInteger(subfield) {
-  const index = subfield6GetOccurenceNumber(subfield);
+export function fieldHasOccurrenceNumber(field, occurrenceNumber) {
+  return field.subfields && field.subfields.some(subfield6GetOccurrenceNumber) === occurrenceNumber;
+}
+
+export function subfield6GetOccurrenceNumberAsInteger(subfield) {
+  const index = subfield6GetOccurrenceNumber(subfield);
   if (index === undefined || index === '00') {
     return 0;
   }
@@ -88,38 +92,68 @@ function subfield6GetTail(subfield) {
   return '';
 }
 
-export function resetSubfield6OccurenceNumber(subfield, occurenceNumber) {
+export function resetSubfield6OccurrenceNumber(subfield, occurrenceNumber) {
   if (!isValidSubfield6(subfield)) {
     return;
   }
-  const occurenceNumberAsString = typeof occurenceNumber === 'number' ? intToOccurenceNumberString(occurenceNumber) : occurenceNumber;
+  const occurrenceNumberAsString = typeof occurrenceNumber === 'number' ? intToOccurrenceNumberString(occurrenceNumber) : occurrenceNumber;
 
-  const newValue = subfield.value.substring(0, 4) + occurenceNumberAsString + subfield6GetTail(subfield); // eslint-disable-line functional/immutable-data
+  const newValue = subfield.value.substring(0, 4) + occurrenceNumberAsString + subfield6GetTail(subfield); // eslint-disable-line functional/immutable-data
   //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
-export function intToOccurenceNumberString(i) {
+export function intToOccurrenceNumberString(i) {
   return i < 10 ? `0${i}` : `${i}`;
 }
 
-export function recordGetMaxSubfield6OccurenceNumber(record) {
-  // Should we cache the value here?
-  const vals = record.fields.map((field) => fieldGetMaxSubfield6OccurenceNumber(field));
+function fieldGetMaxSubfield6OccurrenceNumberAsInteger(field) {
+  //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
+  const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
+  if (sf6s.length === 0) {
+    return 0;
+  }
+  // There should always be one, but here we check every subfield.
+  //nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`, debug);
+  const vals = sf6s.map(sf => subfield6GetOccurrenceNumberAsInteger(sf));
   return Math.max(...vals);
+}
 
-  function fieldGetMaxSubfield6OccurenceNumber(field) {
-    //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
-    const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
-    if (sf6s.length === 0) {
-      return 0;
+
+export function recordGetMaxSubfield6OccurrenceNumber(record) {
+  // Should we cache the value here?
+  const vals = record.fields.map((field) => fieldGetMaxSubfield6OccurrenceNumberAsInteger(field));
+  return Math.max(...vals);
+}
+
+export function hasWantedTagAndOccurrenceNumber(subfield, tagAndOccurrenceNumber) {
+  if (subfield.code !== '6') {
+    return false;
+  }
+  // We could also use generic code and go getTag()+'-'+getIndex() instead of regexp...
+  const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  nvdebug(` Compare '${key}' vs '${tagAndOccurrenceNumber}'`);
+  return key === tagAndOccurrenceNumber;
+}
+
+
+export function fieldHasWantedTagAndOccurrenceNumber(field, tagAndOccurrenceNumber) {
+  return field.subfields && field.subfields.some(sf => hasWantedTagAndOccurrenceNumber(sf, tagAndOccurrenceNumber));
+}
+
+
+/*
+export function getFieldsWithGivenOccurrenceNumberSubfield6(record, occurrenceNumberAsString) {
+  const record.fields.filter(field => field
+
+  function fieldHasIndex(field, index) {
+    if (!field.subfields) {
+      return false;
     }
-    // There should always be one, but here we check every subfield.
-    //nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`, debug);
-    const vals = sf6s.map(sf => subfield6GetOccurenceNumberAsInteger(sf));
-    return Math.max(...vals);
+    return field.subfields.find(sf => isValidSubfield6(sf) && subfieldGetOccurrenceNumber6(sf) === index);
   }
 }
+*/
 
 /*
 function fieldHasValidSubfield6(field) {
@@ -129,7 +163,7 @@ function fieldHasValidSubfield6(field) {
 
 /*
 
-export function subfieldGetOccurenceNumber6(subfield) {
+export function subfieldGetOccurrenceNumber6(subfield) {
   if (isValidSubfield6(subfield)) {
     // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
     return subfield.value.substring(4).replace(/\D.*$/u, '');
@@ -159,7 +193,7 @@ export function resetSubfield6Tag(subfield, tag) {
 */
 
 /*
-export function subfieldGetOccurenceNumber(subfield) {
+export function subfieldGetOccurrenceNumber(subfield) {
   if (!isValidSubfield6(subfield)) {
     return undefined;
   }
@@ -168,7 +202,7 @@ export function subfieldGetOccurenceNumber(subfield) {
 */
 
 /*
-export function fieldGetOccurenceNumber6(field) {
+export function fieldGetOccurrenceNumber6(field) {
   if (!field.subfields) {
     return undefined;
   }
@@ -178,7 +212,7 @@ export function fieldGetOccurenceNumber6(field) {
   if (sf6 === undefined) {
     return undefined;
   }
-  return subfieldGetOccurenceNumber6(sf6);
+  return subfieldGetOccurrenceNumber6(sf6);
 }
 
 function fieldGetTag6(field) {
@@ -207,13 +241,13 @@ export function isSubfield6Pair(field, otherField) {
 
   nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
 
-  const fieldIndex = fieldGetOccurenceNumber6(field);
+  const fieldIndex = fieldGetOccurrenceNumber6(field);
   if (fieldIndex === undefined || fieldIndex === '00') {
     nvdebug(` FAILED. REASON: NO INDEX FOUND`);
     return false;
   }
 
-  const otherFieldIndex = fieldGetOccurenceNumber6(otherField);
+  const otherFieldIndex = fieldGetOccurrenceNumber6(otherField);
 
   if (fieldIndex !== otherFieldIndex) {
     nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
@@ -313,14 +347,4 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
 }
 
 
-export function getFieldsWithSubfield6Index(record, index) {
-  return record.fields.filter(field => fieldHasIndex(field, index));
-
-  function fieldHasIndex(field, index) {
-    if (!field.subfields) {
-      return false;
-    }
-    return field.subfields.find(sf => isValidSubfield6(sf) && subfieldGetOccurenceNumber6(sf) === index);
-  }
-}
 */
