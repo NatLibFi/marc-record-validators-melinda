@@ -16,6 +16,11 @@
       { "code": "a", "value": "Pairless"},
       { "code": "e", "value": "whatever" }
     ]},
+    { "tag": "800", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-105" },
+      { "code": "a", "value": "Paired #2"},
+      { "code": "e", "value": "whatever" }
+    ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "500-00/(N" },
       { "code": "a", "value": "Lorum ipsum." }
@@ -34,6 +39,11 @@
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "700-06" },
       { "code": "a", "value": "Pairless #2"},
+      { "code": "e", "value": "whatever" }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "800-105" },
+      { "code": "a", "value": "Paired #2"},
       { "code": "e", "value": "whatever" }
     ]}
 
