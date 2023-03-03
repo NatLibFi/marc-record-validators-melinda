@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
-import {intToOccurenceNumberString, isValidSubfield6, nvdebug, recordGetMaxSubfield6Index,
-  resetSubfield6OccurenceNumber, subfield6GetIndex, subfield6GetIndexAsInteger} from './subfield6Utils';
+import {intToOccurenceNumberString, isValidSubfield6, nvdebug, recordGetMaxSubfield6OccurenceNumber,
+  resetSubfield6OccurenceNumber, subfield6GetOccurenceNumber, subfield6GetOccurenceNumberAsInteger} from './subfield6Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -27,7 +27,7 @@ export default function () {
   function validate(record) {
     // Check max, and check number of different indexes
     nvdebug('Validate SF6 occurence numbers', debug);
-    const max = recordGetMaxSubfield6Index(record);
+    const max = recordGetMaxSubfield6OccurenceNumber(record);
     const size = recordGetNumberOfUniqueSubfield6OccurenceNumbers(record);
 
     const res = {message: []};
@@ -56,7 +56,7 @@ function recordGetNumberOfUniqueSubfield6OccurenceNumbers(record) {
     if (!isValidSubfield6(subfield)) {
       return;
     }
-    const i = subfield6GetIndexAsInteger(subfield);
+    const i = subfield6GetOccurenceNumberAsInteger(subfield);
     if (i === 0) {
       return
     }
@@ -87,7 +87,7 @@ export function recordResetSubfield6OccurenceNumbers(record) { // Remove gaps
     if (!isValidSubfield6(subfield)) {
       return;
     }
-    const currIndex = subfield6GetIndex(subfield);
+    const currIndex = subfield6GetOccurenceNumber(subfield);
     if (currIndex === undefined || currIndex === '00') {
       return;
     }
