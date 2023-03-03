@@ -11,6 +11,9 @@
       { "code": "a", "value": "FOO"},
       { "code": "e", "value": "whatever" }
     ]},
+    { "tag": "800", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-04" }
+    ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "500-00/(N" },
       { "code": "a", "value": "Lorum ipsum." }
@@ -25,6 +28,10 @@
       { "code": "6", "value": "700-04" },
       { "code": "a", "value": "BAR"},
       { "code": "e", "value": "whatever" }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "810-666" },
+      { "code": "a", "value": "Tässä kentässä hudin esiintymänumero muuttuu 00:ksi"}
     ]}
 
   ]
