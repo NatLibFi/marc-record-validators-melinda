@@ -1,0 +1,6 @@
+{
+  "description": "02: $6 has pairless occurence numbers",
+  "enabled": true,
+  "fix": false,
+  "only": true
+}
