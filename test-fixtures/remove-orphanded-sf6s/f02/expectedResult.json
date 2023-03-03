@@ -29,6 +29,10 @@
       { "code": "6", "value": "700-00" },
       { "code": "a", "value": "BAR"},
       { "code": "e", "value": "whatever" }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "810-00" },
+      { "code": "a", "value": "Tässä kentässä hudin esiintymämumero muuttuu 00:ksi"}
     ]}
 
   ],
