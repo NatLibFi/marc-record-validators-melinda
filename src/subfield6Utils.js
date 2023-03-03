@@ -6,6 +6,8 @@
 // NB! Index value '00' are left as they are (is not paired/indexed/whatever.
 const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
 
+// generic utils that could/should be relocated:
+
 export function nvdebug(message, func = undefined) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
@@ -13,6 +15,33 @@ export function nvdebug(message, func = undefined) {
   console.info(message); // eslint-disable-line no-console
   console.log(message); // eslint-disable-line no-console
 }
+
+export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
+  if (!field.subfields) {
+    return false;
+  }
+  if (subfieldValue === null) {
+    return field.subfields.some(sf => sf.code === subfieldCode);
+  }
+  return field.subfields.some(sf => sf.code === subfieldCode && subfieldValue === sf.value);
+}
+
+export function subfieldToString(sf) {
+  return `‡${sf.code} ${sf.value}`;
+}
+export function fieldToString(f) {
+  if ('subfields' in f) {
+    return `${f.tag} ${f.ind1}${f.ind2}${formatSubfields(f)}`;
+  }
+  return `${f.tag}    ${f.value}`;
+
+  function formatSubfields(field) {
+    return field.subfields.map(sf => ` ${subfieldToString(sf)}`).join('');
+  }
+}
+
+
+// SF $6 specific utils:
 
 
 export function isValidSubfield6(subfield) {
@@ -22,7 +51,8 @@ export function isValidSubfield6(subfield) {
   return subfield.value.match(sf6Regexp);
 }
 
-export function fieldHasValidSubfield6AndIsNoAnAlternateGraphicRepresentation(field) {
+/*
+export function fieldHasValidSubfield6AndIsNotAnAlternateGraphicRepresentation(field) {
   // AlternateGraphicRepresentation is same as "field.tag === '880'""
   if (!field.subfields || field.tag === '880') {
     return false;
@@ -30,8 +60,9 @@ export function fieldHasValidSubfield6AndIsNoAnAlternateGraphicRepresentation(fi
   const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
   return sf6s.length === 1;
 }
+*/
 
-export function subfield6GetIndex(subfield) {
+export function subfield6GetOccurenceNumber(subfield) {
   if (isValidSubfield6(subfield)) {
     // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
     return subfield.value.substring(4).replace(/\D.*$/u, '');
@@ -39,8 +70,8 @@ export function subfield6GetIndex(subfield) {
   return undefined;
 }
 
-export function subfield6GetIndexAsInteger(subfield) {
-  const index = subfield6GetIndex(subfield);
+export function subfield6GetOccurenceNumberAsInteger(subfield) {
+  const index = subfield6GetOccurenceNumber(subfield);
   if (index === undefined || index === '00') {
     return 0;
   }
@@ -72,12 +103,12 @@ export function intToOccurenceNumberString(i) {
   return i < 10 ? `0${i}` : `${i}`;
 }
 
-export function recordGetMaxSubfield6Index(record) {
+export function recordGetMaxSubfield6OccurenceNumber(record) {
   // Should we cache the value here?
-  const vals = record.fields.map((field) => fieldSubfield6Index(field));
+  const vals = record.fields.map((field) => fieldGetMaxSubfield6OccurenceNumber(field));
   return Math.max(...vals);
 
-  function fieldSubfield6Index(field) {
+  function fieldGetMaxSubfield6OccurenceNumber(field) {
     //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
     const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
     if (sf6s.length === 0) {
@@ -85,18 +116,20 @@ export function recordGetMaxSubfield6Index(record) {
     }
     // There should always be one, but here we check every subfield.
     //nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`, debug);
-    const vals = sf6s.map(sf => subfield6GetIndexAsInteger(sf));
+    const vals = sf6s.map(sf => subfield6GetOccurenceNumberAsInteger(sf));
     return Math.max(...vals);
   }
 }
-
 
 /*
 function fieldHasValidSubfield6(field) {
   return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
 }
+*/
 
-export function subfieldGetIndex6(subfield) {
+/*
+
+export function subfieldGetOccurenceNumber6(subfield) {
   if (isValidSubfield6(subfield)) {
     // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
     return subfield.value.substring(4).replace(/\D.*$/u, '');
@@ -126,7 +159,7 @@ export function resetSubfield6Tag(subfield, tag) {
 */
 
 /*
-export function subfieldGetIndex(subfield) {
+export function subfieldGetOccurenceNumber(subfield) {
   if (!isValidSubfield6(subfield)) {
     return undefined;
   }
@@ -135,7 +168,7 @@ export function subfieldGetIndex(subfield) {
 */
 
 /*
-export function fieldGetIndex6(field) {
+export function fieldGetOccurenceNumber6(field) {
   if (!field.subfields) {
     return undefined;
   }
@@ -145,7 +178,7 @@ export function fieldGetIndex6(field) {
   if (sf6 === undefined) {
     return undefined;
   }
-  return subfieldGetIndex6(sf6);
+  return subfieldGetOccurenceNumber6(sf6);
 }
 
 function fieldGetTag6(field) {
@@ -174,13 +207,13 @@ export function isSubfield6Pair(field, otherField) {
 
   nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
 
-  const fieldIndex = fieldGetIndex6(field);
+  const fieldIndex = fieldGetOccurenceNumber6(field);
   if (fieldIndex === undefined || fieldIndex === '00') {
     nvdebug(` FAILED. REASON: NO INDEX FOUND`);
     return false;
   }
 
-  const otherFieldIndex = fieldGetIndex6(otherField);
+  const otherFieldIndex = fieldGetOccurenceNumber6(otherField);
 
   if (fieldIndex !== otherFieldIndex) {
     nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
@@ -210,6 +243,7 @@ export function fieldGetSubfield6Pair(field, record) {
   if (pairedFields.length !== 1) {
     return undefined;
   }
+  // NB! It is theoretically possible to have multiple pairable 880 fields (one for each encoding)
   nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedFields[0])}`);
   return pairedFields[0];
 }
@@ -286,7 +320,7 @@ export function getFieldsWithSubfield6Index(record, index) {
     if (!field.subfields) {
       return false;
     }
-    return field.subfields.find(sf => isValidSubfield6(sf) && subfieldGetIndex6(sf) === index);
+    return field.subfields.find(sf => isValidSubfield6(sf) && subfieldGetOccurenceNumber6(sf) === index);
   }
 }
 */
