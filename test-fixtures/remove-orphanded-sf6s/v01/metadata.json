@@ -2,5 +2,5 @@
   "description": "01: has only paired $6 occurence numbers ",
   "enabled": true,
   "fix": false,
-  "only": true
+  "only": false
 }
