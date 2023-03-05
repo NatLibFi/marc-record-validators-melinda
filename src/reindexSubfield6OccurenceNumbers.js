@@ -36,7 +36,7 @@ export default function () {
     const res = {message: []};
 
     nvdebug('Validate SF6 occurrence number multiuses', debug);
-    if (recordGetSharedOccurrenceNumbers(record)) { // eslint-disable-line functional/no-conditional-statement
+    if (recordGetSharedOccurrenceNumbers(record).length) { // eslint-disable-line functional/no-conditional-statement
       res.message.push(`Multi-use of occurrence number(s) detected`); // eslint-disable-line functional/immutable-data
     }
 
