@@ -13,7 +13,6 @@ export function nvdebug(message, func = undefined) {
     func(message);
   }
   console.info(message); // eslint-disable-line no-console
-  console.log(message); // eslint-disable-line no-console
 }
 
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
@@ -51,16 +50,12 @@ export function isValidSubfield6(subfield) {
   return subfield.value.match(sf6Regexp);
 }
 
-/*
-export function fieldHasValidSubfield6AndIsNotAnAlternateGraphicRepresentation(field) {
-  // AlternateGraphicRepresentation is same as "field.tag === '880'""
-  if (!field.subfields || field.tag === '880') {
-    return false;
+export function subfield6GetTag(subfield) {
+  if (isValidSubfield6(subfield)) {
+    return subfield.value.substring(0, 3);
   }
-  const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
-  return sf6s.length === 1;
+  return undefined;
 }
-*/
 
 export function subfield6GetOccurrenceNumber(subfield) {
   if (isValidSubfield6(subfield)) {
@@ -68,10 +63,6 @@ export function subfield6GetOccurrenceNumber(subfield) {
     return subfield.value.substring(4).replace(/\D.*$/u, '');
   }
   return undefined;
-}
-
-export function fieldHasOccurrenceNumber(field, occurrenceNumber) {
-  return field.subfields && field.subfields.some(subfield6GetOccurrenceNumber) === occurrenceNumber;
 }
 
 export function subfield6GetOccurrenceNumberAsInteger(subfield) {
@@ -84,14 +75,6 @@ export function subfield6GetOccurrenceNumberAsInteger(subfield) {
   return result;
 }
 
-function subfield6GetTail(subfield) {
-  if (isValidSubfield6(subfield)) {
-    // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
-    return subfield.value.replace(/^\d+-\d+/u, '');
-  }
-  return '';
-}
-
 export function resetSubfield6OccurrenceNumber(subfield, occurrenceNumber) {
   if (!isValidSubfield6(subfield)) {
     return;
@@ -101,6 +84,64 @@ export function resetSubfield6OccurrenceNumber(subfield, occurrenceNumber) {
   const newValue = subfield.value.substring(0, 4) + occurrenceNumberAsString + subfield6GetTail(subfield); // eslint-disable-line functional/immutable-data
   //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
+}
+
+
+function subfield6GetTail(subfield) {
+  if (isValidSubfield6(subfield)) {
+    // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
+    return subfield.value.replace(/^\d+-\d+/u, '');
+  }
+  return '';
+}
+
+// <= SUBFIELD, FIELD =>
+
+/*
+export function fieldHasValidSubfield6AndIsNotAnAlternateGraphicRepresentation(field) {
+  // AlternateGraphicRepresentation is same as "field.tag === '880'""
+  if (!field.subfields || field.tag === '880') {
+    return false;
+  }
+  const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
+  return sf6s.length === 1;
+}
+*/
+
+export function fieldGetUnambiguousTag(field) {
+  const tags = field.subfields.filter(sf => subfield6GetTag(sf));
+  if (tags.length === 1) {
+    nvdebug(`   GOT ${tags.length} tag(s): ${subfieldToString(tags[0])}`);
+    return subfield6GetTag(tags[0]);
+  }
+  return undefined;
+}
+
+export function fieldGetUnambiguousOccurrenceNumber(field) {
+  const occurrenceNumbers = field.subfields.filter(sf => subfield6GetOccurrenceNumber(sf));
+  if (occurrenceNumbers.length === 1) {
+    return subfield6GetOccurrenceNumber(occurrenceNumbers[0]);
+  }
+  return undefined;
+}
+
+export function fieldHasOccurrenceNumber(field, occurrenceNumber) {
+  return field.subfields && field.subfields.some(subfield6GetOccurrenceNumber) === occurrenceNumber;
+}
+
+export function resetFieldOccurrenceNumber(field, newOccurrenceNumber, oldOccurrenceNumber = undefined) {
+  field.subfields.forEach(subfield => innerReset(subfield));
+
+  function innerReset(subfield) {
+    // (Optional) Check that this is really the occurrence number we wan't to reseot
+    if (oldOccurrenceNumber !== undefined) {
+      const currOccurrenceNumber = subfield6GetOccurrenceNumber(subfield);
+      if (currOccurrenceNumber !== oldOccurrenceNumber) {
+        return;
+      }
+    }
+    resetSubfield6OccurrenceNumber(subfield, newOccurrenceNumber);
+  }
 }
 
 export function intToOccurrenceNumberString(i) {
@@ -120,7 +161,7 @@ function fieldGetMaxSubfield6OccurrenceNumberAsInteger(field) {
 }
 
 
-export function recordGetMaxSubfield6OccurrenceNumber(record) {
+export function recordGetMaxSubfield6OccurrenceNumberAsInteger(record) {
   // Should we cache the value here?
   const vals = record.fields.map((field) => fieldGetMaxSubfield6OccurrenceNumberAsInteger(field));
   return Math.max(...vals);
@@ -155,11 +196,11 @@ export function getFieldsWithGivenOccurrenceNumberSubfield6(record, occurrenceNu
 }
 */
 
-/*
+
 function fieldHasValidSubfield6(field) {
   return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
 }
-*/
+
 
 /*
 
@@ -192,14 +233,6 @@ export function resetSubfield6Tag(subfield, tag) {
 
 */
 
-/*
-export function subfieldGetOccurrenceNumber(subfield) {
-  if (!isValidSubfield6(subfield)) {
-    return undefined;
-  }
-  return subfield.value.substring(4, 6);
-}
-*/
 
 /*
 export function fieldGetOccurrenceNumber6(field) {
@@ -228,33 +261,35 @@ function fieldGetTag6(field) {
   return subfieldGetTag6(sf6);
 }
 
-export function isSubfield6Pair(field, otherField) {
+*/
+
+function isSubfield6Pair(field, otherField) {
   // No need to log this:
+  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`);
   if (!fieldHasValidSubfield6(field) || !fieldHasValidSubfield6(otherField)) {
     return false;
   }
 
   if (!tagsArePairable6(field.tag, otherField.tag)) {
-    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
+    nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
     return false;
   }
 
-  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
 
-  const fieldIndex = fieldGetOccurrenceNumber6(field);
+  const fieldIndex = fieldGetUnambiguousOccurrenceNumber(field);
   if (fieldIndex === undefined || fieldIndex === '00') {
     nvdebug(` FAILED. REASON: NO INDEX FOUND`);
     return false;
   }
 
-  const otherFieldIndex = fieldGetOccurrenceNumber6(otherField);
+  const otherFieldIndex = fieldGetUnambiguousOccurrenceNumber(otherField);
 
   if (fieldIndex !== otherFieldIndex) {
     nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
     return false;
   }
 
-  if (fieldGetTag6(field) !== otherField.tag || field.tag !== fieldGetTag6(otherField)) {
+  if (fieldGetUnambiguousTag(field) !== otherField.tag || field.tag !== fieldGetUnambiguousTag(otherField)) {
     nvdebug(` FAILURE: TAG vs $6 TAG`);
     return false;
   }
@@ -272,6 +307,13 @@ export function isSubfield6Pair(field, otherField) {
   }
 }
 
+export function fieldGetOccurrenceNumberPairs(field, candFields) {
+  // NB! TAG!=880 returns 880 fields, TAG==880 returns non-880 field
+  //nvdebug(`  Trying to finds pair for ${fieldToString(field)} in ${candFields.length} fields`);
+  return candFields.filter(otherField => isSubfield6Pair(field, otherField));
+}
+
+/*
 export function fieldGetSubfield6Pair(field, record) {
   const pairedFields = record.fields.filter(otherField => isSubfield6Pair(field, otherField));
   if (pairedFields.length !== 1) {
@@ -281,8 +323,9 @@ export function fieldGetSubfield6Pair(field, record) {
   nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedFields[0])}`);
   return pairedFields[0];
 }
+*/
 
-
+/*
 export function pairAndStringify6(field, record) {
   const pair6 = fieldGetSubfield6Pair(field, record);
   if (!pair6) {
@@ -290,8 +333,9 @@ export function pairAndStringify6(field, record) {
   }
   return fieldsToNormalizedString([field, pair6]);
 }
+*/
 
-
+/*
 export function fieldToNormalizedString(field, currIndex = 0) {
   function subfieldToNormalizedString(sf) {
     if (isValidSubfield6(sf)) {
@@ -326,6 +370,7 @@ export function fieldsToNormalizedString(fields, index = 0) {
   return strings.join('\t__SEPARATOR__\t');
 }
 
+
 export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairField = fieldGetSubfield6Pair(field, record);
   const asString = pairField ? fieldsToNormalizedString([field, pairField]) : fieldToNormalizedString(field);
@@ -345,6 +390,4 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
   nvdebug(`Duplicate $6 removal (pair): ${fieldToString(pairField)}`);
   record.removeField(pairField);
 }
-
-
 */
