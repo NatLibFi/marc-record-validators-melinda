@@ -12,7 +12,7 @@ import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
 import NormalizeUTF8Diacritics from './normalize-utf8-diacritics';
 import Punctuation from './punctuation/';
-import RemoveOrphanedSubfield6s from './removeOrphanedSubfield6s'; // Do this before reindexing!
+import ResolveOrphanedSubfield6s from './resolveOrphanedSubfield6s'; // Do this before reindexing!
 import ReindexSubfield6OccurenceNumbers from './reindexSubfield6OccurenceNumbers';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 
@@ -36,7 +36,7 @@ export {
   ItemLanguage,
   NormalizeUTF8Diacritics,
   Punctuation,
-  RemoveOrphanedSubfield6s,
+  ResolveOrphanedSubfield6s,
   ReindexSubfield6OccurenceNumbers,
   ResolvableExtReferences,
   SortTags,
