@@ -1,5 +1,7 @@
 import createDebugLogger from 'debug';
-import {fieldHasOccurrenceNumber, fieldHasSubfield, fieldsToNormalizedString, fieldToString, isValidSubfield6, nvdebug, subfield6GetOccurrenceNumber} from './subfield6Utils';
+import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
+import {fieldHasOccurrenceNumber, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from './subfield6Utils';
+import {recordGetAllSubfield8LinkingNumbers} from './subfield8Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -83,7 +85,7 @@ function numberOfLinkageSubfields(field) {
 }
 
 
-function getAllLinkedfields(field, record) {
+function getAllLinkedSubfield6Fields(field, record) {
   const fields = add6s(field, record);
   const moreFields = add8s(fields, record);
 
@@ -108,21 +110,16 @@ function getFirstField(record, fields) {
 }
 
 
-function isFirstLinkedField(field, record) {
+function isFirstLinkedSubfield6Field(field, record) {
   if (!field.subfields) { // Is not a datafield
     return false;
   }
-  const chain = getAllLinkedfields(field, record);
+  const chain = getAllLinkedSubfield6Fields(field, record);
   if (chain.length < 2) {
     return false;
   }
 
-  /*
-  if (chain.length === 1) { // Lone Field
-    return true;
-  }
-  */
-  // Interpretation of first: position of field in record
+  // Interpretation of first: position of field in record (however, we might have a duplicate field. See tests...)
   const firstField = getFirstField(record, chain);
   if (firstField) {
     return fieldToString(field) === fieldToString(firstField);
@@ -133,13 +130,13 @@ function isFirstLinkedField(field, record) {
   //return fieldToString(field) === fieldToString(chain[0]);
 }
 
-export function removeIndividualDuplicateDatafields(record, fix = true) {
+export function removeIndividualDuplicateDatafields(record, fix = true) { // No $6 nor $8 in field
   /* eslint-disable */
   let seen = {};
 
   let removables = []; // for validation
 
-  record.fields.forEach(field => nvdebug(`DUPL-CHECK ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
+  record.fields.forEach(field => nvdebug(`DUPL-CHECK SINGLE ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
   
   const fields = record.fields;
   
@@ -154,13 +151,7 @@ export function removeIndividualDuplicateDatafields(record, fix = true) {
     nvdebug(` step 2 ${fieldAsString}`);
     if (fieldAsString in seen)  {
       nvdebug(` step 3 ${fieldAsString}`);
-      /*
-      if (fields.some(currField => numberOfLinkageSubfields(currField) > 0) ) {
-        // Fields with multi-$6 should only get the relevant $6 removed.
-        // (And then removal will break the cache hit logic)
-        return;
-      }
-      */
+      // There's actually no reason to check whether individual fields contain a $6 or an $8...
 
       if (!removables.includes(fieldAsString)) {
         removables.push(fieldAsString);
@@ -182,23 +173,64 @@ export function removeIndividualDuplicateDatafields(record, fix = true) {
   return removables;
 }
 
-
-export function removeDuplicateDatafields(record, fix = true) {
-  const removables1 = removeIndividualDuplicateDatafields(record, fix);
+export function removeDuplicateSubfield8Chains(record, fix = true) {
   /* eslint-disable */
   let seen = {};
 
-  let removablesN = []; // for validation
+  let removables = []; // for validation
 
-  record.fields.forEach(field => nvdebug(`DUPL-CHECK ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
+  nvdebug("CHAIN 8...");
+  const seenLinkingNumbers = recordGetAllSubfield8LinkingNumbers(record); // recordGetAllSubfield8Indexes(base);
+  if (seenLinkingNumbers.length === 0) {
+    return removables;
+  }
+
+  nvdebug(`seen linking numbers ($8): ${seenLinkingNumbers.join(', ')}`, debug);
+
+  seenLinkingNumbers.forEach(currLinkingNumber => {
+    const linkedFields = recordGetFieldsWithSubfield8LinkingNumber(record, currLinkingNumber) //getFieldsWithSubfield8Index(base, baseIndex);
+    const linkedFieldsAsString = fieldsToNormalizedString(linkedFields, currLinkingNumber);
+    nvdebug(`Results for LINKING NUMBER ${currLinkingNumber}:`, debug);
+    nvdebug(`${linkedFieldsAsString}`, debug);
+
+    if (linkedFieldsAsString in seen)  {
+      if (!removables.includes(linkedFieldsAsString)) {
+        removables.push(linkedFieldsAsString);
+      }
+
+      if (fix) {
+        nvdebug(`$8 FIX: REMOVE $8 GROUP: ${linkedFieldsAsString}`, debug);
+        linkedFields.forEach(field => removeFieldOrSubfield8(record, field, currLinkingNumber));
+        return;
+      }
+
+      nvdebug(`$8 VALIDATION: DUPLICATE DETECTED ${linkedFieldsAsString}`, debug);
+      return;
+    }
+    nvdebug(`$8 DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${linkedFieldsAsString}`, debug);
+    seen[linkedFieldsAsString] = 1;
+    return;
+  });
+
+  /* eslint-enable */
+  return removables;
+}
+
+export function removeDuplicateSubfield6Chains(record, fix = true) {
+  /* eslint-disable */
+  let seen = {};
+
+  let removables = []; // for validation
+
+  record.fields.forEach(field => nvdebug(`DUPL-CHECK $CHAIN ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
   
-  const fields = record.fields.filter(field => isFirstLinkedField(field, record)); // Well a
+  const fields = record.fields.filter(field => isFirstLinkedSubfield6Field(field, record)); // Well a
   
   fields.forEach(field => removeDuplicateDatafield(field));
 
   function removeDuplicateDatafield(field) {
-    nvdebug(`removeDuplicateDatafield? ${fieldToString(field)} (and friends)`);
-    const fields = getAllLinkedfields(field, record);
+    nvdebug(`removeDuplicateDatafield? $6 ${fieldToString(field)} (and friends)`);
+    const fields = getAllLinkedSubfield6Fields(field, record);
     if(fields.length === 0) {
       return;
     }
@@ -207,14 +239,8 @@ export function removeDuplicateDatafields(record, fix = true) {
     nvdebug(` step 2 ${fieldsAsString}`);
     if (fieldsAsString in seen)  {
       nvdebug(` step 3 ${fieldsAsString}`);
-      /*
-      if (fields.some(currField => numberOfLinkageSubfields(currField) > 0) ) {
-        // Fields with multi-$6 should only get the relevant $6 removed.
-        // (And then removal will break the cache hit logic)
-        return;
-      }
-      */
-      removablesN.push(fieldsAsString);
+
+      removables.push(fieldsAsString);
 
       if (fix) {
         nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldsAsString}`, debug);
@@ -228,6 +254,19 @@ export function removeDuplicateDatafields(record, fix = true) {
     seen[fieldsAsString] = 1;
     return;
   }
+
+
   /* eslint-enable */
-  return removables1.concat(removablesN);
+  return removables;
+}
+
+export function removeDuplicateDatafields(record, fix = true) {
+  const removables = removeIndividualDuplicateDatafields(record, fix); // Lone fields
+  const removables8 = removeDuplicateSubfield8Chains(record, fix); // Lone subfield $8 chains
+  const removables6 = removeDuplicateSubfield6Chains(record, fix); // Lone subfield $6 chains
+  // HOW TO HANDLE $6+$8 combos?
+
+  const removablesAll = removables.concat(removables8).concat(removables6);
+
+  return removablesAll;
 }

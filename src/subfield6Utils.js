@@ -1,74 +1,13 @@
 // import createDebugLogger from 'debug';
 // const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');
 
+import {getSubfield8LinkingNumber, isValidSubfield8} from './subfield8Utils';
+import {fieldToString, nvdebug, subfieldToString} from './utils';
+
 // NB! Subfield 6 is non-repeatable and it should always comes first!
 // NB! Index size should always be 2 (preceding 0 required for 01..09) However, support for 100+ was added on 2023-02-27.
 // NB! Index value '00' are left as they are (is not paired/indexed/whatever.
 const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
-
-
-// generic utils that could/should be relocated:
-
-export function nvdebug(message, func = undefined) {
-  if (func) { // eslint-disable-line functional/no-conditional-statement
-    func(message);
-  }
-  //console.info(message); // eslint-disable-line no-console
-}
-
-export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
-  if (!field.subfields) {
-    return false;
-  }
-  if (subfieldValue === null) {
-    return field.subfields.some(sf => sf.code === subfieldCode);
-  }
-  return field.subfields.some(sf => sf.code === subfieldCode && subfieldValue === sf.value);
-}
-
-export function subfieldToString(sf) {
-  return `‡${sf.code} ${sf.value}`;
-}
-
-export function fieldToString(f) {
-  if ('subfields' in f) {
-    return `${f.tag} ${f.ind1}${f.ind2}${formatSubfields(f)}`;
-  }
-  return `${f.tag}    ${f.value}`;
-
-  function formatSubfields(field) {
-    return field.subfields.map(sf => ` ${subfieldToString(sf)}`).join('');
-  }
-}
-
-const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
-
-function isValidSubfield8(subfield) {
-  if (subfield.code !== '8') {
-    return false;
-  }
-  const match = subfield.value.match(sf8Regexp);
-  return match && match.length > 0;
-}
-
-function getSubfield8Value(subfield) {
-  if (!isValidSubfield8(subfield)) {
-    return undefined;
-  }
-  return subfield.value;
-}
-
-function getSubfield8Index(subfield) {
-  const value = getSubfield8Value(subfield);
-  if (value === undefined) {
-    return 0;
-  }
-  return parseInt(value, 10);
-}
-
-
-// SF $6 specific utils:
-
 
 export function isValidSubfield6(subfield) {
   if (subfield.code !== '6') {
@@ -77,7 +16,7 @@ export function isValidSubfield6(subfield) {
   return subfield.value.match(sf6Regexp);
 }
 
-export function subfield6GetTag(subfield) {
+function subfield6GetTag(subfield) {
   if (isValidSubfield6(subfield)) {
     return subfield.value.substring(0, 3);
   }
@@ -371,31 +310,32 @@ export function pairAndStringify6(field, record) {
 }
 */
 
-export function fieldToNormalizedString(field, currIndex = 0) {
-  function subfieldToNormalizedString(sf) {
-    if (isValidSubfield6(sf)) {
-      // Replace index with XX:
-      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX${subfield6GetTail(sf)}`;
-    }
-    if (isValidSubfield8(sf)) {
-      const index8 = getSubfield8Index(sf);
-      if (currIndex === 0 || currIndex === index8) {
-        // For $8 we should only XX the index we are looking at...
-        const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
-        return `‡${sf.code} ${normVal}`;
-      }
-      return ''; // Other $8 subfields are meaningless in this context
-    }
-    return subfieldToString(sf); // `‡${sf.code} ${sf.value}`;
+export function subfieldToNormalizedString(sf, targetLinkingNumber = 0) {
+  if (isValidSubfield6(sf) && targetLinkingNumber === 0) {
+    // If we are normalizing $8 stuff, don't normalize $6 occurrence number!
+    // Replace $6 occurrence number with XX:
+    return ` ‡${sf.code} ${sf.value.substring(0, 3)}-XX${subfield6GetTail(sf)}`;
   }
+  if (isValidSubfield8(sf)) {
+    const currLinkingNumber = getSubfield8LinkingNumber(sf); //getSubfield8Index(sf);
+    if (targetLinkingNumber > 0 && currLinkingNumber === targetLinkingNumber) {
+      // For $8 we should only XX the index we are looking at...
+      const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
+      return ` ‡${sf.code} ${normVal}`;
+    }
+    return ''; // Other $8 subfields are meaningless in this context
+  }
+  return ` ${subfieldToString(sf)}`; // `‡${sf.code} ${sf.value}`;
+}
 
+export function fieldToNormalizedString(field, targetLinkingNumber = 0) {
   if ('subfields' in field) {
     return `${field.tag} ${field.ind1}${field.ind2}${formatAndNormalizeSubfields(field)}`;
   }
   return `${field.tag}    ${field.value}`;
 
   function formatAndNormalizeSubfields(field) {
-    return field.subfields.map(sf => ` ${subfieldToNormalizedString(sf)}`).join('');
+    return field.subfields.map(sf => subfieldToNormalizedString(sf, targetLinkingNumber)).join('');
   }
 }
 
