@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './removeOrphanedSubfield6s';
+import validatorFactory from './resolveOrphanedSubfield6s';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/reindexSubfield6:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/resolveOrphanedSubfields6:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
