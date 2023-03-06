@@ -6,6 +6,7 @@
 // NB! Index value '00' are left as they are (is not paired/indexed/whatever.
 const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
 
+
 // generic utils that could/should be relocated:
 
 export function nvdebug(message, func = undefined) {
@@ -28,6 +29,7 @@ export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
 export function subfieldToString(sf) {
   return `‡${sf.code} ${sf.value}`;
 }
+
 export function fieldToString(f) {
   if ('subfields' in f) {
     return `${f.tag} ${f.ind1}${f.ind2}${formatSubfields(f)}`;
@@ -37,6 +39,31 @@ export function fieldToString(f) {
   function formatSubfields(field) {
     return field.subfields.map(sf => ` ${subfieldToString(sf)}`).join('');
   }
+}
+
+const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
+
+function isValidSubfield8(subfield) {
+  if (subfield.code !== '8') {
+    return false;
+  }
+  const match = subfield.value.match(sf8Regexp);
+  return match && match.length > 0;
+}
+
+function getSubfield8Value(subfield) {
+  if (!isValidSubfield8(subfield)) {
+    return undefined;
+  }
+  return subfield.value;
+}
+
+function getSubfield8Index(subfield) {
+  const value = getSubfield8Value(subfield);
+  if (value === undefined) {
+    return 0;
+  }
+  return parseInt(value, 10);
 }
 
 
@@ -126,7 +153,8 @@ export function fieldGetUnambiguousOccurrenceNumber(field) {
 }
 
 export function fieldHasOccurrenceNumber(field, occurrenceNumber) {
-  return field.subfields && field.subfields.some(subfield6GetOccurrenceNumber) === occurrenceNumber;
+  //nvdebug(`${occurrenceNumber} vs ${fieldToString(field)}`);
+  return field.subfields && field.subfields.some(sf => subfield6GetOccurrenceNumber(sf) === occurrenceNumber);
 }
 
 export function resetFieldOccurrenceNumber(field, newOccurrenceNumber, oldOccurrenceNumber = undefined) {
@@ -343,12 +371,11 @@ export function pairAndStringify6(field, record) {
 }
 */
 
-/*
 export function fieldToNormalizedString(field, currIndex = 0) {
   function subfieldToNormalizedString(sf) {
     if (isValidSubfield6(sf)) {
       // Replace index with XX:
-      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX${getSubfield6Tail(sf)}`;
+      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX${subfield6GetTail(sf)}`;
     }
     if (isValidSubfield8(sf)) {
       const index8 = getSubfield8Index(sf);
@@ -359,7 +386,7 @@ export function fieldToNormalizedString(field, currIndex = 0) {
       }
       return ''; // Other $8 subfields are meaningless in this context
     }
-    return `‡${sf.code} ${sf.value}`;
+    return subfieldToString(sf); // `‡${sf.code} ${sf.value}`;
   }
 
   if ('subfields' in field) {
@@ -368,7 +395,7 @@ export function fieldToNormalizedString(field, currIndex = 0) {
   return `${field.tag}    ${field.value}`;
 
   function formatAndNormalizeSubfields(field) {
-    return field.subfields.map(sf => `${subfieldToNormalizedString(sf)}`).join('');
+    return field.subfields.map(sf => ` ${subfieldToNormalizedString(sf)}`).join('');
   }
 }
 
@@ -378,6 +405,7 @@ export function fieldsToNormalizedString(fields, index = 0) {
   return strings.join('\t__SEPARATOR__\t');
 }
 
+/*
 
 export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairField = fieldGetSubfield6Pair(field, record);
