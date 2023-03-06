@@ -12,7 +12,7 @@ export function nvdebug(message, func = undefined) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
   }
-  console.info(message); // eslint-disable-line no-console
+  //console.info(message); // eslint-disable-line no-console
 }
 
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
@@ -265,32 +265,33 @@ function fieldGetTag6(field) {
 
 function isSubfield6Pair(field, otherField) {
   // No need to log this:
-  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`);
+  //nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`);
   if (!fieldHasValidSubfield6(field) || !fieldHasValidSubfield6(otherField)) {
     return false;
   }
 
   if (!tagsArePairable6(field.tag, otherField.tag)) {
-    nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
+    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
     return false;
   }
 
 
   const fieldIndex = fieldGetUnambiguousOccurrenceNumber(field);
   if (fieldIndex === undefined || fieldIndex === '00') {
-    nvdebug(` FAILED. REASON: NO INDEX FOUND`);
+    //nvdebug(` FAILED. REASON: NO INDEX FOUND`);
     return false;
   }
 
   const otherFieldIndex = fieldGetUnambiguousOccurrenceNumber(otherField);
 
+
   if (fieldIndex !== otherFieldIndex) {
-    nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
+    //nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
     return false;
   }
 
   if (fieldGetUnambiguousTag(field) !== otherField.tag || field.tag !== fieldGetUnambiguousTag(otherField)) {
-    nvdebug(` FAILURE: TAG vs $6 TAG`);
+    //nvdebug(` FAILURE: TAG vs $6 TAG`);
     return false;
   }
   return true;
@@ -310,7 +311,14 @@ function isSubfield6Pair(field, otherField) {
 export function fieldGetOccurrenceNumberPairs(field, candFields) {
   // NB! TAG!=880 returns 880 fields, TAG==880 returns non-880 field
   //nvdebug(`  Trying to finds pair for ${fieldToString(field)} in ${candFields.length} fields`);
-  return candFields.filter(otherField => isSubfield6Pair(field, otherField));
+  const pairs = candFields.filter(otherField => isSubfield6Pair(field, otherField));
+  if (pairs.length === 0) {
+    nvdebug(`NO PAIRS FOUND FOR '${fieldToString(field)}'`);
+    return pairs;
+  }
+  nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`);
+  pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`));
+  return pairs;
 }
 
 /*

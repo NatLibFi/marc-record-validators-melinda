@@ -173,7 +173,7 @@ export function recordResetSubfield6OccurrenceNumbers(record) { // Remove gaps
   record.fields.forEach(field => fieldResetSubfield6(field));
 
   function fieldResetSubfield6(field) {
-    nvdebug(`fieldResetSubfield6(${fieldToString(field)})`, debug);
+    nvdebug(`fieldResetSubfield6(${fieldToString(field)}), CURR:${currentInt}`, debug);
     if (!field.subfields) {
       return;
     }
