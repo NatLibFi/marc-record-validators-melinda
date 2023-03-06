@@ -1,5 +1,6 @@
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasWantedTagAndOccurrenceNumber, fieldToString, isValidSubfield6, nvdebug, resetSubfield6OccurrenceNumber, subfield6GetOccurrenceNumber, subfieldToString} from './subfield6Utils';
+import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, resetSubfield6OccurrenceNumber, subfield6GetOccurrenceNumber} from './subfield6Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 

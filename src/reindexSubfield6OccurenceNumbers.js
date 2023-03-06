@@ -1,6 +1,7 @@
 import createDebugLogger from 'debug';
-import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, fieldHasSubfield, fieldToString, intToOccurrenceNumberString, isValidSubfield6, nvdebug, recordGetMaxSubfield6OccurrenceNumberAsInteger,
-  resetFieldOccurrenceNumber,
+import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
+import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, isValidSubfield6,
+  recordGetMaxSubfield6OccurrenceNumberAsInteger, resetFieldOccurrenceNumber,
   resetSubfield6OccurrenceNumber, subfield6GetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger} from './subfield6Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
