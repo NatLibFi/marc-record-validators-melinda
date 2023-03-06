@@ -1,0 +1,45 @@
+{
+  "fields": [
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "A., A.,"},
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Whatever."} ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Whatever NOT."} ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Whatever."} ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "A., A.,"},
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "B., B.,"},
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "B., B.,"},
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01"},
+      { "code": "a", "value": "C., C.,"},
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01"},
+      { "code": "a", "value": "C., C.,"},
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-02"},
+      { "code": "a", "value": "D., D.,"},
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-02"},
+      { "code": "a", "value": "D., D.,"},
+      { "code": "e", "value": "kirjoittaja." }
+    ]}
+  ]
+}
