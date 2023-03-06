@@ -2,5 +2,5 @@
   "description": "Val-02: has identical normal fields",
   "enabled": true,
   "fix": false,
-  "only": true
+  "only": false
 }
