@@ -1,0 +1,6 @@
+{
+  "description": "v01: removable $0s found",
+  "enabled": true,
+  "fix": true,
+  "only": true
+}
