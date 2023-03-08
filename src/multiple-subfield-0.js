@@ -2,7 +2,7 @@
 // import clone from 'clone';
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalizeIdentifiers');
 
-import {fieldToString} from './utils';
+import {fieldHasSubfield, fieldToString} from './utils';
 
 const asteriPrefixes = ['(FI-ASTERI-N)', '(FIN11)', 'http://urn.fi/URN:NBN:fi:au:finaf:', 'https://urn.fi/URN:NBN:fi:au:finaf:'];
 
@@ -76,6 +76,14 @@ export default function () {
     }
   }
 
+  function fieldHasTitlePart(field) {
+    if (['600', '610', '700', '710', '800', '810'].includes(field.tag)) {
+      if (fieldHasSubfield(field, 't')) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   function fieldIsRelevant(field) {
     const subfield0s = fieldGetSubfields(field, '0');
@@ -86,6 +94,13 @@ export default function () {
     if (asteriSubfields.length < 1) {
       return false;
     }
+
+    // $0 might refer to name part or title part. If title part is present, don't remove...
+    if (fieldHasTitlePart(field)) {
+      return false;
+    }
+
+
     const deletableSubfields = getDeletableSubfields(subfield0s);
     return deletableSubfields.length > 0;
   }
