@@ -39,3 +39,8 @@ export function fieldToString(f) {
     return field.subfields.map(sf => ` ${subfieldToString(sf)}`).join('');
   }
 }
+
+export function fieldsToString(fields) {
+  return fields.map(f => fieldToString(f)).join('\t__SEPARATOR__\t');
+}
+
