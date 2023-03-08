@@ -1,0 +1,29 @@
+{
+  "fields": [
+    { "tag": "650", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "8", "value": "1\\u" },
+      { "code": "8", "value": "2\\u" },
+      { "code": "8", "value": "3\\u" },
+      { "code": "a", "value": "eka"}
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "8", "value": "1\\u" },
+      { "code": "8", "value": "2\\u" },
+      { "code": "8", "value": "3\\u" },
+      { "code": "a", "value": "toka"}
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "8", "value": "1\\u" },
+      { "code": "8", "value": "2\\u" },
+      { "code": "a", "value": "kolmas"}
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "8", "value": "1\\u" },
+      { "code": "a", "value": "neljäs"}
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "8", "value": "2\\u" },
+      { "code": "a", "value": "neljäs"}
+    ]}
+  ]
+}

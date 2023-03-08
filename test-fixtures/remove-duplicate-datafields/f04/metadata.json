@@ -1,0 +1,6 @@
+{
+  "description": "Fix-04: remove duplicate $8 chain",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
