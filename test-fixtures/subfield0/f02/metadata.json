@@ -2,5 +2,5 @@
   "description": "v01: No $0s to remove",
   "enabled": true,
   "fix": true,
-  "only": true
+  "only": false
 }

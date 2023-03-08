@@ -2,5 +2,5 @@
   "description": "v01: removable $0s found",
   "enabled": true,
   "fix": false,
-  "only": true
+  "only": false
 }
