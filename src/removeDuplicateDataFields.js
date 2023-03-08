@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
+import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug} from './utils';
 import {fieldHasOccurrenceNumber, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from './subfield6Utils';
-import {recordGetAllSubfield8LinkingNumbers} from './subfield8Utils';
+import {getSubfield8LinkingNumber, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from './subfield8Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -136,21 +136,21 @@ export function removeIndividualDuplicateDatafields(record, fix = true) { // No 
 
   let removables = []; // for validation
 
-  record.fields.forEach(field => nvdebug(`DUPL-CHECK SINGLE ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
+  //record.fields.forEach(field => nvdebug(`DUPL-1 CHECK SINGLE ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
   
   const fields = record.fields;
   
   fields.forEach(field => removeIndividualDuplicateDatafield(field));
 
   function removeIndividualDuplicateDatafield(field) {
-    nvdebug(`removeIndividualDuplicateDatafield? ${fieldToString(field)} (and friends)`);
+    //nvdebug(`removeIndividualDuplicateDatafield? ${fieldToString(field)} (and friends)`);
 
     // We are in trouble if $9 ^ and $9 ^^ style chains appear here...
     const fieldAsString = fieldToString(field); // Never normalize!
 
-    nvdebug(` step 2 ${fieldAsString}`);
+    //nvdebug(` step 2 ${fieldAsString}`);
     if (fieldAsString in seen)  {
-      nvdebug(` step 3 ${fieldAsString}`);
+      // nvdebug(` step 3 ${fieldAsString}`);
       // There's actually no reason to check whether individual fields contain a $6 or an $8...
 
       if (!removables.includes(fieldAsString)) {
@@ -158,14 +158,14 @@ export function removeIndividualDuplicateDatafields(record, fix = true) { // No 
       }
 
       if (fix) {
-        nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldAsString}`, debug);
+        //nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldAsString}`, debug);
         fields.forEach(currField => record.removeField(currField));
         return;
       }
-      nvdebug(`VALIDATION: DUPLICATE DETECTED ${fieldAsString}`, debug);
-      
+      nvdebug(`VALIDATION-1: DUPLICATE DETECTED ${fieldAsString}`, debug);
+      return;
     }
-    nvdebug(`DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${fieldAsString}`, debug);
+    nvdebug(`ADD2SEEN-1 ${fieldAsString}`, debug);
     seen[fieldAsString] = 1;
     return;
   }
@@ -173,14 +173,26 @@ export function removeIndividualDuplicateDatafields(record, fix = true) { // No 
   return removables;
 }
 
+
+function recordRemoveFieldOrSubfield8(record, field, currLinkingNumber) {
+  const eights = field.subfields.filter(sf => sf.code === '8');
+  if (eights.length < 2) {
+    record.removeField(field);
+    return;
+  }
+  const subfields = field.subfields.filter(sf => getSubfield8LinkingNumber(sf) === currLinkingNumber);
+  subfields.forEach(sf => record.removeSubfield(sf, field));
+}
+
+
 export function removeDuplicateSubfield8Chains(record, fix = true) {
   /* eslint-disable */
   let seen = {};
 
   let removables = []; // for validation
 
-  nvdebug("CHAIN 8...");
-  const seenLinkingNumbers = recordGetAllSubfield8LinkingNumbers(record); // recordGetAllSubfield8Indexes(base);
+  nvdebug("CHAIN-8");
+  const seenLinkingNumbers = recordGetAllSubfield8LinkingNumbers(record);
   if (seenLinkingNumbers.length === 0) {
     return removables;
   }
@@ -199,8 +211,8 @@ export function removeDuplicateSubfield8Chains(record, fix = true) {
       }
 
       if (fix) {
-        nvdebug(`$8 FIX: REMOVE $8 GROUP: ${linkedFieldsAsString}`, debug);
-        linkedFields.forEach(field => removeFieldOrSubfield8(record, field, currLinkingNumber));
+        nvdebug(`$8 CHAIN FIX: REMOVE $8 GROUP: ${fieldsToString(linkedFields)}`, debug);
+        linkedFields.forEach(field => recordRemoveFieldOrSubfield8(record, field, currLinkingNumber));
         return;
       }
 
