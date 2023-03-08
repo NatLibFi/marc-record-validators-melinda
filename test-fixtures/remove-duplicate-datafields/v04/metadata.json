@@ -1,7 +1,6 @@
 {
-  "description": "Val-03: has only paired $6 occurrence numbers ",
-  "comment": "expected result has two failed rows, the second one is a bug, and it won't happen when the first issue is fixed",
+  "description": "Val-04: has duplicate $8 chain",
   "enabled": true,
   "fix": false,
-  "only": true
+  "only": false
 }
