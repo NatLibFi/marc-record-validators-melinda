@@ -1,0 +1,11 @@
+{
+  "message": [
+    "500    ‡a Whatever.",
+    "700 1  ‡a B., B., ‡e kirjoittaja.",
+    "700 1  ‡6 880-01 ‡a C., C., ‡e kirjoittaja.",
+    "880 1  ‡6 700-02 ‡a D., D., ‡e kirjoittaja.",
+    "700 1  ‡6 880-XX ‡a C., C., ‡e kirjoittaja.\t__SEPARATOR__\t700 1  ‡6 880-XX ‡a C., C., ‡e kirjoittaja.",
+    "880 1  ‡6 700-XX ‡a D., D., ‡e kirjoittaja.\t__SEPARATOR__\t880 1  ‡6 700-XX ‡a D., D., ‡e kirjoittaja."
+  ],
+  "valid": false
+}

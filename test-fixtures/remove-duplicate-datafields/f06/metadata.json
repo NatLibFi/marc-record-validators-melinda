@@ -1,0 +1,6 @@
+{
+  "description": "Fix-06: record contains duplicate in a $6+$8 chain which so complicated to fix, that it is not yet supported",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

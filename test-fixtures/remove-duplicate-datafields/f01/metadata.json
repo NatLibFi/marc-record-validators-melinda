@@ -1,0 +1,6 @@
+{
+  "description": "f01: no removable occurrence numbers to fix",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
