@@ -1,0 +1,21 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "base"},
+    { "tag": "110", "ind1": "2", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Yhdysvallat"},
+      {"code": "b", "value": "Office of Strategic Services,"},
+      {"code": "e", "value": "kirjoittaja."}
+    ]},
+    {
+      "tag": "856", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "u", "value": "https://www.novitaknits.com/fi/fazer-x-novita/" },
+        { "code": "y", "value": "Linkki julkaisun verkkosivuille" }
+    ]},
+    { "tag": "856", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "u", "value": "https://www.novitaknits.com/fi/fazer-x-novita/" },
+        { "code": "y", "value": "Linkki julkaisun verkkosivuille" }
+      ]
+    }
+  ]
+}
