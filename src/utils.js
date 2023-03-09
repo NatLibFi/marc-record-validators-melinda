@@ -7,3 +7,40 @@ export function isElectronicMaterial(record) {
     return mediaTypeIsC && sourceIsRdamedia;
   });
 }
+
+export function nvdebug(message, func = undefined) {
+  if (func) { // eslint-disable-line functional/no-conditional-statement
+    func(message);
+  }
+  //console.info(message); // eslint-disable-line no-console
+}
+
+export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
+  if (!field.subfields) {
+    return false;
+  }
+  if (subfieldValue === null) {
+    return field.subfields.some(sf => sf.code === subfieldCode);
+  }
+  return field.subfields.some(sf => sf.code === subfieldCode && subfieldValue === sf.value);
+}
+
+export function subfieldToString(sf) {
+  return `‡${sf.code} ${sf.value}`;
+}
+
+export function fieldToString(f) {
+  if ('subfields' in f) {
+    return `${f.tag} ${f.ind1}${f.ind2}${formatSubfields(f)}`;
+  }
+  return `${f.tag}    ${f.value}`;
+
+  function formatSubfields(field) {
+    return field.subfields.map(sf => ` ${subfieldToString(sf)}`).join('');
+  }
+}
+
+export function fieldsToString(fields) {
+  return fields.map(f => fieldToString(f)).join('\t__SEPARATOR__\t');
+}
+

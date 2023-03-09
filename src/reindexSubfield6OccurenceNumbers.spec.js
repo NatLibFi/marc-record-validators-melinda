@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './mergeField500Lisapainokset';
+import validatorFactory from './reindexSubfield6OccurenceNumbers';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'lisapainokset'],
+  path: [__dirname, '..', 'test-fixtures', 'reindex-sf6-occurence-numbers'],
   useMetadataFile: true,
-  recurse: true,
+  recurse: false,
   fixura: {
     reader: READERS.JSON
   },
@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/mergeField500Lisapainokset:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/reindexSubfield6OccurrenceNumbers:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();

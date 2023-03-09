@@ -1,0 +1,6 @@
+{
+  "description": "01: valid $6, no orphaned occurence numbers ",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
