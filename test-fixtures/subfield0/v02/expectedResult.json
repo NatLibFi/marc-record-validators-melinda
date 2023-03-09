@@ -1,0 +1,8 @@
+{
+  "message": [
+    "Contains deletable $0 subfield(s): 700    ‡a Nimi1 ‡0 (FI-ASTERI-N)000654321 ‡0 (orcid)0000-0002-1355-5633",
+    "Contains deletable $0 subfield(s): 700    ‡a Nimi2 ‡0 https://isni.org/isni/0000000110485855 ‡0 (FI-ASTERI-N)000654322",
+    "Contains deletable $0 subfield(s): 700    ‡a Nimi3 ‡0 (FI-ASTERI-N)000654323 ‡0 https://isni.org/isni/0000000110485853 ‡0 (keep-for-now)666 ‡0 (orcid)0000-0002-1355-5633"
+  ],
+  "valid": false
+}

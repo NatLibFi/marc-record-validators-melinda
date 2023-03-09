@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './mergeField500Lisapainokset';
+import validatorFactory from './multiple-subfield-0';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'lisapainokset'],
+  path: [__dirname, '..', 'test-fixtures', 'subfield0'],
   useMetadataFile: true,
-  recurse: true,
+  recurse: false,
   fixura: {
     reader: READERS.JSON
   },
@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/mergeField500Lisapainokset:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/multiple-subfield-0:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();

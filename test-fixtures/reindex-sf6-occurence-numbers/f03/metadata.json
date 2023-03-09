@@ -1,0 +1,7 @@
+{
+  "description": "Validate-03: $6 has shared occurrence numbers",
+  "comment": "880 $6 700-01 is not handled on purpose (which might appear strange). It is fixed by handle-orphaned-sf6s",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

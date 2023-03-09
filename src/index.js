@@ -14,7 +14,10 @@ import ItemLanguage from './item-language';
 import NonBreakingSpace from './non-breaking-space';
 import NormalizeUTF8Diacritics from './normalize-utf8-diacritics';
 import Punctuation from './punctuation/';
+import ResolveOrphanedSubfield6s from './resolveOrphanedSubfield6s'; // Do this before reindexing!
+import ReindexSubfield6OccurenceNumbers from './reindexSubfield6OccurenceNumbers';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
+
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
 import UnicodeDecomposition from './unicode-decomposition';
@@ -37,6 +40,8 @@ export {
   NonBreakingSpace,
   NormalizeUTF8Diacritics,
   Punctuation,
+  ResolveOrphanedSubfield6s,
+  ReindexSubfield6OccurenceNumbers,
   ResolvableExtReferences,
   SortTags,
   SubfieldExclusion,

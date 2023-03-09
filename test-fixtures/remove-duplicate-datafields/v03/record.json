@@ -1,0 +1,37 @@
+{
+  "fields": [
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01" },
+      { "code": "a", "value": "Zabara, Olena,"},
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01" },
+      { "code": "a", "value": "Zabara, Olena,"},
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-02" },
+      { "code": "a", "value": "FOO"},
+      { "code": "e", "value": "whatever" }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "500-00/(N" },
+      { "code": "a", "value": "Lorum ipsum." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "100-01/(N" },
+      { "code": "a", "value": "Забара, Олена," },
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "600-02" },
+      { "code": "a", "value": "BAR"},
+      { "code": "e", "value": "whatever" }
+    ]}
+
+  ]
+}
