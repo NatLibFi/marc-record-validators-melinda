@@ -1,5 +1,5 @@
 // import createDebugLogger from 'debug';
-// const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');
+// const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield8Utils');
 
 import {nvdebug, subfieldToString} from './utils';
 

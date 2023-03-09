@@ -4,7 +4,7 @@ import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, resetSubfield6Oc
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:reindexSubfield6OccurrenceNumbers');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:resolveOrphanedSubfield6s');
 
 export default function () {
   return {

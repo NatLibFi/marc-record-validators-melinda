@@ -1,5 +1,5 @@
 // import createDebugLogger from 'debug';
-// const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');
+// const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield6Utils');
 
 import {getSubfield8LinkingNumber, isValidSubfield8} from './subfield8Utils';
 import {fieldToString, nvdebug, subfieldToString} from './utils';

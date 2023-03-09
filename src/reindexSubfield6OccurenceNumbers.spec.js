@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/reindexSubfield6:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/reindexSubfield6OccurrenceNumbers:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();

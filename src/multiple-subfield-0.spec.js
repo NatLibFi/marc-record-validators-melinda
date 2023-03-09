@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/normalize-identifiers:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/multiple-subfield-0:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();

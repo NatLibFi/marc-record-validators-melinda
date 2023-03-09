@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/normalize-utf8-diacritics:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/mergeField500Lisapainokset:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
