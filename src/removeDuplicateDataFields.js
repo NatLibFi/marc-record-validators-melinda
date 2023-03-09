@@ -134,46 +134,42 @@ export function removeIndividualDuplicateDatafields(record, fix = true) { // No 
   /* eslint-disable */
   let seen = {};
 
-  let removables = []; // for validation
-
-  //record.fields.forEach(field => nvdebug(`DUPL-1 CHECK SINGLE ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
+  record.fields.forEach(field => nvdebug(`DUPL-1 CHECK SINGLE ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
   
-  const fields = record.fields;
-  
-  fields.forEach(field => removeIndividualDuplicateDatafield(field));
+  const removableFields = record.fields.filter(field => removableIndividualDuplicateDatafield(field));
+  const removableFieldsAsStrings = removableFields.map(field => fieldToString(field));
 
-  function removeIndividualDuplicateDatafield(field) {
+  if (fix) {
+    removableFields.forEach(field => record.removeField(field));
+  }
+
+  return removableFieldsAsStrings;
+
+  function removableIndividualDuplicateDatafield(field) {
     if (!field.subfields) { // Not a datafield
-      return;
+      //nvdebug(`SKIP subfieldless ${fieldToString(field)}`);
+      return false;
     }
-    //nvdebug(`removeIndividualDuplicateDatafield? ${fieldToString(field)} (and friends)`);
+    // There's actually no reason to check whether individual fields contain a $6 or an $8...
+    // If everything incl. occurence/xxxx numbers match it's still deletable, regardless of chains.
+
+    //nvdebug(`removeIndividualDuplicateDatafield? ${fieldToString(field)}`);
 
     // We are in trouble if $9 ^ and $9 ^^ style chains appear here...
     const fieldAsString = fieldToString(field); // Never normalize!
 
     //nvdebug(` step 2 ${fieldAsString}`);
     if (fieldAsString in seen)  {
-      // nvdebug(` step 3 ${fieldAsString}`);
-      // There's actually no reason to check whether individual fields contain a $6 or an $8...
-
-      if (!removables.includes(fieldAsString)) {
-        removables.push(fieldAsString);
-      }
-
-      if (fix) {
-        //nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldAsString}`, debug);
-        record.removeField(field);
-        return;
-      }
-      nvdebug(`VALIDATION-1: DUPLICATE DETECTED ${fieldAsString}`, debug);
-      return;
+      nvdebug(`DUPLICATE SINGLETON DETECTED: ${fieldAsString}`);
+      return true;
     }
-    nvdebug(`ADD2SEEN-1 ${fieldAsString}`, debug);
+    nvdebug(`MARK SINGLETON AS SEEN: ${fieldAsString}`, debug);
     seen[fieldAsString] = 1;
     return;
   }
+
   /* eslint-enable */
-  return removables;
+
 }
 
 
