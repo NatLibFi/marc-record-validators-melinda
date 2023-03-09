@@ -143,6 +143,9 @@ export function removeIndividualDuplicateDatafields(record, fix = true) { // No 
   fields.forEach(field => removeIndividualDuplicateDatafield(field));
 
   function removeIndividualDuplicateDatafield(field) {
+    if (!field.subfields) { // Not a datafield
+      return;
+    }
     //nvdebug(`removeIndividualDuplicateDatafield? ${fieldToString(field)} (and friends)`);
 
     // We are in trouble if $9 ^ and $9 ^^ style chains appear here...
@@ -159,7 +162,7 @@ export function removeIndividualDuplicateDatafields(record, fix = true) { // No 
 
       if (fix) {
         //nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldAsString}`, debug);
-        fields.forEach(currField => record.removeField(currField));
+        record.removeField(field);
         return;
       }
       nvdebug(`VALIDATION-1: DUPLICATE DETECTED ${fieldAsString}`, debug);
