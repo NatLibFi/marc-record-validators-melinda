@@ -1,0 +1,10 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    {
+      "tag": "008",
+      "value": "Foo "
+    }
+  ],
+  "leader": ""
+}

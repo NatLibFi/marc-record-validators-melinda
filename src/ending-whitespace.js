@@ -10,7 +10,7 @@ export default function () {
   };
 
   function validate(record) {
-    const nonValidFields = record.fields.filter(({subfields}) => subfields.filter(valueEndsWithWhitespace).length > 0);
+    const nonValidFields = record.fields.filter(({subfields}) => subfields !== undefined && subfields.filter(valueEndsWithWhitespace).length > 0);
 
     const valid = nonValidFields.length === 0;
     const messages = nonValidFields.flatMap(({tag, subfields}) => subfields.map(sf => `Field ${tag} subfield $${sf.code} ends with whitespace`));
@@ -21,6 +21,10 @@ export default function () {
   /* eslint-disable functional/immutable-data,functional/no-conditional-statement */
   function fix(record) {
     record.fields.forEach(({subfields}) => {
+      if (subfields === undefined) {
+        return;
+      }
+
       subfields.forEach(subfield => {
         if (valueEndsWithWhitespace(subfield)) {
           subfield.value = subfield.value.trimEnd();

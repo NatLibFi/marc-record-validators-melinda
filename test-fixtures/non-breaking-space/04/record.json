@@ -1,0 +1,19 @@
+{
+  "fields": [
+    {
+      "tag": "008",
+      "value": "Foo\u00A0Foo\u00A0"
+    },
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Foo\u00A0Foo\u00A0"
+        }
+      ]
+    }
+  ]
+}
