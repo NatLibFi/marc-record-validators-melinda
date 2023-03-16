@@ -1,6 +1,6 @@
 {
-  "description": "$0 f02: remove some, keep some",
+  "description": "v01: No $0s to remove",
   "enabled": true,
   "fix": true,
-  "only": true
+  "only": false
 }

@@ -1,5 +1,5 @@
 {
-  "description": "v01: removable $0s not found",
+  "description": "v01: removable $0s found",
   "enabled": true,
   "fix": false,
   "only": false
