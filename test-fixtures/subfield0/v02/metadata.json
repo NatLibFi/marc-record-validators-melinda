@@ -1,5 +1,5 @@
 {
-  "description": "v01: No $0s to remove",
+  "description": "v02: multiple $0s to remove",
   "enabled": true,
   "fix": false,
   "only": false

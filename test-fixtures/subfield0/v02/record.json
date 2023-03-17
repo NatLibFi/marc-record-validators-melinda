@@ -20,7 +20,15 @@
       { "code": "a", "value": "Nimi3" },
       { "code": "0", "value": "(FI-ASTERI-N)000654323" },
       { "code": "0", "value": "https://isni.org/isni/0000000110485853" },
-      { "code": "0", "value": "(keep-for-now)666" },
+      { "code": "0", "value": "(keep-only-if-title-part-present)666" },
+      { "code": "0", "value": "(orcid)0000-0002-1355-5633" }
+    ]},
+    { "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Nimi3" },
+      { "code": "0", "value": "(FI-ASTERI-N)000654323" },
+      { "code": "t", "value": "Titlepart prevents unknown $0 identifiers from being removed"},
+      { "code": "0", "value": "https://isni.org/isni/0000000110485853" },
+      { "code": "0", "value": "(keep-only-if-title-part-present)666" },
       { "code": "0", "value": "(orcid)0000-0002-1355-5633" }
     ]}
 
