@@ -310,12 +310,21 @@ export function pairAndStringify6(field, record) {
 }
 */
 
+export function is7XX(tag) {
+  return ['700', '710', '711', '730'].includes(tag);
+}
+
 export function subfieldToNormalizedString(sf, targetLinkingNumber = 0) {
   if (isValidSubfield6(sf) && targetLinkingNumber === 0) {
+    const tag = sf.value.substring(0, 3);
+    // 100/700 normalization:
+    const tag2 = tag.match(/^[17](?:00|10|11|30)$/u) ? `X${tag.substring(1)}` : tag;
+
     // If we are normalizing $8 stuff, don't normalize $6 occurrence number!
     // Replace $6 occurrence number with XX:
-    return ` ‡${sf.code} ${sf.value.substring(0, 3)}-XX${subfield6GetTail(sf)}`;
+    return ` ‡${sf.code} ${tag2}-XX${subfield6GetTail(sf)}`;
   }
+
   if (isValidSubfield8(sf)) {
     const currLinkingNumber = getSubfield8LinkingNumber(sf); //getSubfield8Index(sf);
     if (targetLinkingNumber > 0 && currLinkingNumber === targetLinkingNumber) {
@@ -337,6 +346,7 @@ export function fieldToNormalizedString(field, targetLinkingNumber = 0) {
   function formatAndNormalizeSubfields(field) {
     return field.subfields.map(sf => subfieldToNormalizedString(sf, targetLinkingNumber)).join('');
   }
+
 }
 
 export function fieldsToNormalizedString(fields, index = 0) {
