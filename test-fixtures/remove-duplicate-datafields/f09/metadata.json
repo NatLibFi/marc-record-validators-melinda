@@ -1,0 +1,6 @@
+{
+  "description": "Fix-09: remove duplicate 1XX-7XX (no chains)",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

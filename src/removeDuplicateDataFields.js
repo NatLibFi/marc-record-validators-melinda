@@ -163,11 +163,15 @@ export function removeIndividualDuplicateDatafields(record, fix = true) { // No 
       nvdebug(`DUPLICATE SINGLETON DETECTED: ${fieldAsString}`);
       return true;
     }
+    if (is7XX(field.tag) && convert7XXto1XX(fieldAsString) in seen) {
+      nvdebug(`DUPLICATE (1XX-7XX) SINGLETON DETECTED: ${fieldAsString}`);
+      return true;
+    }
+
     nvdebug(`MARK SINGLETON AS SEEN: ${fieldAsString}`, debug);
     seen[fieldAsString] = 1;
     return;
   }
-
   /* eslint-enable */
 
 }
@@ -183,8 +187,30 @@ function recordRemoveFieldOrSubfield8(record, field, currLinkingNumber) {
   subfields.forEach(sf => record.removeSubfield(sf, field));
 }
 
+function is7XX(tag) {
+  return ['700', '710', '711', '730'].includes(tag);
+}
+
+function convert7XXto1XX(fieldString) {
+  /* eslint-disable prefer-named-capture-group, no-param-reassign */
+  fieldString = fieldString.replace(/^7(00|10|11|30)/u, '1$1');
+  fieldString = fieldString.replace(/‡6 [17](00|10|11|30)/gu, '‡6 X$1');
+
+  /* eslint-enable */
+
+  return fieldString;
+}
 
 export function removeDuplicateSubfield8Chains(record, fix = true) {
+
+  // Seen $8 subsfields in various fields:
+  // 161 700
+  // 17 710
+  // 11 110
+  // 8 730
+  // 1 100
+  // Given these stats, there's no need to check for 1XX-vs-7XX removals
+
   /* eslint-disable */
   let seen = {};
 
@@ -247,26 +273,37 @@ export function removeDuplicateSubfield6Chains(record, fix = true) {
     }
 
     const fieldsAsString = fieldsToNormalizedString(fields);
+    // Frequencly list for $6 subfields in 1XX/7XX fields:
+    // 231115 100
+    // 183832 700
+    //  28773 710
+    //   2047 711
+    //    661 110
+    //    341 111
+    //    284 130
+    //     63 730
+    // Thus there's a real risk of ending up with, say, identical 100 vs 700 chains.
+    // Semi-hackily support 1XX/7XX-version: 7XX can be deleted if corresponding 1XX exists:
+    const altFieldsAsString = fieldsAsString.substring(0, 1) === '7' ? `1${fieldsAsString.substring(1)}` : fieldsAsString;
     nvdebug(` step 2 ${fieldsAsString}`);
-    if (fieldsAsString in seen)  {
+    if (fieldsAsString in seen || altFieldsAsString in seen) {
       nvdebug(` step 3 ${fieldsAsString}`);
 
       removables.push(fieldsAsString);
 
       if (fix) {
-        nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldsAsString}`, debug);
+        nvdebug(`$6 DOUBLE REMOVAL: REMOVE ${fieldsAsString}`, debug);
         fields.forEach(currField => record.removeField(currField));
         return;
       }
-      nvdebug(`VALIDATION: DUPLICATE DETECTED ${fieldsAsString}`, debug);
+
+      nvdebug(`$6 VALIDATION: DUPLICATE DETECTED ${fieldsAsString}`, debug);
       
     }
-    nvdebug(`DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${fieldsAsString}`, debug);
+    nvdebug(`$6 DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${fieldsAsString}`, debug);
     seen[fieldsAsString] = 1;
     return;
   }
-
-
   /* eslint-enable */
   return removables;
 }

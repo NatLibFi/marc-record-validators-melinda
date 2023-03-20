@@ -1,7 +1,7 @@
 {
   "message": [
     "100 1  ‡6 880-01 ‡a Zabara, Olena, ‡e kirjoittaja, ‡e taiteilija.",
-    "100 1  ‡6 880-XX ‡a Zabara, Olena, ‡e kirjoittaja, ‡e taiteilija.\t__SEPARATOR__\t100 1  ‡6 880-XX ‡a Zabara, Olena, ‡e kirjoittaja, ‡e taiteilija.\t__SEPARATOR__\t880 1  ‡6 100-XX/(N ‡a Забара, Олена, ‡e kirjoittaja, ‡e taiteilija."
+    "100 1  ‡6 880-XX ‡a Zabara, Olena, ‡e kirjoittaja, ‡e taiteilija.\t__SEPARATOR__\t100 1  ‡6 880-XX ‡a Zabara, Olena, ‡e kirjoittaja, ‡e taiteilija.\t__SEPARATOR__\t880 1  ‡6 X00-XX/(N ‡a Забара, Олена, ‡e kirjoittaja, ‡e taiteilija."
   ],
   "valid": false
 }
