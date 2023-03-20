@@ -273,7 +273,7 @@ export function removeDuplicateSubfield6Chains(record, fix = true) {
     }
 
     const fieldsAsString = fieldsToNormalizedString(fields);
-    // Frequencly list for $5 subfields in 1XX/7XX fields:
+    // Frequencly list for $6 subfields in 1XX/7XX fields:
     // 231115 100
     // 183832 700
     //  28773 710
