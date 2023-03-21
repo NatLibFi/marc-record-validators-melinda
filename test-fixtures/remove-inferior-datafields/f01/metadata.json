@@ -2,5 +2,5 @@
   "description": "f01: removable subsets deleted",
   "enabled": true,
   "fix": true,
-  "only": true
+  "only": false
 }
