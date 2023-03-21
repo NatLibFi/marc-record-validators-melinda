@@ -1,0 +1,31 @@
+{
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "term"} ]},
+    { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "term"},
+        { "code": "9", "value": "FENNI<KEEP>"}
+    ]},
+
+
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Etunimi,"},
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Etunimi,"},
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Etunimi,"},
+      { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Etunimi." }
+    ]}
+
+
+  ],
+  "leader": ""
+}
