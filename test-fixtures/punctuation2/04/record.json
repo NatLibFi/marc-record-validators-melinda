@@ -1,0 +1,22 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+        { "code": "a", "value": "Manun illallinen" },
+        { "code": "c", "value": "Tellervo Koivisto" }
+      ]
+    },
+    {
+      "tag": "245", "ind1": "1", "ind2": "0",
+      "subfields": [
+        { "code": "a", "value": "Manun illallinen" },
+        { "code": "b", "value": "lentopallosta hiustöyhtöön" },
+        { "code": "c", "value": "Tellervo Koivisto" }
+      ]
+    },
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "OK-otsikko /" },
+      { "code": "c", "value": "Tekijä." }
+    ]}
+  ]
+}
