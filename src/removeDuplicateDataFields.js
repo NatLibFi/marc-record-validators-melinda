@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug} from './utils';
 import {fieldHasOccurrenceNumber, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from './subfield6Utils';
-import {getSubfield8LinkingNumber, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from './subfield8Utils';
+import {fieldHasLinkingNumber, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from './subfield8Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -42,19 +42,6 @@ export default function () {
 }
 
 function add6s(field, record) {
-
-  /*
-  // Can't rely on nice pairs...
-  if (fieldHasSubfield(field, '6')) {
-
-    const pairs = fieldGetOccurrenceNumberPairs(field, record.fields);
-    if (pairs) {
-      return [field].concat(pairs);
-    }
-
-  }
-  */
-
   // Get all fields with given occurence number
   const sixes = field.subfields.filter(sf => isValidSubfield6(sf));
 
@@ -73,16 +60,36 @@ function add6s(field, record) {
 
 function add8s(fields, record) {
   // Not implemented yet:
-  if (fields && fields.some(f => fieldHasSubfield(f, '8'))) {
-    return [];
+  const linkingNumbers = fieldsGetAllSubfield8LinkingNumbers(fields);
+  if (linkingNumbers.length === 0) {
+    return fields;
   }
-  return record ? fields : fields;
+
+  nvdebug(`Linking number(s): ${linkingNumbers.join(', ')}`);
+  linkingNumbers.forEach(number => collectLinkingNumberFields(number));
+
+  fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`));
+
+  return fields;
+
+  function collectLinkingNumberFields(linkingNumber) {
+    // Remove existing hits (to avoid field repetition):
+    fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber)); // eslint-disable-line functional/immutable-data, no-param-reassign
+    // Add them and their "sisters" back:
+    const addableFields = record.fields.filter(f => fieldHasLinkingNumber(f, linkingNumber));
+    addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));
+    fields = fields.concat(addableFields); // eslint-disable-line functional/immutable-data, no-param-reassign
+
+  }
 }
 
+/*
 function numberOfLinkageSubfields(field) {
+  nvdebug(`N of Linkage Subs(${fieldToString(field)})`);
   const subfields = field.subfields.filter(sf => sf.code === '6' || sf.code === '8');
   return subfields.length;
 }
+*/
 
 
 function getAllLinkedSubfield6Fields(field, record) {
@@ -90,10 +97,46 @@ function getAllLinkedSubfield6Fields(field, record) {
   const moreFields = add8s(fields, record);
 
   // Currently we don't handle fields with more than one $6 and/or $8 subfield.
-  if (moreFields.length === 0 || moreFields.some(f => numberOfLinkageSubfields(f) > 1)) {
+  if (moreFields.length > fields.length) {
     return []; // Don't fix!
   }
   return moreFields;
+}
+
+function getAllLinkedSubfield68Fields(field, record) {
+  const fields = add6s(field, record);
+  return add8s(fields, record);
+}
+
+function isRelevantSubfield6Chain(fields) {
+  if (fields.length < 2) { // 1 non-880-field and 1+ 880 fields
+    return false;
+  }
+  const non880 = fields.filter(f => f.tag !== '880');
+  if (non880.length !== 1) {
+    return false;
+  }
+
+  const linkingNumbers = fieldsGetAllSubfield8LinkingNumbers(fields);
+  if (linkingNumbers.length !== 0) {
+    return false;
+  }
+
+  return fields.every(f => fieldHasSubfield(f, '6'));
+}
+
+function isRelevantSubfield68Chain(fields) {
+  if (fields.length < 3) {
+    return false;
+  }
+
+  const linkingNumbers = fieldsGetAllSubfield8LinkingNumbers(fields);
+  if (linkingNumbers.length !== 1) {
+    nvdebug(`Expected one linking number, got ${linkingNumbers.length}: ${linkingNumbers.join(', ')}`);
+    return false;
+  }
+
+  return fields.some(f => fieldHasSubfield(f, '6'));
 }
 
 function getFirstField(record, fields) {
@@ -109,16 +152,7 @@ function getFirstField(record, fields) {
   return undefined;
 }
 
-
-function isFirstLinkedSubfield6Field(field, record) {
-  if (!field.subfields) { // Is not a datafield
-    return false;
-  }
-  const chain = getAllLinkedSubfield6Fields(field, record);
-  if (chain.length < 2) {
-    return false;
-  }
-
+function fieldIsFirstFieldInChain(field, chain, record) {
   // Interpretation of first: position of field in record (however, we might have a duplicate field. See tests...)
   const firstField = getFirstField(record, chain);
   if (firstField) {
@@ -126,8 +160,32 @@ function isFirstLinkedSubfield6Field(field, record) {
   }
   return false;
 
-  // Fallback:
-  //return fieldToString(field) === fieldToString(chain[0]);
+}
+
+function isFirstLinkedSubfield6Field(field, record) {
+  if (!field.subfields) { // Is not a datafield
+    return false;
+  }
+  const chain = getAllLinkedSubfield6Fields(field, record);
+  if (!isRelevantSubfield6Chain(chain)) {
+    nvdebug(`Rejected 6: ${fieldsToString(chain)}`);
+    return false;
+  }
+
+  return fieldIsFirstFieldInChain(field, chain, record);
+}
+
+function isFirstLinkedSubfield68Field(field, record) {
+  if (!field.subfields) { // Is not a datafield
+    return false;
+  }
+  const chain = getAllLinkedSubfield68Fields(field, record);
+  if (!isRelevantSubfield68Chain(chain)) {
+    //nvdebug(`Rejected 68: ${fieldsToString(chain)}`);
+    return false;
+  }
+
+  return fieldIsFirstFieldInChain(field, chain, record);
 }
 
 export function removeIndividualDuplicateDatafields(record, fix = true) { // No $6 nor $8 in field
@@ -253,24 +311,72 @@ export function removeDuplicateSubfield8Chains(record, fix = true) {
   return removables;
 }
 
+export function removeDuplicateSubfield68Chains(record, fix = true) {
+  /* eslint-disable */
+  let seen = {};
+
+  let removables = []; // for validation
+
+  const fields = record.fields.filter(field => isFirstLinkedSubfield68Field(field, record));
+
+  fields.forEach(field => removeDuplicateDatafield68(field));
+
+  function removeDuplicateDatafield68(field) {
+    nvdebug(`removeDuplicateDatafield? $6-$8 ${fieldToString(field)} (and friends)`);
+    const fields = getAllLinkedSubfield68Fields(field, record);
+    if (!isRelevantSubfield68Chain(fields)) {
+      return;
+    }
+  
+    const fieldsAsString = fieldsToNormalizedString(fields);
+
+    const altFieldsAsString = fieldsAsString.substring(0, 1) === '7' ? `1${fieldsAsString.substring(1)}` : fieldsAsString;
+    nvdebug(` step 2 ${fieldsAsString}`);
+    if (fieldsAsString in seen || altFieldsAsString in seen) {
+      nvdebug(` step 3 ${fieldsAsString}`);
+
+      removables.push(fieldsAsString);
+
+      if (fix) {
+        nvdebug(`$68 DOUBLE REMOVAL: REMOVE ${fieldsAsString}`, debug);
+        fields.forEach(currField => record.removeField(currField));
+        return;
+      }
+
+      nvdebug(`$68 VALIDATION: DUPLICATE DETECTED ${fieldsAsString}`, debug);
+      
+    }
+    nvdebug(`$68 DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${fieldsAsString}`, debug);
+    seen[fieldsAsString] = 1;
+    return;
+  }
+  /* eslint-enable */
+  return removables;
+}
+
 export function removeDuplicateSubfield6Chains(record, fix = true) {
   /* eslint-disable */
   let seen = {};
 
   let removables = []; // for validation
 
-  record.fields.forEach(field => nvdebug(`DUPL-CHECK $CHAIN ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
+  record.fields.forEach(field => nvdebug(`$6-DUPL-CHECK CHAIN ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
   
   const fields = record.fields.filter(field => isFirstLinkedSubfield6Field(field, record)); // Well a
+  //fields.forEach(field => nvdebug(`$6-DUPL-CHECK CHAIN HEAD ${fieldToString(field)}, mode=${fix ? 'FIX' : 'VALIDATE'}`));
   
-  fields.forEach(field => removeDuplicateDatafield(field));
 
-  function removeDuplicateDatafield(field) {
+  fields.forEach(field => removeDuplicateDatafield6(field));
+
+  
+
+  function removeDuplicateDatafield6(field) {
     nvdebug(`removeDuplicateDatafield? $6 ${fieldToString(field)} (and friends)`);
     const fields = getAllLinkedSubfield6Fields(field, record);
-    if(fields.length === 0) {
+    if (!isRelevantSubfield6Chain(fields)) {
       return;
     }
+
 
     const fieldsAsString = fieldsToNormalizedString(fields);
     // Frequencly list for $6 subfields in 1XX/7XX fields:
@@ -310,11 +416,15 @@ export function removeDuplicateSubfield6Chains(record, fix = true) {
 
 export function removeDuplicateDatafields(record, fix = true) {
   const removables = removeIndividualDuplicateDatafields(record, fix); // Lone fields
+  // NB! Do $6+$8 before mere $8!
+  const removables68 = removeDuplicateSubfield68Chains(record, fix); // Single $6 + $8
+
   const removables8 = removeDuplicateSubfield8Chains(record, fix); // Lone subfield $8 chains
   const removables6 = removeDuplicateSubfield6Chains(record, fix); // Lone subfield $6 chains
+
   // HOW TO HANDLE $6+$8 combos?
 
-  const removablesAll = removables.concat(removables8).concat(removables6);
+  const removablesAll = removables.concat(removables68).concat(removables6).concat(removables8);
 
   return removablesAll;
 }
