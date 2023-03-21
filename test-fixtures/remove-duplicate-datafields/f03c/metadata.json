@@ -1,0 +1,6 @@
+{
+  "description": "Fix-03c: remove 520$8 chain + 880$8 chains. Too complicated for now.",
+  "enabled": false,
+  "fix": true,
+  "only": false
+}
