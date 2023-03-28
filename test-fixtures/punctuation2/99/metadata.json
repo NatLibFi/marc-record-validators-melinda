@@ -1,0 +1,6 @@
+{
+  "description":"Only fixer test, as fixer always returns true",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

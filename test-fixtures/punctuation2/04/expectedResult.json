@@ -1,0 +1,7 @@
+{
+  "message": [
+    "'245 10 ‡a Manun illallinen ‡c Tellervo Koivisto' => '245 10 ‡a Manun illallinen / ‡c Tellervo Koivisto'",
+    "'245 10 ‡a Manun illallinen ‡b lentopallosta hiustöyhtöön ‡c Tellervo Koivisto' => '245 10 ‡a Manun illallinen : ‡b lentopallosta hiustöyhtöön / ‡c Tellervo Koivisto'"
+  ],
+  "valid": false
+}

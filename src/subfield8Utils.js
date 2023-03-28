@@ -10,7 +10,7 @@ export function isValidSubfield8(subfield) {
     return false;
   }
 
-  nvdebug(`   IS VALID $8? '${subfieldToString(subfield)}'`);
+  //nvdebug(`   IS VALID $8? '${subfieldToString(subfield)}'`);
   const match = subfield.value.match(sf8Regexp);
   //nvdebug(`   IS VALID $8? '${subfieldToString(subfield)}' vs ${match.length}}`);
   return match && match.length > 0;
@@ -32,25 +32,25 @@ export function getSubfield8LinkingNumber(subfield) {
 }
 
 
+export function fieldHasLinkingNumber(field, linkingNumber) {
+  if (!field.subfields) {
+    return false;
+  }
+  return field.subfields.some(sf => getSubfield8LinkingNumber(sf) === linkingNumber);
+}
+
 export function recordGetFieldsWithSubfield8LinkingNumber(record, linkingNumber) {
   if (linkingNumber < 1) {
     return;
   }
-  return record.fields.filter(field => relevant4GFWS8I(field));
-
-  function relevant4GFWS8I(field) {
-    if (!field.subfields) {
-      return false;
-    }
-    return field.subfields.some(sf => getSubfield8LinkingNumber(sf) === linkingNumber);
-  }
+  return record.fields.filter(field => fieldHasLinkingNumber(field, linkingNumber));
 }
 
 
-export function recordGetAllSubfield8LinkingNumbers(record) {
+export function fieldsGetAllSubfield8LinkingNumbers(fields) {
   /* eslint-disable */
   let subfield8LinkingNumbers = [];
-  record.fields.forEach(field => {
+  fields.forEach(field => {
     if (!field.subfields) {
       return;
     }
@@ -66,4 +66,9 @@ export function recordGetAllSubfield8LinkingNumbers(record) {
 
   return subfield8LinkingNumbers;
   /* eslint-enable */
+
+}
+
+export function recordGetAllSubfield8LinkingNumbers(record) {
+  return fieldsGetAllSubfield8LinkingNumbers(record.fields);
 }

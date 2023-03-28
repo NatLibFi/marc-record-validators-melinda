@@ -1,0 +1,25 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "520", "ind1": "3", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01" },
+      { "code": "8", "value": "1.1\\x" },
+      { "code": "a", "value": "eka"}
+    ]},
+    { "tag": "520", "ind1": "3", "ind2": " ", "subfields": [
+      { "code": "8", "value": "1.2\\x" },
+      { "code": "a", "value": "toka"}
+    ]},
+
+    { "tag": "880", "ind1": "3", "ind2": " ", "subfields": [
+      { "code": "6", "value": "520-01" },
+      { "code": "8", "value": "3.1\\x" },
+      { "code": "a", "value": "ake"}
+    ]},
+    { "tag": "880", "ind1": "3", "ind2": " ", "subfields": [
+      { "code": "8", "value": "3.2\\x" },
+      { "code": "a", "value": "akot"}
+    ]}
+  ],
+  "leader": ""
+}
