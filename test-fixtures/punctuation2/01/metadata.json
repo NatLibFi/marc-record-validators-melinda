@@ -1,0 +1,6 @@
+{
+  "description":"validate 01 - fix punctuation of X00 fields. Non-X00 fields are fine",
+  "enabled": true,
+  "fix": false,
+  "only": false
+}
