@@ -183,7 +183,7 @@ export function removeDuplicateSubfield8Chains(record, fix = true) {
 }
 
 
-export function markDuplicateSubfield8Chains(record, fix) {
+export function handleDuplicateSubfield8Chains(record, fix) {
 
   // Seen $8 subsfields in various fields:
   // 161 700
@@ -415,7 +415,8 @@ function fieldHandleDuplicateDatafields(field, record) {
 
 
 export function removeDuplicateDatafields(record, fix = true) {
-  markDuplicateSubfield8Chains(record, fix);
+  // Sometimes only $8 subfield (vs the whole field) is removed. Thus they are handled separately:
+  handleDuplicateSubfield8Chains(record, fix);
 
   const dataFields = record.fields.filter(f => f.subfields !== undefined);
 
