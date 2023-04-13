@@ -441,7 +441,7 @@ export function removeDuplicateDatafields(record, fix = true) {
 
   deletableFields.forEach(f => delete f.deleted); // eslint-disable-line functional/immutable-data
   deletableFields.forEach(f => delete f.modified); // eslint-disable-line functional/immutable-data
-  modifiedFields.forEach(f => delete f.modified); // eslint-disable-line functional/immutable-data
+
 
   return result;
 }
