@@ -1,0 +1,16 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-02"},
+      { "code": "a", "value": "foo"}
+    ]},
+    { "tag": "880", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "6", "value": "500-02/(N"},
+      { "code": "a", "value": "bar"}
+    ]}
+
+  ],
+  "leader": ""
+}
