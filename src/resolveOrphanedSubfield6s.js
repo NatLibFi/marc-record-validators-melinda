@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils';
-import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, resetSubfield6OccurrenceNumber, subfield6GetOccurrenceNumber} from './subfield6Utils';
+import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from './subfield6Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -67,7 +67,7 @@ export function recordFixSubfield6OccurrenceNumbers(record) {
       return;
     }
     // convert occurrence number to 00
-    resetSubfield6OccurrenceNumber(subfield, '00');
+    subfield6ResetOccurrenceNumber(subfield, '00');
   }
 }
 
