@@ -256,11 +256,14 @@ function markIdenticalSubfield6Chains(chain, record) {
 
 }
 
-function markIdenticalLoneFields(field, record) {
+function markIdenticalLoneFieldsAsDeletable(field, record) {
+  if (field.deleted) {
+    return;
+  }
   // targetLinkingNumber = 0, normalizedOccurenceNumber = false, normalizeTag = true)
   const normalizeTag = field.tag.substring(0, 1) === '1'; // 1XX can delete 7XX as well!
   const fieldAsString = fieldToNormalizedString(field, 0, false, normalizeTag);
-  nvdebug(`mILF(): ${fieldAsString}`);
+
   const identicalLoneFields = record.fields.filter(f => !sameField(f, field) && fieldToNormalizedString(f, 0, false, normalizeTag) === fieldAsString);
 
   // Mark fields as deleted:
@@ -384,14 +387,14 @@ function fieldHandleDuplicateDatafields(field, record) {
 
   // Lone fields:
   if (chain.length === 1) {
-    markIdenticalLoneFields(chain[0], record);
+    markIdenticalLoneFieldsAsDeletable(chain[0], record);
     return;
   }
   if (fieldsWithSubfield6.length === 0) {
 
     if (fieldsWithSubfield8.length === 0) { // chain.length === 1?
       nvdebug(` Trying to find duplicates of single field '${fieldToString(chain[0])}'`);
-      markIdenticalLoneFields(chain[0], record);
+      markIdenticalLoneFieldsAsDeletable(chain[0], record);
       return;
     }
     const linkingNumbers = fieldsGetAllSubfield8LinkingNumbers(fieldsWithSubfield8);
