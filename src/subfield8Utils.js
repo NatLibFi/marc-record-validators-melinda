@@ -1,7 +1,7 @@
 // import createDebugLogger from 'debug';
 // const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield8Utils');
 
-import {nvdebug, subfieldToString} from './utils';
+import {fieldToString, nvdebug} from './utils';
 
 const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
 
@@ -56,7 +56,6 @@ export function fieldsGetAllSubfield8LinkingNumbers(fields) {
     }
     field.subfields.forEach(sf => {
       const linkingNumber = getSubfield8LinkingNumber(sf);
-      nvdebug(`WP50: ${linkingNumber} vs '${subfieldToString(sf)}`);
       if (linkingNumber > 0 && !subfield8LinkingNumbers.includes(linkingNumber)) {
         nvdebug(` LINK8: Add subfield \$8 ${linkingNumber} to seen values list`);
         subfield8LinkingNumbers.push(linkingNumber);
@@ -71,4 +70,33 @@ export function fieldsGetAllSubfield8LinkingNumbers(fields) {
 
 export function recordGetAllSubfield8LinkingNumbers(record) {
   return fieldsGetAllSubfield8LinkingNumbers(record.fields);
+}
+
+
+export function add8s(fields, record) {
+  const linkingNumbers = fieldsGetAllSubfield8LinkingNumbers(fields);
+  if (linkingNumbers.length === 0) {
+    return fields;
+  }
+
+  nvdebug(`Linking number(s): ${linkingNumbers.join(', ')}`);
+  linkingNumbers.forEach(number => collectLinkingNumberFields(number));
+
+  fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`));
+
+  return fields;
+
+  function collectLinkingNumberFields(linkingNumber) {
+    // Remove existing hits (to avoid field repetition):
+    fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber)); // eslint-disable-line functional/immutable-data, no-param-reassign
+    // Add them and their "sisters" back:
+    const addableFields = record.fields.filter(f => fieldHasLinkingNumber(f, linkingNumber));
+    addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));
+    fields = fields.concat(addableFields); // eslint-disable-line functional/immutable-data, no-param-reassign
+
+  }
+}
+
+export function fieldHasValidSubfield8(field) {
+  return field.subfields && field.subfields.some(sf => isValidSubfield8(sf));
 }
