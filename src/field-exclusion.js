@@ -69,7 +69,7 @@ export default function (config) {
       forEach(obj, ([key, val]) => {
         configMatchesSpec(val, key, confSpec);
         // Concat all excluded elements to array
-        if (confSpec[key].excl) { // eslint-disable-line functional/no-conditional-statement
+        if (confSpec[key].excl) { // eslint-disable-line functional/no-conditional-statements
           excluded.push(...confSpec[key].excl); // eslint-disable-line functional/immutable-data
         }
       });
@@ -97,10 +97,10 @@ export default function (config) {
     }
 
     // Check subfields recursively
-    if (key === 'subfields') { // eslint-disable-line functional/no-conditional-statement
+    if (key === 'subfields') { // eslint-disable-line functional/no-conditional-statements
       forEach(data, ([, subObj]) => {
         // Console.log("subObj: ", subObj, " type: ", typeof subObj, !(Array.isArray(subObj)))
-        if (typeof subObj === 'object' && !Array.isArray(subObj)) { // eslint-disable-line functional/no-conditional-statement
+        if (typeof subObj === 'object' && !Array.isArray(subObj)) { // eslint-disable-line functional/no-conditional-statements
           checkMandatory(spec[key], subObj);
 
           forEach(subObj, ([subKey, subVal]) => {
@@ -112,7 +112,7 @@ export default function (config) {
       });
     }
 
-    if (key === 'dependencies') { // eslint-disable-line functional/no-conditional-statement
+    if (key === 'dependencies') { // eslint-disable-line functional/no-conditional-statements
       forEach(data, ([, subObj]) => {
         if (!(typeof subObj === 'object' && !Array.isArray(subObj) && Object.keys(subObj).length === 1 && isRegExp(subObj.leader))) {
           throw new TypeError('Configuration not valid - Invalid dependencies config');
@@ -177,9 +177,9 @@ export default function (config) {
           return false;
         })) {
           // All configuration fields match, element should be excluded.
-          if (fix) { // eslint-disable-line functional/no-conditional-statement
+          if (fix) { // eslint-disable-line functional/no-conditional-statements
             excluded.push(element); // eslint-disable-line functional/immutable-data
-          } else { // eslint-disable-line functional/no-conditional-statement
+          } else { // eslint-disable-line functional/no-conditional-statements
             res.message.push(`Field $${element.tag} should be excluded`); // eslint-disable-line functional/immutable-data
           }
         }
@@ -190,7 +190,7 @@ export default function (config) {
 
     // Fix does not send response
     if (!fix) {
-      if (res.message.length > 0) { // eslint-disable-line functional/no-conditional-statement
+      if (res.message.length > 0) { // eslint-disable-line functional/no-conditional-statements
         res.valid = false; // eslint-disable-line functional/immutable-data
       }
 

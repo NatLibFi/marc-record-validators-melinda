@@ -164,7 +164,7 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 
   const deletedFieldsAsStrings = hits.map(f => fieldToString(f));
 
-  if (fix) { // eslint-disable-line functional/no-conditional-statement
+  if (fix) { // eslint-disable-line functional/no-conditional-statements
     hits.forEach(field => {
       nvdebug(`Remove inferior field: ${fieldToString(field)}`);
       record.removeField(field);

@@ -33,7 +33,7 @@ export default function () {
 
     const res = {message: []};
 
-    if (orphanedFields.length > 0) { // eslint-disable-line functional/no-conditional-statement
+    if (orphanedFields.length > 0) { // eslint-disable-line functional/no-conditional-statements
       res.message = [`${orphanedFields.length} orphaned occurrence number field(s) detected`]; // eslint-disable-line functional/immutable-data
     }
     res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data

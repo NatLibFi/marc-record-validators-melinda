@@ -28,7 +28,7 @@ export default function () {
 
   function uniqWith(fields) {
     return fields.reduce((uniq, field) => {
-      if (!uniq.some(f => MarcRecord.isEqual(f, field))) { // eslint-disable-line functional/no-conditional-statement
+      if (!uniq.some(f => MarcRecord.isEqual(f, field))) { // eslint-disable-line functional/no-conditional-statements
         uniq.push(field); // eslint-disable-line functional/immutable-data
       }
 

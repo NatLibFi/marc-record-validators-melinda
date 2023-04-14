@@ -17,7 +17,7 @@ function fieldToString(f) {
 
 /*
 function nvdebug(message, func) {
-  if (func) { // eslint-disable-line functional/no-conditional-statement
+  if (func) { // eslint-disable-line functional/no-conditional-statements
     func(message);
   }
   console.info(message); // eslint-disable-line no-console
@@ -78,11 +78,11 @@ export default function () {
     function compareFields(field, index) {
       const origFieldAsString = fieldToString(clonedFields[index]);
       //const clonedFieldAsString = fieldToString(field);
-      if (clonedFields[index].ind1 !== field.ind1) { // eslint-disable-line functional/no-conditional-statement
+      if (clonedFields[index].ind1 !== field.ind1) { // eslint-disable-line functional/no-conditional-statements
         //nvdebug(`FIX IND1: '${clonedFields[index].ind1}' => '${field.ind1}': ${clonedFieldAsString}`);
         res.message.push(`Expected IND1 for '${origFieldAsString}' is '${field.ind1}'`); // eslint-disable-line functional/immutable-data
       }
-      if (clonedFields[index].ind2 !== field.ind2) { // eslint-disable-line functional/no-conditional-statement
+      if (clonedFields[index].ind2 !== field.ind2) { // eslint-disable-line functional/no-conditional-statements
         //nvdebug(`FIX IND2: '${clonedFields[index].ind2}' => '${field.ind2}': ${clonedFieldAsString}`);
         res.message.push(`Expected IND2 for '${origFieldAsString}' is '${field.ind2}'`); // eslint-disable-line functional/immutable-data
       }

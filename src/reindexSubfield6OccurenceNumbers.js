@@ -37,7 +37,7 @@ export default function () {
     const res = {message: []};
 
     nvdebug('Validate SF6 occurrence number multiuses', debug);
-    if (recordGetSharedOccurrenceNumbers(record).length) { // eslint-disable-line functional/no-conditional-statement
+    if (recordGetSharedOccurrenceNumbers(record).length) { // eslint-disable-line functional/no-conditional-statements
       res.message.push(`Multi-use of occurrence number(s) detected`); // eslint-disable-line functional/immutable-data
     }
 
@@ -47,7 +47,7 @@ export default function () {
     const size = recordGetNumberOfUniqueSubfield6OccurrenceNumbers(record);
 
 
-    if (max !== size) { // eslint-disable-line functional/no-conditional-statement
+    if (max !== size) { // eslint-disable-line functional/no-conditional-statements
       res.message.push(`Gaps detected in occurrence numbers: found ${size}, seen max ${max}`); // eslint-disable-line functional/immutable-data
     }
     res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data

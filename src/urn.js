@@ -31,7 +31,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
     // We add the URN even if we're not getting the legalDeposit - where does this URN resolve?
     // We probably should not do these additions
 
-    if (f856sUrn.length === 0) { // eslint-disable-line functional/no-conditional-statement
+    if (f856sUrn.length === 0) { // eslint-disable-line functional/no-conditional-statements
       const {code, value, generated} = await createURNSubfield(record);
 
       if (generated && useMelindaTemp) {
@@ -55,7 +55,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
       });
 
       return true;
-    } else if (isLegalDeposit) { // eslint-disable-line functional/no-conditional-statement
+    } else if (isLegalDeposit) { // eslint-disable-line functional/no-conditional-statements
 
       // We add here legal deposit information to all URN-f856s - we probably should not do this
       // We should add extra f856 URN / URNs for legal deposits that already have a open (non-legal-deposit) URN
@@ -64,7 +64,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
 
       f856sUrn.forEach(f => {
         ldSubfields.forEach(ldsf => {
-          if (!f.subfields.some(sf => sf.code === ldsf.code && sf.value === ldsf.value)) { // eslint-disable-line functional/no-conditional-statement
+          if (!f.subfields.some(sf => sf.code === ldsf.code && sf.value === ldsf.value)) { // eslint-disable-line functional/no-conditional-statements
             f.subfields.push(ldsf); // eslint-disable-line functional/immutable-data
           }
         });

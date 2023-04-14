@@ -37,7 +37,7 @@ export default function () {
     const res = {message: duplicates};
 
     /*
-    if (orphanedFields.length > 0) { // eslint-disable-line functional/no-conditional-statement
+    if (orphanedFields.length > 0) { // eslint-disable-line functional/no-conditional-statements
       res.message = [`${orphanedFields.length} orphaned occurrence number field(s) detected`]; // eslint-disable-line functional/immutable-data
     }
     */
@@ -121,7 +121,7 @@ function newRecordRemoveFieldOrSubfield8(record, field, currLinkingNumber, fix) 
   const subfields = field.subfields.filter(sf => getSubfield8LinkingNumber(sf) === currLinkingNumber);
   subfields.forEach(sf => {
     field.modified = 1; // eslint-disable-line functional/immutable-data
-    if (fix) { // eslint-disable-line functional/no-conditional-statement
+    if (fix) { // eslint-disable-line functional/no-conditional-statements
       record.removeSubfield(sf, field);
     }
   });
@@ -429,7 +429,7 @@ export function removeDuplicateDatafields(record, fix = true) {
   const modifiedFields = dataFields.filter(f => f.modified && !f.deleted);
 
   const result = deletableFields.map(f => `DEL: ${fieldToString(f)}`);
-  if (modifiedFields.length) { // eslint-disable-line functional/no-conditional-statement
+  if (modifiedFields.length) { // eslint-disable-line functional/no-conditional-statements
     modifiedFields.forEach(f => delete f.modified); // eslint-disable-line functional/immutable-data
     result.push(modifiedFields.map(f => `MOD: ${fieldToString(f)}`)); // eslint-disable-line functional/immutable-data
   }

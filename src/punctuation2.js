@@ -328,7 +328,7 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
   if (!(`${tag}` in ruleArray) || ruleArray === null || operation === NONE) {
 
     /*
-    if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statement
+    if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statements
       nvdebug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`, debug);
 
     }
@@ -341,16 +341,16 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
 
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
-    if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statement
+    if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statements
       //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
       //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
     }
-    if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statement
+    if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statements
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
       //nvdebug(`    ADDED '${rule.add}' TO '${subfield1.value}'`, debug);
     }
-    if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
+    if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statements
       //nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
     }
   });
@@ -390,7 +390,7 @@ export function fieldFixPunctuation(field) {
   });
 
   // Use shared code for final punctuation (sadly this does not fix intermediate punc):
-  if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statement
+  if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statements
     // addFinalPunctuation(field); // local version. use shared code instead.
     validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
   }

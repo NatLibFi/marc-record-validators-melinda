@@ -104,7 +104,7 @@ export default function (config) {
         configMatchesSpec(val, key, confSpec);
 
         // Concat all excluded elements to array
-        if (confSpec[key].excl) { // eslint-disable-line functional/no-conditional-statement
+        if (confSpec[key].excl) { // eslint-disable-line functional/no-conditional-statements
           excluded.push(...confSpec[key].excl); // eslint-disable-line functional/immutable-data
         }
       });
@@ -132,9 +132,9 @@ export default function (config) {
     }
 
     // Check subfields/dependencies recursively
-    if (key === 'subfields' || key === 'dependencies') { // eslint-disable-line functional/no-conditional-statement
+    if (key === 'subfields' || key === 'dependencies') { // eslint-disable-line functional/no-conditional-statements
       forEach(data, ([, subObj]) => {
-        if (typeof subObj === 'object') { // eslint-disable-line functional/no-conditional-statement
+        if (typeof subObj === 'object') { // eslint-disable-line functional/no-conditional-statements
           forEach(subObj, ([subKey, subVal]) => {
             configMatchesSpec(subVal, subKey, key === 'subfields' ? subSpec : depSpec);
           });

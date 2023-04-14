@@ -94,28 +94,28 @@ export default function () {
         return;
       }
 
-      if (inNamePortion && portion.includes('T', 'S')) { // eslint-disable-line functional/no-conditional-statement
+      if (inNamePortion && portion.includes('T', 'S')) { // eslint-disable-line functional/no-conditional-statements
         debug(`Portion changed to ${portion}. Not in name portion anymore`);
         inNamePortion = false;
       }
 
-      if (inNamePortion && portion === 'NT') { // eslint-disable-line functional/no-conditional-statement
+      if (inNamePortion && portion === 'NT') { // eslint-disable-line functional/no-conditional-statements
         portion = 'N';
       }
 
-      if (!inNamePortion && portion === 'NT') { // eslint-disable-line functional/no-conditional-statement
+      if (!inNamePortion && portion === 'NT') { // eslint-disable-line functional/no-conditional-statements
         portion = 'T';
       }
 
       debug(`Current portion is ${portion}.`);
 
       if (currentPortion) {
-        if (currentPortion === portion) { // eslint-disable-line functional/no-conditional-statement
+        if (currentPortion === portion) { // eslint-disable-line functional/no-conditional-statements
           debug(`Current stayed as ${portion}. Adding punctuation for subfield.`);
           addSubfieldPunctuation(preceedingField, subfield, rulesForField);
         } else {
           debug(`Current portion changed to ${portion}.`);
-          if (portion !== 'S') { // eslint-disable-line functional/no-conditional-statement
+          if (portion !== 'S') { // eslint-disable-line functional/no-conditional-statements
             debug('Adding punctuation for portion.');
             addNamePortionPunctuation(preceedingField);
           }
@@ -126,7 +126,7 @@ export default function () {
       preceedingField = subfield;
     });
 
-    if (recordType !== 'z') { // eslint-disable-line functional/no-conditional-statement
+    if (recordType !== 'z') { // eslint-disable-line functional/no-conditional-statements
       addNamePortionPunctuation(preceedingField);
     }
 
@@ -152,7 +152,7 @@ export default function () {
 
   function addNamePortionPunctuation(preceedingSubfield) {
     const subfieldContainsPunctuation = (/[?")\].\-!,]$/u).test(preceedingSubfield.value);
-    if (!subfieldContainsPunctuation) { // eslint-disable-line functional/no-conditional-statement
+    if (!subfieldContainsPunctuation) { // eslint-disable-line functional/no-conditional-statements
       const nextValue = `${preceedingSubfield.value}.`;
       debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
       preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
@@ -173,7 +173,7 @@ export default function () {
     debug(`addSubfieldPunctuation -- punctType: ${punctType} endsInPunctuation: ${endsInPunctuation}`);
 
     if (!endsInPunctuation) {
-      if (punctType === 'PERIOD' && !(/\.$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+      if (punctType === 'PERIOD' && !(/\.$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statements
         const nextValue = `${preceedingSubfield.value}.`;
         debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
         preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
@@ -182,7 +182,7 @@ export default function () {
 
     if (punctType === 'COMMA') {
       if (!(/,$/u).test(preceedingSubfield.value)) {
-        if (!(/^[[(]/u).test(currentSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+        if (!(/^[[(]/u).test(currentSubfield.value)) { // eslint-disable-line functional/no-conditional-statements
           const nextValue = `${preceedingSubfield.value},`;
           debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
           preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
@@ -191,7 +191,7 @@ export default function () {
     }
 
     if (punctType === 'COND_COMMA') {
-      if (!(/[-,]$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+      if (!(/[-,]$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statements
         const nextValue = `${preceedingSubfield.value},`;
         debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
         preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
@@ -199,12 +199,12 @@ export default function () {
     }
 
     if (punctType === 'SPACECOLON') {
-      if (!(/:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+      if (!(/:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statements
         const nextValue = `${preceedingSubfield.value} :`;
         debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
         preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
       }
-      if ((/[^ ]:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+      if ((/[^ ]:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statements
         const nextValue = `${preceedingSubfield.value.slice(0, -1)} :`;
         debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
         preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
@@ -241,7 +241,7 @@ export default function () {
 
     exceptionRules.forEach(exceptionRule => {
       const match = (/- (.*) if preceded by (.*)/u).exec(exceptionRule); // eslint-disable-line prefer-named-capture-group
-      if (match) { // eslint-disable-line functional/no-conditional-statement
+      if (match) { // eslint-disable-line functional/no-conditional-statements
         const [, type, preceededCode] = match;
         const normalizedType = type.trim().toUpperCase().trim();
         const normalizedCode = preceededCode.replace(/\$/ug, '').trim();
@@ -256,13 +256,13 @@ export default function () {
     return preceedingSubfield => {
       if (code === preceedingSubfield.code) {
         debug(`Adding ${type} to ${preceedingSubfield.code}`);
-        if (type === 'SEMICOLON' && !(/;$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+        if (type === 'SEMICOLON' && !(/;$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statements
           const nextValue = `${preceedingSubfield.value} ;`;
           debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
           preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
         }
 
-        if (type === 'COLON' && !(/:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statement
+        if (type === 'COLON' && !(/:$/u).test(preceedingSubfield.value)) { // eslint-disable-line functional/no-conditional-statements
           const nextValue = `${preceedingSubfield.value} :`;
           debug(`Updated subfield ${preceedingSubfield.code} from '${preceedingSubfield.value}' to '${nextValue}'`);
           preceedingSubfield.value = nextValue; // eslint-disable-line functional/immutable-data
