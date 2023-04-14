@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
-import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, isValidSubfield6,
-  recordGetMaxSubfield6OccurrenceNumberAsInteger, resetFieldOccurrenceNumber,
-  resetSubfield6OccurrenceNumber, subfield6GetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger} from './subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, fieldResetOccurrenceNumber, intToOccurrenceNumberString, isValidSubfield6,
+  recordGetMaxSubfield6OccurrenceNumberAsInteger,
+  subfield6GetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger, subfield6ResetOccurrenceNumber} from './subfield6Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -37,7 +37,7 @@ export default function () {
     const res = {message: []};
 
     nvdebug('Validate SF6 occurrence number multiuses', debug);
-    if (recordGetSharedOccurrenceNumbers(record).length) { // eslint-disable-line functional/no-conditional-statement
+    if (recordGetSharedOccurrenceNumbers(record).length) { // eslint-disable-line functional/no-conditional-statements
       res.message.push(`Multi-use of occurrence number(s) detected`); // eslint-disable-line functional/immutable-data
     }
 
@@ -47,7 +47,7 @@ export default function () {
     const size = recordGetNumberOfUniqueSubfield6OccurrenceNumbers(record);
 
 
-    if (max !== size) { // eslint-disable-line functional/no-conditional-statement
+    if (max !== size) { // eslint-disable-line functional/no-conditional-statements
       res.message.push(`Gaps detected in occurrence numbers: found ${size}, seen max ${max}`); // eslint-disable-line functional/immutable-data
     }
     res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
@@ -130,8 +130,8 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
 
     nvdebug(` Reindex '${fieldToString(field)}' occurrence number and it's ${pairedFields.length} pair(s) using '${newOccurrenceNumber}'`, debug);
 
-    resetFieldOccurrenceNumber(field, newOccurrenceNumber, occurrenceNumber);
-    pairedFields.forEach(pairedField => resetFieldOccurrenceNumber(pairedField, newOccurrenceNumber, occurrenceNumber));
+    fieldResetOccurrenceNumber(field, newOccurrenceNumber, occurrenceNumber);
+    pairedFields.forEach(pairedField => fieldResetOccurrenceNumber(pairedField, newOccurrenceNumber, occurrenceNumber));
 
   }
 
@@ -192,7 +192,7 @@ export function recordResetSubfield6OccurrenceNumbers(record) { // Remove gaps
 
     const newIndex = mapCurrIndexToNewIndex(currIndex);
     //nvdebug(`subfieldReset6(${subfieldToString(subfield)}): ${newIndex}`, debug);
-    resetSubfield6OccurrenceNumber(subfield, newIndex);
+    subfield6ResetOccurrenceNumber(subfield, newIndex);
   }
 
   function mapCurrIndexToNewIndex(currIndex) {

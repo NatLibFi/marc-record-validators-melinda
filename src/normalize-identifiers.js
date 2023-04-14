@@ -15,7 +15,7 @@ function fieldToString(f) {
 
 /*
 function nvdebug(message, func) {
-  if (func) { // eslint-disable-line functional/no-conditional-statement
+  if (func) { // eslint-disable-line functional/no-conditional-statements
     func(message);
   }
   console.info(message); // eslint-disable-line no-console

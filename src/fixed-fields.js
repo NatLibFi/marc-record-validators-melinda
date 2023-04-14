@@ -13,9 +13,9 @@ export default function (configuration) {
     const messages = configuration.reduce((messages, item) => {
       let results; // eslint-disable-line functional/no-let
 
-      if (item.leader) { // eslint-disable-line functional/no-conditional-statement
+      if (item.leader) { // eslint-disable-line functional/no-conditional-statements
         results = validateField(record.leader, item);
-      } else { // eslint-disable-line functional/no-conditional-statement
+      } else { // eslint-disable-line functional/no-conditional-statements
         results = record.get(item.tag)
           .map(f => validateField(f.value, item, f.tag));
       }

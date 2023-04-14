@@ -8,7 +8,7 @@ export default function () {
     // If printed do nothing
 
     // If material is electronic add theis if missing
-    if (!hasTag(record, '506', sf506)) { // eslint-disable-line functional/no-conditional-statement
+    if (!hasTag(record, '506', sf506)) { // eslint-disable-line functional/no-conditional-statements
       record.insertField({
         tag: '506',
         ind1: '1',
@@ -33,7 +33,7 @@ export default function () {
       });
     }
 
-    if (!hasTag(record, '540', sf540)) { // eslint-disable-line functional/no-conditional-statement
+    if (!hasTag(record, '540', sf540)) { // eslint-disable-line functional/no-conditional-statements
       record.insertField({
         tag: '540',
         subfields: [

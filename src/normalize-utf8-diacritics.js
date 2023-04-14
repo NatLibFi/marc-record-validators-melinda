@@ -124,7 +124,7 @@ export function fieldFixComposition(field) {
     field.subfields[index].value = fixComposition(subfield.value); // eslint-disable-line functional/immutable-data
   });
   //const newValue = fieldToString(field);
-  //if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
+  //if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statements
   //  debug(`FIXCOMP: '${originalValue}' => '${newValue}'`);
   //}
   return field;

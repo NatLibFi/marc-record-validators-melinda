@@ -178,7 +178,7 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
       }
       // 022 ISSN:
       const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-      if (subfield && handleInvalid) { // eslint-disable-line functional/no-conditional-statement
+      if (subfield && handleInvalid) { // eslint-disable-line functional/no-conditional-statements
         // $a/$l => $y (bit overkill to add $z and remove $a/$l instead of just renaming)
         field.subfields.push({code: 'y', value: subfield.value}); // eslint-disable-line functional/immutable-data
         record.removeSubfield(subfield, field);
@@ -198,7 +198,7 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         }
         // ISBN is valid but is missing hyphens
         const normalizedValue = normalizeIsbnValue(subfield.value);
-        if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statement
+        if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statements
           subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
         }
       }
@@ -244,7 +244,7 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         }
         const numbersOnly = trimmedValue.replace(/[^0-9Xx]+/ug, '');
         const parsedIsbn = ISBN.parse(trimmedValue);
-        if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statement
+        if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statements
           return numbersOnly.length === 10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
         }
         return numbersOnly.length === 10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data

@@ -77,10 +77,10 @@ export default function (config) {
     }
 
     // Check subfields recursively
-    if (key === 'subfields') { // eslint-disable-line functional/no-conditional-statement
+    if (key === 'subfields') { // eslint-disable-line functional/no-conditional-statements
       forEach(data, ([, subObj]) => {
         // Console.log("subObj: ", subObj, " type: ", typeof subObj, !(Array.isArray(subObj)))
-        if (typeof subObj === 'object' && !Array.isArray(subObj)) { // eslint-disable-line functional/no-conditional-statement
+        if (typeof subObj === 'object' && !Array.isArray(subObj)) { // eslint-disable-line functional/no-conditional-statements
           checkMandatory(spec[key], subObj);
 
           forEach(subObj, ([subKey, subVal]) => {
@@ -128,7 +128,7 @@ export default function (config) {
 
           // Configuration object not found from found element
           return false;
-        })) { // eslint-disable-line functional/no-conditional-statement
+        })) { // eslint-disable-line functional/no-conditional-statements
           // All configuration fields match, check if some subfields should be excluded.
           confObj.subfields.forEach(subField => {
             const excluded = [];
@@ -138,9 +138,9 @@ export default function (config) {
               const subFieldCodeFine = subField.code && elemSub.code && subField.code.test(elemSub.code);
               const subFieldValueFine = subField.value && elemSub.value && subField.value.test(elemSub.value);
               if (subFieldCodeFine && (typeof subField.value === 'undefined' || subFieldValueFine)) {
-                if (fix) { // eslint-disable-line functional/no-conditional-statement
+                if (fix) { // eslint-disable-line functional/no-conditional-statements
                   excluded.push(elemSub); // eslint-disable-line functional/immutable-data
-                } else { // eslint-disable-line functional/no-conditional-statement
+                } else { // eslint-disable-line functional/no-conditional-statements
                   res.message.push(`Subfield $${element.tag}$$${elemSub.code}should be excluded`); // eslint-disable-line functional/immutable-data
                 }
               }
@@ -148,7 +148,7 @@ export default function (config) {
 
             excluded.forEach(sf => record.removeSubfield(sf, element));
             // If no subfields remains, the whole field will be removed as well:
-            if (element.subfields && element.subfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
+            if (element.subfields && element.subfields.length === 0) { // eslint-disable-line functional/no-conditional-statements
               record.removeField(element);
             }
           });
@@ -158,7 +158,7 @@ export default function (config) {
 
     // Fix does not send response
     if (!fix) {
-      if (res.message.length > 0) { // eslint-disable-line functional/no-conditional-statement
+      if (res.message.length > 0) { // eslint-disable-line functional/no-conditional-statements
         res.valid = false; // eslint-disable-line functional/immutable-data
       }
 

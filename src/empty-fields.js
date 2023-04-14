@@ -33,15 +33,15 @@ export default function () {
   function fix(record) {
     const errors = findErrors(record.fields);
     errors.forEach(error => {
-      if (error.code === ERRORS.MISSING_SUBFIELD_VALUES) { // eslint-disable-line functional/no-conditional-statement
-        if (error.emptySubfields.length === error.field.subfields.length) { // eslint-disable-line functional/no-conditional-statement
+      if (error.code === ERRORS.MISSING_SUBFIELD_VALUES) { // eslint-disable-line functional/no-conditional-statements
+        if (error.emptySubfields.length === error.field.subfields.length) { // eslint-disable-line functional/no-conditional-statements
           record.removeField(error.field);
-        } else { // eslint-disable-line functional/no-conditional-statement
+        } else { // eslint-disable-line functional/no-conditional-statements
           error.emptySubfields.forEach(sf => {
             record.removeSubfield(sf, error.field);
           });
         }
-      } else { // eslint-disable-line functional/no-conditional-statement
+      } else { // eslint-disable-line functional/no-conditional-statements
         record.removeField(error.field);
       }
     });

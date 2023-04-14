@@ -1,0 +1,6 @@
+{
+  "description": "f03: removable subset chains deleted",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
