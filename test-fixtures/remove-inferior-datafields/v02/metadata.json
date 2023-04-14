@@ -1,0 +1,6 @@
+{
+  "description": "VAL-02: MRA-476: missing 880 $6 script identification code caused near-double",
+  "enabled": true,
+  "fix": false,
+  "only": false
+}
