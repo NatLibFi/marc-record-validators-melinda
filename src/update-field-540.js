@@ -57,12 +57,22 @@ function findSubfieldIndex(field, subfield) {
   return index;
 }
 
-function licenseApplies(subfieldC, license) {
-  if (subfieldC.code !== 'c' || subfieldC.value !== license.license) {
+function validLicenseInSubfieldC(subfieldC, license) {
+  if (subfieldC.code !== 'c') {
     return false;
   }
+  //nvdebug(`Compare ${subfieldC.value} vs ${license.license}`);
   return license.license === subfieldC.value;
 }
+
+function validUrlInSubfieldU(subfieldU, license) {
+  if (subfieldU.code !== 'u') {
+    return false;
+  }
+  //nvdebug(`Compare ${subfieldU.value} vs ${license.url}`);
+  return license.url === subfieldU.value;
+}
+
 
 function fixC(field, subfieldC) {
   // MELINDA-2431_
@@ -75,12 +85,14 @@ function fieldHasOldCcLicense(field, fix) {
   if (field.tag !== '540') {
     return false;
   }
-  const validLicense = licences.find(license => licenseApplies(license, field));
+  //nvdebug(`NORM 540: ${fieldToString(field)}`);
+  const validLicense = licences.find(license => field.subfields.some(sf => validLicenseInSubfieldC(sf, license)) && field.subfields.some(sf => validUrlInSubfieldU(sf, license)));
   if (!validLicense) {
     return false;
   }
+  //nvdebug(` Found valid license`);
   if (fix) { // eslint-disable-line functional/no-conditional-statements
-    const subfieldsC = field.subfields.filter(sf => licenseApplies(sf, validLicense));
+    const subfieldsC = field.subfields.filter(sf => validLicenseInSubfieldC(sf, validLicense));
     subfieldsC.forEach(c => fixC(field, c));
   }
 
