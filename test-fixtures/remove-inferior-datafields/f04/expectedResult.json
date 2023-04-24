@@ -1,0 +1,31 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "8", "value": "2.1\\x"},
+      { "code": "a", "value": "foo"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "8", "value": "2.2\\x"},
+      { "code": "a", "value": "bar"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "8", "value": "3.1\\x"},
+      { "code": "8", "value": "4.1\\x"},
+      { "code": "a", "value": "foo"}
+    ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "8", "value": "3.2\\x"},
+      { "code": "a", "value": "bar"}
+    ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "8", "value": "4.2\\x"},
+      { "code": "a", "value": "bar"}
+    ]}
+
+  ],
+  "leader": ""
+}

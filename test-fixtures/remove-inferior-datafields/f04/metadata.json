@@ -1,0 +1,6 @@
+{
+  "description": "f04: two $8 chains, one with $9 <KEEP>, one without. Remove keepless. (MET-319)",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
