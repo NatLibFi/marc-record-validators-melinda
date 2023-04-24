@@ -1,6 +1,7 @@
 {
   "fields": [
     { "tag": "001", "value": "f01" },
+    { "tag": "500", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "don't touch me"}, {"code": "2", "value": "ysa"}]},
     { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "good3"}, {"code": "2", "value": "ysa"}]},
     { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "bad3"}, {"code": "2", "value": "ysa."}]},
 
