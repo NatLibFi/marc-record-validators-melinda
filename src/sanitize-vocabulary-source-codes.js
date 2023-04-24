@@ -84,6 +84,9 @@ function isCrappySubfield2(subfield, fix) {
 }
 
 function fieldHasCrappySubfield2(field, fix) {
+  if (!field.tag.match(/^(?:6..|257|38.)$/u)) {
+    return false;
+  }
   return field.subfields.some(sf => isCrappySubfield2(sf, fix));
 }
 
