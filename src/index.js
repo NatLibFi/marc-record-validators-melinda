@@ -17,7 +17,8 @@ import Punctuation from './punctuation/';
 import ResolveOrphanedSubfield6s from './resolveOrphanedSubfield6s'; // Do this before reindexing!
 import ReindexSubfield6OccurenceNumbers from './reindexSubfield6OccurenceNumbers';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
-
+import SanitizeVocabularySourceCodes from './sanitize-vocabulary-source-codes';
+import UpdateField540 from './update-field-540';
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
 import UnicodeDecomposition from './unicode-decomposition';
@@ -43,8 +44,10 @@ export {
   ResolveOrphanedSubfield6s,
   ReindexSubfield6OccurenceNumbers,
   ResolvableExtReferences,
+  SanitizeVocabularySourceCodes,
   SortTags,
   SubfieldExclusion,
   UnicodeDecomposition,
+  UpdateField540,
   Urn
 };
