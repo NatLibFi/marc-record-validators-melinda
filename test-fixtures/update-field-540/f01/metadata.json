@@ -2,5 +2,5 @@
   "description": "f01: Fix buggy vocabulary source codes in subfield $2",
   "enabled": true,
   "fix": true,
-  "only": true
+  "only": false
 }
