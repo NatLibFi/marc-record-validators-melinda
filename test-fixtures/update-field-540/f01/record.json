@@ -1,0 +1,23 @@
+
+{
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "540", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "c", "value": "CC BY 4.0" },
+        { "code": "u", "value": "https://creativecommons.org/licenses/by/4.0/deed.fi" }
+    ]},
+    { "tag": "540", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Whatever" },
+      { "code": "c", "value": "CC BY-NC 4.0" },
+      { "code": "u", "value": "https://creativecommons.org/licenses/by-nc/4.0/deed.fi" }
+    ]},
+    { "tag": "540", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Mismatch between $c and $u is retained" },
+      { "code": "c", "value": "CC BY-NC 4.0" },
+      { "code": "u", "value": "https://creativecommons.org/licenses/by/4.0/deed.fi" }
+    ]}
+
+
+  ],
+  "leader": ""
+}

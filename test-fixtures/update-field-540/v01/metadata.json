@@ -1,0 +1,6 @@
+{
+  "description": "v01: detect two fixable fields",
+  "enabled": true,
+  "fix": false,
+  "only": true
+}
