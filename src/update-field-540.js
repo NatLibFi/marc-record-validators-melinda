@@ -93,7 +93,6 @@ function fieldHasOldCcLicense(field, fix) {
 
 
 function getFieldsThatUseOldFormat(record, fix) {
-  // NB! $2 is used in fields 257, 38X etc. However, these were not requested, so I'll skip them here in the first version.
   return record.fields.filter(f => fieldHasOldCcLicense(f, fix));
 }
 
