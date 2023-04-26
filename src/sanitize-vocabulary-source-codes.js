@@ -90,6 +90,6 @@ function fieldHasCrappySubfield2(field, fix) {
 }
 
 function getFieldsWithCrappySubfieldCode(record, fix) {
- return record.get(/^6..$/u).filter(f => fieldHasCrappySubfield2(f, fix));
+  return record.get(/^6..$/u).filter(f => fieldHasCrappySubfield2(f, fix));
 }
 
