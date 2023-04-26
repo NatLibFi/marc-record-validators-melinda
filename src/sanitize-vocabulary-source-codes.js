@@ -80,6 +80,12 @@ function isCrappySubfield2(subfield, fix) {
   if (!fix && subfield.value.indexOf('yso/') === 0) {
     return !['yso/eng', 'yso/fin', 'yso/swe'].includes(subfield.value);
   }
+  if (!fix && subfield.value.indexOf('slm/') === 0) {
+    return !['slm/fin', 'slm/swe'].includes(subfield.value);
+  }
+  if (!fix && subfield.value.indexOf('mts/') === 0) {
+    return !['mts/fin', 'mts/swe'].includes(subfield.value);
+  }
   return false;
 }
 
