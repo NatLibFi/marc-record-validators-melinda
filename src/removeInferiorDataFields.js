@@ -2,9 +2,13 @@ import createDebugLogger from 'debug';
 import {fieldToChain, sameField} from './removeDuplicateDataFields';
 import {fieldHasValidSubfield6, fieldsToNormalizedString} from './subfield6Utils';
 import {fieldsToString, fieldToString, nvdebug} from './utils';
+import {fieldHasValidSubfield8} from './subfield8Utils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
+// NB! This validator handles only full fields, and does not support subfield $8 removal.
+// Also, having multiple $8 subfields in same fields is not supported.
+// If this functionality is needed, see removeDuplicateDatafields.js for examples of subfield-only stuff.
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:removeSubsetDataFields');
 
 export default function () {
@@ -35,14 +39,14 @@ export default function () {
 }
 
 
-function deriveInferiorSubfield6Chains(fields, record) {
+function deriveInferiorChains(fields, record) {
   /* eslint-disable */
   let deletableStringsArray = [];
 
   nvdebug(`WP1: GOT ${fields.length} field(s) for potential deletable chain derivation`);
-  fields.forEach(field => fieldDeriveSubfield6ChainDeletables(field));
+  fields.forEach(field => fieldDeriveChainDeletables(field));
 
-  function fieldDeriveSubfield6ChainDeletables(field) {
+  function fieldDeriveChainDeletables(field) {
     const chain = fieldToChain(field, record);
     if (chain.length === 0) {
       return;
@@ -51,13 +55,21 @@ function deriveInferiorSubfield6Chains(fields, record) {
 
     nvdebug(`666: ${chainAsString}`);
 
-    // Fix MRA-476 (part 1): list inferior field chains as deletables 
+    // Fix MRA-476 (part 1): one $6 value can be worse than the other
     let tmp = chainAsString;
     while (tmp.match(/ ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+)\/[^ ]+/u)) {
       tmp = tmp.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1');
       nvdebug(`FFS: ${tmp}`);
 
       deletableStringsArray.push(tmp);
+    }
+
+    // Remove keepless versions:
+    tmp = chainAsString;
+    while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
+      tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/, '');
+      deletableStringsArray.push(tmp);
+      nvdebug(`FFS: ${tmp}`);
     }
   }
 
@@ -68,7 +80,7 @@ function deriveInferiorSubfield6Chains(fields, record) {
 
 function isRelevantChain6(field, record) {
   nvdebug(`CHAIN?-WP1: ${fieldToString(field)}`);
-  if (!fieldHasValidSubfield6(field)) {
+  if (!fieldHasValidSubfield6(field) && !fieldHasValidSubfield8(field)) {
     return false;
   }
   nvdebug(`CHAIN?-WP2: ${fieldToString(field)}`);
@@ -76,7 +88,11 @@ function isRelevantChain6(field, record) {
   if (chain.length < 2) {
     return false;
   }
-  nvdebug(`CHAIN?-WP3: ${fieldToString(field)}`);
+  nvdebug(`CHAIN?-WP4: ${fieldToString(field)}`);
+  if (chain.some(f => f.subfields.filter(sf => sf.code === '6').length > 1)) {
+    return false;
+  }
+  nvdebug(`CHAIN?-WP4: ${fieldToString(field)}`);
 
   /* eslint-disable */
   field.tmpInferiorId = 666;
@@ -86,32 +102,32 @@ function isRelevantChain6(field, record) {
   return result;
 }
 
-export function removeInferiorSubfield6Chains(record, fix = true) {
+export function removeInferiorChains(record, fix = true) {
   const fields = record.fields.filter(f => isRelevantChain6(f, record));
   nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
 
-  const deletableSubfield6ChainsAsString = deriveInferiorSubfield6Chains(fields, record);
-  nvdebug(`WP2: GOT ${deletableSubfield6ChainsAsString.length} chain(s)`);
-  if (deletableSubfield6ChainsAsString.length === 0) {
+  const deletableChainsAsString = deriveInferiorChains(fields, record);
+  nvdebug(`WP2: GOT ${deletableChainsAsString.length} chain(s)`);
+  if (deletableChainsAsString.length === 0) {
     return [];
   }
 
-  nvdebug(`removeInferiorSubfield6Chains() has ${fields.length} fields-in-chain(s), and a list of ${deletableSubfield6ChainsAsString.length} deletable(s)`);
+  nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${deletableChainsAsString.length} deletable(s)`);
 
 
   /* eslint-disable */
 
   let deletedStringsArray = [];
-  fields.forEach(f => innerRemoveInferiorSubfield6Chain(f));
+  fields.forEach(f => innerRemoveInferiorChain(f));
 
 
-  function innerRemoveInferiorSubfield6Chain(field) {
+  function innerRemoveInferiorChain(field) {
     const chain = fieldToChain(field, record);
     if (chain.length === 0 || !sameField(field, chain[0])) {
       return;
     }
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
-    if (deletableSubfield6ChainsAsString.includes(chainAsString)) {
+    if (deletableChainsAsString.includes(chainAsString)) {
       nvdebug(`iRIS6C: ${chainAsString}`);
       const deletedString = fieldsToString(chain);
       deletedStringsArray.push(`DEL: ${deletedString}`);
@@ -183,7 +199,7 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 export function removeInferiorDatafields(record, fix = true) {
   const removables = removeIndividualInferiorDatafields(record, fix); // Lone fields
   //const removables8 = removeDuplicateSubfield8Chains(record, fix); // Lone subfield $8 chains
-  const removables6 = removeInferiorSubfield6Chains(record, fix); // Lone subfield $6 chains
+  const removables6 = removeInferiorChains(record, fix); // Lone subfield $6 chains
   // HOW TO HANDLE $6+$8 combos?
 
   nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`);
