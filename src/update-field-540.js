@@ -1,15 +1,7 @@
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
 
-// Note that https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js contains
-// similar functionalities. It's less generic and lacks diacritic removal but has it advantages as well.
-
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers/reducers/normalize-utf-diacritics');
-
-// See also https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js .
-// It uses a list of convertable characters whilst this uses a generic stuff as well.
-// It handles various '.' and '©' type normalizations as well.
-// NB! This version has minor bug/feature issue regarding fixComposition()
 
 // Author(s): Nicholas Volk
 export default function () {
