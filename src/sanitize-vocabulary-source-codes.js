@@ -90,7 +90,6 @@ function fieldHasCrappySubfield2(field, fix) {
 }
 
 function getFieldsWithCrappySubfieldCode(record, fix) {
-  // NB! $2 is used in fields 257, 38X etc. However, these were not requested, so I'll skip them here in the first version.
-  return record.get(/^6..$/u).filter(f => fieldHasCrappySubfield2(f, fix));
+ return record.get(/^6..$/u).filter(f => fieldHasCrappySubfield2(f, fix));
 }
 
