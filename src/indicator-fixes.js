@@ -15,18 +15,9 @@ function fieldToString(f) {
   }
 }
 
-/*
-function nvdebug(message, func) {
-  if (func) { // eslint-disable-line functional/no-conditional-statements
-    func(message);
-  }
-  console.info(message); // eslint-disable-line no-console
-}
-*/
 
 export default function () {
 
-  // NB! We should and could handle ISNIs here as well.
   return {
     description: 'Normalizes indicator values',
     validate, fix
@@ -34,32 +25,14 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
-    //message.fix = []; // eslint-disable-line functional/immutable-data
-
-    // Actual parsing of all fields
-    /*
-      if (!record.fields) {
-        return false;
-      }
-      */
-
 
     recordNormalizeIndicators(record);
 
-
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
     return res;
   }
 
   function validate(record) {
     const res = {message: []};
-    //nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debug);
-    // Actual parsing of all fields
-    /*
-      if (!record.fields) {
-        return false;
-      }
-      */
 
     validateRecord(record, res);
 
