@@ -1,0 +1,8 @@
+{
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "Bar Records"}, {"code": "a", "value": "BARCD-1"}]},
+    { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "BARCD-2"}, { "code": "b", "value": "Bar Records"}]}
+  ],
+  "leader": ""
+}
