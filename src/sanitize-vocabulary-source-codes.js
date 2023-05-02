@@ -25,7 +25,8 @@ export default function () {
       return {message: remainingBadFieldsAsStrings, fix: fixedFieldsAsStrings, valid: true};
     }
 
-    return {message: remainingBadFieldsAsStrings, fix: [], valid: false};
+    // J.O. wants this to return true, as some putki somewhere always expects fixer to return true:
+    return {message: remainingBadFieldsAsStrings, fix: [], valid: true};
 
   }
 
