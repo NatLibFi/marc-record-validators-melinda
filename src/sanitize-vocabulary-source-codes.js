@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
 
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers/reducers/sanitize-vocabulary-source-codes);
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
 
 
 // Author(s): Nicholas Volk
@@ -25,7 +25,8 @@ export default function () {
       return {message: remainingBadFieldsAsStrings, fix: fixedFieldsAsStrings, valid: true};
     }
 
-    return {message: remainingBadFieldsAsStrings, fix: [], valid: false};
+    // J.O. wants this to return true, as some putki somewhere always expects fixer to return true:
+    return {message: remainingBadFieldsAsStrings, fix: [], valid: true};
 
   }
 
@@ -47,7 +48,10 @@ const legalSubfieldCode = ['allars', 'mts', 'mts/fin', 'mts/swe', 'slm/fin', 'sl
 
 function stringFixVocabularySourceCode(value) {
   // Try to remove spaces, change '//' to '/' and remove final '.' and '/':
-  const tmp = value.replace(/ /ug, '').replace(/\/+/ug, '/').replace(/[./]$/gu, '');
+  const tmp = value.replace(/ /ug, '')
+    .replace(/\/+/ug, '/')
+    .replace(/[./]$/gu, '')
+    .replace(/^yso-(?:aika|paikat)\//u, 'yso/'); // IMP-HELMET crap. Also, they still have a '.' at the end of $a...
   if (legalSubfieldCode.includes(tmp)) {
     return tmp;
   }
