@@ -1,6 +1,5 @@
 export default function () {
 
-  // NB! We should and could handle ISNIs here as well.
   return {
     description: 'Merge 500 $a Lisäpainokset fields',
     validate, fix
@@ -142,7 +141,7 @@ export function mergeLisapainokset(record) {
 
   const content = "Lisäpainokset: " + collapsedArray.join('. - ') + ".";
 
-  relevantFields[0].subfields[0].value = content; // Keep the place 
+  relevantFields[0].subfields[0].value = content; // Keep the place
 
   relevantFields.forEach((field, index) => {
     if (index > 0) {

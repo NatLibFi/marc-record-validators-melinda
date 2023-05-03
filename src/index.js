@@ -19,6 +19,7 @@ import ReindexSubfield6OccurenceNumbers from './reindexSubfield6OccurenceNumbers
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SanitizeVocabularySourceCodes from './sanitize-vocabulary-source-codes';
 import UpdateField540 from './update-field-540';
+import SortSubfields from './sortSubfields';
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
 import UnicodeDecomposition from './unicode-decomposition';
@@ -45,6 +46,7 @@ export {
   ReindexSubfield6OccurenceNumbers,
   ResolvableExtReferences,
   SanitizeVocabularySourceCodes,
+  SortSubfields,
   SortTags,
   SubfieldExclusion,
   UnicodeDecomposition,
