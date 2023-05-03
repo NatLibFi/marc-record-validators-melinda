@@ -2,7 +2,7 @@ import clone from 'clone';
 import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:sortSubfields');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortSubfields');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 

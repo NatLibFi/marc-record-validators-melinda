@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
 
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers/reducers/update-field-540');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/update-field-540');
 
 // Author(s): Nicholas Volk
 export default function () {

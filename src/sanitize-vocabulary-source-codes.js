@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
 
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers/reducers/sanitize-vocabulary-source-codes);
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
 
 
 // Author(s): Nicholas Volk

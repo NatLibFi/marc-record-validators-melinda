@@ -5,7 +5,7 @@ import {convert as nongenericNormalization} from './unicode-decomposition';
 // Note that https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js contains
 // similar functionalities. It's less generic and lacks diacritic removal but has it advantages as well.
 
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers/reducers/normalize-utf-diacritics');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/normalize-utf-diacritics');
 
 // See also https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js .
 // It uses a list of convertable characters whilst this uses a generic stuff as well.
