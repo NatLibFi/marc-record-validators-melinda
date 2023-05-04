@@ -6,7 +6,7 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortSu
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-const defaultSortOrderString = '8673abcdefghijklmnopqrstuvwxyz420159';
+const defaultSortOrderString = '8673abcdefghijklmnopqrstuvwxyz420159'; // NB! We Finns like $2 before $0 in 6XX...
 const defaultSortOrder = defaultSortOrderString.split('');
 
 
@@ -150,7 +150,7 @@ function swapSubfields(field, sortOrder) {
   }
 }
 
-export function sortAdjacentSubfields(field, externalSortOrder = false) {
+export function sortAdjacentSubfields(field, externalSortOrder = []) {
   if (!field.subfields) {
     return;
   }
@@ -161,9 +161,10 @@ export function sortAdjacentSubfields(field, externalSortOrder = false) {
   // Implement: 880 field should use values from $6...
 
   // Should we support multiple sort orders per field?
-  const sortOrderForField = externalSortOrder ? externalSortOrder : getSubfieldSortOrder(field);
-  const subfieldOrder = sortOrderForField ? sortOrderForField : defaultSortOrder;
-  nvdebug(`SUBFIELD ORDER: ${subfieldOrder.join(', ')}`);
+  const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);
+  nvdebug(`INTERMEDIATE SUBFIELD ORDER FOR ${field.tag}: ${sortOrderForField.join(', ')}`);
+  const subfieldOrder = sortOrderForField.length > 0 ? sortOrderForField : defaultSortOrder;
+  nvdebug(`FINAL SUBFIELD ORDER FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
   //if (sortOrder === null) { return field; } //// Currently always sort..
 
   swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']); // <= Handle control subfield order (it never changes)

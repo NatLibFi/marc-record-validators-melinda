@@ -2,7 +2,13 @@
   "fields": [
     { "tag": "001", "value": "f01" },
     { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "Bar Records"}, {"code": "a", "value": "BARCD-1"}]},
-    { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "BARCD-2"}, { "code": "b", "value": "Bar Records"}]}
+    { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "BARCD-2"}, { "code": "b", "value": "Bar Records"}]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "123 sivua"},
+      {"code": "c", "value": "25 cm"},
+      {"code": "b", "value": "karttoja"},
+      {"code": "e", "value": "CD-rom"}
+    ]}
   ],
   "leader": ""
 }
