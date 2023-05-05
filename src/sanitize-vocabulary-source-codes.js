@@ -4,8 +4,8 @@ import {fieldToString} from './utils';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
 
 
-// Author(s): Nicholas Volk
-export default function () {
+// Author(s): Nicholas Volk, Joni Ollila
+export default function (dropInvalidFieldsInFix = false) {
 
   return {
     description: 'Validator for sanitizing vocabulary source codes in subfield $2 (MRA-532)',
@@ -18,16 +18,10 @@ export default function () {
 
     const remainingBadFieldsAsStrings = remainingBadFields.map(f => fieldToString(f));
 
-    if (fixedFields.length > 0 || remainingBadFields.length === 0) {
-      // We are content
-      const fixedFieldsAsStrings = fixedFields.map(f => fieldToString(f));
+    // We are content
+    const fixedFieldsAsStrings = fixedFields.map(f => fieldToString(f));
 
-      return {message: remainingBadFieldsAsStrings, fix: fixedFieldsAsStrings, valid: true};
-    }
-
-    // J.O. wants this to return true, as some putki somewhere always expects fixer to return true:
-    return {message: remainingBadFieldsAsStrings, fix: [], valid: true};
-
+    return {message: remainingBadFieldsAsStrings, fix: fixedFieldsAsStrings, valid: true};
   }
 
   function validate(record) {
@@ -39,32 +33,34 @@ export default function () {
 
     return {'message': messages, 'valid': false};
   }
-
 }
 
 // 'mts' is here as per specs. However, I think it should be 'mts/fin' or 'mts/swe'
 const legalSubfieldCode = ['allars', 'mts', 'mts/fin', 'mts/swe', 'slm/fin', 'slm/swe', 'ysa', 'yso/fin', 'yso/swe'];
 
-
 function stringFixVocabularySourceCode(value) {
   // Try to remove spaces, change '//' to '/' and remove final '.' and '/':
   const tmp = value.replace(/ /ug, '')
     .replace(/\/+/ug, '/')
+    .replace(/^(slm|yso)\/$/u, 'local')
     .replace(/[./]$/gu, '')
     .replace(/^yso-(?:aika|paikat)\//u, 'yso/'); // IMP-HELMET crap. Also, they still have a '.' at the end of $a...
+
   if (legalSubfieldCode.includes(tmp)) {
     return tmp;
   }
+
   return value;
 }
-
 
 function isCrappySubfield2(subfield, fix) {
   if (subfield.code !== '2' || legalSubfieldCode.includes(subfield.value)) {
     return false;
   }
+
   // If fixer modifies string, it's crap:
   const fixedVersion = stringFixVocabularySourceCode(subfield.value);
+
   if (fixedVersion !== subfield.value) {
     if (fix) {
       subfield.value = fixedVersion; // eslint-disable-line functional/immutable-data
@@ -83,6 +79,7 @@ function isCrappySubfield2(subfield, fix) {
   if (!fix && subfield.value.indexOf('mts/') === 0) {
     return !['mts/fin', 'mts/swe'].includes(subfield.value);
   }
+
   return false;
 }
 
@@ -90,10 +87,10 @@ function fieldHasCrappySubfield2(field, fix) {
   if (!field.tag.match(/^(?:6..|257|370|38.)$/u)) {
     return false;
   }
+
   return field.subfields.some(sf => isCrappySubfield2(sf, fix));
 }
 
 function getFieldsWithCrappySubfieldCode(record, fix) {
   return record.get(/^6..$/u).filter(f => fieldHasCrappySubfield2(f, fix));
 }
-
