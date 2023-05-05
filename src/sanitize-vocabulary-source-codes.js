@@ -15,7 +15,6 @@ export default function () {
   function fix(record) {
     const fixedFields = getFieldsWithCrappySubfieldCode(record, true);
     const remainingBadFields = getFieldsWithCrappySubfieldCode(record, false);
-
     const remainingBadFieldsAsStrings = remainingBadFields.map(f => fieldToString(f));
 
     // We are content
@@ -26,9 +25,11 @@ export default function () {
 
   function validate(record) {
     const badFields = getFieldsWithCrappySubfieldCode(record, false);
+    
     if (badFields.length === 0) {
       return {'message': [], 'valid': true};
     }
+    
     const messages = badFields.map(f => fieldToString(f));
 
     return {'message': messages, 'valid': false};
@@ -42,7 +43,7 @@ function stringFixVocabularySourceCode(value) {
   // Try to remove spaces, change '//' to '/' and remove final '.' and '/':
   const tmp = value.replace(/ /ug, '')
     .replace(/\/+/ug, '/')
-    .replace(/^(slm|yso)\/$/u, 'local')
+    .replace(/^(?:slm|yso)\/$/u, 'local')
     .replace(/[./]$/gu, '')
     .replace(/^yso-(?:aika|paikat)\//u, 'yso/'); // IMP-HELMET crap. Also, they still have a '.' at the end of $a...
 
@@ -73,9 +74,11 @@ function isCrappySubfield2(subfield, fix) {
   if (!fix && subfield.value.indexOf('yso/') === 0) {
     return !['yso/eng', 'yso/fin', 'yso/swe'].includes(subfield.value);
   }
+  
   if (!fix && subfield.value.indexOf('slm/') === 0) {
     return !['slm/fin', 'slm/swe'].includes(subfield.value);
   }
+  
   if (!fix && subfield.value.indexOf('mts/') === 0) {
     return !['mts/fin', 'mts/swe'].includes(subfield.value);
   }
