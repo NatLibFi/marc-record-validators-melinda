@@ -5,7 +5,7 @@ import {fieldToString} from './utils';
 
 
 // Author(s): Nicholas Volk, Joni Ollila
-export default function (dropInvalidFieldsInFix = false) {
+export default function () {
 
   return {
     description: 'Validator for sanitizing vocabulary source codes in subfield $2 (MRA-532)',
