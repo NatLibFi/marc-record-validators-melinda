@@ -1,0 +1,6 @@
+{
+  "description": "f05: worse 100-880 chain vs better 700-880: don't drop 100",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
