@@ -126,6 +126,12 @@ export function removeInferiorChains(record, fix = true) {
     if (chain.length === 0 || !sameField(field, chain[0])) {
       return;
     }
+    // 1XX may be converted to XXX. However, it should not be removed.
+    // Better to keep inferior 1XX (vs better 7XX) than to delete 1XX!
+    if(chain.some(f => f.tag.substring(0, 1) === '1')) {
+      return;
+    }
+
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
     if (deletableChainsAsString.includes(chainAsString)) {
       nvdebug(`iRIS6C: ${chainAsString}`);
