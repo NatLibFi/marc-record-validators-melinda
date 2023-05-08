@@ -1,0 +1,6 @@
+{
+  "description": "f02: sort $e subfields and punctuate",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

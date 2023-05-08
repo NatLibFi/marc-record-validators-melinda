@@ -1,0 +1,6 @@
+{
+  "message": [
+    "700    ‡a Nimi1, ‡d 1900-2000, ‡e esittäjä ‡e sovittaja, ‡e säveltäjä. ‡0 (isni)1234567890123456 => 700    ‡a Nimi1, ‡d 1900-2000, ‡e säveltäjä, ‡e sovittaja, ‡e esittäjä. ‡0 (isni)1234567890123456"
+  ],
+  "valid": false
+}
