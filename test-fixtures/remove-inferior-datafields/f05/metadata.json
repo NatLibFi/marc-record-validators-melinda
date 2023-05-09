@@ -1,5 +1,6 @@
 {
-  "description": "f05: worse 100-880 chain vs better 700-880: don't drop 100",
+  "description": "f05: worse 100-880 chain vs better 700-880: drop worse 100, retag 7XX and corresponding occurrence number as 1XX",
+  "comment": "Note: we are not currently sorting fields (1XX stays in 7XX'c place) nor reindexing occurrence numbers here. Both are/should be probably handled elsewhere later on.",
   "enabled": true,
   "fix": true,
   "only": false
