@@ -196,6 +196,22 @@ function isSubfield6Pair(field, otherField) {
   }
 }
 
+
+function subfieldSevenToOneOccurrenceNumber(subfield) {
+  if (subfield.code !== '6' || subfield.value.substring(0, 1) !== '7') {
+    return;
+  }
+  subfield.value = `1${subfield.value.substring(1)}`; // eslint-disable-line functional/immutable-data
+}
+
+export function fieldSevenToOneOccurrenceNumber(field) {
+  if (field.tag !== '880') {
+    return;
+  }
+  field.subfields.forEach(sf => subfieldSevenToOneOccurrenceNumber(sf));
+}
+
+
 export function fieldGetOccurrenceNumberPairs(field, candFields) {
   // NB! TAG!=880 returns 880 fields, TAG==880 returns non-880 field
   //nvdebug(`  Trying to finds pair for ${fieldToString(field)} in ${candFields.length} fields`);
@@ -375,12 +391,12 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
 
 function getFirstField(record, fields) {
   const fieldsAsStrings = fields.map(field => fieldToString(field));
-  record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`));
-  nvdebug(`getFirstField: ${fieldsAsStrings.join('\t')}`);
+  //record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`));
+  //nvdebug(`getFirstField: ${fieldsAsStrings.join('\t')}`);
   const i = record.fields.findIndex(field => fieldsAsStrings.includes(fieldToString(field)));
   if (i > -1) {
     const field = record.fields[i];
-    nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`);
+    //nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`);
     return field;
   }
   return undefined;
