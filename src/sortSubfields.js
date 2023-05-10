@@ -152,7 +152,7 @@ function swapSubfields(field, sortOrder) {
 
 export function sortAdjacentSubfields(field, externalSortOrder = []) {
   if (!field.subfields) {
-    return;
+    return field;
   }
   // Features:
   // - Swap only sort adjacent pairs.

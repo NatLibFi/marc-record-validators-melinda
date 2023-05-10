@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {fieldToChain, sameField} from './removeDuplicateDataFields';
-import {fieldHasValidSubfield6, fieldsToNormalizedString} from './subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils';
 import {fieldsToString, fieldToString, nvdebug} from './utils';
 import {fieldHasValidSubfield8} from './subfield8Utils';
 
@@ -41,7 +41,7 @@ export default function () {
 
 function deriveInferiorChains(fields, record) {
   /* eslint-disable */
-  let deletableStringsArray = [];
+  let deletableStringsObject = {};
 
   nvdebug(`WP1: GOT ${fields.length} field(s) for potential deletable chain derivation`);
   fields.forEach(field => fieldDeriveChainDeletables(field));
@@ -53,47 +53,46 @@ function deriveInferiorChains(fields, record) {
     }
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
 
-    nvdebug(`666: ${chainAsString}`);
+    //nvdebug(`666: ${chainAsString}`);
 
     // Fix MRA-476 (part 1): one $6 value can be worse than the other
     let tmp = chainAsString;
     while (tmp.match(/ ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+)\/[^ ]+/u)) {
       tmp = tmp.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1');
-      nvdebug(`FFS: ${tmp}`);
-
-      deletableStringsArray.push(tmp);
+      //nvdebug(`FFS: ${tmp}`);
+      deletableStringsObject[tmp] = field;
     }
 
     // Remove keepless versions:
     tmp = chainAsString;
     while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
       tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/, '');
-      deletableStringsArray.push(tmp);
-      nvdebug(`FFS: ${tmp}`);
+      deletableStringsObject[tmp] = field;
+      //nvdebug(`FFS: ${tmp}`);
     }
   }
 
 
   /* eslint-enable */
-  return deletableStringsArray;
+  return deletableStringsObject;
 }
 
 function isRelevantChain6(field, record) {
-  nvdebug(`CHAIN?-WP1: ${fieldToString(field)}`);
+  //Can't be a chain:
   if (!fieldHasValidSubfield6(field) && !fieldHasValidSubfield8(field)) {
     return false;
   }
-  nvdebug(`CHAIN?-WP2: ${fieldToString(field)}`);
+  // Too short to be a chain:
   const chain = fieldToChain(field, record);
   if (chain.length < 2) {
     return false;
   }
-  nvdebug(`CHAIN?-WP4: ${fieldToString(field)}`);
+  // No field can contains no more than one subfield $6
   if (chain.some(f => f.subfields.filter(sf => sf.code === '6').length > 1)) {
     return false;
   }
-  nvdebug(`CHAIN?-WP4: ${fieldToString(field)}`);
 
+  // Chainwise non-initial fields are not relevant as chains is handled through the initial/head field
   /* eslint-disable */
   field.tmpInferiorId = 666;
   const result = chain[0].tmpInferiorId === 666 ? true : false;
@@ -104,15 +103,16 @@ function isRelevantChain6(field, record) {
 
 export function removeInferiorChains(record, fix = true) {
   const fields = record.fields.filter(f => isRelevantChain6(f, record));
-  nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
+  //nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
 
-  const deletableChainsAsString = deriveInferiorChains(fields, record);
-  nvdebug(`WP2: GOT ${deletableChainsAsString.length} chain(s)`);
-  if (deletableChainsAsString.length === 0) {
+  const deletableChainsAsKeys = deriveInferiorChains(fields, record);
+  const nChains = Object.keys(deletableChainsAsKeys).length;
+  //nvdebug(`WP2: GOT ${nChains} chain(s)`);
+  if (nChains === 0) {
     return [];
   }
 
-  nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${deletableChainsAsString.length} deletable(s)`);
+  nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`);
 
 
   /* eslint-disable */
@@ -120,19 +120,48 @@ export function removeInferiorChains(record, fix = true) {
   let deletedStringsArray = [];
   fields.forEach(f => innerRemoveInferiorChain(f));
 
+  function chainContains1XX(chain) {
+    return chain.some(f => f.tag.substring(0, 1) === '1');
+  }
+
+  function sevenToOne(field, chain) {
+    if (!['700', '710', '711', '730'].includes(field.tag)) {
+      return;
+    }
+    // Retag field 7XX as 1XX and fix corresponding occurrence numbers as well:
+    const pairs = fieldGetOccurrenceNumberPairs(field, chain);
+    field.tag = `1${field.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
+    // There should always be one pair, but I'm not sanity-checking this
+    pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField));
+  }
 
   function innerRemoveInferiorChain(field) {
     const chain = fieldToChain(field, record);
     if (chain.length === 0 || !sameField(field, chain[0])) {
       return;
     }
+
+
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
-    if (deletableChainsAsString.includes(chainAsString)) {
+    if (chainAsString in deletableChainsAsKeys) {
+      const triggeringField = deletableChainsAsKeys[chainAsString];
+      const triggeringChain = fieldToChain(triggeringField, record);
+
+      // 1XX may be converted to XXX. However, it should not be removed.
+      // Better to keep inferior 1XX (vs better 7XX) than to delete 1XX!
+      if(chainContains1XX(chain)) {
+        if (chainContains1XX(triggeringChain)) {
+          // This should *never* happen, but keep this as a sanity check
+          return;
+        }
+        triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
+      }
       nvdebug(`iRIS6C: ${chainAsString}`);
       const deletedString = fieldsToString(chain);
-      deletedStringsArray.push(`DEL: ${deletedString}`);
+      const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
+      deletedStringsArray.push(message);
       if (fix) {
-        nvdebug(`INFERIOR $6 CHAIN REMOVAL: REMOVE ${deletedString}`, debug);
+        nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
         chain.forEach(currField => record.removeField(currField));
       }
     }
