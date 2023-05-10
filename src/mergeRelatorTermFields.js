@@ -90,7 +90,8 @@ function copyRelatorSubfields(fromField, toField) {
 
 function mergeRelatorTermFields(record, fix = false) {
   /* eslint-disable */
-  let fields = record.get('[17][01]0'); // 100/700, 110/710, 111/711
+  // NV: 111/711, 751 and 752 where so rare that I did not add them here
+  let fields = record.get('(?:[17][01]0|720)'); 
   let result = [];
   const comparisonFieldsAsString = fields.map(f => fieldToString(createNormalizedCloneWithoutRelatorTerms(f)));
 
