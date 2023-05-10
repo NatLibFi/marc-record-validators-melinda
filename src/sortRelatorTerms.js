@@ -9,21 +9,24 @@ import {fieldFixPunctuation} from './punctuation2';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortRelatorTerms');
 //const debugData = debug.extend('data');
 
-const WORST_WORK = 99;
+const WORST_WORK = 98;
 
 const relatorTermValues = { // The higher, the better
   // More abstract, the earlier it appears.
   // Note that terms with same abstraction level might also have order preferences
-  // work/teos > expression/ekspressio > manifestation/manifestaatio > item/kappale
+  // work/teos > expression/ekspressio > manifestation/manifestaatio
   'säveltäjä': 100,
   'kirjoittaja': 99, // Viola wants composer/säveltäjä on top (highly unlikely to ever appear together, but...)
+  'taiteilija': 98,
   'sanoittaja': 90,
   // ekspressio
   'sovittaja': 80,
   'toimittaja': 80,
-  'editointi': 70,
+  'kuvittaja': 75,
+  'editointi': 71,
   'kääntäjä': 70,
-  // item/kappale
+  'lukija': 61,
+  // manifestaatio
   'esittäjä': 60,
   'johtaja': 50
 };
