@@ -43,11 +43,3 @@ export function fieldToString(f) {
 export function fieldsToString(fields) {
   return fields.map(f => fieldToString(f)).join('\t__SEPARATOR__\t');
 }
-
-export function getChar(value, startIndex, howMany = false) {
-  if (!howMany) {
-    return value.slice(startIndex);
-  }
-
-  return value.slice(startIndex, startIndex + howMany);
-}
