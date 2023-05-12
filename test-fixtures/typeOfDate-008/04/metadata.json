@@ -1,0 +1,5 @@
+{
+  "description": "Valid 008 06 t, fix does not change t to s",
+  "fix": true,
+  "only": false
+}

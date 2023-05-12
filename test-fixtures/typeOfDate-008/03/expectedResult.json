@@ -1,0 +1,14 @@
+{
+    "_validationOptions": {},
+    "fields": [
+      {
+        "tag": "001",
+        "value": "f01"
+      },
+      {
+        "tag": "008",
+        "value": "230512s2022    fi |||| |0| 0|fin|c"
+      }
+    ],
+    "leader": ""
+}
