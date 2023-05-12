@@ -1,0 +1,5 @@
+{
+  "description": "Invalid 008 06 t & fix",
+  "fix": true,
+  "only":"true"
+}
