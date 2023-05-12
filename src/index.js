@@ -22,6 +22,7 @@ import UpdateField540 from './update-field-540';
 import SortSubfields from './sortSubfields';
 import SortTags from './sort-tags';
 import SubfieldExclusion from './subfield-exclusion';
+import TypeOfDateF008 from './typeOfDate-008';
 import UnicodeDecomposition from './unicode-decomposition';
 import Urn from './urn';
 
@@ -49,6 +50,7 @@ export {
   SortSubfields,
   SortTags,
   SubfieldExclusion,
+  TypeOfDateF008,
   UnicodeDecomposition,
   UpdateField540,
   Urn
