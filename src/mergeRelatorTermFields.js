@@ -1,4 +1,4 @@
-// Merge author fields
+// Merge author/agent fields
 //
 // Rationale: Same author can appear in one 1XX and multiple 7XX fields having only different $e subfields.
 // These fields can be merged (and $e-subfields can then be sorted)...
@@ -68,7 +68,7 @@ function getRelatorTermStrings(relatorTermSubfieldCode, field) {
 
 }
 
-function extractAddableRelatoTerms(fromField, toField) {
+function extractAddableRelatorTerms(fromField, toField) {
   const relatorTermSubfieldCode = fieldToRelatorTermSubfieldCode(fromField);
   const normalizedFromFieldRelatorTerms = getRelatorTermStrings(relatorTermSubfieldCode, fromField);
   if (normalizedFromFieldRelatorTerms.length === 0) {
@@ -82,7 +82,7 @@ function extractAddableRelatoTerms(fromField, toField) {
 
 function copyRelatorSubfields(fromField, toField) {
   const relatorTermSubfieldCode = fieldToRelatorTermSubfieldCode(fromField);
-  const newRelatorTerms = extractAddableRelatoTerms(fromField, toField);
+  const newRelatorTerms = extractAddableRelatorTerms(fromField, toField);
 
   newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term})); // eslint-disable-line functional/immutable-data
 
