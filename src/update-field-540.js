@@ -39,7 +39,7 @@ const licences = [
   {'license': 'CC BY-NC-SA 4.0', 'url': 'https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fi'},
   {'license': 'CC BY-ND 4.0', 'url': 'https://creativecommons.org/licenses/by-nd/4.0/deed.fi'},
   {'license': 'CC BY-SA 4.0', 'url': 'https://creativecommons.org/licenses/by-sa/4.0/deed.fi'},
-  // {'license': 'CC0 1.0', 'url': ' https://creativecommons.org/publicdomain/zero/1.0/deed.fi' }, // not seen/unused
+  {'license': 'CC0 1.0', 'url': ' https://creativecommons.org/publicdomain/zero/1.0/deed.fi' }, // not seen/unused
   {'license': 'Public domain', 'url': 'https://creativecommons.org/publicdomain/mark/1.0/deed.fi'}
 ];
 
