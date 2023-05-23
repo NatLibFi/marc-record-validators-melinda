@@ -1,0 +1,16 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Sukunimi, Etunimi," },
+        { "code": "e", "value": "kuvittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Eri-Sukunimi, Etunimi," },
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "valokuvaaja." }
+    ]}
+  ],
+
+  "leader": ""
+}
