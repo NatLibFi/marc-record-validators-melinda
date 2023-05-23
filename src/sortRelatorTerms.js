@@ -28,7 +28,10 @@ const relatorTermValues = { // The higher, the better
   'lukija': 61,
   // manifestaatio
   'esittäjä': 60,
-  'johtaja': 50
+  'johtaja': 50,
+  'kustantaja': 41,
+  'julkaisija': 40
+
 };
 
 function scoreRelatorTerm(term) {
