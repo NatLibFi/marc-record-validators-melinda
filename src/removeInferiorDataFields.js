@@ -192,6 +192,16 @@ function deriveIndividualDeletables(record) {
         deletableStringsArray.push(tmp);
       }
     }
+    // MET-381: remove occurence number TAG-00, if TAG-NN existists
+    if (field.tag === '880') {
+      tmp = fieldAsString;
+      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-([?:1-9][0-9]|0[1-9])/)) {
+        tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
+        nvdebug(`MET-381: ADD TO DELETABLES: ${tmp}`);
+        deletableStringsArray.push(tmp);
+      }
+    }
+
 
 
     // Remove keepless versions:
