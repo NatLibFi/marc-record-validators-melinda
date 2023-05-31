@@ -141,6 +141,10 @@ export function removeInferiorChains(record, fix = true) {
       return;
     }
 
+    // Better to keep inferior 1XX (vs better 7XX) than to delete 1XX!
+    if(chain.some(f => f.tag.substring(0, 1) === '1')) {
+      return;
+    }
 
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
     if (chainAsString in deletableChainsAsKeys) {
