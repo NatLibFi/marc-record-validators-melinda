@@ -59,7 +59,7 @@ function fieldGetFixedString(field) {
   cloneField.subfields.forEach((sf, i) => {
     // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
     // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
-    subfieldFixPunctuation(cloneField.tag, sf, getNextRelevantSubfield(cloneField, i));
+    subfieldFixPunctuation(cloneField, sf, getNextRelevantSubfield(cloneField, i));
   });
   return fieldToString(cloneField);
 }
@@ -211,7 +211,9 @@ const cleanValidPunctuationRules = {
     {'code': 'axy', 'followedBy': 'xy', 'remove': /,$/u},
     {'code': 'axy', 'followedBy': 'v', 'remove': / *;$/u}
   ],
-  '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}]
+  '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
+  // Experimental, MET366-ish (end punc in internationally valid, but we don't use it here in Finland):
+  '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': '4', 'remove': /\.$/u}]
 
 };
 
@@ -267,12 +269,28 @@ const addPairedPunctuationRules = {
 
 };
 
+
 function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
   const negation = targetSubfieldCodes.includes('!');
   if (negation) {
     return !targetSubfieldCodes.includes(currSubfieldCode);
   }
   return targetSubfieldCodes.includes(currSubfieldCode);
+}
+
+
+function ruleAppliesToField(rule, field) {
+  if ('ind1' in rule && !field.ind1.match(rule.ind1)) {
+    return false;
+  }
+
+  if ('ind2' in rule && !field.ind2.match(rule.ind2)) {
+    return false;
+  }
+
+  // If we want to check, say, $2, it should be implemented here!
+
+  return true;
 }
 
 
@@ -308,16 +326,20 @@ function ruleAppliesToNextSubfield(rule, nextSubfield) {
   return true;
 }
 
-function checkRule(rule, subfield1, subfield2) {
+function checkRule(rule, field, subfield1, subfield2) {
+  if (!ruleAppliesToField(rule, field)) {
+    nvdebug(`FAIL ON WHOLE FIELD: '${fieldToString(field)}`);
+    return false;
+  }
   //const name = rule.name || 'UNNAMED';
   if (!ruleAppliesToCurrentSubfield(rule, subfield1)) {
-    //nvdebug(`${name}: FAIL ON LHS FIELD: '$${subfield1.code} ${subfield1.value}', SF=${rule.code}`, debug);
+    //nvdebug(`${name}: FAIL ON LHS SUBFIELD: '$${subfield1.code} ${subfield1.value}', SF=${rule.code}`, debug);
     return false;
   }
 
   // NB! This is not a perfect solution. We might have $e$0$e where $e$0 punctuation should actually be based on $e$e rules
   if (!ruleAppliesToNextSubfield(rule, subfield2)) {
-    //const msg = subfield2 ? `${name}: FAIL ON RHS FIELD '${subfield2.code}' not in [${rule.followedBy}]` : `${name}: FAIL ON RHS FIELD`;
+    //const msg = subfield2 ? `${name}: FAIL ON RHS SUBFIELD '${subfield2.code}' not in [${rule.followedBy}]` : `${name}: FAIL ON RHS FIELD`;
     //nvdebug(msg, debug);
     return false;
   }
@@ -326,7 +348,7 @@ function checkRule(rule, subfield1, subfield2) {
   return true;
 }
 
-function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, operation = NONE) {
+function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, operation = NONE) {
 
   /*
   if (ruleArray === null || operation === NONE) {
@@ -334,7 +356,7 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
     return;
   }
 */
-  if (!(`${tag}` in ruleArray) || ruleArray === null || operation === NONE) {
+  if (!(`${field.tag}` in ruleArray) || ruleArray === null || operation === NONE) {
 
     /*
     if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statements
@@ -346,7 +368,7 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
   }
 
   //nvdebug(`OP=${operation} ${tag}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debug);
-  const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
+  const activeRules = ruleArray[field.tag].filter(rule => checkRule(rule, field, subfield1, subfield2));
 
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
@@ -365,9 +387,9 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
   });
 }
 
-function subfieldFixPunctuation(tag, subfield1, subfield2) {
-  applyPunctuationRules(tag, subfield1, subfield2, cleanCrappyPunctuationRules, REMOVE);
-  applyPunctuationRules(tag, subfield1, subfield2, addPairedPunctuationRules, ADD);
+function subfieldFixPunctuation(field, subfield1, subfield2) {
+  applyPunctuationRules(field, subfield1, subfield2, cleanCrappyPunctuationRules, REMOVE);
+  applyPunctuationRules(field, subfield1, subfield2, addPairedPunctuationRules, ADD);
 }
 
 
@@ -378,9 +400,9 @@ export function fieldStripPunctuation(field) {
 
   field.subfields.forEach((sf, i) => {
     nvdebug(`FSP1: '${sf.value}'`);
-    applyPunctuationRules(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanValidPunctuationRules, REMOVE);
+    applyPunctuationRules(field, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanValidPunctuationRules, REMOVE);
     nvdebug(`FSP2: '${sf.value}'`);
-    applyPunctuationRules(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanCrappyPunctuationRules, REMOVE);
+    applyPunctuationRules(field, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanCrappyPunctuationRules, REMOVE);
     nvdebug(`FSP3: '${sf.value}'`);
   });
   return field;
@@ -395,7 +417,7 @@ export function fieldFixPunctuation(field) {
   field.subfields.forEach((sf, i) => {
     // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
     // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
-    subfieldFixPunctuation(field.tag, sf, getNextRelevantSubfield(field, i));
+    subfieldFixPunctuation(field, sf, getNextRelevantSubfield(field, i));
   });
 
   // Use shared code for final punctuation (sadly this does not fix intermediate punc):
