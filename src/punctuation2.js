@@ -213,7 +213,7 @@ const cleanValidPunctuationRules = {
   ],
   '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
   // Experimental, MET366-ish (end punc in internationally valid, but we don't use it here in Finland):
-  '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': '4', 'remove': /\.$/u}]
+  '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}]
 
 };
 
@@ -280,11 +280,11 @@ function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
 
 
 function ruleAppliesToField(rule, field) {
-  if ('ind1' in rule && !field.ind1.match(rule.ind1)) {
+  if ('ind1' in rule && field.ind1.includes(rule.ind1)) {
     return false;
   }
 
-  if ('ind2' in rule && !field.ind2.match(rule.ind2)) {
+  if ('ind2' in rule && field.ind2.includes(rule.ind2)) {
     return false;
   }
 
