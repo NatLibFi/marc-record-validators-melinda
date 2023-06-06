@@ -141,6 +141,10 @@ export function removeInferiorChains(record, fix = true) {
       return;
     }
 
+    // Better to keep inferior 1XX (vs better 7XX) than to delete 1XX!
+    if(chain.some(f => f.tag.substring(0, 1) === '1')) {
+      return;
+    }
 
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
     if (chainAsString in deletableChainsAsKeys) {
@@ -188,6 +192,16 @@ function deriveIndividualDeletables(record) {
         deletableStringsArray.push(tmp);
       }
     }
+    // MET-381: remove occurence number TAG-00, if TAG-NN existists
+    if (field.tag === '880') {
+      tmp = fieldAsString;
+      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-([?:1-9][0-9]|0[1-9])/)) {
+        tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
+        nvdebug(`MET-381: ADD TO DELETABLES: ${tmp}`);
+        deletableStringsArray.push(tmp);
+      }
+    }
+
 
 
     // Remove keepless versions:
