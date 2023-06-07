@@ -48,6 +48,7 @@ export default function () {
 
 
 // X00, X10, X11 and X130 could also for their own sets...
+const sortOrderForX10 = ['6', 'a', 'b', 't', 'n', 'e', 'v', 'w', '0', '5', '9']; // somewhat iffy
 const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
 
 // List *only* exceptional order here. Otherwise default order is used.
@@ -59,7 +60,7 @@ const subfieldSortOrder = [
   {'tag': '041', 'sortOrder': ['8', '6', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
-  {'tag': '110', 'sortOrder': ['6', 'a', 'b', 'n', 'e', '0', '5', '9']},
+  {'tag': '110', 'sortOrder': sortOrderForX10},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
@@ -73,10 +74,10 @@ const subfieldSortOrder = [
   {'tag': '526', 'sortOrder': ['i', 'a', 'b', 'x', 'z']},
   {'tag': '540', 'sortOrder': ['a', 'b', 'c', 'd', 'f', '2', 'u']},
   {'tag': '600', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', '0', '5', '9']},
-  {'tag': '610', 'sortOrder': ['6', 'a', 'b', 'n']},
+  {'tag': '610', 'sortOrder': sortOrderForX10},
   {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '700', 'sortOrder': ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
-  {'tag': '710', 'sortOrder': ['a', 'b', 'n', 'e']},
+  {'tag': '710', 'sortOrder': sortOrderForX10},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '760', 'sortOrder': sortOrderFor7XX},
   {'tag': '762', 'sortOrder': sortOrderFor7XX},
@@ -95,7 +96,7 @@ const subfieldSortOrder = [
   {'tag': '787', 'sortOrder': sortOrderFor7XX},
   {'tag': '788', 'sortOrder': sortOrderFor7XX},
   {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'v', 'l', 'f', '0', '5', '9']},
-  {'tag': '810', 'sortOrder': ['a', 'b', 't', 'n', 'v', 'w']},
+  {'tag': '810', 'sortOrder': sortOrderForX10},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['6', 'a']},

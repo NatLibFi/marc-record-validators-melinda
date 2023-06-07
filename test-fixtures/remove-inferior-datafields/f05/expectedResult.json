@@ -3,13 +3,30 @@
   "fields": [
     { "tag": "001", "value": "f01" },
     { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01"},
+      { "code": "a", "value": "Qu, Mi."}
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "880-02"},
       { "code": "a", "value": "Qu, Mi."}
     ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-04"},
+      { "code": "a", "value": "Foo, Bar."}
+    ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "100-02/(N"},
+      { "code": "6", "value": "100-01"},
       { "code": "a", "value": "Uq, Im."}
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-02/(N"},
+      { "code": "a", "value": "Uq, Im."}
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-04/N"},
+      { "code": "a", "value": "Bar, Foo."}
     ]}
+
 
 
   ],
