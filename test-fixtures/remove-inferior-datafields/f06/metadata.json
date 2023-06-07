@@ -1,0 +1,6 @@
+{
+  "description": "MET-371: orphaned occurence number is inferior to non-orphaned sister field",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
