@@ -1,0 +1,14 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "100", "ind1": "1", "ind2": "0", "subfields": [
+        { "code": "a", "value": "Sukunimi, Etunimi" },
+        { "code": "e", "value": "säveltäjä" }
+      ]
+    },
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Only already stripped fields in this test" },
+      { "code": "c", "value": "Tekijä" }
+    ]}
+  ]
+}
