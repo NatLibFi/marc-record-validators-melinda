@@ -31,11 +31,11 @@ export default function () {
   function validate(record) {
     nvdebug('Add punctuation to data fields: validate');
 
-    const fieldsNeedingModification = record.fields.filter(f => fieldNeedsPunctuation(f));
+    const fieldsNeedingModification = record.fields.filter(f => fieldNeedsModification(f, true));
 
 
     const values = fieldsNeedingModification.map(f => fieldToString(f));
-    const newValues = fieldsNeedingModification.map(f => fieldGetFixedString(f));
+    const newValues = fieldsNeedingModification.map(f => fieldGetFixedString(f, true));
 
     const messages = values.map((val, i) => `'${val}' => '${newValues[i]}'`);
 
@@ -54,23 +54,24 @@ function getNextRelevantSubfield(field, currSubfieldIndex) {
   return field.subfields.find((subfield, index) => index > currSubfieldIndex && !isControlSubfield(subfield));
 }
 
-function fieldGetFixedString(field) {
+function fieldGetFixedString(field, add = true) {
   const cloneField = clone(field);
+  const operation = add ? subfieldFixPunctuation : subfieldStripPunctuation;
   cloneField.subfields.forEach((sf, i) => {
     // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
     // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
-    subfieldFixPunctuation(cloneField, sf, getNextRelevantSubfield(cloneField, i));
+    operation(cloneField, sf, getNextRelevantSubfield(cloneField, i));
   });
   return fieldToString(cloneField);
 }
 
-function fieldNeedsPunctuation(field) {
+function fieldNeedsModification(field, add = true) {
   if (!field.subfields) {
     return false;
   }
 
   const originalFieldAsString = fieldToString(field);
-  const modifiedFieldAsString = fieldGetFixedString(field);
+  const modifiedFieldAsString = fieldGetFixedString(field, add);
 
   return modifiedFieldAsString !== originalFieldAsString;
 }
@@ -392,6 +393,14 @@ function subfieldFixPunctuation(field, subfield1, subfield2) {
   applyPunctuationRules(field, subfield1, subfield2, addPairedPunctuationRules, ADD);
 }
 
+function subfieldStripPunctuation(field, subfield1, subfield2) {
+  nvdebug(`FSP1: '${subfield1.value}'`);
+  applyPunctuationRules(field, subfield1, subfield2, cleanValidPunctuationRules, REMOVE);
+  nvdebug(`FSP2: '${subfield1.value}'`);
+  applyPunctuationRules(field, subfield1, subfield2, cleanCrappyPunctuationRules, REMOVE);
+  nvdebug(`FSP3: '${subfield1.value}'`);
+
+}
 
 export function fieldStripPunctuation(field) {
   if (!field.subfields) {
@@ -399,11 +408,10 @@ export function fieldStripPunctuation(field) {
   }
 
   field.subfields.forEach((sf, i) => {
-    nvdebug(`FSP1: '${sf.value}'`);
-    applyPunctuationRules(field, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanValidPunctuationRules, REMOVE);
-    nvdebug(`FSP2: '${sf.value}'`);
-    applyPunctuationRules(field, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanCrappyPunctuationRules, REMOVE);
-    nvdebug(`FSP3: '${sf.value}'`);
+    // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
+    // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
+    subfieldStripPunctuation(field, sf, getNextRelevantSubfield(field, i));
+
   });
   return field;
 }
