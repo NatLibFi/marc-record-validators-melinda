@@ -3,7 +3,8 @@
 *
 * Author(s): Nicholas Volk <nicholas.volk@helsinki.fi>
 *
-* NOTE #1: https://www.kiwi.fi/display/kumea/Loppupisteohje is implemented via another validator/fixer.(ending-punctuation)
+* NOTE #1: https://www.kiwi.fi/display/kumea/Loppupisteohje is implemented via another validator/fixer (ending-punctuation).
+*          This file has some support but it's now yet thorough. (And mmight never be.)
 * NOTE #2: Validator/fixer punctuation does similar stuff, but focuses on X00 fields.
 * NOTE #3: As of 2023-06-05 control subfields ($0...$9) are obsolete. Don't use them in rules.
 *          (They are jumped over when looking for next (non-controlfield subfield)
@@ -54,7 +55,7 @@ function getNextRelevantSubfield(field, currSubfieldIndex) {
   return field.subfields.find((subfield, index) => index > currSubfieldIndex && !isControlSubfield(subfield));
 }
 
-function fieldGetFixedString(field, add = true) {
+export function fieldGetFixedString(field, add = true) {
   const cloneField = clone(field);
   const operation = add ? subfieldFixPunctuation : subfieldStripPunctuation;
   cloneField.subfields.forEach((sf, i) => {
@@ -65,7 +66,7 @@ function fieldGetFixedString(field, add = true) {
   return fieldToString(cloneField);
 }
 
-function fieldNeedsModification(field, add = true) {
+export function fieldNeedsModification(field, add = true) {
   if (!field.subfields) {
     return false;
   }
@@ -141,14 +142,16 @@ const cleanCrappyPunctuationRules = {
   '710': removeX10Whatever,
   '800': removeX00Whatever,
   '810': removeX10Whatever,
-  '245': [{'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u}],
+  '245': [
+    {'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u},
+    {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc}
+  ],
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': / *:$/u},
     {'code': 'a', 'followedBy': 'b', 'remove': /:$/u, 'context': /[^ ]:$/u},
     {'code': 'ab', 'followedBy': '!c', 'remove': / *;$/u},
     {'code': 'ab', 'followedBy': 'c', 'remove': /;$/u, 'context': /[^ ];$/u},
-    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u},
-    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u, 'context': /[^ ]\+$/u}
+    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u} // Removes both valid (with one space) and invalid (spaceless et al) puncs
 
   ],
   '490': [{'code': 'a', 'followedBy': 'xy', 'remove': / ;$/u}],
@@ -228,7 +231,8 @@ const addPairedPunctuationRules = {
     // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
     {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
-    {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
+    {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
+    {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
   ],
   '260': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
