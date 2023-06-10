@@ -199,6 +199,11 @@ function deriveIndividualDeletables(record) {
         tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
         nvdebug(`MET-381: ADD TO DELETABLES: ${tmp}`);
         deletableStringsArray.push(tmp);
+        if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /)) {
+          tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/, '$1');
+          nvdebug(`MET-381: ADD TO DELETABLES: ${tmp}`);
+          deletableStringsArray.push(tmp);
+        }
       }
     }
 
