@@ -1,0 +1,12 @@
+{
+  "message": [
+    "'100 1  ‡a Tuisku, Sara, ‡e turkulainen, ‡e testaaja.' => '100 1  ‡a Tuisku, Sara ‡e turkulainen ‡e testaaja'",
+    "'700 1  ‡a Reipas, R., ‡d 2000- ‡e esittäjä.' => '700 1  ‡a Reipas, R. ‡d 2000- ‡e esittäjä'",
+    "'700 1  ‡a Reippaahko, R., ‡d 2000-' => '700 1  ‡a Reippaahko, R. ‡d 2000-'",
+    "'700 1  ‡a Reippaampi, R., ‡d 2000-2050, ‡e esittäjä.' => '700 1  ‡a Reippaampi, R. ‡d 2000-2050 ‡e esittäjä'",
+    "'700 1  ‡a Reippain, R., ‡d 2000-2050.' => '700 1  ‡a Reippain, R. ‡d 2000-2050'",
+    "'700 1  ‡a Nalle, P., ‡d 1926- ‡0 (FIN11)000000000' => '700 1  ‡a Nalle, P. ‡d 1926- ‡0 (FIN11)000000000'"
+  ],
+  "valid": false
+
+}

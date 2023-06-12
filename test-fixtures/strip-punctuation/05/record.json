@@ -1,0 +1,12 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "300", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "740 sivua :" },
+      { "code": "b", "value": "kuvitettu ;" },
+      { "code": "c", "value": "25 cm +" },
+      { "code": "e", "value": "1 CD-levy" }
+    ]}
+ 
+  ]
+}

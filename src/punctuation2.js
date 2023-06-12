@@ -3,7 +3,8 @@
 *
 * Author(s): Nicholas Volk <nicholas.volk@helsinki.fi>
 *
-* NOTE #1: https://www.kiwi.fi/display/kumea/Loppupisteohje is implemented via another validator/fixer.(ending-punctuation)
+* NOTE #1: https://www.kiwi.fi/display/kumea/Loppupisteohje is implemented via another validator/fixer (ending-punctuation).
+*          This file has some support but it's now yet thorough. (And mmight never be.)
 * NOTE #2: Validator/fixer punctuation does similar stuff, but focuses on X00 fields.
 * NOTE #3: As of 2023-06-05 control subfields ($0...$9) are obsolete. Don't use them in rules.
 *          (They are jumped over when looking for next (non-controlfield subfield)
@@ -31,11 +32,11 @@ export default function () {
   function validate(record) {
     nvdebug('Add punctuation to data fields: validate');
 
-    const fieldsNeedingModification = record.fields.filter(f => fieldNeedsPunctuation(f));
+    const fieldsNeedingModification = record.fields.filter(f => fieldNeedsModification(f, true));
 
 
     const values = fieldsNeedingModification.map(f => fieldToString(f));
-    const newValues = fieldsNeedingModification.map(f => fieldGetFixedString(f));
+    const newValues = fieldsNeedingModification.map(f => fieldGetFixedString(f, true));
 
     const messages = values.map((val, i) => `'${val}' => '${newValues[i]}'`);
 
@@ -54,23 +55,24 @@ function getNextRelevantSubfield(field, currSubfieldIndex) {
   return field.subfields.find((subfield, index) => index > currSubfieldIndex && !isControlSubfield(subfield));
 }
 
-function fieldGetFixedString(field) {
+export function fieldGetFixedString(field, add = true) {
   const cloneField = clone(field);
+  const operation = add ? subfieldFixPunctuation : subfieldStripPunctuation;
   cloneField.subfields.forEach((sf, i) => {
     // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
     // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
-    subfieldFixPunctuation(cloneField, sf, getNextRelevantSubfield(cloneField, i));
+    operation(cloneField, sf, getNextRelevantSubfield(cloneField, i));
   });
   return fieldToString(cloneField);
 }
 
-function fieldNeedsPunctuation(field) {
+export function fieldNeedsModification(field, add = true) {
   if (!field.subfields) {
     return false;
   }
 
   const originalFieldAsString = fieldToString(field);
-  const modifiedFieldAsString = fieldGetFixedString(field);
+  const modifiedFieldAsString = fieldGetFixedString(field, add);
 
   return modifiedFieldAsString !== originalFieldAsString;
 }
@@ -140,14 +142,16 @@ const cleanCrappyPunctuationRules = {
   '710': removeX10Whatever,
   '800': removeX00Whatever,
   '810': removeX10Whatever,
-  '245': [{'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u}],
+  '245': [
+    {'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u},
+    {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc}
+  ],
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': / *:$/u},
     {'code': 'a', 'followedBy': 'b', 'remove': /:$/u, 'context': /[^ ]:$/u},
     {'code': 'ab', 'followedBy': '!c', 'remove': / *;$/u},
     {'code': 'ab', 'followedBy': 'c', 'remove': /;$/u, 'context': /[^ ];$/u},
-    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u},
-    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u, 'context': /[^ ]\+$/u}
+    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u} // Removes both valid (with one space) and invalid (spaceless et al) puncs
 
   ],
   '490': [{'code': 'a', 'followedBy': 'xy', 'remove': / ;$/u}],
@@ -227,7 +231,8 @@ const addPairedPunctuationRules = {
     // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
     {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
-    {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
+    {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
+    {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
   ],
   '260': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
@@ -392,6 +397,14 @@ function subfieldFixPunctuation(field, subfield1, subfield2) {
   applyPunctuationRules(field, subfield1, subfield2, addPairedPunctuationRules, ADD);
 }
 
+function subfieldStripPunctuation(field, subfield1, subfield2) {
+  nvdebug(`FSP1: '${subfield1.value}'`);
+  applyPunctuationRules(field, subfield1, subfield2, cleanValidPunctuationRules, REMOVE);
+  nvdebug(`FSP2: '${subfield1.value}'`);
+  applyPunctuationRules(field, subfield1, subfield2, cleanCrappyPunctuationRules, REMOVE);
+  nvdebug(`FSP3: '${subfield1.value}'`);
+
+}
 
 export function fieldStripPunctuation(field) {
   if (!field.subfields) {
@@ -399,11 +412,10 @@ export function fieldStripPunctuation(field) {
   }
 
   field.subfields.forEach((sf, i) => {
-    nvdebug(`FSP1: '${sf.value}'`);
-    applyPunctuationRules(field, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanValidPunctuationRules, REMOVE);
-    nvdebug(`FSP2: '${sf.value}'`);
-    applyPunctuationRules(field, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanCrappyPunctuationRules, REMOVE);
-    nvdebug(`FSP3: '${sf.value}'`);
+    // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
+    // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
+    subfieldStripPunctuation(field, sf, getNextRelevantSubfield(field, i));
+
   });
   return field;
 }

@@ -1,5 +1,5 @@
 {
-  "description": "f03: removable subset chains deleted",
+  "description": "f03: removable subset chains deleted + MET-423 is deleted",
   "enabled": true,
   "fix": true,
   "only": false

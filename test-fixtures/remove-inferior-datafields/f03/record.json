@@ -10,6 +10,10 @@
       { "code": "a", "value": "foo"}
     ]},
     { "tag": "880", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "6", "value": "500-00"},
+      { "code": "a", "value": "bar"}
+    ]},
+    { "tag": "880", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "6", "value": "500-01"},
       { "code": "a", "value": "bar"}
     ]},
