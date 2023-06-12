@@ -1,6 +1,5 @@
 {
-  "description": "f03: removable subset chains deleted",
-  "comment": "2023-06-10: included MET-423 into this test",
+  "description": "f03: removable subset chains deleted + MET-423 is deleted",
   "enabled": true,
   "fix": true,
   "only": false
