@@ -114,7 +114,8 @@ export function intToOccurrenceNumberString(i) {
   return i < 10 ? `0${i}` : `${i}`;
 }
 
-function fieldGetMaxSubfield6OccurrenceNumberAsInteger(field) {
+export function fieldGetMaxSubfield6OccurrenceNumberAsInteger(field) {
+  // used by reducer!
   //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
   const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
   if (sf6s.length === 0) {
