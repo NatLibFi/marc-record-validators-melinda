@@ -2,18 +2,7 @@
 //import createDebugLogger from 'debug';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalizeIdentifiers');
 
-
-function fieldToString(f) {
-  if (!f.subfields) {
-    return `${f.tag}    ${f.value}`;
-  }
-  return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
-
-  function formatSubfields(field) {
-    //return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
-    return field.subfields.map(sf => `${sf.code}${sf.value}`).join(' ‡');
-  }
-}
+import {fieldToString} from './utils';
 
 
 export default function () {

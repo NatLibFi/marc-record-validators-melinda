@@ -1,6 +1,7 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
 import {convert as nongenericNormalization} from './unicode-decomposition';
+import {fieldToString} from './utils';
 
 // Note that https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js contains
 // similar functionalities. It's less generic and lacks diacritic removal but has it advantages as well.
@@ -71,15 +72,6 @@ export default function () {
       return;
     }
     return;
-  }
-
-  function fieldToString(f) {
-    return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
-
-    function formatSubfields(field) {
-      //return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
-      return field.subfields.map(sf => `${sf.code}${sf.value}`).join('‡');
-    }
   }
 }
 
