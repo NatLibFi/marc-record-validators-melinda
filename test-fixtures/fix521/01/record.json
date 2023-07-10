@@ -1,0 +1,13 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    { "tag": "521", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Ikäsuositus 50v." }
+      ]
+    }
+  ]
+}
