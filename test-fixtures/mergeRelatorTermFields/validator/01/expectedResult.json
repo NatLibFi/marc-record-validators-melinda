@@ -1,6 +1,6 @@
 {
   "message": [
-    "MERGE RELATOR TERM FIELD: 700 1  ‡a Sukunimi, Etunimi, ‡e kirjoittaja, ‡e valokuvaaja."
+    "MERGE RELATOR TERM FIELD: 700 1# ‡a Sukunimi, Etunimi, ‡e kirjoittaja, ‡e valokuvaaja."
   ],
   "valid": false
 }

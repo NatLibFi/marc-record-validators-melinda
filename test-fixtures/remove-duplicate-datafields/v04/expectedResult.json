@@ -1,8 +1,8 @@
 {
   "message": [
-    "DEL: 520 3  ‡8 2.1\\x ‡a eka",
-    "DEL: 520 3  ‡8 2.2\\x ‡a toka",
-    "DEL: 520 3  ‡8 2.3\\x ‡a kolmas"
+    "DEL: 520 3# ‡8 2.1\\x ‡a eka",
+    "DEL: 520 3# ‡8 2.2\\x ‡a toka",
+    "DEL: 520 3# ‡8 2.3\\x ‡a kolmas"
   ],
   "valid": false
 }

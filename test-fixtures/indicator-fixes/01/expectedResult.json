@@ -1,9 +1,9 @@
 {
   "message": [
-    "Expected IND1 for '130 0  ‡a The Title.' is '4'",
-    "Expected IND1 for '245    ‡a An Example' is '1'",
-    "Expected IND2 for '245    ‡a An Example' is '3'",
-    "Expected IND1 for '730    ‡a A Tale of Two Cities' is '2'"
+    "Expected IND1 for '130 0# ‡a The Title.' is '4'",
+    "Expected IND1 for '245 ## ‡a An Example' is '1'",
+    "Expected IND2 for '245 ## ‡a An Example' is '3'",
+    "Expected IND1 for '730 ## ‡a A Tale of Two Cities' is '2'"
   ],
   "valid": false
 }
