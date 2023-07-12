@@ -1,0 +1,5 @@
+{
+  "description": "Fix field 521 ind1 and $a value",
+  "enabled": true,
+  "fix": true
+}

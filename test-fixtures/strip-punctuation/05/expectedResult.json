@@ -1,6 +1,6 @@
 {
   "message": [
-    "'300 1  ‡a 740 sivua : ‡b kuvitettu ; ‡c 25 cm + ‡e 1 CD-levy' => '300 1  ‡a 740 sivua ‡b kuvitettu ‡c 25 cm ‡e 1 CD-levy'"
+    "'300 1# ‡a 740 sivua : ‡b kuvitettu ; ‡c 25 cm + ‡e 1 CD-levy' => '300 1# ‡a 740 sivua ‡b kuvitettu ‡c 25 cm ‡e 1 CD-levy'"
   ],
   "valid": false
 }

@@ -1,17 +1,8 @@
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 //import createDebugLogger from 'debug';
 import clone from 'clone';
+import {fieldToString} from './utils';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalizeIdentifiers');
-
-
-function fieldToString(f) {
-  return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
-
-  function formatSubfields(field) {
-    //return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
-    return field.subfields.map(sf => `${sf.code}${sf.value}`).join(' ‡');
-  }
-}
 
 /*
 function nvdebug(message, func) {

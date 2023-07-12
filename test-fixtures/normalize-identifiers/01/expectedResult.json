@@ -1,8 +1,8 @@
 {
   "message": [
-    "'100    ‡aSirén, Matti ‡ekirjoittaja. ‡0(FI-ASTERI-N)000654321' could do with control number identifier normalization",
-    "'773    ‡wFCC000123456 ‡twhatever' could do with control number identifier normalization",
-    "'773    ‡w(FI-MELINDA)000666666 ‡twhatever 2' could do with control number identifier normalization"
+    "'100 ## ‡a Sirén, Matti ‡e kirjoittaja. ‡0 (FI-ASTERI-N)000654321' could do with control number identifier normalization",
+    "'773 ## ‡w FCC000123456 ‡t whatever' could do with control number identifier normalization",
+    "'773 ## ‡w (FI-MELINDA)000666666 ‡t whatever 2' could do with control number identifier normalization"
   ],
   "valid": false
 }

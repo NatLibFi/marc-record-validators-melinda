@@ -1,9 +1,9 @@
 {
   "message": [
-    "Field '700    ‡a Nimi1 ‡0 (FI-ASTERI-N)000654321 ‡0 (orcid)0000-0002-1355-5633' contains deletable $0 subfield(s): (orcid)0000-0002-1355-5633",
-    "Field '700    ‡a Nimi2 ‡0 https://isni.org/isni/0000000110485855 ‡0 (FI-ASTERI-N)000654322' contains deletable $0 subfield(s): https://isni.org/isni/0000000110485855",
-    "Field '700    ‡a Nimi3 ‡0 (FI-ASTERI-N)000654323 ‡0 https://isni.org/isni/0000000110485853 ‡0 (keep-only-if-title-part-present)666 ‡0 (orcid)0000-0002-1355-5633' contains deletable $0 subfield(s): https://isni.org/isni/0000000110485853, (keep-only-if-title-part-present)666, (orcid)0000-0002-1355-5633",
-    "Field '700    ‡a Nimi3 ‡0 (FI-ASTERI-N)000654323 ‡t Titlepart prevents unknown $0 identifiers from being removed ‡0 https://isni.org/isni/0000000110485853 ‡0 (keep-only-if-title-part-present)666 ‡0 (orcid)0000-0002-1355-5633' contains deletable $0 subfield(s): https://isni.org/isni/0000000110485853, (orcid)0000-0002-1355-5633"
+    "Field '700 ## ‡a Nimi1 ‡0 (FI-ASTERI-N)000654321 ‡0 (orcid)0000-0002-1355-5633' contains deletable $0 subfield(s): (orcid)0000-0002-1355-5633",
+    "Field '700 ## ‡a Nimi2 ‡0 https://isni.org/isni/0000000110485855 ‡0 (FI-ASTERI-N)000654322' contains deletable $0 subfield(s): https://isni.org/isni/0000000110485855",
+    "Field '700 ## ‡a Nimi3 ‡0 (FI-ASTERI-N)000654323 ‡0 https://isni.org/isni/0000000110485853 ‡0 (keep-only-if-title-part-present)666 ‡0 (orcid)0000-0002-1355-5633' contains deletable $0 subfield(s): https://isni.org/isni/0000000110485853, (keep-only-if-title-part-present)666, (orcid)0000-0002-1355-5633",
+    "Field '700 ## ‡a Nimi3 ‡0 (FI-ASTERI-N)000654323 ‡t Titlepart prevents unknown $0 identifiers from being removed ‡0 https://isni.org/isni/0000000110485853 ‡0 (keep-only-if-title-part-present)666 ‡0 (orcid)0000-0002-1355-5633' contains deletable $0 subfield(s): https://isni.org/isni/0000000110485853, (orcid)0000-0002-1355-5633"
   ],
   "valid": false
 }

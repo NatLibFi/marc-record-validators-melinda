@@ -1,10 +1,10 @@
 {
   "message": [
-    "DEL: 500    ‡a Whatever.",
-    "DEL: 700 1  ‡a A., A., ‡e kirjoittaja, ‡e taiteilija.",
-    "DEL: 700 1  ‡a B., B., ‡e kirjoittaja.",
-    "DEL: 700 1  ‡6 880-01 ‡a C., C., ‡e kirjoittaja.",
-    "DEL: 880 1  ‡6 700-02 ‡a D., D., ‡e kirjoittaja."
+    "DEL: 500 ## ‡a Whatever.",
+    "DEL: 700 1# ‡a A., A., ‡e kirjoittaja, ‡e taiteilija.",
+    "DEL: 700 1# ‡a B., B., ‡e kirjoittaja.",
+    "DEL: 700 1# ‡6 880-01 ‡a C., C., ‡e kirjoittaja.",
+    "DEL: 880 1# ‡6 700-02 ‡a D., D., ‡e kirjoittaja."
   ],
   "valid": false
 }

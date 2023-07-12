@@ -1,0 +1,5 @@
+{
+  "description": "Validate diacritics: fail, since both 506 ind1 and $a both should change",
+  "enabled": true,
+  "fix": false
+}

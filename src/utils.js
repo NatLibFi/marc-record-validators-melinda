@@ -29,9 +29,16 @@ export function subfieldToString(sf) {
   return `‡${sf.code} ${sf.value}`;
 }
 
+function normalizeIndicatorValue(val) {
+  if (val === ' ') {
+    return '#';
+  }
+  return val;
+}
+
 export function fieldToString(f) {
   if ('subfields' in f) {
-    return `${f.tag} ${f.ind1}${f.ind2}${formatSubfields(f)}`;
+    return `${f.tag} ${normalizeIndicatorValue(f.ind1)}${normalizeIndicatorValue(f.ind2)}${formatSubfields(f)}`;
   }
   return `${f.tag}    ${f.value}`;
 
