@@ -4,6 +4,7 @@ import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
 import EndingPunctuation from './ending-punctuation';
 import EndingWhitespace from './ending-whitespace';
+import Field521Fix from './field-521-fix';
 import FieldsPresent from './fields-present';
 import FieldStructure from './field-structure';
 import FixedFields from './fixed-fields';
@@ -33,6 +34,7 @@ export {
   EmptyFields,
   EndingPunctuation,
   EndingWhitespace,
+  Field521Fix,
   FieldExclusion,
   FieldsPresent,
   FieldStructure,
