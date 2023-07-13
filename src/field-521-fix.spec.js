@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './fix521';
+import validatorFactory from './field-521-fix';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
