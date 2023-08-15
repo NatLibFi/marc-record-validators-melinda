@@ -1,0 +1,20 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "000000001" },
+    { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "fin" } ] },
+
+    { "tag": "490", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Suomeksi =" },
+        { "code": "a", "value": "Ruotsiksi," },
+        { "code": "x", "value": "1234-5678 ;" },
+        { "code": "v", "value": "4" }
+      ]},
+    { "tag": "830", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Suomeksi =" },
+      { "code": "a", "value": "Ruotsiksi," },
+      { "code": "x", "value": "1234-5678 ;" },
+      { "code": "v", "value": "4" }
+    ]}
+  ]
+}
