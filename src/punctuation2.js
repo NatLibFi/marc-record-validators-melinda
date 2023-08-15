@@ -120,7 +120,7 @@ const addLanguageComma = {'name': 'Add comma before 810$l', 'add': ',', 'code': 
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': /[a-z)åäö]$/u};
 
 // 490:
-const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxy', 'followedBy': 'v', 'context': /[^;]$/u};
+const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxyz', 'followedBy': 'v', 'context': /[^;]$/u};
 
 const NONE = 0;
 const ADD = 2;
@@ -133,15 +133,13 @@ const REMOVE_AND_ADD = 3;
 const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage];
 const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage];
 
+const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remove': /(?: *;| *=|,)$/u}];
+
+const linkingEntryWhatever = [{'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'abdghiklmnopqrstuwxyz', 'remove': /\. -$/u}];
+
 const cleanCrappyPunctuationRules = {
   '100': removeX00Whatever,
   '110': removeX10Whatever,
-  '600': removeX00Whatever,
-  '610': removeX10Whatever,
-  '700': removeX00Whatever,
-  '710': removeX10Whatever,
-  '800': removeX00Whatever,
-  '810': removeX10Whatever,
   '245': [
     {'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u},
     {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc}
@@ -154,8 +152,18 @@ const cleanCrappyPunctuationRules = {
     {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u} // Removes both valid (with one space) and invalid (spaceless et al) puncs
 
   ],
-  '490': [{'code': 'a', 'followedBy': 'xy', 'remove': / ;$/u}],
-  '773': [{'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'abdghiklmnopqrstuwxyz', 'remove': /\. -$/u}]
+
+  '490': remove490And830Whatever,
+  '600': removeX00Whatever,
+  '610': removeX10Whatever,
+  '700': removeX00Whatever,
+  '710': removeX10Whatever,
+  '773': linkingEntryWhatever,
+  '774': linkingEntryWhatever,
+  '776': linkingEntryWhatever,
+  '800': removeX00Whatever,
+  '810': removeX10Whatever,
+  '830': remove490And830Whatever
 
 };
 
@@ -172,6 +180,12 @@ const cleanLegalX10Comma = {'name': 'X10comma', 'code': 'abe', 'followedBy': 'e'
 const cleanLegalX10Dot = {'name': 'X10dot', 'code': 'ab', 'followedBy': 'b#', 'context': /.\.$/u, 'remove': /\.$/u};
 
 const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot, cleanX00eDot, cleanLanguageComma];
+
+const cleanLegalSeriesTitle = [ // 490 and 830
+  {'code': 'a', 'followedBy': 'a', 'remove': / =$/u},
+  {'code': 'axyz', 'followedBy': 'xyz', 'remove': /,$/u, 'context': /.,$/u},
+  {'code': 'axyz', 'followedBy': 'v', 'remove': / *;$/u}
+];
 
 const cleanValidPunctuationRules = {
   '100': legalX00punc,
@@ -198,7 +212,7 @@ const cleanValidPunctuationRules = {
     {'code': 'c', 'followedBy': '#', 'remove': /\.$/u},
     {'code': 'd', 'followedBy': 'e', 'remove': / :$/u},
     {'code': 'e', 'followedBy': 'f', 'remove': /,$/u},
-    {'code': 'f', 'followedBy': '#', 'remove': /\.$/u} // Probably ')' but shouldit be removed?
+    {'code': 'f', 'followedBy': '#', 'remove': /\.$/u} // Probably ')' but should it be removed?
   ],
   '264': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
@@ -211,19 +225,24 @@ const cleanValidPunctuationRules = {
     {'code': 'ab', 'followedBy': 'c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': 'e', 'remove': / \+$/u}
   ],
-  '490': [
-    {'code': 'axy', 'followedBy': 'xy', 'remove': /,$/u},
-    {'code': 'axy', 'followedBy': 'v', 'remove': / *;$/u}
-  ],
+  '490': cleanLegalSeriesTitle,
   '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
   // Experimental, MET366-ish (end punc in internationally valid, but we don't use it here in Finland):
-  '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}]
+  '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}],
+  '830': cleanLegalSeriesTitle
 
 };
 
 // addColonToRelationshipInformation only applies to 700/710 but as others don't have $i, it's fine
 const addX00 = [addX00aComma, addX00aComma2, addX00aDot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
 const addX10 = [addX10bDot, addX10eComma, addX10Dot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
+
+const addSeriesTitle = [ // 490 and 830
+  {'code': 'a', 'followedBy': 'a', 'add': ' =', 'context': defaultNeedsPuncAfter2},
+  {'code': 'axyz', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
+  addSemicolonBeforeVolumeDesignation //  eg. 490$axyz-$v
+];
+
 const addPairedPunctuationRules = {
   '100': addX00,
   '110': addX10,
@@ -253,11 +272,7 @@ const addPairedPunctuationRules = {
     {'code': 'ab', 'followedBy': 'c', 'add': ' ;', 'context': defaultNeedsPuncAfter2},
     {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': defaultNeedsPuncAfter2}
   ],
-  '490': [
-    {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
-    addSemicolonBeforeVolumeDesignation
-    //{'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'context': defaultNeedsPuncAfter}
-  ],
+  '490': addSeriesTitle,
   '506': [{'code': 'a', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter2}],
   '534': [{'code': 'p', 'followedBy': 'c', 'add': ':', 'context': defaultNeedsPuncAfter2}],
   '600': addX00,
@@ -266,12 +281,7 @@ const addPairedPunctuationRules = {
   '710': addX10,
   '800': addX00,
   '810': addX10,
-  '830': [
-    {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
-    addSemicolonBeforeVolumeDesignation
-    //{'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'context': defaultNeedsPuncAfter}
-  ]
-
+  '830': addSeriesTitle
 };
 
 
