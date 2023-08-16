@@ -1,12 +1,12 @@
 {
   "message": [
-    "650 #7 ‡a bad3 ‡2 ysa.",
-    "650 #7 ‡a bad4 ‡2 mts/",
-    "650 #7 ‡a bad6 ‡2 mts/fin ",
-    "650 #7 ‡a bad7 ‡2 yso/foobar",
-    "655 #7 ‡a bad1 ‡2 slm//fin",
-    "655 #7 ‡a bad2 ‡2 slm/fin/",
-    "655 #7 ‡a bad5 ‡2 slm /fin"
+    "FIXABLE: '650 #7 ‡a bad3 ‡2 ysa.' => '650 #7 ‡a bad3 ‡2 ysa'",
+    "FIXABLE: '650 #7 ‡a bad4 ‡2 mts/' => '650 #7 ‡a bad4 ‡2 mts'",
+    "FIXABLE: '650 #7 ‡a bad6 ‡2 mts/fin ' => '650 #7 ‡a bad6 ‡2 mts/fin'",
+    "CAN'T BE FIXED AUTOMATICALLY: '650 #7 ‡a bad7 ‡2 yso/foobar'",
+    "FIXABLE: '655 #7 ‡a bad1 ‡2 slm//fin' => '655 #7 ‡a bad1 ‡2 slm/fin'",
+    "FIXABLE: '655 #7 ‡a bad2 ‡2 slm/fin/' => '655 #7 ‡a bad2 ‡2 slm/fin'",
+    "FIXABLE: '655 #7 ‡a bad5 ‡2 slm /fin' => '655 #7 ‡a bad5 ‡2 slm/fin'"
   ],
   "valid": false
 }
