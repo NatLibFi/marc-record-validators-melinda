@@ -68,7 +68,7 @@ export default function () {
 }
 
 // Note tah language suffix is optional
-const legalSubfieldCode = ['allars', 'mts', 'mts/fin', 'mts/swe', 'slm', 'slm/fin', 'slm/swe', 'ysa', 'yso', 'yso/eng', 'yso/fin', 'yso/sme', 'yso/swe'];
+const legalSubfieldCode = ['allars', 'kauno', 'kauno/fin', 'kauno/swe', 'mts', 'mts/fin', 'mts/swe', 'slm', 'slm/fin', 'slm/swe', 'ysa', 'yso', 'yso/eng', 'yso/fin', 'yso/sme', 'yso/swe'];
 
 function stringFixVocabularySourceCode(value) {
   // Try to remove spaces, change '//' to '/' and remove final '.' and '/':
@@ -101,6 +101,10 @@ function subfieldHasUnfixableVocabularySourceCode(subfield) {
 
   if (subfield.value.indexOf('mts/') === 0) {
     return !['mts/fin', 'mts/swe'].includes(subfield.value);
+  }
+
+  if (subfield.value.indexOf('kauno/') === 0) {
+    return !['kauno/fin', 'kauno/swe'].includes(subfield.value);
   }
 
   return false;
