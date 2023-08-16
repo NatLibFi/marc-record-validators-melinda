@@ -26,7 +26,8 @@
     { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "good1"}, {"code": "2", "value": "slm/fin"}]},
     { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "bad1"}, {"code": "2", "value": "slm/fin"}]},
     { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "bad2"}, {"code": "2", "value": "slm/fin"}]},
-    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "bad5"}, {"code": "2", "value": "slm/fin"}]}
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "bad5"}, {"code": "2", "value": "slm/fin"}]},
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "bad9"}, {"code": "2", "value": "slm"}]}
   ],
   "leader": ""
 }
