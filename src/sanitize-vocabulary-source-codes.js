@@ -67,7 +67,7 @@ export default function () {
 
 }
 
-// Note tah language suffix is optional
+// Note that language suffix is optional
 const legalSubfieldCode = ['allars', 'kauno', 'kauno/fin', 'kauno/swe', 'mts', 'mts/fin', 'mts/swe', 'slm', 'slm/fin', 'slm/swe', 'ysa', 'yso', 'yso/eng', 'yso/fin', 'yso/sme', 'yso/swe'];
 
 function stringFixVocabularySourceCode(value) {
