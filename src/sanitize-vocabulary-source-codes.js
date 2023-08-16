@@ -102,7 +102,9 @@ function subfieldHasUnfixableVocabularySourceCode(subfield) {
   if (subfield.value.indexOf('mts/') === 0) {
     return !['mts/fin', 'mts/swe'].includes(subfield.value);
   }
-
+ if (subfield.value.indexOf('kauno/') === 0) {
+    return !['kauno/fin', 'kauno/swe'].includes(subfield.value);
+  }
   if (subfield.value.indexOf('kauno/') === 0) {
     return !['kauno/fin', 'kauno/swe'].includes(subfield.value);
   }
