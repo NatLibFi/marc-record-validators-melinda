@@ -1,8 +1,8 @@
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
+import clone from 'clone';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
-
 
 // Author(s): Nicholas Volk, Joni Ollila
 export default function () {
@@ -13,40 +13,71 @@ export default function () {
   };
 
   function fix(record) {
-    const fixedFields = getFieldsWithCrappySubfieldCode(record, true);
-    const remainingBadFields = getFieldsWithCrappySubfieldCode(record, false);
-    const remainingBadFieldsAsStrings = remainingBadFields.map(f => fieldToString(f));
-
-    // We are content
-    const fixedFieldsAsStrings = fixedFields.map(f => fieldToString(f));
-
-    return {message: remainingBadFieldsAsStrings, fix: fixedFieldsAsStrings, valid: true};
+    const res = {message: [], fix: [], valid: true};
+    record.fields.forEach(f => fieldSanitizeVocabularySourceCode(f));
+    return res;
   }
 
   function validate(record) {
-    const badFields = getFieldsWithCrappySubfieldCode(record, false);
+    const res = {message: []};
 
-    if (badFields.length === 0) {
-      return {'message': [], 'valid': true};
+    record.fields.forEach(field => {
+      validateField(field, res);
+    });
+
+    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    return res;
+  }
+
+  function validateField(field, res) {
+    if (!field.subfields) {
+      return;
+    }
+    const orig = fieldToString(field);
+
+    const normalizedField = fieldSanitizeVocabularySourceCode(clone(field));
+    const mod = fieldToString(normalizedField);
+    if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
+      res.message.push(`FIXABLE: '${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      return;
+    }
+    // Handle illegal values here
+    if (fieldHasUnfixableVocabularySourceCode(field)) {
+      res.message.push(`CAN'T BE FIXED AUTOMATICALLY: '${orig}'`); // eslint-disable-line functional/immutable-data
+      return;
+    }
+    return;
+  }
+
+  function fieldSanitizeVocabularySourceCode(field) {
+    if (!field.tag.match(/^(?:6..|257|370|38.)$/u)) {
+      return field;
     }
 
-    const messages = badFields.map(f => fieldToString(f));
-
-    return {'message': messages, 'valid': false};
+    field.subfields.forEach(sf => subfieldSanitizeVocabularySourceCode(sf));
+    return field;
   }
+
+  function subfieldSanitizeVocabularySourceCode(subfield) {
+    if (subfield.code !== '2') {
+      return;
+    }
+    subfield.value = stringFixVocabularySourceCode(subfield.value); // eslint-disable-line functional/immutable-data
+  }
+
 }
 
-// 'mts' is here as per specs. However, I think it should be 'mts/fin' or 'mts/swe'
-const legalSubfieldCode = ['allars', 'mts', 'mts/fin', 'mts/swe', 'slm/fin', 'slm/swe', 'ysa', 'yso/fin', 'yso/swe'];
+// Note that language suffix is optional
+const legalSubfieldCode = ['allars', 'kauno', 'kauno/fin', 'kauno/swe', 'mts', 'mts/fin', 'mts/swe', 'slm', 'slm/fin', 'slm/swe', 'ysa', 'yso', 'yso/eng', 'yso/fin', 'yso/sme', 'yso/swe'];
 
 function stringFixVocabularySourceCode(value) {
   // Try to remove spaces, change '//' to '/' and remove final '.' and '/':
   const tmp = value.replace(/ /ug, '')
     .replace(/\/+/ug, '/')
-    .replace(/^(?:slm|yso)\/$/u, 'local')
-    .replace(/[./]$/gu, '')
+    .replace(/(.)[./]$/gu, '$1') // eslint-disable-line prefer-named-capture-group
     .replace(/^yso-(?:aika|paikat)\//u, 'yso/'); // IMP-HELMET crap. Also, they still have a '.' at the end of $a...
 
+  // NB! Use the modified value ONLY if the result (tmp variable) is a legal subfield code...
   if (legalSubfieldCode.includes(tmp)) {
     return tmp;
   }
@@ -54,46 +85,27 @@ function stringFixVocabularySourceCode(value) {
   return value;
 }
 
-function isCrappySubfield2(subfield, fix) {
-  if (subfield.code !== '2' || legalSubfieldCode.includes(subfield.value)) {
-    return false;
-  }
+function fieldHasUnfixableVocabularySourceCode(field) {
+  return field.subfields.some(sf => subfieldHasUnfixableVocabularySourceCode(sf));
+}
 
-  // If fixer modifies string, it's crap:
-  const fixedVersion = stringFixVocabularySourceCode(subfield.value);
-
-  if (fixedVersion !== subfield.value) {
-    if (fix) {
-      subfield.value = fixedVersion; // eslint-disable-line functional/immutable-data
-      return true;
-    }
-
-    return true;
-  }
+function subfieldHasUnfixableVocabularySourceCode(subfield) {
   // As we can't fix this here, apply this yso-rule only when validating!
-  if (!fix && subfield.value.indexOf('yso/') === 0) {
-    return !['yso/eng', 'yso/fin', 'yso/swe'].includes(subfield.value);
+  if (subfield.value.indexOf('yso/') === 0) {
+    return !['yso/eng', 'yso/fin', 'yso/sme', 'yso/swe'].includes(subfield.value);
   }
 
-  if (!fix && subfield.value.indexOf('slm/') === 0) {
+  if (subfield.value.indexOf('slm/') === 0) {
     return !['slm/fin', 'slm/swe'].includes(subfield.value);
   }
 
-  if (!fix && subfield.value.indexOf('mts/') === 0) {
+  if (subfield.value.indexOf('mts/') === 0) {
     return !['mts/fin', 'mts/swe'].includes(subfield.value);
   }
 
-  return false;
-}
-
-function fieldHasCrappySubfield2(field, fix) {
-  if (!field.tag.match(/^(?:6..|257|370|38.)$/u)) {
-    return false;
+  if (subfield.value.indexOf('kauno/') === 0) {
+    return !['kauno/fin', 'kauno/swe'].includes(subfield.value);
   }
 
-  return field.subfields.some(sf => isCrappySubfield2(sf, fix));
-}
-
-function getFieldsWithCrappySubfieldCode(record, fix) {
-  return record.get(/^6..$/u).filter(f => fieldHasCrappySubfield2(f, fix));
+  return false;
 }
