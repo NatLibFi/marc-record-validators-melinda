@@ -1,0 +1,15 @@
+{
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "007", "value": "vd|csaizq" },
+    { "tag": "007", "value": "vd|cv||||" },
+
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "DVD (2 h 15 min) :"},
+        { "code": "b", "value": "värillinen, ääni ;"},
+        { "code": "c", "value": "12 cm"}
+    ]}
+
+  ],
+  "leader": ""
+}
