@@ -8,7 +8,7 @@ import clone from 'clone';
 export default function () {
 
   return {
-    description: 'Validator for sanitizing vocabulary source codes in subfield $2 (MRA-532)',
+    description: 'Validator for updating mismatching f007 based on f300 (DVD/Bluray) (MRA-613)',
     validate, fix
   };
 
