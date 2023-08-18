@@ -1,0 +1,7 @@
+{
+  "description": "f01: Fixable 007 found and fixed",
+  "comment": "Note that the other (blu-ray) 007 is kept as well...",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
