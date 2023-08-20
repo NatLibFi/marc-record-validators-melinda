@@ -64,7 +64,7 @@ describe('fixed-fields: language', () => {
           {position: 1, pattern: /a/u, dependencies: [{position: 0, pattern: /b/u}]},
           {position: [2, 3], pattern: /u/u, dependencies: [{position: 0, pattern: /[^a]/u}]}
         ]},
-        {tag: /^FUBAR$/u, length: 5}
+        {tag: /^FUB$/u, length: 5}
       ]);
       const record = new MarcRecord({
         leader: 'bacxfe',
@@ -78,7 +78,7 @@ describe('fixed-fields: language', () => {
             value: 'burfoo'
           },
           {
-            tag: 'FUBAR',
+            tag: 'FUB',
             value: 'foo'
           }
         ]
@@ -91,7 +91,7 @@ describe('fixed-fields: language', () => {
         'Field FOO has invalid values at positions: 0 (Rule index 0)',
         'Field BAR has invalid values at positions: 1 (Rule index 1)',
         'Field BAR has invalid values at positions: 2,3 (Rule index 2)',
-        'Field FUBAR has invalid length'
+        'Field FUB has invalid length'
       ]});
     });
   });
