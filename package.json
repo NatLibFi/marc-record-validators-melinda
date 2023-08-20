@@ -37,7 +37,7 @@
   "dependencies": {
     "@babel/register": "^7.22.5",
     "@natlibfi/issn-verify": "^1.0.3",
-    "@natlibfi/marc-record": "^7.2.4",
+    "@natlibfi/marc-record": "^7.3.0",
     "@natlibfi/marc-record-validate": "^8.0.1",
     "cld3-asm": "^3.1.1",
     "debug": "^4.3.4",
