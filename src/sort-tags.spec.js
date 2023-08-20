@@ -110,11 +110,11 @@ describe('sort-tags', () => {
             value: 'bar'
           },
           {
-            tag: '30',
+            tag: '300',
             value: 'bar'
           },
           {
-            tag: 'c',
+            tag: 'CCC',
             ind1: ' ',
             ind2: ' ',
             subfields: [
@@ -136,7 +136,7 @@ describe('sort-tags', () => {
             ]
           },
           {
-            tag: 'a',
+            tag: 'AAA',
             ind1: ' ',
             ind2: ' ',
             subfields: [
@@ -188,7 +188,7 @@ describe('sort-tags', () => {
           value: '100'
         },
         {
-          tag: '30',
+          tag: '300',
           value: 'bar'
         },
         {
@@ -240,7 +240,7 @@ describe('sort-tags', () => {
           ]
         },
         {
-          tag: 'a',
+          tag: 'AAA',
           ind1: ' ',
           ind2: ' ',
           subfields: [
@@ -251,7 +251,7 @@ describe('sort-tags', () => {
           ]
         },
         {
-          tag: 'c',
+          tag: 'CCC',
           ind1: ' ',
           ind2: ' ',
           subfields: [
