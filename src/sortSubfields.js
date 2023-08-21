@@ -1,3 +1,5 @@
+// Author(s): Nicholas Volk
+
 import clone from 'clone';
 import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils';
@@ -6,11 +8,13 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortSu
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-const defaultSortOrderString = '8673abcdefghijklmnopqrstuvwxyz420159'; // NB! We Finns like $2 before $0 in 6XX...
-const defaultSortOrder = defaultSortOrderString.split('');
+const defaultSortOrderStringFinns = '8673abcdefghijklmnopqrstuvwxyz420159'; // NB! We Finns like $2 before $0 in 6XX...
+const defaultSortOrderStringOthers = '8673abcdefghijklmnopqrstuvwxyz420159';
+
+const defaultSortOrderFinns = defaultSortOrderStringFinns.split('');
+const defaultSortOrderOthers = defaultSortOrderStringOthers.split('');
 
 
-// Author(s): Nicholas Volk
 export default function () {
 
   return {
@@ -154,17 +158,17 @@ function swapSubfields(field, sortOrder) {
 }
 
 
-function swap20(field) {
+function twoBeforeZero(field) {
   const sf2 = field.subfields.filter(sf => sf.code === '2');
   if (sf2.length !== 1) {
-    return;
+    return true;
   }
   // MRA-465: gcipplatform (field 753)
   // rdasco (344), creatorbio (353), gbd (668), lsch (eg. 385)
-  if (!['creatorbio', 'gbd', 'gcipplatform', 'lscsh', 'rdasco'].includes(sf2[0].value)) {
-    return;
+  if (['creatorbio', 'gbd', 'gcipplatform', 'lscsh', 'rdasco'].includes(sf2[0].value)) {
+    return false;
   }
-  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']);
+  return true;
 }
 
 export function sortAdjacentSubfields(field, externalSortOrder = []) {
@@ -178,16 +182,21 @@ export function sortAdjacentSubfields(field, externalSortOrder = []) {
   // Implement: 880 field should use values from $6...
 
   // Should we support multiple sort orders per field?
-  const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);
-  nvdebug(`INTERMEDIATE SUBFIELD ORDER FOR ${field.tag}: ${sortOrderForField.join(', ')}`);
-  const subfieldOrder = sortOrderForField.length > 0 ? sortOrderForField : defaultSortOrder;
-  nvdebug(`FINAL SUBFIELD ORDER FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
-  //if (sortOrder === null) { return field; } //// Currently always sort..
 
-  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']); // <= Handle control subfield order (it never changes)
-  // <= Handle control subfield order (it never changes)
-  // <= However, there are exceptions (eg. $9 ^^ comes first and $2 $0 is a Finnish convention...)
-  swap20(field);
+  // Try to handle control subfield order. This is not 100% fool proof. Control subfields are pretty stable, though.
+  // However, there are exceptions (eg. $9 ^^ comes first and $2 $0 is a Finnish convention...)
+
+  const finnishWay = twoBeforeZero(field);
+  const controlSubfieldOrder = finnishWay ? ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9'] : ['8', '6', '7', '3', 'a', '4', '0', '2', '1', '5', '9'];
+  swapSubfields(field, controlSubfieldOrder);
+
+  const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);
+  //nvdebug(`INTERMEDIATE SUBFIELD ORDER FOR ${field.tag}: ${sortOrderForField.join(', ')}`);
+
+  const defaultSortOrder = finnishWay ? defaultSortOrderFinns : defaultSortOrderOthers; // $2 vs $0
+  const subfieldOrder = sortOrderForField.length > 0 ? sortOrderForField : defaultSortOrder;
+  //nvdebug(`FINAL SUBFIELD ORDER FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
+  //if (sortOrder === null) { return field; } //// Currently always sort..
 
   swapSubfields(field, subfieldOrder);
 
