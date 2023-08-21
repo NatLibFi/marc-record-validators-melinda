@@ -50,6 +50,7 @@ export default function () {
 // X00, X10, X11 and X130 could also for their own sets...
 const sortOrderForX10 = ['6', 'a', 'b', 't', 'n', 'e', 'v', 'w', '0', '5', '9']; // somewhat iffy
 const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
+const sortOrderFor246 = ['i', 'a', 'n', 'p']; // Used by field 946 as well
 
 // List *only* exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
@@ -65,7 +66,7 @@ const subfieldSortOrder = [
   {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['6', 'a', 'b', 'n', 'p', 'k', 'f', 'c']},
-  {'tag': '246', 'sortOrder': ['i', 'a', 'n', 'p']},
+  {'tag': '246', 'sortOrder': sortOrderFor246},
   {'tag': '382', 'sortOrder': ['a']},
   {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a', '2', '0']},
   {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a']},
@@ -100,6 +101,7 @@ const subfieldSortOrder = [
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['6', 'a']},
+  {'tag': '946', 'sortOrder': sortOrderFor246},
   {'tag': 'LOW', 'sortOrder': ['a', 'b', 'c', 'l', 'h']},
   {'tag': 'SID', 'sortOrder': ['c', 'b']} // Hack, so that default order is not used
 ];
