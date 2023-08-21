@@ -153,6 +153,20 @@ function swapSubfields(field, sortOrder) {
   }
 }
 
+
+function swap20(field) {
+  const sf2 = field.subfields.filter(sf => sf.code === '2');
+  if (sf2.length !== 1) {
+    return;
+  }
+  // MRA-465: gcipplatform (field 753)
+  // rdasco (344), creatorbio (353), gbd (668), lsch (eg. 385)
+  if (!['creatorbio', 'gbd', 'gcipplatform', 'lscsh', 'rdasco'].includes(sf2[0].value)) {
+    return;
+  }
+  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']);
+}
+
 export function sortAdjacentSubfields(field, externalSortOrder = []) {
   if (!field.subfields) {
     return field;
@@ -171,6 +185,10 @@ export function sortAdjacentSubfields(field, externalSortOrder = []) {
   //if (sortOrder === null) { return field; } //// Currently always sort..
 
   swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']); // <= Handle control subfield order (it never changes)
+  // <= Handle control subfield order (it never changes)
+  // <= However, there are exceptions (eg. $9 ^^ comes first and $2 $0 is a Finnish convention...)
+  swap20(field);
+
   swapSubfields(field, subfieldOrder);
 
   return field;
