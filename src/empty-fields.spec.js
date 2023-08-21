@@ -27,16 +27,14 @@ describe('empty-fields', () => {
       const validator = await validatorFactory();
       const record = new MarcRecord({
         fields: [
-          {
-            tag: '001',
-            value: '1234567',
+          {tag: '001', value: '1234567'},
+          {tag: '500', ind1: ' ', ind2: ' ',
             subfields: [
               {
                 code: 'a',
                 value: 'foo'
               }
-            ]
-          }
+            ]}
         ]
       });
       const result = await validator.validate(record);
