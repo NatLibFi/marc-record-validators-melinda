@@ -3,6 +3,7 @@ import {fieldToChain, sameField} from './removeDuplicateDataFields';
 import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils';
 import {fieldsToString, fieldToString, nvdebug} from './utils';
 import {fieldHasValidSubfield8} from './subfield8Utils';
+import {encodingLevelIsBetterThanPrepublication, getEncodingLevel} from './prepublicationUtils';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -179,11 +180,14 @@ function deriveIndividualDeletables(record) {
   /* eslint-disable */
   let deletableStringsArray = [];
 
+  const finishedRecord = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
+
   record.fields.forEach(field => fieldDeriveIndividualDeletables(field));
 
   function fieldDeriveIndividualDeletables(field) {
     const fieldAsString = fieldToString(field);
 
+    nvdebug(`Derivations for ${fieldAsString}`);
     // Proof-of-concept rule:
     let tmp = fieldAsString;
     if (field.tag.match(/^[1678]00$/u)) {
@@ -212,10 +216,24 @@ function deriveIndividualDeletables(record) {
     // Remove keepless versions:
     tmp = fieldAsString;
     while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
-      tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/, '');
+      tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
       deletableStringsArray.push(tmp);
     }
+
+    //  MET-461:
+    if (['245', '246'].includes(field.tag) && finishedRecord && fieldAsString.match(/ ‡a /u)) {
+      tmp = fieldAsString;
+      tmp = tmp.replace(/^(...) ../u, '946 ##'); // Ind
+      tmp = tmp.replace(" ‡a ", " ‡i Nimeke Onixissa: ‡a ");
+      tmp = tmp.replace(/ \/ ‡c[^‡]+$/u, ''); // Can $c be non-last?
+      deletableStringsArray.push(tmp);
+      if (field.tag === '245' && tmp.match(/\.$/u)) {
+        tmp = tmp.replace(/\.$/u, '');
+        deletableStringsArray.push(tmp);
+      }
+    }
   }
+
   /* eslint-enable */
   return deletableStringsArray; // we should do uniq!
 
