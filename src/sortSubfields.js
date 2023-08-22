@@ -9,7 +9,7 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortSu
 const debugDev = debug.extend('dev');
 
 const defaultSortOrderStringFinns = '8673abcdefghijklmnopqrstuvwxyz420159'; // NB! We Finns like $2 before $0 in 6XX...
-const defaultSortOrderStringOthers = '8673abcdefghijklmnopqrstuvwxyz420159';
+const defaultSortOrderStringOthers = '8673abcdefghijklmnopqrstuvwxyz402159';
 
 const defaultSortOrderFinns = defaultSortOrderStringFinns.split('');
 const defaultSortOrderOthers = defaultSortOrderStringOthers.split('');
