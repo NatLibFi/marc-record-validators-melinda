@@ -161,7 +161,7 @@ function swapSubfields(field, sortOrder) {
 function twoBeforeZero(field) {
   const sf2 = field.subfields.filter(sf => sf.code === '2');
   if (sf2.length !== 1) {
-    return true;
+    return true; // both true and false are ok here
   }
   // MRA-465: gcipplatform (field 753)
   // rdasco (344), creatorbio (353), gbd (668), lsch (eg. 385)
@@ -195,10 +195,11 @@ export function sortAdjacentSubfields(field, externalSortOrder = []) {
 
   const defaultSortOrder = finnishWay ? defaultSortOrderFinns : defaultSortOrderOthers; // $2 vs $0
   const subfieldOrder = sortOrderForField.length > 0 ? sortOrderForField : defaultSortOrder;
-  //nvdebug(`FINAL SUBFIELD ORDER FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
+  nvdebug(`FINAL SUBFIELD ORDER (FINNISH=${finnishWay}) FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
   //if (sortOrder === null) { return field; } //// Currently always sort..
-
+  nvdebug(`IN:  ${fieldToString(field)}`);
   swapSubfields(field, subfieldOrder);
+  nvdebug(`OUT: ${fieldToString(field)}`);
 
   return field;
 }
