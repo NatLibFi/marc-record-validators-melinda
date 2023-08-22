@@ -1,0 +1,6 @@
+{
+  "description": "f07a: MET-461: fields are not deleted, as this a prepublication (LDR/17)",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
