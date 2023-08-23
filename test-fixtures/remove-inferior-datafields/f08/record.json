@@ -1,0 +1,33 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01"},
+      { "code": "a", "value": "eka sarjan nimi"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-02"},
+      { "code": "a", "value": "eka sarjan nimi"}
+    ]},
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "toka sarjan nimi"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "toka sarjan nimi"}
+    ]},
+
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-01"},
+      { "code": "a", "value": "eka sarjan nimi toisella aakkostolla"}
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-02"},
+      { "code": "a", "value": "eka sarjan nimi toisella aakkostolla"}
+    ]}
+
+
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}
