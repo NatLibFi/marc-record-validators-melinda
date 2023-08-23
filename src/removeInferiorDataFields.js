@@ -133,7 +133,8 @@ export function removeInferiorChains(record, fix = true) {
     return chain.some(f => f.tag.substring(0, 1) === '1');
   }
 
-  function sevenToOne(field, chain) {
+  function sevenToOne(field, chain) { // Change 7XX field to 1XX field. Also handle the corresponding 880$6 7XX-NN subfields
+    // NB! This function should be called only if the original 1XX gets deleted!
     if (!['700', '710', '711', '730'].includes(field.tag)) {
       return;
     }
@@ -150,26 +151,16 @@ export function removeInferiorChains(record, fix = true) {
       return;
     }
 
-    // Better to keep inferior 1XX (vs better 7XX) than to delete 1XX!
-    if(chain.some(f => f.tag.substring(0, 1) === '1')) {
-      return;
-    }
-
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
     if (chainAsString in deletableChainsAsKeys) {
       const triggeringField = deletableChainsAsKeys[chainAsString];
       const triggeringChain = fieldToChain(triggeringField, record);
 
-      // 1XX may be converted to XXX. However, it should not be removed.
-      // Better to keep inferior 1XX (vs better 7XX) than to delete 1XX!
+      // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
       if(chainContains1XX(chain)) {
-        if (chainContains1XX(triggeringChain)) {
-          // This should *never* happen, but keep this as a sanity check
-          return;
-        }
         triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
       }
-      nvdebug(`iRIS6C: ${chainAsString}`);
+      //nvdebug(`iRIS6C: ${chainAsString}`);
       const deletedString = fieldsToString(chain);
       const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
       deletedStringsArray.push(message);
@@ -242,7 +233,7 @@ function deriveIndividualDeletables(record) {
       }
     }
 
-    // 490 ind1=1 vs ind1=0: remove latter
+    // MRA-433-ish (non-chain): 490 ind1=1 vs ind1=0: remove latter
     if (fieldAsString.match(/^490 1/) ) {
       tmp = fieldAsString.replace(/^490 1/u, '490 0');
       deletableStringsArray.push(tmp);
