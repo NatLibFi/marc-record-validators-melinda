@@ -71,6 +71,14 @@ function deriveInferiorChains(fields, record) {
       deletableStringsObject[tmp] = field;
       //nvdebug(`FFS: ${tmp}`);
     }
+
+    // MRA-433: 490 ind1=1 vs ind1=0: remove latter (luckily no 2nd indicator etc)
+    if (chainAsString.match(/^490 1 .*\t880 1  ‡/) ) {
+      // change ind1s to '0' to get the deletable chain:
+      tmp = chainAsString.replace(/^490 1/u, '490 0').replace(/\t880 1/ug, "\t880 0");
+      deletableStringsObject[tmp] = field;
+    }
+
   }
 
 
@@ -196,6 +204,7 @@ function deriveIndividualDeletables(record) {
         deletableStringsArray.push(tmp);
       }
     }
+
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
     if (field.tag === '880') {
       tmp = fieldAsString;
@@ -231,6 +240,12 @@ function deriveIndividualDeletables(record) {
         tmp = tmp.replace(/\.$/u, '');
         deletableStringsArray.push(tmp);
       }
+    }
+
+    // 490 ind1=1 vs ind1=0: remove latter
+    if (fieldAsString.match(/^490 1/) ) {
+      tmp = fieldAsString.replace(/^490 1/u, '490 0');
+      deletableStringsArray.push(tmp);
     }
   }
 
