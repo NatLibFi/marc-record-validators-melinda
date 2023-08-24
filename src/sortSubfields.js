@@ -54,7 +54,7 @@ export default function () {
 // X00, X10, X11 and X130 could also for their own sets...
 const sortOrderForX10 = ['6', 'a', 'b', 't', 'n', 'e', 'v', 'w', '0', '5', '9']; // somewhat iffy
 const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
-const sortOrderFor246 = ['i', 'a', 'n', 'p']; // Used by field 946 as well
+const sortOrderFor246 = ['i', 'a', 'b', 'n', 'p', 'f', '5', '9']; // Used by field 946 as well
 
 // List *only* exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
