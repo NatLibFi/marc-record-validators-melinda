@@ -408,11 +408,11 @@ function subfieldFixPunctuation(field, subfield1, subfield2) {
 }
 
 function subfieldStripPunctuation(field, subfield1, subfield2) {
-  nvdebug(`FSP1: '${subfield1.value}'`);
+  //nvdebug(`FSP1: '${subfield1.value}'`);
   applyPunctuationRules(field, subfield1, subfield2, cleanValidPunctuationRules, REMOVE);
-  nvdebug(`FSP2: '${subfield1.value}'`);
+  //nvdebug(`FSP2: '${subfield1.value}'`);
   applyPunctuationRules(field, subfield1, subfield2, cleanCrappyPunctuationRules, REMOVE);
-  nvdebug(`FSP3: '${subfield1.value}'`);
+  //nvdebug(`FSP3: '${subfield1.value}'`);
 
 }
 
