@@ -57,6 +57,7 @@ function handleInitials(value, subfieldCode, field) {
     // Fix MRA-267/273 (partial): Handle the most common case(s). (And extend them rules later on if the need arises):
     // No longest initial sequence I've seen is six (in a Sri Lankan name).
     for (var i=0; i < 6 && initialsInRow(value); i++) {
+      // NB: Regexp has ','. Everything before it belongs to the surname. Everything after it is free game.
       value = value.replace(/(,.*) ([A-Z]|Å|Ö|Ö)\.([A-Z]|Å|Ö|Ö)/u, '$1 $2. $3');
     }
   }
