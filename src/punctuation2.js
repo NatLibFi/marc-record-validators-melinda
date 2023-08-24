@@ -187,6 +187,17 @@ const cleanLegalSeriesTitle = [ // 490 and 830
   {'code': 'axyz', 'followedBy': 'v', 'remove': / *;$/u}
 ];
 
+const clean24X = [
+  {'name': 'I:A', 'code': 'i', 'followedBy': 'i', 'remove': / *:$/u},
+  {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / [:;=]$/u},
+  {'name': 'AB:K', 'code': 'ab', 'followedBy': 'k', 'remove': / :$/u},
+  {'name': 'ABK:F', 'code': 'abk', 'followedBy': 'f', 'remove': /,$/u},
+  {'name': 'ABFNP:C', 'code': 'abfnp', 'followedBy': 'c', 'remove': / \/$/u},
+  {'name': 'ABN:N', 'code': 'abn', 'followedBy': 'n', 'remove': /\.$/u},
+  {'name': 'ABNP:#', 'code': 'abnp', 'followedBy': '#', 'remove': /\.$/u},
+  {'name': 'N:P', 'code': 'n', 'followedBy': 'p', 'remove': /,$/u}
+];
+
 const cleanValidPunctuationRules = {
   '100': legalX00punc,
   '110': legalX10punc,
@@ -196,16 +207,8 @@ const cleanValidPunctuationRules = {
   '710': legalX10punc,
   '800': legalX00punc,
   '810': legalX10punc,
-  '245': [
-    {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / [:;=]$/u},
-    {'name': 'AB:K', 'code': 'ab', 'followedBy': 'k', 'remove': / :$/u},
-    {'name': 'ABK:F', 'code': 'abk', 'followedBy': 'f', 'remove': /,$/u},
-    {'name': 'ABFNP:C', 'code': 'abfnp', 'followedBy': 'c', 'remove': / \/$/u},
-    {'name': 'ABN:N', 'code': 'abn', 'followedBy': 'n', 'remove': /\.$/u},
-    {'name': 'ABNP:#', 'code': 'abnp', 'followedBy': '#', 'remove': /\.$/u},
-    {'name': 'N:P', 'code': 'n', 'followedBy': 'p', 'remove': /,$/u}
-
-  ],
+  '245': clean24X,
+  '246': clean24X,
   '260': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
     {'code': 'b', 'followedBy': 'c', 'remove': /,$/u},
@@ -229,13 +232,31 @@ const cleanValidPunctuationRules = {
   '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
   // Experimental, MET366-ish (end punc in internationally valid, but we don't use it here in Finland):
   '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}],
-  '830': cleanLegalSeriesTitle
+  '830': cleanLegalSeriesTitle,
+  '946': clean24X
 
 };
 
 // addColonToRelationshipInformation only applies to 700/710 but as others don't have $i, it's fine
 const addX00 = [addX00aComma, addX00aComma2, addX00aDot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
 const addX10 = [addX10bDot, addX10eComma, addX10Dot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
+
+const add245 = [
+  // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
+  {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
+  {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
+  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
+  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
+];
+
+const add246 = [
+  {'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter},
+  {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
+  {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
+  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
+  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
+];
+
 
 const addSeriesTitle = [ // 490 and 830
   {'code': 'a', 'followedBy': 'a', 'add': ' =', 'context': defaultNeedsPuncAfter2},
@@ -246,13 +267,8 @@ const addSeriesTitle = [ // 490 and 830
 const addPairedPunctuationRules = {
   '100': addX00,
   '110': addX10,
-  '245': [
-    // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
-    {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
-    {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
-    {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
-    {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
-  ],
+  '245': add245,
+  '246': add246,
   '260': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
     {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
@@ -281,7 +297,8 @@ const addPairedPunctuationRules = {
   '710': addX10,
   '800': addX00,
   '810': addX10,
-  '830': addSeriesTitle
+  '830': addSeriesTitle,
+  '946': add246
 };
 
 
