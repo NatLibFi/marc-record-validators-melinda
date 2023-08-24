@@ -16,10 +16,14 @@
       ]
     },
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "a", "value": "Sukunimelä, A.B." }
+      { "code": "a", "value": "Sukunimelä, A.B. Cecilia" }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "a", "value": "Sukunimelä, A.B.C." }
+      { "code": "a", "value": "Sukunimelä, A.B." }
+      ]
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Kaikki, O. N. Oikein." }
       ]
     },
     { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [
