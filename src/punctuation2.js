@@ -253,8 +253,7 @@ const add246 = [
   {'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter},
   {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
   {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
-  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
-  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
+  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
 ];
 
 
