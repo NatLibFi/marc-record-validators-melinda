@@ -137,6 +137,16 @@ const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remov
 
 const linkingEntryWhatever = [{'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'abdghiklmnopqrstuwxyz', 'remove': /\. -$/u}];
 
+
+// '!' means negation, thus '!b' means any other subfield but 'b'.
+// 'followedBy': '#' means that current subfield is the last subfield.
+// NB! Note that control subfields are ignored in punctuation rules.
+// NB #2! Control field ignorance causes issues with field 257: https://wiki.helsinki.fi/display/rdasovellusohje/Loppupisteohje
+//        Might need to work on that at some point. NOT a top priority though.
+// NB #3! Final punctuation creation is/should be handled by endind-punctuation.js validator!
+
+const crappy246 = [{'code': 'abfghinp', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc}];
+
 const cleanCrappyPunctuationRules = {
   '100': removeX00Whatever,
   '110': removeX10Whatever,
@@ -144,6 +154,7 @@ const cleanCrappyPunctuationRules = {
     {'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u},
     {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc}
   ],
+  '246': crappy246,
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': / *:$/u},
     {'code': 'a', 'followedBy': 'b', 'remove': /:$/u, 'context': /[^ ]:$/u},
@@ -163,8 +174,8 @@ const cleanCrappyPunctuationRules = {
   '776': linkingEntryWhatever,
   '800': removeX00Whatever,
   '810': removeX10Whatever,
-  '830': remove490And830Whatever
-
+  '830': remove490And830Whatever,
+  '946': crappy246
 };
 
 const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
