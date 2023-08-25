@@ -1,0 +1,6 @@
+{
+  "description": "f02b: MET-467 (better 700 replaces worse 100)",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

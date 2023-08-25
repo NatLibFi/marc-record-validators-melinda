@@ -50,3 +50,7 @@ export function fieldToString(f) {
 export function fieldsToString(fields) {
   return fields.map(f => fieldToString(f)).join('\t__SEPARATOR__\t');
 }
+
+export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
+  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
+}

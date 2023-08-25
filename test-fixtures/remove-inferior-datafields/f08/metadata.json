@@ -1,0 +1,6 @@
+{
+  "description": "f08/MRA-433: ind1=0 can be removed",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

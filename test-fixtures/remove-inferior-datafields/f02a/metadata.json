@@ -1,0 +1,6 @@
+{
+  "description": "f02a: MET-467-ish (better 100, supposed to work already)",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils';
+import {fieldHasSubfield, fieldToString} from './utils';
 
 
 // Author(s): Nicholas Volk
@@ -49,20 +49,40 @@ export default function () {
   }
 }
 
-function getNormalizedValue(subfield, field) {
-  if (field.ind1 === '1' && subfield.code === 'a' && ['100', '600', '700', '800'].includes(field.tag)) {
-    // Fix MRA-267/273 (partial):
-    // Proof-of-concept: Handle the most common case(s). (And extend them rules later on if the need arises):
-    if (field.subfields.every(sf => sf.code !== '0')) {
-      return subfield.value.replace(/, ([A-Z]|Å|Ö|Ö)\.([A-Z]|Å|Ö|Ö)\.(,?)$/u, ', $1. $2.$3'); // eslint-disable-line prefer-named-capture-group
+
+function handleInitials(value, subfieldCode, field) {
+  // MRA-267/273
+  /* eslint-disable */
+  if (field.ind1 === '1' && subfieldCode === 'a' && ['100', '600', '700', '800'].includes(field.tag) && !fieldHasSubfield(field, '0')) {
+    // Fix MRA-267/273 (partial): Handle the most common case(s). (And extend them rules later on if the need arises):
+    // No longest initial sequence I've seen is six (in a Sri Lankan name).
+    for (var i=0; i < 6 && initialsInRow(value); i++) {
+      // NB: Regexp has ','. Everything before it belongs to the surname. Everything after it is free game.
+      value = value.replace(/(,.*) ([A-Z]|Å|Ö|Ö)\.([A-Z]|Å|Ö|Ö)/u, '$1 $2. $3');
     }
   }
 
+  return value;
+
+  /* eslint-enable */
+  function initialsInRow(str) {
+    // initial space confirms us that it's an initial
+    return str.match(/ (?:[A-Z]|Å|Ä|Ö)\.(?:[A-Z]|Å|Ä|Ö)/u);
+  }
+
+}
+function getNormalizedValue(subfield, field) {
+  /* eslint-disable */
+  let value = subfield.value;
+  value = handleInitials(value, subfield.code, field);
+
+
   if (subfield.code === 'a' && ['130', '630', '730'].includes(field.tag)) {
     // MRA-614: "(elokuva, 2000)" => "(elokuva : 2000)""
-    return subfield.value.replace(/\((elokuva), (19[0-9][0-9]|20[0-2][0-9])\)/u, '($1 : $2)'); // eslint-disable-line prefer-named-capture-group
+    return value.replace(/\((elokuva), (19[0-9][0-9]|20[0-2][0-9])\)/u, '($1 : $2)'); // eslint-disable-line prefer-named-capture-group
   }
-  return subfield.value;
+  /* eslint-enable */
+  return value;
 }
 
 function normalizeSubfieldValues(field) {
