@@ -199,7 +199,7 @@ const cleanLegalSeriesTitle = [ // 490 and 830
 ];
 
 const clean24X = [
-  {'name': 'I:A', 'code': 'i', 'followedBy': 'i', 'remove': / *:$/u},
+  {'name': 'I:A', 'code': 'i', 'followedBy': 'a', 'remove': / *:$/u},
   {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / [:;=]$/u},
   {'name': 'AB:K', 'code': 'ab', 'followedBy': 'k', 'remove': / :$/u},
   {'name': 'ABK:F', 'code': 'abk', 'followedBy': 'f', 'remove': /,$/u},
