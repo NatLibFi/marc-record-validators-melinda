@@ -1,5 +1,5 @@
 {
-  "description": "f07b: MET-461 (comments): 946$ does not prevent field deletion'",
+  "description": "f07d: MET-461 (comments): 946$ does not prevent field deletion'",
   "enabled": true,
   "fix": true,
   "only": false
