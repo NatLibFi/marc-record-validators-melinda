@@ -20,7 +20,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug('Fix record: remove subset data fields', debug);
+    nvdebug('Fix record: remove inferior (eg. subset) data fields', debug);
     const res = {message: [], fix: [], valid: true};
     removeInferiorDatafields(record, true);
     // This can not really fail...
@@ -29,7 +29,7 @@ export default function () {
 
   function validate(record) {
     // Check max, and check number of different indexes
-    nvdebug('Validate record: remove subset data fields', debug);
+    nvdebug('Validate record: remove inferior (eg. subset) data fields', debug);
 
     const duplicates = removeInferiorDatafields(record, false);
 
@@ -221,19 +221,6 @@ function deriveIndividualDeletables(record) {
       deletableStringsArray.push(tmp);
     }
 
-    //  MET-461:
-    if (['245', '246'].includes(field.tag) && finishedRecord && fieldAsString.match(/ ‡a /u)) {
-      tmp = fieldAsString;
-      tmp = tmp.replace(/^(...) ../u, '946 ##'); // Ind
-      tmp = tmp.replace(" ‡a ", " ‡i Nimeke Onixissa: ‡a ");
-      tmp = tmp.replace(/ \/ ‡c[^‡]+$/u, ''); // Can $c be non-last?
-      deletableStringsArray.push(tmp);
-      if (field.tag === '245' && tmp.match(/\.$/u)) {
-        tmp = tmp.replace(/\.$/u, '');
-        deletableStringsArray.push(tmp);
-      }
-    }
-
     // MRA-433-ish (non-chain): 490 ind1=1 vs ind1=0: remove latter
     if (fieldAsString.match(/^490 1/) ) {
       tmp = fieldAsString.replace(/^490 1/u, '490 0');
@@ -261,18 +248,16 @@ function deriveIndividualNormalizedDeletables(record) {
 
   function fieldDeriveIndividualNormalizedDeletables(field) {
     const fieldAsNormalizedString = fieldToNormalizedString(field);
-
-    nvdebug(`Normalized derivations for ${fieldAsNormalizedString}`);
-
     let tmp = fieldAsNormalizedString;
 
     //  MET-461:
     if (recordIsFinished && ['245', '246'].includes(field.tag) && fieldAsNormalizedString.match(/ ‡a /u)) {
       tmp = fieldAsNormalizedString;
       tmp = tmp.replace(/^(...) ../u, '946 ##'); // Ind
-      tmp = tmp.replace(" ‡a ", " ‡i Nimeke Onixissa: ‡a ");
+      tmp = tmp.replace(" ‡a ", " ‡i nimeke onixissa ‡a "); // NB! This is added in the normalized lower-cased form!
       tmp = tmp.replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Can $c be non-last?
       deletableNormalizedStringsArray.push(tmp);
+      deletableNormalizedStringsArray.push(`${tmp} ‡5 MELINDA`); // MET-461 comment. NB! $5 is never normalized
     }
   }
 
@@ -284,6 +269,9 @@ function deriveIndividualNormalizedDeletables(record) {
 export function removeIndividualInferiorDatafields(record, fix = true) { // No $6 nor $8 in field
   const deletableFieldsAsStrings = deriveIndividualDeletables(record);
   const deletableFieldsAsNormalizedStrings = deriveIndividualNormalizedDeletables(record);
+
+  // nvdebug(`Deletables:\n ${deletableFieldsAsStrings.join('\n ')}`);
+  // nvdebug(`Normalized deletables:\n ${deletableFieldsAsNormalizedStrings.join('\n ')}`);
 
   const hits = record.fields.filter(field => isDeletableField(field));
 
