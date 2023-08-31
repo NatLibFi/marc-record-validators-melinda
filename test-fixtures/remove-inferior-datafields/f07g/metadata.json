@@ -1,5 +1,5 @@
 {
-  "description": "f07g: MET-461 (comments): case difference does not prevent field deletion (reason: normalization)",
+  "description": "f07g: MET-461 (comments): different subfielding prevents removal",
   "enabled": true,
   "fix": true,
   "only": false
