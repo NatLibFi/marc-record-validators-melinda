@@ -307,7 +307,8 @@ const addPairedPunctuationRules = {
   '710': addX10,
   '800': addX00,
   '810': addX10,
-  '830': addSeriesTitle
+  '830': addSeriesTitle,
+  '946': [{'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter}]
 };
 
 
