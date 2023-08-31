@@ -1,0 +1,19 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Haavi auki :"},
+      { "code": "b", "value": "työskentelyä Ankalliskirjastossa."},
+      { "code": "n", "value": "II /"},
+      { "code": "c", "value": "toimittajat: T. Puominen ja T. Eestiläinen."}
+    ]},
+    { "tag": "946", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "i", "value": "Nimeke Onixissa :"},
+      { "code": "a", "value": "Haavi auki II"},
+      { "code": "b", "value": "Työskentelyä Ankalliskirjastossa"},
+      { "code": "5", "value": "MELINDA"}
+    ]}
+  ],
+  "leader": "01331cam a22003494i 4500"
+}
