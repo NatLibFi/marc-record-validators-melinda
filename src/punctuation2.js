@@ -307,8 +307,7 @@ const addPairedPunctuationRules = {
   '710': addX10,
   '800': addX00,
   '810': addX10,
-  '830': addSeriesTitle,
-  '946': add246
+  '830': addSeriesTitle
 };
 
 
