@@ -4,6 +4,7 @@ import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOc
 import {fieldsToString, fieldToString, nvdebug} from './utils';
 import {fieldHasValidSubfield8} from './subfield8Utils';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel} from './prepublicationUtils';
+import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -14,7 +15,7 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:remove
 
 export default function () {
   return {
-    description: 'Remove subset data fields. Certain exceptions apply, mainly too complited chained fields',
+    description: 'Remove subset data fields. Certain exceptions apply, mainly too complicated for chained fields',
     validate, fix
   };
 
@@ -245,9 +246,45 @@ function deriveIndividualDeletables(record) {
 
 }
 
+function fieldToNormalizedString(field) {
+  const normalizedField = cloneAndNormalizeFieldForComparison(field);
+  return fieldToString(normalizedField);
+}
+
+function deriveIndividualNormalizedDeletables(record) {
+  /* eslint-disable */
+  let deletableNormalizedStringsArray = [];
+
+  const recordIsFinished = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
+
+  record.fields.forEach(field => fieldDeriveIndividualNormalizedDeletables(field));
+
+  function fieldDeriveIndividualNormalizedDeletables(field) {
+    const fieldAsNormalizedString = fieldToNormalizedString(field);
+
+    nvdebug(`Normalized derivations for ${fieldAsNormalizedString}`);
+
+    let tmp = fieldAsNormalizedString;
+
+    //  MET-461:
+    if (recordIsFinished && ['245', '246'].includes(field.tag) && fieldAsNormalizedString.match(/ ‡a /u)) {
+      tmp = fieldAsNormalizedString;
+      tmp = tmp.replace(/^(...) ../u, '946 ##'); // Ind
+      tmp = tmp.replace(" ‡a ", " ‡i Nimeke Onixissa: ‡a ");
+      tmp = tmp.replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Can $c be non-last?
+      deletableNormalizedStringsArray.push(tmp);
+    }
+  }
+
+  /* eslint-enable */
+  return deletableNormalizedStringsArray; // we should do uniq!
+
+}
 
 export function removeIndividualInferiorDatafields(record, fix = true) { // No $6 nor $8 in field
   const deletableFieldsAsStrings = deriveIndividualDeletables(record);
+  const deletableFieldsAsNormalizedStrings = deriveIndividualNormalizedDeletables(record);
+
   const hits = record.fields.filter(field => isDeletableField(field));
 
   const deletedFieldsAsStrings = hits.map(f => fieldToString(f));
@@ -263,7 +300,15 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 
   function isDeletableField(field) {
     const fieldAsString = fieldToString(field);
-    return deletableFieldsAsStrings.includes(fieldAsString);
+    if (deletableFieldsAsStrings.includes(fieldAsString)) {
+      return true;
+    }
+    const fieldAsNormalizedString = fieldToNormalizedString(field);
+    if (deletableFieldsAsNormalizedStrings.includes(fieldAsNormalizedString)) {
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -272,7 +317,7 @@ export function removeInferiorDatafields(record, fix = true) {
   const removables = removeIndividualInferiorDatafields(record, fix); // Lone fields
   //const removables8 = removeDuplicateSubfield8Chains(record, fix); // Lone subfield $8 chains
   const removables6 = removeInferiorChains(record, fix); // Lone subfield $6 chains
-  // HOW TO HANDLE $6+$8 combos?
+  // HOW TO HANDLE $6+$8 combos? Skipping is relatively OK.
 
   nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`);
   nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`);
