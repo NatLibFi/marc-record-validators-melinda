@@ -14,6 +14,11 @@
       {"code": "e", "value": "kustantaja,"},
       {"code": "0", "value": "(FI-ASTERI-N)000111222"},
       {"code": "e", "value": "kustanantaja."}
+    ]},
+    { "tag": "946", "ind1": " ", "ind2": " ",  "subfields": [
+      { "code": "a", "value": "whatever" },
+      { "code": "5", "value": "FOOBAR" },
+      { "code": "i", "value": "Nimeke Onixissa:" }
     ]}
   ],
   "leader": ""

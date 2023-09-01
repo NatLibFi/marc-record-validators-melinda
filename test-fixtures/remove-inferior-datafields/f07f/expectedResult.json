@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Isokyröläisten murheet :"},
+      { "code": "b", "value": "hutkimus keskiajalta 1900-luvulle /"},
+      { "code": "c", "value": "Rontti Tulipalo."}
+    ]}
+  ],
+  "leader": "01331cam a22003494i 4500"
+}

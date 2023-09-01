@@ -1,0 +1,28 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "245", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "foo :"},
+      { "code": "b", "value": "bar /"},
+      { "code": "c", "value": "Kerho Ukkonen."}
+    ]},
+    { "tag": "246", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Ukkossanomat"}
+    ]},
+    { "tag": "246", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Ukkosenjumala"}
+    ]},
+
+    { "tag": "946", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "foo :"},
+      { "code": "b", "value": "bar"}
+    ]},
+
+    { "tag": "946", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Ukkossanomat"}
+    ]}
+
+  ],
+  "leader": "01331cam a22003494i 4500"
+}

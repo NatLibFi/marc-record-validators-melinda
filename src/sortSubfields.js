@@ -1,3 +1,5 @@
+// Author(s): Nicholas Volk
+
 import clone from 'clone';
 import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils';
@@ -6,11 +8,13 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortSu
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-const defaultSortOrderString = '8673abcdefghijklmnopqrstuvwxyz420159'; // NB! We Finns like $2 before $0 in 6XX...
-const defaultSortOrder = defaultSortOrderString.split('');
+const defaultSortOrderStringFinns = '8673abcdefghijklmnopqrstuvwxyz420159'; // NB! We Finns like $2 before $0 in 6XX...
+const defaultSortOrderStringOthers = '8673abcdefghijklmnopqrstuvwxyz402159';
+
+const defaultSortOrderFinns = defaultSortOrderStringFinns.split('');
+const defaultSortOrderOthers = defaultSortOrderStringOthers.split('');
 
 
-// Author(s): Nicholas Volk
 export default function () {
 
   return {
@@ -48,8 +52,10 @@ export default function () {
 
 
 // X00, X10, X11 and X130 could also for their own sets...
-const sortOrderForX10 = ['6', 'a', 'b', 't', 'n', 'e', 'v', 'w', '0', '5', '9']; // somewhat iffy
+const sortOrderForX00 = ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '5', '9']; // skip $g. Can't remember why, though...
+const sortOrderForX10 = ['6', 'i', 'a', 'b', 't', 'n', 'e', 'v', 'w', 'x', 'y', 'z', '0', '5', '9']; // somewhat iffy
 const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
+const sortOrderFor246 = ['i', 'a', 'b', 'n', 'p', 'f', '5', '9']; // Used by field 946 as well
 
 // List *only* exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
@@ -59,13 +65,13 @@ const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'e', 'c', 'd', 'x']},
   {'tag': '041', 'sortOrder': ['8', '6', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
-  {'tag': '100', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
+  {'tag': '100', 'sortOrder': sortOrderForX00},
   {'tag': '110', 'sortOrder': sortOrderForX10},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['6', 'a', 'b', 'n', 'p', 'k', 'f', 'c']},
-  {'tag': '246', 'sortOrder': ['i', 'a', 'n', 'p']},
+  {'tag': '246', 'sortOrder': sortOrderFor246},
   {'tag': '382', 'sortOrder': ['a']},
   {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a', '2', '0']},
   {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a']},
@@ -73,10 +79,11 @@ const subfieldSortOrder = [
   {'tag': '505', 'sortOrder': ['a']},
   {'tag': '526', 'sortOrder': ['i', 'a', 'b', 'x', 'z']},
   {'tag': '540', 'sortOrder': ['a', 'b', 'c', 'd', 'f', '2', 'u']},
-  {'tag': '600', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', '0', '5', '9']},
+  {'tag': '600', 'sortOrder': sortOrderForX00},
   {'tag': '610', 'sortOrder': sortOrderForX10},
   {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '700', 'sortOrder': ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
+  {'tag': '650', 'sortOrder': ['a', 'x', 'y', 'z']},
+  {'tag': '700', 'sortOrder': sortOrderForX00},
   {'tag': '710', 'sortOrder': sortOrderForX10},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '760', 'sortOrder': sortOrderFor7XX},
@@ -95,11 +102,12 @@ const subfieldSortOrder = [
   {'tag': '786', 'sortOrder': sortOrderFor7XX},
   {'tag': '787', 'sortOrder': sortOrderFor7XX},
   {'tag': '788', 'sortOrder': sortOrderFor7XX},
-  {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'v', 'l', 'f', '0', '5', '9']},
+  {'tag': '800', 'sortOrder': sortOrderForX00},
   {'tag': '810', 'sortOrder': sortOrderForX10},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['6', 'a']},
+  {'tag': '946', 'sortOrder': sortOrderFor246},
   {'tag': 'LOW', 'sortOrder': ['a', 'b', 'c', 'l', 'h']},
   {'tag': 'SID', 'sortOrder': ['c', 'b']} // Hack, so that default order is not used
 ];
@@ -110,7 +118,7 @@ function getSubfieldSortOrder(field) {
     debugDev(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
     return entry[0].sortOrder;
   }
-  nvdebug(`NO DROPPABLE SUBFIELDS FOUND FOR ${field.tag}.`);
+  nvdebug(`WARNING!\tNo subfield order found for ${field.tag}.`);
   return [];
 }
 
@@ -151,6 +159,20 @@ function swapSubfields(field, sortOrder) {
   }
 }
 
+
+function twoBeforeZero(field) {
+  const sf2 = field.subfields.filter(sf => sf.code === '2');
+  if (sf2.length !== 1) {
+    return true; // both true and false are ok here
+  }
+  // MRA-465: gcipplatform (field 753)
+  // rdasco (344), creatorbio (353), gbd (668), lsch (eg. 385)
+  if (['creatorbio', 'gbd', 'gcipplatform', 'lscsh', 'rdasco'].includes(sf2[0].value)) {
+    return false;
+  }
+  return true;
+}
+
 export function sortAdjacentSubfields(field, externalSortOrder = []) {
   if (!field.subfields) {
     return field;
@@ -162,14 +184,24 @@ export function sortAdjacentSubfields(field, externalSortOrder = []) {
   // Implement: 880 field should use values from $6...
 
   // Should we support multiple sort orders per field?
-  const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);
-  nvdebug(`INTERMEDIATE SUBFIELD ORDER FOR ${field.tag}: ${sortOrderForField.join(', ')}`);
-  const subfieldOrder = sortOrderForField.length > 0 ? sortOrderForField : defaultSortOrder;
-  nvdebug(`FINAL SUBFIELD ORDER FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
-  //if (sortOrder === null) { return field; } //// Currently always sort..
 
-  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']); // <= Handle control subfield order (it never changes)
+  // Try to handle control subfield order. This is not 100% fool proof. Control subfields are pretty stable, though.
+  // However, there are exceptions (eg. $9 ^^ comes first and $2 $0 is a Finnish convention...)
+
+  const finnishWay = twoBeforeZero(field);
+  const controlSubfieldOrder = finnishWay ? ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9'] : ['8', '6', '7', '3', 'a', '4', '0', '2', '1', '5', '9'];
+  swapSubfields(field, controlSubfieldOrder);
+
+  const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);
+  //nvdebug(`INTERMEDIATE SUBFIELD ORDER FOR ${field.tag}: ${sortOrderForField.join(', ')}`);
+
+  const defaultSortOrder = finnishWay ? defaultSortOrderFinns : defaultSortOrderOthers; // $2 vs $0
+  const subfieldOrder = sortOrderForField.length > 0 ? sortOrderForField : defaultSortOrder;
+  //nvdebug(`FINAL SUBFIELD ORDER (FINNISH=${finnishWay}) FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
+  //if (sortOrder === null) { return field; } //// Currently always sort..
+  //nvdebug(`IN:  ${fieldToString(field)}`);
   swapSubfields(field, subfieldOrder);
+  //nvdebug(`OUT: ${fieldToString(field)}`);
 
   return field;
 }

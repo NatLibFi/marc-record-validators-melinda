@@ -1,0 +1,13 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Entinen elämäni! :"},
+      { "code": "b", "value": "Transylvanialainen klassismi."},
+      { "code": "n", "value": "II /"},
+      { "code": "c", "value": "Kreivi Dracula; käännös: Renfield."}
+    ]}
+  ],
+  "leader": "01331cam a22003494i 4500"
+}

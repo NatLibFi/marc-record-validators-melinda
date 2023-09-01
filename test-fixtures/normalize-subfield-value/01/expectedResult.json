@@ -1,6 +1,8 @@
 {
   "message": [
     "'100 1# ‡a Sukunimi, A.B., ‡e kirjoittaja.' requires subfield internal mods/normalization",
+    "'700 1# ‡a Sukunimi, A.B.C., ‡e kirjoittaja.' requires subfield internal mods/normalization",
+    "'700 1# ‡a Sukunimelä, A.B. Cecilia' requires subfield internal mods/normalization",
     "'700 1# ‡a Sukunimelä, A.B.' requires subfield internal mods/normalization",
     "'730 ## ‡a Movie (elokuva, 2020)' requires subfield internal mods/normalization"
   ],
