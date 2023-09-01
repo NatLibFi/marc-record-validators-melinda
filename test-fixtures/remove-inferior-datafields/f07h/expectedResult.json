@@ -1,0 +1,27 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Haisteluni."},
+      { "code": "n", "value": "VII /"},
+      { "code": "c", "value": "Vihikoira Vuh."}
+    ]},
+    { "tag": "246", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Haisteluni."},
+      { "code": "n", "value": "Seitsemäs kirja"}
+    ]},
+    { "tag": "246", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Haisteluni."},
+      { "code": "n", "value": "7"}
+    ]},
+
+    { "tag": "946", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "i", "value": "Nimeke Onixissa:"},
+      { "code": "a", "value": "Haisteluni"},
+      { "code": "b", "value": "Seitsemäs kirja"},
+      { "code": "5", "value": "MELINDA"}
+    ]}
+  ],
+  "leader": "01331cam a22003494i 4500"
+}
