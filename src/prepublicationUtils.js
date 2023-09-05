@@ -213,7 +213,7 @@ export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
     return;
   }
 
-  // MET-306: keep "koneellisesti tuotettu tietue" if encodng level is '2':
+  // MET-306: keep "koneellisesti tuotettu tietue" if encoding level is '2':
   const f500 = getRelevant5XXFields(record, true, false).filter(field => encodingLevel === '2' ? !fieldRefersToKoneellisestiTuotettuTietue(field) : true);
   if (f500.length === 0) {
     return;
