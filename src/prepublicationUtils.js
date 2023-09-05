@@ -41,8 +41,12 @@ export function fieldRefersToTarkistettuEnnakkotieto(field) {
 
 
 export function fieldRefersToEnnakkotieto(field) {
-  // NB! This matches also 'TARKISTETTU ENNAKKOTIETO' case!
-  return containsSubstringInSubfieldA(field, 'ENNAKKOTIETO');
+  // NB! This no longer matches 'TARKISTETTU ENNAKKOTIETO' case! Bug or Feature?
+  if (containsSubstringInSubfieldA(field, 'ENNAKKOTIETO') && !fieldRefersToTarkistettuEnnakkotieto(field)) {
+    return true;
+  }
+  // MRA-420: "EI VIELÄ ILMESTYNYT" is a Helmet note, that is semantically similar to ENNAKKOTIETO:
+  return containsSubstringInSubfieldA(field, 'EI VIELÄ ILMESTYNYT');
 }
 
 
