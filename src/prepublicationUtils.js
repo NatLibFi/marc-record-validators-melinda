@@ -72,27 +72,6 @@ export function firstFieldHasBetterPrepubEncodingLevel(field1, field2) {
   return false;
 }
 
-/*
-export function firstFieldHasEqualOrBetterPrepubEncodingLevel(field1, field2) {
-  // Could be optimized...
-  if (fieldRefersToKoneellisestiTuotettuTietue(field1)) {
-    return true;
-  }
-  if (fieldRefersToKoneellisestiTuotettuTietue(field2)) {
-    return false;
-  }
-  if (fieldRefersToTarkistettuEnnakkotieto(field1)) {
-    return true;
-  }
-  if (fieldRefersToTarkistettuEnnakkotieto(field2)) {
-    return false;
-  }
-  if (fieldRefersToEnnakkotieto(field1)) {
-    return true;
-  }
-  return !fieldRefersToEnnakkotieto(field2);
-}
-*/
 
 /*
 function hasEnnakkotietoSubfield(field) {
@@ -121,7 +100,7 @@ export function getRelevant5XXFields(record, f500 = false, f594 = false) {
 
   function hasRelevantPrepubData(field) {
     // Check prepub ($a):
-    if (!fieldRefersToKoneellisestiTuotettuTietue(field) && !fieldRefersToEnnakkotieto(field)) {
+    if (!fieldRefersToKoneellisestiTuotettuTietue(field) && !fieldRefersToTarkistettuEnnakkotieto(field) && !fieldRefersToEnnakkotieto(field)) {
       return false;
     }
     // Check relevance (594$5):
