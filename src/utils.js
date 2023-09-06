@@ -61,3 +61,15 @@ export function isControlSubfieldCode(subfieldCode) {
   }
   return false;
 }
+
+export function getCatalogingLanguage(record) {
+  const [field040] = record.get(/^040$/u);
+  if (!field040) {
+    return null;
+  }
+  const [b] = field040.subfields.filter(sf => sf.code === 'b');
+  if (!b) {
+    return null;
+  }
+  return b.value;
+}
