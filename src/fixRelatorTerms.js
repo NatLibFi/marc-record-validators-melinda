@@ -114,7 +114,7 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
   if (subfield.code !== 'e') {
     return;
   }
-  nvdebug(`Relator cand subfield: ${subfieldToString(subfield)}, lang: ${language ? language : 'NULL'}`, debugDev);
+  nvdebug(`Relator cand subfield: '${subfieldToString(subfield)}', lang: ${language ? language : 'NULL'}`, debugDev);
   if (language === null || language === 'mul') {
     subfieldHandleRelatorTermAbbreviation(subfield, 'fin');
     // Maybe later add Swedish here...
@@ -127,7 +127,7 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
 
   // NB: Policy: if no language or multi-language: apply all rules! (Not much overlap I hope...)
   if (language === 'fin') {
-    nvdebug(`Relator try Finnish...`, debugDev);
+    nvdebug(`Relator try Finnish for '${lcValue}}'...`, debugDev);
     if (lcValue in finnishAbbreviations) {
       const hit = `${finnishAbbreviations[lcValue]}${punc}`;
       nvdebug(`Relator hit: ${hit}`, debugDev);
