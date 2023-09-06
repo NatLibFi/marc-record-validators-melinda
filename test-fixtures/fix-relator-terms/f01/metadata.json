@@ -1,5 +1,5 @@
 {
-  "description": "Fix relator terms: expand abbreviations",
+  "description": "Fix relator terms: expand abbreviations based on 040$b",
   "enabled": true,
   "fix": true,
   "only": true
