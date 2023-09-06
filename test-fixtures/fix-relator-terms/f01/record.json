@@ -5,6 +5,7 @@
     { "tag": "700", "ind1": " ", "ind2": " ",
       "subfields": [
           { "code": "a", "value": "Nimi," },
+          { "code": "e", "value": "säv.,"},
           { "code": "e", "value": "esitt.,"},
           { "code": "e", "value": "san." }
       ] }
