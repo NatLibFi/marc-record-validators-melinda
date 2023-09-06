@@ -1,0 +1,6 @@
+{
+  "description": "Fix relator terms: expand abbreviations",
+  "enabled": true,
+  "fix": true,
+  "only": true
+}
