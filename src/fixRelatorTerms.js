@@ -1,4 +1,4 @@
-//import clone from 'clone';
+import clone from 'clone';
 import {fieldFixPunctuation} from './punctuation2';
 import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils';
 import createDebugLogger from 'debug';
@@ -10,6 +10,48 @@ import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fixRelatorterms');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
+
+export default function () {
+  return {
+    description: 'Fix $e subfields in field [1678][01]0 and 720',
+    validate, fix
+  };
+
+  function fix(record) {
+    const res = {message: [], fix: [], valid: true};
+
+    const language = getCatalogingLanguage(record);
+
+    record.fields.forEach(field => {
+      fieldFixRelatorTerms(field, language, language);
+    });
+
+    return res;
+  }
+
+  function validate(record) {
+    const res = {message: []};
+
+    const language = getCatalogingLanguage(record);
+
+    record.fields.forEach(field => {
+      const clonedField = clone(field);
+      // Rather hackily/abnormally use language as both fromLanguage and toLanguage.
+      // fromLanguage is used to expand "esitt." => "esittäjä".
+      // toLanguage is used by translations (fixes "författere" to "kirjoittaja", if 040$b is "fin")
+      fieldFixRelatorTerms(field, language, language);
+      const clonedFieldAsString = fieldToString(clonedField);
+      const fieldAsString = fieldToString(field);
+      if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
+        res.message.push(`${fieldAsString} => ${clonedFieldAsString}`); // eslint-disable-line functional/immutable-data
+      }
+    });
+
+    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    return res;
+  }
+}
+
 
 /*
 export default () => (base, source) => {
@@ -161,11 +203,12 @@ function subfieldTranslateRelatorTerm(subfield, fromLanguage, toLanguage) {
   subfield.value = translateRelatorTerm(subfield.value, fromLanguage, toLanguage); // eslint-disable-line functional/immutable-data
 }
 
-export function fieldTranslateRelatorTerm(field, fromLanguage, toLanguage) {
+export function fieldFixRelatorTerms(field, fromLanguage, toLanguage) {
   // fromLanguage can not be relied upon.
   if (!isRelatorField(field)/* || fromLanguage === toLanguage*/) {
     return;
   }
+  fieldHandleRelatorTermAbbreviations(field, fromLanguage);
   field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage));
 }
 
@@ -178,9 +221,7 @@ export function recordFixRelatorTerms(record, toLanguage = null, defaultFromLang
   record.fields.forEach(field => translateField(field, fromLanguage, toLanguage));
 
   function translateField(field, from, to) {
-    fieldHandleRelatorTermAbbreviations(field, from);
-    fieldTranslateRelatorTerm(field, from, to);
-
+    fieldFixRelatorTerms(field, from, to);
   }
 }
 
