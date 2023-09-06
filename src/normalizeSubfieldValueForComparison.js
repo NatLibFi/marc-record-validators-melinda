@@ -8,6 +8,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:no
 const debugDev = debug.extend('dev');
 
 export function subfieldContainsPartData(tag, subfieldCode) {
+  // NB! Used by reducers' mergeSubield.js
   if (subfieldCode === 'v' && ['490', '800', '810', '811', '830'].includes(tag)) {
     return true;
   }
@@ -18,8 +19,9 @@ export function subfieldContainsPartData(tag, subfieldCode) {
 }
 
 function splitPartData(originalValue) {
+  // Remove brackets from number-only:
   const value = originalValue.replace(/^\[([0-9]+)\][-.,:; ]*$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
-  const splitPoint = value.lastIndexOf(' ');
+  const splitPoint = value.lastIndexOf(' '); // MRA-627: "5, 2017" should be split here. Think of this later on...
   if (splitPoint === -1) {
     return [undefined, value];
   }
@@ -34,12 +36,24 @@ function normalizePartType(originalValue) {
   }
   const value = originalValue.toLowerCase();
   // Return Finnish singular nominative. Best-ish for debug purposes...
+  if (['band', 'bd', 'nide'].includes(value)) {
+    return 'nide';
+  }
+  if (['n:o', 'no', 'nr', 'nro', 'number', 'numero', 'nummer'].includes(value)) {
+    return 'numero';
+  }
   if (['osa', 'part', 'teil'].includes(value)) {
     return 'osa';
   }
+
   if (['p.', 'page', 'pages', 'pp.', 's.', 'sidor', 'sivu', 'sivut'].includes(value)) {
     return 'sivu';
   }
+
+  if (['vol.', 'volume'].includes(value)) {
+    return 'volume';
+  }
+
   return value;
 }
 
@@ -67,12 +81,15 @@ function splitAndNormalizePartData(value) {
 }
 
 export function partsAgree(value1, value2, tag, subfieldCode) {
+  // Note, that parts can not be normalized away, as "2" can agree with "Part 2" and "Raita 2" and "Volume 2"...
+  // NB! Used by reducers' mergeSubield.js
   if (!subfieldContainsPartData(tag, subfieldCode)) {
     return false;
   }
   const [partType1, partNumber1] = splitAndNormalizePartData(value1);
   const [partType2, partNumber2] = splitAndNormalizePartData(value2);
   if (partNumber1 !== partNumber2) {
+    // MRA-627: This should/could accept 5/1997
     return false;
   }
   if (partType1 === undefined || partType2 === undefined || partType1 === partType2) {
