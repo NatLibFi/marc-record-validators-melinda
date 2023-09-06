@@ -114,14 +114,19 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
   if (subfield.code !== 'e') {
     return;
   }
-  nvdebug(`Relator cand subfield: ${subfieldToString(subfield)}`, debugDev);
+  nvdebug(`Relator cand subfield: ${subfieldToString(subfield)}, lang: ${language ? language : 'NULL'}`, debugDev);
+  if (language === null || language === 'mul') {
+    subfieldHandleRelatorTermAbbreviation(subfield, 'fin');
+    // Maybe later add Swedish here...
+    return;
+  }
   const value = subfield.value.replace(/,$/u, '');
   const punc = value === subfield.value ? '' : ',';
 
   const lcValue = value.toLowerCase(); // Check Å, Ä, Ö...
 
   // NB: Policy: if no language or multi-language: apply all rules! (Not much overlap I hope...)
-  if (language === null || language === 'fin' || language === 'mul') {
+  if (language === 'fin') {
     nvdebug(`Relator try Finnish...`, debugDev);
     if (lcValue in finnishAbbreviations) {
       const hit = `${finnishAbbreviations[lcValue]}${punc}`;
@@ -140,7 +145,7 @@ function isRelatorField(field) {
 }
 
 function fieldHandleRelatorTermAbbreviations(field, language) {
-  if (!isRelatorField(field) || !language) {
+  if (!isRelatorField(field)) {
     return;
   }
 
