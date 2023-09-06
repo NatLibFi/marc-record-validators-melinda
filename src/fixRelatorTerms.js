@@ -214,15 +214,15 @@ export function fieldFixRelatorTerms(field, fromLanguage, toLanguage) {
     return;
   }
   fieldHandleRelatorTermAbbreviations(field, fromLanguage);
+
   field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage));
 }
 
 
-export function recordFixRelatorTerms(record, toLanguage = null, defaultFromLanguage = null) { // WAS: translateRecord()
+export function recordFixRelatorTerms(record, defaultToLanguage = null, defaultFromLanguage = null) { // WAS: translateRecord()
   const fromLanguage = defaultFromLanguage ? defaultFromLanguage : getCatalogingLanguage(record);
-  if (toLanguage === null || fromLanguage === toLanguage) {
-    return;
-  }
+  const toLanguage = defaultToLanguage ? defaultToLanguage : getCatalogingLanguage(record);
+
   record.fields.forEach(field => translateField(field, fromLanguage, toLanguage));
 
   function translateField(field, from, to) {
