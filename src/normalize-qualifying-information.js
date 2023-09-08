@@ -62,18 +62,18 @@ function normalizeQualifyingInformationField(field) {
   }
 
   function normalizeValue(val) {
-    if (val.match(/^häftad$/iu)) {
+    if (val.match(/^(?:hft|häftad)[.,]*$/iu)) {
       return 'mjuka pärmar';
     }
 
-    if (val.match(/^inb(?:\.|unden)$/iu)) {
+    if (val.match(/^inb(?:\.|unden)[.,]*$/iu)) {
       return 'hårda pärmar';
     }
 
-    if (val.match(/^nid(?:\.|ottu)$/iu)) {
+    if (val.match(/^nid(?:\.|ottu)[.,]*$/iu)) {
       return 'pehmeäkantinen';
     }
-    if (val.match(/^sid(?:\.|ottu)$/iu)) {
+    if (val.match(/^sid(?:\.|ottu)[.,]*$/iu)) {
       return 'kovakantinen';
     }
     return val;
