@@ -1,0 +1,7 @@
+{
+  "message": [
+    "'TODO: 505 8# ‡a Foo ; Bar ; Lorum ; Ipsum' => '505 8# ‡a Foo -- Bar -- Lorum -- Ipsum'",
+    "'TODO: 505 80 ‡t Foo ; ‡t Bar ; ‡t Lorum ; ‡t Ipsum' => '505 80 ‡t Foo -- ‡t Bar -- ‡t Lorum -- ‡t Ipsum'"
+  ],
+  "valid": false
+}

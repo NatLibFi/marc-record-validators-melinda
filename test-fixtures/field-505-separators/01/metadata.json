@@ -1,0 +1,7 @@
+{
+  "description": "Validate field 505 separators",
+  "comment": "NB! Handles only ' ; ' => ' -- ' conversions",
+  "enabled": true,
+  "fix": false,
+  "only": false
+}
