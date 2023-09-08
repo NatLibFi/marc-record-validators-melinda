@@ -1,0 +1,7 @@
+{
+  "description": "Fix qualifying information terms",
+  "comment": "MELINDA-8740",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

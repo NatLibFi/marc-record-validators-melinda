@@ -1,0 +1,8 @@
+{
+  "message": [
+    "'TODO: 020 ## ‡a fv67890 ‡q häftad' => '020 ## ‡a fv67890 ‡q mjuka pärmar'",
+    "'TODO: 020 ## ‡a 1234567890 ‡q SID.' => '020 ## ‡a 1234567890 ‡q kovakantinen'",
+    "'TODO: 024 8# ‡a MEL123 ‡q Nidottu' => '024 8# ‡a MEL123 ‡q pehmeäkantinen'"
+  ],
+  "valid": false
+}
