@@ -176,6 +176,52 @@ export function removeInferiorChains(record, fix = true) {
   return deletedStringsArray;
 }
 
+function deriveIndividualDeletables490(fieldAsString) {
+  if (!fieldAsString.match(/^490/u)) {
+    return [];
+  }
+
+  /* eslint-disable */
+  let deletable490s = [];
+
+  // $6-less version (keep this first)
+  let tmp = fieldAsString.replace(/ ‡6 [^‡]+ ‡/u, ' ‡');
+  if ( tmp !== fieldAsString) {
+    fieldAsString = tmp; // NB! Carry on with $6-less version!
+    deletable490s.push(tmp);
+  }
+
+  // Add $v-less version
+  tmp = fieldAsString.replace(/ *; ‡v [^‡]+$/u, '');
+  if ( tmp !== fieldAsString) {
+    deletable490s.push(tmp);
+  }
+
+  // Add $x-less version
+  tmp = fieldAsString.replace(/, ‡x [^‡]+($|[;,] ‡)/u, '$1');
+  if ( tmp !== fieldAsString) {
+    deletable490s.push(tmp);
+  }
+
+  // Add $xv-less version
+  tmp = fieldAsString.replace(/, ‡x [^‡]+ ‡v [^‡]+$/u, '');
+  if ( tmp !== fieldAsString) {
+    deletable490s.push(tmp);
+  }
+
+  // MRA-433-ish (non-chain): 490 ind1=1 vs ind1=0: remove latter
+  if (fieldAsString.match(/^490 1/) ) {
+    // TODO: $x-less and $v-less versions...
+    tmp = `490 0${fieldAsString.substring(5)}`;
+    deletable490s.push(tmp);
+    const arr = deriveIndividualDeletables490(tmp);
+    arr.forEach(val => deletable490s.push(val));
+  }
+
+   /* eslint-enable */
+  return deletable490s;
+}
+
 function deriveIndividualDeletables(record) {
   /* eslint-disable */
   let deletableStringsArray = [];
@@ -202,28 +248,23 @@ function deriveIndividualDeletables(record) {
       tmp = fieldAsString;
       if (tmp.match(/ ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/)) {
         tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
-        nvdebug(`MET-381: ADD TO DELETABLES: ${tmp}`);
+        nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
         deletableStringsArray.push(tmp);
         if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /)) {
           tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/, '$1');
-          nvdebug(`MET-381: ADD TO DELETABLES: ${tmp}`);
+          nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
           deletableStringsArray.push(tmp);
         }
       }
     }
 
-
+    const d490 = deriveIndividualDeletables490(fieldAsString);
+    d490.forEach(str => deletableStringsArray.push(str));
 
     // Remove keepless versions:
     tmp = fieldAsString;
     while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
       tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
-      deletableStringsArray.push(tmp);
-    }
-
-    // MRA-433-ish (non-chain): 490 ind1=1 vs ind1=0: remove latter
-    if (fieldAsString.match(/^490 1/) ) {
-      tmp = fieldAsString.replace(/^490 1/u, '490 0');
       deletableStringsArray.push(tmp);
     }
   }
