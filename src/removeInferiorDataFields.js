@@ -191,14 +191,15 @@ function deriveIndividualDeletables490(fieldAsString) {
     deletable490s.push(tmp);
   }
 
-  // Add $v-less version
-  tmp = fieldAsString.replace(/ *; ‡v [^‡]+$/u, '');
+  // Without final $v or $x:
+  tmp = fieldAsString.replace(/ *[;,] ‡[vx] [^‡]+$/u, '');
   if ( tmp !== fieldAsString) {
     deletable490s.push(tmp);
   }
 
-  // Add $x-less version
-  tmp = fieldAsString.replace(/, ‡x [^‡]+($|[;,] ‡)/u, '$1');
+  // Add intermedia $x-less version
+  tmp = fieldAsString.replace(/, ‡x [^‡]+(, ‡x| ; ‡v)/u, '$1');
+  // Add final $v/$x-less version
   if ( tmp !== fieldAsString) {
     deletable490s.push(tmp);
   }
@@ -218,6 +219,10 @@ function deriveIndividualDeletables490(fieldAsString) {
     arr.forEach(val => deletable490s.push(val));
   }
 
+  nvdebug(`${deletable490s.length} derivation(s) for ${fieldAsString}`);
+  if (deletable490s.length > 0) {
+    nvdebug(deletable490s.join('\n'));
+  }
    /* eslint-enable */
   return deletable490s;
 }
@@ -233,7 +238,6 @@ function deriveIndividualDeletables(record) {
   function fieldDeriveIndividualDeletables(field) {
     const fieldAsString = fieldToString(field);
 
-    nvdebug(`Derivations for ${fieldAsString}`);
     // Proof-of-concept rule:
     let tmp = fieldAsString;
     if (field.tag.match(/^[1678]00$/u)) {
@@ -267,8 +271,8 @@ function deriveIndividualDeletables(record) {
       tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
       deletableStringsArray.push(tmp);
     }
-  }
 
+  }
   /* eslint-enable */
   return deletableStringsArray; // we should do uniq!
 
