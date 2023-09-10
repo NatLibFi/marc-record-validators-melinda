@@ -35,14 +35,12 @@ function normalizePartType(originalValue) {
     return undefined;
   }
   const value = originalValue.toLowerCase();
-  // Return Finnish singular nominative. Best-ish for debug purposes...
-  if (['band', 'bd', 'nide'].includes(value)) {
-    return 'nide';
-  }
+
+  // Return Finnish singular nominative. Choise of language is arbitrary. This is best-ish for debug purposes...
   if (['n:o', 'no', 'nr', 'nro', 'number', 'numero', 'nummer'].includes(value)) {
     return 'numero';
   }
-  if (['osa', 'part', 'teil'].includes(value)) {
+  if (['band', 'bd', 'häfte', 'nide', 'osa', 'part', 'teil', 'vol', 'vol.', 'volume'].includes(value)) {
     return 'osa';
   }
 
@@ -50,9 +48,7 @@ function normalizePartType(originalValue) {
     return 'sivu';
   }
 
-  if (['vol.', 'volume'].includes(value)) {
-    return 'volume';
-  }
+
 
   return value;
 }
