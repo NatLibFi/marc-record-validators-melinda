@@ -247,6 +247,21 @@ function deriveIndividualDeletables(record) {
       }
     }
 
+    if (field.tag === '505') { // MRA-413-ish
+      if (fieldAsString.match(/^.0.*-- ‡t/u)) {
+        tmp = fieldAsString;
+        tmp = tmp.replace(/ -- ‡t /gu, ' -- ');
+        tmp = tmp.replace(/ ‡[rg] /gu, ' ');
+        tmp = tmp.replace(/ ‡t /u, ' ‡a '); // first $t, not
+        tmp = tmp.replace(/^505 (.)0/u, '505 $1#');
+        if (tmp !== fieldAsString) {
+          deletableStringsArray.push(tmp);
+        }
+        //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
+        //nvdebug(`505 DERIVATE: '${tmp}'`)
+      }
+    }
+
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
     if (field.tag === '880') {
       tmp = fieldAsString;
