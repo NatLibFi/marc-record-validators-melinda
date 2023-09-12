@@ -48,8 +48,6 @@ function normalizePartType(originalValue) {
     return 'sivu';
   }
 
-
-
   return value;
 }
 
