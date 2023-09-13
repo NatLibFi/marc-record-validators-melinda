@@ -1,0 +1,25 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    { "tag": "505", "ind1": "8", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Foo ; Bar ; Lorum ; Ipsum" }
+    ]},
+    { "tag": "505", "ind1": "8", "ind2": " ", "subfields": [
+        { "code": "a", "value": "No -- action --required" }
+    ]},
+    { "tag": "505", "ind1": "8", "ind2": "0", "subfields": [
+        { "code": "t", "value": "Foo ;" },
+        { "code": "t", "value": "Bar ;" },
+        { "code": "t", "value": "Lorum ;" },
+        { "code": "t", "value": "Ipsum" }
+    ]},
+    { "tag": "505", "ind1": "8", "ind2": "0", "subfields": [
+      { "code": "t", "value": "Replace --" },
+      { "code": "t", "value": "only" },
+      { "code": "t", "value": "semicolon" }
+    ]}
+  ]
+}

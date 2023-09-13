@@ -1,0 +1,6 @@
+{
+  "description": "F01b: Fix relator terms: expand abbreviations (no 040$b)",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

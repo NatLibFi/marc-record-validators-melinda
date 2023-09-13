@@ -117,7 +117,7 @@ const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'fol
 const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter};
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abe', 'followedBy': '#', 'context': defaultNeedsPuncAfter};
 const addLanguageComma = {'name': 'Add comma before 810$l', 'add': ',', 'code': 'tv', 'followedBy': 'l', 'context': defaultNeedsPuncAfter2};
-const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': /[a-z)åäö]$/u};
+const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
 
 // 490:
 const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxyz', 'followedBy': 'v', 'context': /[^;]$/u};
@@ -181,11 +181,12 @@ const cleanCrappyPunctuationRules = {
 const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
 // Accept upper case letters in X00$b, since they are probably Roman numerals.
 const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
+const cleanLegalX00iColon = {'code': 'i', 'followedBy': 'a', 'remove': / *:$/u}; // NB! context is not needed
 const cleanLegalX00Dot = {'code': 'abcdetvl', 'followedBy': 'tu#', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 const cleanLanguageComma = {'name': 'language comma', 'code': 'tv', 'followedBy': 'l', 'context': /.,$/u, 'remove': /,$/u};
 
 
-const legalX00punc = [cleanLegalX00Comma, cleanLegalX00bDot, cleanLegalX00Dot, cleanLanguageComma];
+const legalX00punc = [cleanLegalX00Comma, cleanLegalX00iColon, cleanLegalX00bDot, cleanLegalX00Dot, cleanLanguageComma];
 
 const cleanLegalX10Comma = {'name': 'X10comma', 'code': 'abe', 'followedBy': 'e', 'context': /.,$/u, 'remove': /,$/u};
 const cleanLegalX10Dot = {'name': 'X10dot', 'code': 'ab', 'followedBy': 'b#', 'context': /.\.$/u, 'remove': /\.$/u};
