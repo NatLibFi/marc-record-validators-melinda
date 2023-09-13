@@ -62,18 +62,29 @@ function normalizeQualifyingInformationField(field) {
   }
 
   function normalizeValue(val) {
-    if (val.match(/^(?:hft|häftad)[.,]*$/iu)) {
+    // Should we do English as well: "coil bound" and "comb-bound" => "spiral-bound" (as per MTS)?
+
+    if (val.match(/^(?:hft|häftad)[.,]*$/iu)) { // MELINDA-8740
       return 'mjuka pärmar';
     }
 
-    if (val.match(/^inb(?:\.|unden)[.,]*$/iu)) {
+    if (val.match(/^inb(?:\.|unden)[.,]*$/iu)) { // MELINDA-8740
       return 'hårda pärmar';
     }
 
-    if (val.match(/^nid(?:\.|ottu)[.,]*$/iu)) {
+    if (val === 'rengaskirja') { // https://www.kiwi.fi/display/melinda/Talonmies+tiedottaa+16.12.2021
+      return 'kierreselkä';
+    }
+
+    if (val === 'ringpärm') { // https://www.kiwi.fi/display/melinda/Talonmies+tiedottaa+16.12.2021
+      return 'spiralrygg';
+    }
+
+    if (val.match(/^nid(?:\.|ottu)[.,]*$/iu)) { // MELINDA-8740
       return 'pehmeäkantinen';
     }
-    if (val.match(/^sid(?:\.|ottu)[.,]*$/iu)) {
+
+    if (val.match(/^sid(?:\.|ottu)[.,]*$/iu)) { // MELINDA-8740
       return 'kovakantinen';
     }
     return val;
