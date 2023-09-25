@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {fieldToChain, sameField} from './removeDuplicateDataFields';
 import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils';
-import {fieldsToString, fieldToString, nvdebug} from './utils';
+import {fieldsToString, fieldToString, nvdebug, uniqArray} from './utils';
 import {fieldHasValidSubfield8} from './subfield8Utils';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel} from './prepublicationUtils';
 import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison';
@@ -176,6 +176,32 @@ export function removeInferiorChains(record, fix = true) {
   return deletedStringsArray;
 }
 
+function idenfifierlessAndKeeplessSubsets(fieldAsString) {
+  /* eslint-disable */
+  let deletables = [];
+
+  // The rules below are not perfect (in complex cases they don't catch all permutations), but good enough:
+  // Remove identifier(s) (MELKEHITYS-2383-ish):
+  let tmp = fieldAsString;
+  while (tmp.match(/ ‡[01] [^‡]+($| ‡)/u)) {
+    tmp = tmp.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); 
+    deletables.push(tmp);
+    const arr = idenfifierlessAndKeeplessSubsets(tmp);
+    arr.forEach(val => deletables.push(val));
+  }
+
+  // Remove keepless versions:
+  tmp = fieldAsString;
+  if (tmp.match(/ ‡9 [A-Z]+<KEEP>/u)) {
+    tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
+    deletables.push(tmp);
+    const arr = idenfifierlessAndKeeplessSubsets(tmp);
+    arr.forEach(val => deletables.push(val));
+  }
+  /* eslint-enable */
+  return deletables;
+}
+
 function deriveIndividualDeletables490(fieldAsString) {
   if (!fieldAsString.match(/^490/u)) {
     return [];
@@ -280,16 +306,13 @@ function deriveIndividualDeletables(record) {
     const d490 = deriveIndividualDeletables490(fieldAsString);
     d490.forEach(str => deletableStringsArray.push(str));
 
-    // Remove keepless versions:
-    tmp = fieldAsString;
-    while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
-      tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
-      deletableStringsArray.push(tmp);
-    }
+    const subsets = idenfifierlessAndKeeplessSubsets(fieldAsString)
+    subsets.forEach(str => deletableStringsArray.push(str));
+
 
   }
   /* eslint-enable */
-  return deletableStringsArray; // we should do uniq!
+  return uniqArray(deletableStringsArray);
 
 }
 
