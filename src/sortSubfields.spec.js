@@ -30,7 +30,7 @@ async function testValidatorFactory() {
   expect(validator.validate).to.be.a('function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
+async function callback({getFixture, enabled = true, fix = false, tagPattern = false}) {
   if (enabled === false) {
     debug('TEST SKIPPED!');
     return;
@@ -42,11 +42,11 @@ async function callback({getFixture, enabled = true, fix = false}) {
   // console.log(expectedResult); // eslint-disable-line
 
   if (!fix) {
-    const result = await validator.validate(record);
+    const result = await validator.validate(record, tagPattern);
     expect(result).to.eql(expectedResult);
     return;
   }
 
-  await validator.fix(record);
+  await validator.fix(record, tagPattern);
   expect(record).to.eql(expectedResult);
 }
