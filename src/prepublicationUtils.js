@@ -41,8 +41,12 @@ export function fieldRefersToTarkistettuEnnakkotieto(field) {
 
 
 export function fieldRefersToEnnakkotieto(field) {
-  // NB! This matches also 'TARKISTETTU ENNAKKOTIETO' case!
-  return containsSubstringInSubfieldA(field, 'ENNAKKOTIETO');
+  // NB! This no longer matches 'TARKISTETTU ENNAKKOTIETO' case! Bug or Feature?
+  if (containsSubstringInSubfieldA(field, 'ENNAKKOTIETO') && !fieldRefersToTarkistettuEnnakkotieto(field)) {
+    return true;
+  }
+  // MRA-420: "EI VIELÄ ILMESTYNYT" is a Helmet note, that is semantically similar to ENNAKKOTIETO:
+  return containsSubstringInSubfieldA(field, 'EI VIELÄ ILMESTYNYT');
 }
 
 
@@ -68,27 +72,6 @@ export function firstFieldHasBetterPrepubEncodingLevel(field1, field2) {
   return false;
 }
 
-/*
-export function firstFieldHasEqualOrBetterPrepubEncodingLevel(field1, field2) {
-  // Could be optimized...
-  if (fieldRefersToKoneellisestiTuotettuTietue(field1)) {
-    return true;
-  }
-  if (fieldRefersToKoneellisestiTuotettuTietue(field2)) {
-    return false;
-  }
-  if (fieldRefersToTarkistettuEnnakkotieto(field1)) {
-    return true;
-  }
-  if (fieldRefersToTarkistettuEnnakkotieto(field2)) {
-    return false;
-  }
-  if (fieldRefersToEnnakkotieto(field1)) {
-    return true;
-  }
-  return !fieldRefersToEnnakkotieto(field2);
-}
-*/
 
 /*
 function hasEnnakkotietoSubfield(field) {
@@ -117,7 +100,7 @@ export function getRelevant5XXFields(record, f500 = false, f594 = false) {
 
   function hasRelevantPrepubData(field) {
     // Check prepub ($a):
-    if (!fieldRefersToKoneellisestiTuotettuTietue(field) && !fieldRefersToEnnakkotieto(field)) {
+    if (!fieldRefersToKoneellisestiTuotettuTietue(field) && !fieldRefersToTarkistettuEnnakkotieto(field) && !fieldRefersToEnnakkotieto(field)) {
       return false;
     }
     // Check relevance (594$5):
@@ -209,7 +192,7 @@ export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
     return;
   }
 
-  // MET-306: keep "koneellisesti tuotettu tietue" if encodng level is '2':
+  // MET-306: keep "koneellisesti tuotettu tietue" if encoding level is '2':
   const f500 = getRelevant5XXFields(record, true, false).filter(field => encodingLevel === '2' ? !fieldRefersToKoneellisestiTuotettuTietue(field) : true);
   if (f500.length === 0) {
     return;

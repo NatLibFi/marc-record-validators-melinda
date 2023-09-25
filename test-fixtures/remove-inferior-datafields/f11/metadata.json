@@ -1,0 +1,6 @@
+{
+  "description": "MRA-413-ish: remove 505$a if similar 505$t... exists",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

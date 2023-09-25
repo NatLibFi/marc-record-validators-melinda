@@ -39,6 +39,11 @@
       { "code": "d", "value": "2000-2050" },
       { "code": "0", "value": "(FIN11)000000000"},
       { "code": "e", "value": "käsikirjoittaja"}
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "i", "value": "Elokuvaversion perustana (teos)" },
+      { "code": "a", "value": "Edam, Adam"},
+      { "code": "t", "value": "Them Movie" }
     ]}
   ]
 }

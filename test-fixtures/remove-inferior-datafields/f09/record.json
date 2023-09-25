@@ -1,0 +1,30 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Shardlake ;"},
+      { "code": "v", "value": "3"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Shardlake ;"},
+      { "code": "v", "value": "3"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Shardlake"}
+    ]},
+
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Tyyris Tyllerön tutkimuksia"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Tyyris Tyllerön tutkimuksia ;"},
+      { "code": "v", "value": "3"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Tyyris Tyllerön tutkimuksia"}
+    ]}
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}

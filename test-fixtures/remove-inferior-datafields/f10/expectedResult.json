@@ -1,0 +1,17 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Studia Fennica, Linguistica,"},
+      { "code": "x", "value": "1235-1938 ;"},
+      { "code": "v", "value": "11"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Studia Fennica. Linguistica"}
+    ]}
+
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}

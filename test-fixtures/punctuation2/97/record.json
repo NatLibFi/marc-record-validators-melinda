@@ -10,6 +10,11 @@
         { "code": "x", "value": "1234-5678" },
         { "code": "v", "value": "4" }
       ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "i", "value": "Elokuvaversion perustana (teos)" },
+        { "code": "a", "value": "Test, Subfield A. Only."},
+        { "code": "t", "value": "Them Movie." }
+    ]},
     { "tag": "830", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "Suomeksi" },
       { "code": "a", "value": "Ruotsiksi" },

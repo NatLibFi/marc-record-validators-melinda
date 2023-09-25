@@ -1,0 +1,25 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "fv67890" },
+      { "code": "q", "value": "häftad" }
+    ]},
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "1234567890" },
+        { "code": "q", "value": "SID." }
+    ]},
+    { "tag": "024", "ind1": "8", "ind2": " ", "subfields": [
+      { "code": "a", "value": "MEL123" },
+      { "code": "q", "value": "Nidottu" }
+    ]},
+    { "tag": "028", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "TätäEnVieläOsaa" },
+      { "code": "q", "value": "(sid.)" }
+    ]}
+
+  ]
+}
