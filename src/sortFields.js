@@ -89,7 +89,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
 
   for (const sortFn of sorterFunctions) { // eslint-disable-line functional/no-loop-statements
     const result = sortFn(fieldA, fieldB);
-    debugDev(`${sortFn.name}: '${fieldToString(fieldA)}' vs '${fieldToString(fieldB)}' ${result}`);
+    debugDev(`${sortFn.name}: '${fieldToString(fieldA)}' vs '${fieldToString(fieldB)}': ${result}`);
     if (result !== 0) {
       return result;
     }
@@ -207,8 +207,8 @@ export function fieldOrderComparator(fieldA, fieldB) {
   }
 
   function preferKeep(fieldA, fieldB, keepOwner = 'FENNI') {
-    const hasKeepA = fieldHasSubfield('9', `${keepOwner}<KEEP>`);
-    const hasKeepB = fieldHasSubfield('9', `${keepOwner}<KEEP>`);
+    const hasKeepA = fieldHasSubfield(fieldA, '9', `${keepOwner}<KEEP>`);
+    const hasKeepB = fieldHasSubfield(fieldB, '9', `${keepOwner}<KEEP>`);
 
     if (hasKeepA && !hasKeepB) {
       return -1;
@@ -245,7 +245,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
       }
       const e = field.subfields.filter(sf => sf.code === 'e');
       const scores = e.map(sf => scoreRelatorTerm(sf.value));
-      debugDev(`RELATOR SCORE FOR '${fieldToString(field)}': ${scores.join(', ')}`);
+      //debugDev(`RELATOR SCORE FOR '${fieldToString(field)}': ${scores.join(', ')}`);
       return Math.max(...scores);
     }
 
@@ -277,8 +277,8 @@ export function fieldOrderComparator(fieldA, fieldB) {
   function sortByFieldLinkAndSequenceNumber(fieldA, fieldB) { // Sort by subfield $8 that is...
     const scoreA = fieldGetMinLinkAndSequenceNumber(fieldA);
     const scoreB = fieldGetMinLinkAndSequenceNumber(fieldB);
-    debugDev(`sf-8-A-score for '${fieldToString(fieldA)}: ${scoreA}`);
-    debugDev(`sf-8-B-score for '${fieldToString(fieldB)}: ${scoreB}`);
+    //debugDev(` sf-8-A-score for '${fieldToString(fieldA)}: ${scoreA}`);
+    //debugDev(` sf-8-B-score for '${fieldToString(fieldB)}: ${scoreB}`);
     if (scoreA === scoreB) {
       return 0;
     }
@@ -313,8 +313,8 @@ export function fieldOrderComparator(fieldA, fieldB) {
     const scoreA = fieldGetOccurrenceNumber(fieldA);
     const scoreB = fieldGetOccurrenceNumber(fieldB);
 
-    debugDev(`A: '${fieldToString(fieldA)}: ${scoreA}`);
-    debugDev(`B: '${fieldToString(fieldB)}: ${scoreB}`);
+    //debugDev(`A: '${fieldToString(fieldA)}: ${scoreA}`);
+    //debugDev(`B: '${fieldToString(fieldB)}: ${scoreB}`);
 
     if (scoreA === scoreB) {
       return 0;
@@ -355,7 +355,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
       if (!valB) {
         return 1;
       }
-      debugDev(`CHECKING SUBFIELD '${subfieldCode}': '${valA}' vs '${valB}'`);
+      //debugDev(`CHECKING SUBFIELD '${subfieldCode}': '${valA}' vs '${valB}'`);
 
       if (valA < valB) {
         return -1;
@@ -375,7 +375,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
 
       //debugDev(`CHECKING ${subfieldsToCheck.join(', ')}`);
       const result = scoreSubfieldsAlphabetically(subfieldsToCheck);
-      debugDev(`RESULT ${result}`);
+      //debugDev(`RESULT ${result}`);
       return result;
     }
     return 0;
