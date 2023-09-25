@@ -47,10 +47,9 @@ export default function () {
 }
 
 
-const relatorTermScore = { // Here bigger is better
-  // The list should be similar to the one for field internal $e sorting in marc-record-validators-js
-  // validator  osrtRelatorTerms.js. Validators should use this list eventually...
-  // More abstract, the earlier it appears.
+export const relatorTermScore = { // Here bigger is better
+  // NB! This is exportable as field internal $e sorting in marc-record-validators-js uses this.
+  // NB! The more abstract, the earlier it appears.
   // Note that terms with same abstraction level might also have order preferences
   // We should 1) check the order of these, and 2) add translations (support Swedish at the very least)
   // work/teos > expression/ekspressio > manifestation/manifestaatio
