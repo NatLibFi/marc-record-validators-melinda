@@ -177,29 +177,20 @@ export function removeInferiorChains(record, fix = true) {
 }
 
 
-function identifierlessAndKeeplessSubsets(fieldAsString) {
-  /* eslint-disable */
-  let deletables = [];
-
+function getIdentifierlessAndKeeplessSubsets(fieldAsString, deletables = []) {
   // The rules below are not perfect (in complex cases they don't catch all permutations), but good enough:
   // Remove identifier(s) (MELKEHITYS-2383-ish):
-  let tmp = fieldAsString;
-  while (tmp.match(/ ‡[01] [^‡]+($| ‡)/u)) {
-    tmp = tmp.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); 
-    deletables.push(tmp);
-    const arr = identifierlessAndKeeplessSubsets(tmp);
-    arr.forEach(val => deletables.push(val));
+  if (fieldAsString.match(/ ‡[01] [^‡]+(?:$| ‡)/u)) {
+    const identifierlessString = fieldAsString.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); // eslint-disable-line prefer-named-capture-group
+    return getIdentifierlessAndKeeplessSubsets(identifierlessString, [...deletables, identifierlessString]);
   }
 
   // Remove keepless versions:
-  tmp = fieldAsString;
-  if (tmp.match(/ ‡9 [A-Z]+<KEEP>/u)) {
-    tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
-    deletables.push(tmp);
-    const arr = identifierlessAndKeeplessSubsets(tmp);
-    arr.forEach(val => deletables.push(val));
+  if (fieldAsString.match(/ ‡9 [A-Z]+<KEEP>/u)) {
+    const keeplessString = fieldAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
+    return getIdentifierlessAndKeeplessSubsets(keeplessString, [...deletables, keeplessString]);
   }
-  /* eslint-enable */
+
   return deletables;
 }
 
@@ -307,9 +298,7 @@ function deriveIndividualDeletables(record) {
     const d490 = deriveIndividualDeletables490(fieldAsString);
     d490.forEach(str => deletableStringsArray.push(str));
 
-    const subsets = identifierlessAndKeeplessSubsets(fieldAsString)
-    subsets.forEach(str => deletableStringsArray.push(str));
-
+    deletableStringsArray = getIdentifierlessAndKeeplessSubsets(fieldAsString, deletableStringsArray);
 
   }
   /* eslint-enable */
