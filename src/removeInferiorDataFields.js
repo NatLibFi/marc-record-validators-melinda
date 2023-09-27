@@ -197,61 +197,45 @@ function getIdentifierlessAndKeeplessSubsets(fieldAsString, deletables = []) {
   return deletables;
 }
 
-function deriveIndividualDeletables490(fieldAsString) {
+function deriveIndividualDeletables490(todoList, deletables = []) {
+  const [fieldAsString, ...stillToDo] = todoList;
+  if (fieldAsString === undefined) {
+    return deletables;
+  }
+  nvdebug(`PROCESS ${fieldAsString}`);
   if (!fieldAsString.match(/^490/u)) {
-    return [];
+    return deriveIndividualDeletables490(stillToDo, deletables);
   }
 
-  /* eslint-disable */
-  let deletable490s = [];
 
   // $6-less version (keep this first)
-  let tmp = fieldAsString.replace(/ ‡6 [^‡]+ ‡/u, ' ‡');
-  if ( tmp !== fieldAsString) {
-    fieldAsString = tmp; // NB! Carry on with $6-less version!
-    deletable490s.push(tmp);
-  }
+  const sixless = fieldAsString.replace(/ ‡6 [^‡]+ ‡/u, ' ‡');
 
   // Without final $v or $x:
-  tmp = fieldAsString.replace(/ *[;,] ‡[vx] [^‡]+$/u, '');
-  if ( tmp !== fieldAsString) {
-    deletable490s.push(tmp);
-  }
+  const withoutFinalVOrX = fieldAsString.replace(/ *[;,] ‡[vx] [^‡]+$/u, '');
+  // Add intermediate $x-less version
+  const xless = fieldAsString.replace(/, ‡x [^‡]+(, ‡x| ; ‡v)/u, '$1'); // eslint-disable-line prefer-named-capture-group
 
-  // Add intermedia $x-less version
-  tmp = fieldAsString.replace(/, ‡x [^‡]+(, ‡x| ; ‡v)/u, '$1');
-  // Add final $v/$x-less version
-  if ( tmp !== fieldAsString) {
-    deletable490s.push(tmp);
-  }
-
-  // Add $xv-less version
-  tmp = fieldAsString.replace(/, ‡x [^‡]+ ‡v [^‡]+$/u, '');
-  if ( tmp !== fieldAsString) {
-    deletable490s.push(tmp);
-  }
+  // Add $xv-less version (handled by recursion?)
+  const xvless = fieldAsString.replace(/, ‡x [^‡]+ ‡v [^‡]+$/u, '');
 
   // MRA-433-ish (non-chain): 490 ind1=1 vs ind1=0: remove latter
-  if (fieldAsString.match(/^490 1/) ) {
-    // TODO: $x-less and $v-less versions...
-    tmp = `490 0${fieldAsString.substring(5)}`;
-    deletable490s.push(tmp);
-    const arr = deriveIndividualDeletables490(tmp);
-    arr.forEach(val => deletable490s.push(val));
+  const modifiedInd2 = fieldAsString.match(/^490 1/u) ? `490 0${fieldAsString.substring(5)}` : fieldAsString;
+
+  const arr = [sixless, withoutFinalVOrX, xless, xvless, modifiedInd2];
+  const filteredArr = arr.filter(val => val !== fieldAsString);
+
+  if (filteredArr.length) { // eslint-disable-line functional/no-conditional-statements
+    nvdebug(`${filteredArr.length} derivation(s) for ${fieldAsString}`);
+    nvdebug(filteredArr.join('\n'));
   }
 
-  nvdebug(`${deletable490s.length} derivation(s) for ${fieldAsString}`);
-  if (deletable490s.length > 0) {
-    nvdebug(deletable490s.join('\n'));
-  }
-   /* eslint-enable */
-  return deletable490s;
+  return deriveIndividualDeletables490([...stillToDo, ...filteredArr], [...deletables, ...filteredArr]);
 }
 
 function deriveIndividualDeletables(record) {
-  /* eslint-disable */
   const todoList = record.fields.map(f => fieldToString(f));
-  const finishedRecord = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
+  //const finishedRecord = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
 
   const deletableStringsArray = processTodoList(todoList);
 
@@ -266,8 +250,8 @@ function deriveIndividualDeletables(record) {
 
     if (currString.match(/^[1678]00/u)) {
       // Proof-of-concpet rule. Should be improved eventually...
-      if (currString.match(/, ‡e [^‡]+\.$/)) {
-        const tmp = currString.replace(/, ‡e [^‡]+\.$/, '.');
+      if (currString.match(/, ‡e [^‡]+\.$/u)) {
+        const tmp = currString.replace(/, ‡e [^‡]+\.$/u, '.');
         return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
       }
     }
@@ -276,7 +260,8 @@ function deriveIndividualDeletables(record) {
       const tmp = currString.replace(/ -- ‡t /gu, ' -- '). // remove non-initial $t subfields
         replace(/ ‡[rg] /gu, ' '). // remove $r and $g subfields
         replace(/ ‡t /u, ' ‡a '). // change first $t to $a
-        replace(/^505 (.)0/u, '505 $1#'); // ind2: '0' -> '#' // eslint-disable-line 
+        // ind2: '1' => '#':
+        replace(/^505 (.)0/u, '505 $1#'); // eslint-disable-line prefer-named-capture-group
       if (tmp !== currString) {
         return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
       }
@@ -285,22 +270,22 @@ function deriveIndividualDeletables(record) {
     }
 
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
-    if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/)) {
-      const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
+    if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
+      const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00'); // eslint-disable-line prefer-named-capture-group
       nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
       //deletableStringsArray.push(tmp);
-      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /)) {
-        const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/, '$1');
+      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
+        const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
         nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
         return processTodoList(stillToDo, [...deletables, tmp, tmp2]);
       }
       return processTodoList(stillToDo, [...deletables, tmp]);
     }
 
-    const d490 = deriveIndividualDeletables490(currString);
-    d490.forEach(str => deletables.push(str));
+    const d490 = deriveIndividualDeletables490([currString]);
+    d490.forEach(str => deletables.push(str)); // eslint-disable-line functional/immutable-data
 
-    deletables = getIdentifierlessAndKeeplessSubsets(currString, deletables);
+    deletables = getIdentifierlessAndKeeplessSubsets(currString, deletables); // eslint-disable-line no-param-reassign
 
     return processTodoList(stillToDo, deletables);
   }
