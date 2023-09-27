@@ -42,52 +42,56 @@ export default function () {
 
 
 function deriveInferiorChains(fields, record) {
-  /* eslint-disable */
-  let deletableStringsObject = {};
+  nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`);
+  const hash = {};
 
-  nvdebug(`WP1: GOT ${fields.length} field(s) for potential deletable chain derivation`);
-  fields.forEach(field => fieldDeriveChainDeletables(field));
+  fields.forEach(f => fieldToChainToDeletables(f));
 
-  function fieldDeriveChainDeletables(field) {
+  return hash;
+
+  //nvdebug(`WP1: GOT ${todoList.length} CHAINS`);
+
+
+  // here we map deletableStringObject[str] => field. The idea is to help debugging. We don't actually need the field object...
+  //return deriveChainDeletables(todoList);
+
+  function fieldToChainToDeletables(field) {
     const chain = fieldToChain(field, record);
-    if (chain.length === 0) {
+    if (chain.length < 2) {
       return;
     }
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
-
-    //nvdebug(`666: ${chainAsString}`);
-
-    // Fix MRA-476 (part 1): one $6 value can be worse than the other
-    let tmp = chainAsString;
-    while (tmp.match(/ ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+)\/[^ ]+/u)) {
-      tmp = tmp.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1');
-      //nvdebug(`FFS: ${tmp}`);
-      deletableStringsObject[tmp] = field;
-    }
-
-    // Remove keepless versions:
-    tmp = chainAsString;
-    while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
-      tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/, '');
-      deletableStringsObject[tmp] = field;
-      //nvdebug(`FFS: ${tmp}`);
-    }
-
-    // MRA-433: 490 ind1=1 vs ind1=0: remove latter (luckily no 2nd indicator etc)
-    if (chainAsString.match(/^490 1 .*\t880 1  ‡/) ) {
-      // change ind1s to '0' to get the deletable chain:
-      tmp = chainAsString.replace(/^490 1/u, '490 0').replace(/\t880 1/ug, "\t880 0");
-      deletableStringsObject[tmp] = field;
-    }
-
-
-
-
+    const arr = deriveChainDeletables([chainAsString]);
+    nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`);
+    arr.forEach(val => {
+      if (!(val in hash)) { // eslint-disable-line functional/no-conditional-statements
+        hash[val] = field; // eslint-disable-line functional/immutable-data
+      }
+    });
   }
 
+  function deriveChainDeletables(todoList, deletables = []) {
+    const [chainAsString, ...stillToDo] = todoList;
+    if (chainAsString === undefined) {
+      return deletables;
+    }
 
-  /* eslint-enable */
-  return deletableStringsObject;
+    // Fix MRA-476 (part 1): one $6 value can be worse than the other
+    const withoutScriptIdentificationCode = chainAsString.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
+
+    // Remove keepless versions:
+    const keepless = chainAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
+
+    // MRA-433: 490 ind1=1 vs ind1=0: remove latter (luckily no 2nd indicator etc)
+    const linked490Ind1 = chainAsString.replace(/^490 1/u, '490 0').replace(/\t880 1/ug, '\t880 0');
+    const arr = [withoutScriptIdentificationCode, keepless, linked490Ind1].filter(val => val !== chainAsString);
+    if (arr.length > 0) {
+      return deriveChainDeletables([...stillToDo, ...arr], [...deletables, ...arr]);
+    }
+
+    return deriveChainDeletables(stillToDo, deletables);
+  }
+
 }
 
 function isRelevantChain6(field, record) {
@@ -116,7 +120,7 @@ function isRelevantChain6(field, record) {
 
 export function removeInferiorChains(record, fix = true) {
   const fields = record.fields.filter(f => isRelevantChain6(f, record));
-  //nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
+  nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
 
   const deletableChainsAsKeys = deriveInferiorChains(fields, record);
   const nChains = Object.keys(deletableChainsAsKeys).length;
@@ -180,21 +184,14 @@ export function removeInferiorChains(record, fix = true) {
 }
 
 
-function getIdentifierlessAndKeeplessSubsets(fieldAsString, deletables = []) {
+function getIdentifierlessAndKeeplessSubsets(fieldAsString) {
   // The rules below are not perfect (in complex cases they don't catch all permutations), but good enough:
   // Remove identifier(s) (MELKEHITYS-2383-ish):
-  if (fieldAsString.match(/ ‡[01] [^‡]+(?:$| ‡)/u)) {
-    const identifierlessString = fieldAsString.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); // eslint-disable-line prefer-named-capture-group
-    return getIdentifierlessAndKeeplessSubsets(identifierlessString, [...deletables, identifierlessString]);
-  }
 
-  // Remove keepless versions:
-  if (fieldAsString.match(/ ‡9 [A-Z]+<KEEP>/u)) {
-    const keeplessString = fieldAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
-    return getIdentifierlessAndKeeplessSubsets(keeplessString, [...deletables, keeplessString]);
-  }
+  const identifierlessString = fieldAsString.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const keeplessString = fieldAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
 
-  return deletables;
+  return [identifierlessString, keeplessString].filter(val => val !== fieldAsString);
 }
 
 function deriveIndividualDeletables490(todoList, deletables = []) {
@@ -206,7 +203,6 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
   if (!fieldAsString.match(/^490/u)) {
     return deriveIndividualDeletables490(stillToDo, deletables);
   }
-
 
   // $6-less version (keep this first)
   const sixless = fieldAsString.replace(/ ‡6 [^‡]+ ‡/u, ' ‡');
@@ -222,15 +218,13 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
   // MRA-433-ish (non-chain): 490 ind1=1 vs ind1=0: remove latter
   const modifiedInd2 = fieldAsString.match(/^490 1/u) ? `490 0${fieldAsString.substring(5)}` : fieldAsString;
 
-  const arr = [sixless, withoutFinalVOrX, xless, xvless, modifiedInd2];
-  const filteredArr = arr.filter(val => val !== fieldAsString);
+  const arr = [sixless, withoutFinalVOrX, xless, xvless, modifiedInd2].filter(val => val !== fieldAsString);
 
-  if (filteredArr.length) { // eslint-disable-line functional/no-conditional-statements
-    nvdebug(`${filteredArr.length} derivation(s) for ${fieldAsString}`);
-    nvdebug(filteredArr.join('\n'));
+  if (arr.length) { // eslint-disable-line functional/no-conditional-statements
+    nvdebug(`${arr.length} derivation(s) for ${fieldAsString}`);
+    nvdebug(arr.join('\n'));
   }
-
-  return deriveIndividualDeletables490([...stillToDo, ...filteredArr], [...deletables, ...filteredArr]);
+  return arr;
 }
 
 function deriveIndividualDeletables(record) {
@@ -283,9 +277,15 @@ function deriveIndividualDeletables(record) {
     }
 
     const d490 = deriveIndividualDeletables490([currString]);
-    d490.forEach(str => deletables.push(str)); // eslint-disable-line functional/immutable-data
+    if (d490.length) {
+      return processTodoList([...stillToDo, ...d490], [...deletables, ...d490]);
+    }
+    // d490.forEach(str => deletables.push(str)); // eslint-disable-line functional/immutable-data
 
-    deletables = getIdentifierlessAndKeeplessSubsets(currString, deletables); // eslint-disable-line no-param-reassign
+    const subsets = getIdentifierlessAndKeeplessSubsets(currString); // eslint-disable-line no-param-reassign
+    if (subsets.length) {
+      return processTodoList([...stillToDo, ...subsets], [...deletables, ...subsets]);
+    }
 
     return processTodoList(stillToDo, deletables);
   }
