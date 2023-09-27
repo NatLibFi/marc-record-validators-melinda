@@ -80,6 +80,9 @@ function deriveInferiorChains(fields, record) {
       deletableStringsObject[tmp] = field;
     }
 
+
+
+
   }
 
 
@@ -247,62 +250,60 @@ function deriveIndividualDeletables490(fieldAsString) {
 
 function deriveIndividualDeletables(record) {
   /* eslint-disable */
-  let deletableStringsArray = [];
-
+  const todoList = record.fields.map(f => fieldToString(f));
   const finishedRecord = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
 
-  record.fields.forEach(field => fieldDeriveIndividualDeletables(field));
+  const deletableStringsArray = processTodoList(todoList);
 
-  function fieldDeriveIndividualDeletables(field) {
-    const fieldAsString = fieldToString(field);
+  return uniqArray(deletableStringsArray);
 
-    // Proof-of-concept rule:
-    let tmp = fieldAsString;
-    if (field.tag.match(/^[1678]00$/u)) {
-      while (tmp.match(/, ‡e [^‡]+\.$/)) {
-        tmp = tmp.replace(/, ‡e [^‡]+\.$/, '.');
-        deletableStringsArray.push(tmp);
+  function processTodoList(thingsToDo, deletables = []) {
+    const [currString, ...stillToDo] = thingsToDo;
+
+    if (currString === undefined) {
+      return deletables;
+    }
+
+    if (currString.match(/^[1678]00/u)) {
+      // Proof-of-concpet rule. Should be improved eventually...
+      if (currString.match(/, ‡e [^‡]+\.$/)) {
+        const tmp = currString.replace(/, ‡e [^‡]+\.$/, '.');
+        return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
       }
     }
 
-    if (field.tag === '505') { // MRA-413-ish
-      if (fieldAsString.match(/^.0.*-- ‡t/u)) {
-        tmp = fieldAsString;
-        tmp = tmp.replace(/ -- ‡t /gu, ' -- ');
-        tmp = tmp.replace(/ ‡[rg] /gu, ' ');
-        tmp = tmp.replace(/ ‡t /u, ' ‡a '); // first $t, not
-        tmp = tmp.replace(/^505 (.)0/u, '505 $1#');
-        if (tmp !== fieldAsString) {
-          deletableStringsArray.push(tmp);
-        }
-        //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
-        //nvdebug(`505 DERIVATE: '${tmp}'`)
+    if (currString.match(/^505 .0.*-- ‡t/u)) { // MRA-413-ish
+      const tmp = currString.replace(/ -- ‡t /gu, ' -- '). // remove non-initial $t subfields
+        replace(/ ‡[rg] /gu, ' '). // remove $r and $g subfields
+        replace(/ ‡t /u, ' ‡a '). // change first $t to $a
+        replace(/^505 (.)0/u, '505 $1#'); // ind2: '0' -> '#' // eslint-disable-line 
+      if (tmp !== currString) {
+        return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
       }
+      //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
+      //nvdebug(`505 DERIVATE: '${tmp}'`)
     }
 
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
-    if (field.tag === '880') {
-      tmp = fieldAsString;
-      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/)) {
-        tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
-        nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
-        deletableStringsArray.push(tmp);
-        if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /)) {
-          tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/, '$1');
-          nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
-          deletableStringsArray.push(tmp);
-        }
+    if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/)) {
+      const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
+      nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
+      //deletableStringsArray.push(tmp);
+      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /)) {
+        const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/, '$1');
+        nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
+        return processTodoList(stillToDo, [...deletables, tmp, tmp2]);
       }
+      return processTodoList(stillToDo, [...deletables, tmp]);
     }
 
-    const d490 = deriveIndividualDeletables490(fieldAsString);
-    d490.forEach(str => deletableStringsArray.push(str));
+    const d490 = deriveIndividualDeletables490(currString);
+    d490.forEach(str => deletables.push(str));
 
-    deletableStringsArray = getIdentifierlessAndKeeplessSubsets(fieldAsString, deletableStringsArray);
+    deletables = getIdentifierlessAndKeeplessSubsets(currString, deletables);
 
+    return processTodoList(stillToDo, deletables);
   }
-  /* eslint-enable */
-  return uniqArray(deletableStringsArray);
 
 }
 
