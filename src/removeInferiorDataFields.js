@@ -176,6 +176,7 @@ export function removeInferiorChains(record, fix = true) {
   return deletedStringsArray;
 }
 
+
 function idenfifierlessAndKeeplessSubsets(fieldAsString) {
   /* eslint-disable */
   let deletables = [];
@@ -335,10 +336,9 @@ function deriveIndividualNormalizedDeletables(record) {
 
     //  MET-461:
     if (recordIsFinished && ['245', '246'].includes(field.tag) && fieldAsNormalizedString.match(/ ‡a /u)) {
-      tmp = fieldAsNormalizedString;
-      tmp = tmp.replace(/^(...) ../u, '946 ##'); // Ind
-      tmp = tmp.replace(" ‡a ", " ‡i nimeke onixissa ‡a "); // NB! This is added in the normalized lower-cased form!
-      tmp = tmp.replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Can $c be non-last?
+      tmp = fieldAsNormalizedString.replace(/^(...) ../u, '946 ##'). // Change tag to 946 and indicators to '##'
+        replace(" ‡a ", " ‡i nimeke onixissa ‡a "). // Add $i before $a. NB! This is added in the normalized lower-cased form!
+        replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Remove $c. (Can $c be non-last?)
       deletableNormalizedStringsArray.push(tmp);
       deletableNormalizedStringsArray.push(`${tmp} ‡5 MELINDA`); // MET-461 comment. NB! $5 is never normalized
     }
