@@ -150,7 +150,7 @@ const crappy24X = [
   {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'abfghinp', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'n', 'followedBy': 'p', 'remove': /\.$/u, 'context': dotIsProbablyPunc}, // MELINDA-8817
-  {'code': 'p', 'followedBy': 'p', 'remove': /\.$/u, 'context': dotIsProbablyPunc} // MELINDA-8817
+  {'code': 'p', 'followedBy': 'pc', 'remove': /\.$/u, 'context': dotIsProbablyPunc} // MELINDA-8817
 ];
 
 const cleanCrappyPunctuationRules = {
@@ -284,6 +284,7 @@ const addSeriesTitle = [ // 490 and 830
 const addPairedPunctuationRules = {
   '100': addX00,
   '110': addX10,
+  '240': add246,
   '245': add245,
   '246': add246,
   '260': [
