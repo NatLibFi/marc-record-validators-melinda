@@ -177,7 +177,7 @@ export function removeInferiorChains(record, fix = true) {
 }
 
 
-function idenfifierlessAndKeeplessSubsets(fieldAsString) {
+function identifierlessAndKeeplessSubsets(fieldAsString) {
   /* eslint-disable */
   let deletables = [];
 
@@ -187,7 +187,7 @@ function idenfifierlessAndKeeplessSubsets(fieldAsString) {
   while (tmp.match(/ ‡[01] [^‡]+($| ‡)/u)) {
     tmp = tmp.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); 
     deletables.push(tmp);
-    const arr = idenfifierlessAndKeeplessSubsets(tmp);
+    const arr = identifierlessAndKeeplessSubsets(tmp);
     arr.forEach(val => deletables.push(val));
   }
 
@@ -196,7 +196,7 @@ function idenfifierlessAndKeeplessSubsets(fieldAsString) {
   if (tmp.match(/ ‡9 [A-Z]+<KEEP>/u)) {
     tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
     deletables.push(tmp);
-    const arr = idenfifierlessAndKeeplessSubsets(tmp);
+    const arr = identifierlessAndKeeplessSubsets(tmp);
     arr.forEach(val => deletables.push(val));
   }
   /* eslint-enable */
@@ -307,7 +307,7 @@ function deriveIndividualDeletables(record) {
     const d490 = deriveIndividualDeletables490(fieldAsString);
     d490.forEach(str => deletableStringsArray.push(str));
 
-    const subsets = idenfifierlessAndKeeplessSubsets(fieldAsString)
+    const subsets = identifierlessAndKeeplessSubsets(fieldAsString)
     subsets.forEach(str => deletableStringsArray.push(str));
 
 
