@@ -109,13 +109,8 @@ function isRelevantChain6(field, record) {
     return false;
   }
 
-  // Chainwise non-initial fields are not relevant as chains is handled through the initial/head field
-  /* eslint-disable */
-  field.tmpInferiorId = 666;
-  const result = chain[0].tmpInferiorId === 666 ? true : false;
-  delete field.tmpInferiorId;
-  /* eslint-enable */
-  return result;
+  // Check whether our field is the head of a chain:
+  return sameField(field, chain[0]);
 }
 
 export function removeInferiorChains(record, fix = true) {
