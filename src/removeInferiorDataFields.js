@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {fieldToChain, sameField} from './removeDuplicateDataFields';
 import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils';
-import {fieldsToString, fieldToString, nvdebug, uniqArray} from './utils';
+import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug, uniqArray} from './utils';
 import {fieldHasValidSubfield8} from './subfield8Utils';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel} from './prepublicationUtils';
 import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison';
@@ -126,11 +126,41 @@ export function removeInferiorChains(record, fix = true) {
 
   nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`);
 
+  return innerRemoveInferiorChains(fields);
 
-  /* eslint-disable */
+  function innerRemoveInferiorChains(fields, deletedStringsArray = []) {
+    const [currField, ...remainingFields] = fields;
 
-  let deletedStringsArray = [];
-  fields.forEach(f => innerRemoveInferiorChain(f));
+    if (currField === undefined) {
+      return deletedStringsArray;
+    }
+
+    const chain = fieldToChain(currField, record);
+    if (chain.length === 0 || !sameField(currField, chain[0])) {
+      return innerRemoveInferiorChains(remainingFields, deletedStringsArray);
+    }
+
+    const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
+    if (!(chainAsString in deletableChainsAsKeys)) {
+      return innerRemoveInferiorChains(remainingFields, deletedStringsArray);
+    }
+
+    const triggeringField = deletableChainsAsKeys[chainAsString];
+    const triggeringChain = fieldToChain(triggeringField, record);
+
+    // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
+    if (chainContains1XX(chain)) { // eslint-disable-line functional/no-conditional-statements
+      triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
+    }
+    //nvdebug(`iRIS6C: ${chainAsString}`);
+    const deletedString = fieldsToString(chain);
+    const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
+    if (fix) { // eslint-disable-line functional/no-conditional-statements
+      nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
+      chain.forEach(field => record.removeField(field));
+    }
+    return innerRemoveInferiorChains(remainingFields, [...deletedStringsArray, message]);
+  }
 
   function chainContains1XX(chain) {
     return chain.some(f => f.tag.substring(0, 1) === '1');
@@ -148,34 +178,6 @@ export function removeInferiorChains(record, fix = true) {
     pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField));
   }
 
-  function innerRemoveInferiorChain(field) {
-    const chain = fieldToChain(field, record);
-    if (chain.length === 0 || !sameField(field, chain[0])) {
-      return;
-    }
-
-    const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
-    if (chainAsString in deletableChainsAsKeys) {
-      const triggeringField = deletableChainsAsKeys[chainAsString];
-      const triggeringChain = fieldToChain(triggeringField, record);
-
-      // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
-      if(chainContains1XX(chain)) {
-        triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
-      }
-      //nvdebug(`iRIS6C: ${chainAsString}`);
-      const deletedString = fieldsToString(chain);
-      const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
-      deletedStringsArray.push(message);
-      if (fix) {
-        nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
-        chain.forEach(currField => record.removeField(currField));
-      }
-    }
-  }
-
-  /* eslint-enable */
-  return deletedStringsArray;
 }
 
 
@@ -292,31 +294,31 @@ function fieldToNormalizedString(field) {
   return fieldToString(normalizedField);
 }
 
-function deriveIndividualNormalizedDeletables(record) {
-  /* eslint-disable */
-  let deletableNormalizedStringsArray = [];
-
+function deriveIndividualNormalizedDeletables(record) { //  MET-461:
   const recordIsFinished = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
-
-  record.fields.forEach(field => fieldDeriveIndividualNormalizedDeletables(field));
-
-  function fieldDeriveIndividualNormalizedDeletables(field) {
-    const fieldAsNormalizedString = fieldToNormalizedString(field);
-    let tmp = fieldAsNormalizedString;
-
-    //  MET-461:
-    if (recordIsFinished && ['245', '246'].includes(field.tag) && fieldAsNormalizedString.match(/ ‡a /u)) {
-      tmp = fieldAsNormalizedString.replace(/^(...) ../u, '946 ##'). // Change tag to 946 and indicators to '##'
-        replace(" ‡a ", " ‡i nimeke onixissa ‡a "). // Add $i before $a. NB! This is added in the normalized lower-cased form!
-        replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Remove $c. (Can $c be non-last?)
-      deletableNormalizedStringsArray.push(tmp);
-      deletableNormalizedStringsArray.push(`${tmp} ‡5 MELINDA`); // MET-461 comment. NB! $5 is never normalized
-    }
+  if (!recordIsFinished) {
+    return [];
   }
+  const relevantFields = record.fields.filter(f => ['245', '246'].includes(f.tag) && fieldHasSubfield(f, 'a'));
 
-  /* eslint-enable */
-  return deletableNormalizedStringsArray; // we should do uniq!
+  return deriveDeletable946s(relevantFields);
 
+  function deriveDeletable946s(fields, results = []) {
+    const [currField, ...remainingFields] = fields;
+    if (currField === undefined) {
+      return results;
+    }
+
+    const fieldAsNormalizedString = fieldToNormalizedString(currField);
+    const tmp = fieldAsNormalizedString.replace(/^(?:...) ../u, '946 ##'). // <= Change tag to 946 and indicators to '##'
+      replace(' ‡a ', ' ‡i nimeke onixissa ‡a '). // Add $i before $a. NB! This is added in the normalized lower-cased form!
+      replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Remove $c. (Can $c be non-last?)
+    const candArray = [tmp, `${tmp} ‡5 MELINDA`].filter(val => val !== fieldAsNormalizedString);
+    if (candArray.length) {
+      return deriveDeletable946s(remainingFields, [...results, ...candArray]);
+    }
+    return deriveDeletable946s(remainingFields, results);
+  }
 }
 
 export function removeIndividualInferiorDatafields(record, fix = true) { // No $6 nor $8 in field
