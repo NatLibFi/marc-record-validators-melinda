@@ -42,7 +42,7 @@ export default function () {
 
 
 function deriveInferiorChains(fields, record) {
-  nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`);
+  //nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`);
   const hash = {};
 
   fields.forEach(f => fieldToChainToDeletables(f));
@@ -62,7 +62,7 @@ function deriveInferiorChains(fields, record) {
     }
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
     const arr = deriveChainDeletables([chainAsString]);
-    nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`);
+    //nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`);
     arr.forEach(val => {
       if (!(val in hash)) { // eslint-disable-line functional/no-conditional-statements
         hash[val] = field; // eslint-disable-line functional/immutable-data
@@ -115,7 +115,7 @@ function isRelevantChain6(field, record) {
 
 export function removeInferiorChains(record, fix = true) {
   const fields = record.fields.filter(f => isRelevantChain6(f, record));
-  nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
+  //nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
 
   const deletableChainsAsKeys = deriveInferiorChains(fields, record);
   const nChains = Object.keys(deletableChainsAsKeys).length;
@@ -124,7 +124,7 @@ export function removeInferiorChains(record, fix = true) {
     return [];
   }
 
-  nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`);
+  //nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`);
 
   return innerRemoveInferiorChains(fields);
 
@@ -156,7 +156,7 @@ export function removeInferiorChains(record, fix = true) {
     const deletedString = fieldsToString(chain);
     const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
     if (fix) { // eslint-disable-line functional/no-conditional-statements
-      nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
+      //nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
       chain.forEach(field => record.removeField(field));
     }
     return innerRemoveInferiorChains(remainingFields, [...deletedStringsArray, message]);
@@ -196,7 +196,7 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
   if (fieldAsString === undefined) {
     return deletables;
   }
-  nvdebug(`PROCESS ${fieldAsString}`);
+  //nvdebug(`PROCESS ${fieldAsString}`);
   if (!fieldAsString.match(/^490/u)) {
     return deriveIndividualDeletables490(stillToDo, deletables);
   }
@@ -217,10 +217,12 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
 
   const arr = [sixless, withoutFinalVOrX, xless, xvless, modifiedInd2].filter(val => val !== fieldAsString);
 
+  /*
   if (arr.length) { // eslint-disable-line functional/no-conditional-statements
     nvdebug(`${arr.length} derivation(s) for ${fieldAsString}`);
     nvdebug(arr.join('\n'));
   }
+  */
   return arr;
 }
 
@@ -263,11 +265,11 @@ function deriveIndividualDeletables(record) {
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
     if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
       const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00'); // eslint-disable-line prefer-named-capture-group
-      nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
+      //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
       //deletableStringsArray.push(tmp);
       if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
         const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
-        nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
+        //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
         return processTodoList(stillToDo, [...deletables, tmp, tmp2]);
       }
       return processTodoList(stillToDo, [...deletables, tmp]);
@@ -334,7 +336,7 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 
   if (fix) { // eslint-disable-line functional/no-conditional-statements
     hits.forEach(field => {
-      nvdebug(`Remove inferior field: ${fieldToString(field)}`);
+      //nvdebug(`Remove inferior field: ${fieldToString(field)}`, debug);
       record.removeField(field);
     });
   }
@@ -362,8 +364,8 @@ export function removeInferiorDatafields(record, fix = true) {
   const removables6 = removeInferiorChains(record, fix); // Lone subfield $6 chains
   // HOW TO HANDLE $6+$8 combos? Skipping is relatively OK.
 
-  nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`);
-  nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`);
+  nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`, debug);
+  nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`, debug);
 
   const removablesAll = removables.concat(removables6); //.concat(removables8);
 
