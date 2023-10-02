@@ -14,7 +14,7 @@
     "url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
   },
   "license": "MIT",
-  "version": "10.13.1",
+  "version": "10.14.0-alpha.1",
   "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -51,19 +51,19 @@
     "@natlibfi/marc-record-validate": "^8.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.22.15",
-    "@babel/core": "^7.22.17",
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
     "@babel/eslint-parser": "^7.22.15",
-    "@babel/preset-env": "^7.22.15",
-    "@natlibfi/eslint-config-melinda-backend": "^3.0.1",
+    "@babel/preset-env": "^7.22.20",
+    "@natlibfi/eslint-config-melinda-backend": "^3.0.2",
     "@natlibfi/fixugen": "^2.0.1",
     "@natlibfi/fixura": "^3.0.1",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-rewire": "^1.2.0",
-    "chai": "^4.3.8",
+    "chai": "^4.3.10",
     "chai-as-promised": "^7.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "fetch-mock": "^9.11.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0"

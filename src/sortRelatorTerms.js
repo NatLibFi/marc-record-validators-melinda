@@ -6,38 +6,16 @@ import clone from 'clone';
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
 import {fieldFixPunctuation} from './punctuation2';
+import {relatorTermScore} from './sortFields';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortRelatorTerms');
 //const debugData = debug.extend('data');
 
 const WORST_WORK = 98;
 
-const relatorTermValues = { // The higher, the better
-  // More abstract, the earlier it appears.
-  // Note that terms with same abstraction level might also have order preferences
-  // work/teos > expression/ekspressio > manifestation/manifestaatio
-  'säveltäjä': 100,
-  'kirjoittaja': 99, // Viola wants composer/säveltäjä on top (highly unlikely to ever appear together, but...)
-  'taiteilija': 98,
-  'sanoittaja': 90,
-  // ekspressio
-  'sovittaja': 80,
-  'toimittaja': 80,
-  'kuvittaja': 75,
-  'editointi': 71,
-  'kääntäjä': 70,
-  'lukija': 61,
-  // manifestaatio
-  'esittäjä': 60,
-  'johtaja': 50,
-  'kustantaja': 41,
-  'julkaisija': 40
-
-};
-
 function scoreRelatorTerm(term) {
   const normalizedTerm = normalizeValue(term);
-  if (normalizedTerm in relatorTermValues) {
-    return relatorTermValues[normalizedTerm];
+  if (normalizedTerm in relatorTermScore) {
+    return relatorTermScore[normalizedTerm];
   }
   return 0;
 }

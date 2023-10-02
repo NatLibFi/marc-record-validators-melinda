@@ -15,17 +15,29 @@ const defaultSortOrderFinns = defaultSortOrderStringFinns.split('');
 const defaultSortOrderOthers = defaultSortOrderStringOthers.split('');
 
 
-export default function () {
+export default function (tagPattern) {
 
   return {
     description: 'Swap adjacent subfields',
     validate, fix
   };
 
-  function fix(record) {
+  function getRelevantFields(record, tagPattern) {
+    const datafields = record.fields.filter(f => f.subfields);
+    if (!tagPattern) {
+      return datafields;
+    }
+
+    const regexp = new RegExp(tagPattern, 'u');
+    return datafields.filter(f => regexp.test(f.tag));
+  }
+
+  function fix(record, tagPattern) {
     const res = {message: [], fix: [], valid: true};
 
-    record.fields.forEach(field => {
+    const relevantFields = getRelevantFields(record, tagPattern);
+
+    relevantFields.forEach(field => {
       sortAdjacentSubfields(field);
     });
 
@@ -35,7 +47,9 @@ export default function () {
   function validate(record) {
     const res = {message: []};
 
-    record.fields.forEach(field => {
+    const relevantFields = getRelevantFields(record, tagPattern);
+
+    relevantFields.forEach(field => {
       const clonedField = clone(field);
       sortAdjacentSubfields(clonedField);
       const clonedFieldAsString = fieldToString(clonedField);

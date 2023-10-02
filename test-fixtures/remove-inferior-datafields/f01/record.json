@@ -1,6 +1,25 @@
 {
   "fields": [
     { "tag": "001", "value": "f01" },
+
+    { "tag": "610", "ind1": "2", "ind2": "4", "subfields": [
+      { "code": "a", "value": "MELKEHITYS-2383a."},
+      { "code": "0", "value": "(FI_ASTERI-N)000111222" },
+      { "code": "9", "value": "FENNI<KEEP>" }
+    ]},
+    { "tag": "610", "ind1": "2", "ind2": "4", "subfields": [
+      { "code": "a", "value": "MELKEHITYS-2383a."}
+    ]},
+
+    { "tag": "610", "ind1": "2", "ind2": "4", "subfields": [
+      { "code": "a", "value": "MELKEHITYS-2383b."},
+      { "code": "0", "value": "(FI_ASTERI-N)000111223" }
+    ]},
+    { "tag": "610", "ind1": "2", "ind2": "4", "subfields": [
+      { "code": "a", "value": "MELKEHITYS-2383b."}
+    ]},
+
+
     { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "term"} ]},
     { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "a", "value": "term"},

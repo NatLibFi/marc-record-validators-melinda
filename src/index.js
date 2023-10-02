@@ -30,6 +30,7 @@ import RemoveDuplicateDataFields from './removeDuplicateDataFields';
 import RemoveInferiorDataFields from './removeInferiorDataFields';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
 import SanitizeVocabularySourceCodes from './sanitize-vocabulary-source-codes';
+import SortFields from './sortFields';
 import SortRelatorTerms from './sortRelatorTerms';
 import SortSubfields from './sortSubfields';
 import SortTags from './sort-tags';
@@ -84,5 +85,6 @@ export {
   TypeOfDateF008,
   UnicodeDecomposition,
   UpdateField540,
-  Urn
+  Urn,
+  SortFields // Keep this as last
 };

@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {fieldToChain, sameField} from './removeDuplicateDataFields';
 import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils';
-import {fieldsToString, fieldToString, nvdebug} from './utils';
+import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug, uniqArray} from './utils';
 import {fieldHasValidSubfield8} from './subfield8Utils';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel} from './prepublicationUtils';
 import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison';
@@ -42,49 +42,56 @@ export default function () {
 
 
 function deriveInferiorChains(fields, record) {
-  /* eslint-disable */
-  let deletableStringsObject = {};
+  //nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`);
+  const hash = {};
 
-  nvdebug(`WP1: GOT ${fields.length} field(s) for potential deletable chain derivation`);
-  fields.forEach(field => fieldDeriveChainDeletables(field));
+  fields.forEach(f => fieldToChainToDeletables(f));
 
-  function fieldDeriveChainDeletables(field) {
+  return hash;
+
+  //nvdebug(`WP1: GOT ${todoList.length} CHAINS`);
+
+
+  // here we map deletableStringObject[str] => field. The idea is to help debugging. We don't actually need the field object...
+  //return deriveChainDeletables(todoList);
+
+  function fieldToChainToDeletables(field) {
     const chain = fieldToChain(field, record);
-    if (chain.length === 0) {
+    if (chain.length < 2) {
       return;
     }
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
-
-    //nvdebug(`666: ${chainAsString}`);
-
-    // Fix MRA-476 (part 1): one $6 value can be worse than the other
-    let tmp = chainAsString;
-    while (tmp.match(/ ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+)\/[^ ]+/u)) {
-      tmp = tmp.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1');
-      //nvdebug(`FFS: ${tmp}`);
-      deletableStringsObject[tmp] = field;
-    }
-
-    // Remove keepless versions:
-    tmp = chainAsString;
-    while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
-      tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/, '');
-      deletableStringsObject[tmp] = field;
-      //nvdebug(`FFS: ${tmp}`);
-    }
-
-    // MRA-433: 490 ind1=1 vs ind1=0: remove latter (luckily no 2nd indicator etc)
-    if (chainAsString.match(/^490 1 .*\t880 1  ‡/) ) {
-      // change ind1s to '0' to get the deletable chain:
-      tmp = chainAsString.replace(/^490 1/u, '490 0').replace(/\t880 1/ug, "\t880 0");
-      deletableStringsObject[tmp] = field;
-    }
-
+    const arr = deriveChainDeletables([chainAsString]);
+    //nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`);
+    arr.forEach(val => {
+      if (!(val in hash)) { // eslint-disable-line functional/no-conditional-statements
+        hash[val] = field; // eslint-disable-line functional/immutable-data
+      }
+    });
   }
 
+  function deriveChainDeletables(todoList, deletables = []) {
+    const [chainAsString, ...stillToDo] = todoList;
+    if (chainAsString === undefined) {
+      return deletables;
+    }
 
-  /* eslint-enable */
-  return deletableStringsObject;
+    // Fix MRA-476 (part 1): one $6 value can be worse than the other
+    const withoutScriptIdentificationCode = chainAsString.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
+
+    // Remove keepless versions:
+    const keepless = chainAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
+
+    // MRA-433: 490 ind1=1 vs ind1=0: remove latter (luckily no 2nd indicator etc)
+    const linked490Ind1 = chainAsString.replace(/^490 1/u, '490 0').replace(/\t880 1/ug, '\t880 0');
+    const arr = [withoutScriptIdentificationCode, keepless, linked490Ind1].filter(val => val !== chainAsString);
+    if (arr.length > 0) {
+      return deriveChainDeletables([...stillToDo, ...arr], [...deletables, ...arr]);
+    }
+
+    return deriveChainDeletables(stillToDo, deletables);
+  }
+
 }
 
 function isRelevantChain6(field, record) {
@@ -102,13 +109,8 @@ function isRelevantChain6(field, record) {
     return false;
   }
 
-  // Chainwise non-initial fields are not relevant as chains is handled through the initial/head field
-  /* eslint-disable */
-  field.tmpInferiorId = 666;
-  const result = chain[0].tmpInferiorId === 666 ? true : false;
-  delete field.tmpInferiorId;
-  /* eslint-enable */
-  return result;
+  // Check whether our field is the head of a chain:
+  return sameField(field, chain[0]);
 }
 
 export function removeInferiorChains(record, fix = true) {
@@ -122,13 +124,43 @@ export function removeInferiorChains(record, fix = true) {
     return [];
   }
 
-  nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`);
+  //nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`);
 
+  return innerRemoveInferiorChains(fields);
 
-  /* eslint-disable */
+  function innerRemoveInferiorChains(fields, deletedStringsArray = []) {
+    const [currField, ...remainingFields] = fields;
 
-  let deletedStringsArray = [];
-  fields.forEach(f => innerRemoveInferiorChain(f));
+    if (currField === undefined) {
+      return deletedStringsArray;
+    }
+
+    const chain = fieldToChain(currField, record);
+    if (chain.length === 0 || !sameField(currField, chain[0])) {
+      return innerRemoveInferiorChains(remainingFields, deletedStringsArray);
+    }
+
+    const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
+    if (!(chainAsString in deletableChainsAsKeys)) {
+      return innerRemoveInferiorChains(remainingFields, deletedStringsArray);
+    }
+
+    const triggeringField = deletableChainsAsKeys[chainAsString];
+    const triggeringChain = fieldToChain(triggeringField, record);
+
+    // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
+    if (chainContains1XX(chain)) { // eslint-disable-line functional/no-conditional-statements
+      triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
+    }
+    //nvdebug(`iRIS6C: ${chainAsString}`);
+    const deletedString = fieldsToString(chain);
+    const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
+    if (fix) { // eslint-disable-line functional/no-conditional-statements
+      //nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
+      chain.forEach(field => record.removeField(field));
+    }
+    return innerRemoveInferiorChains(remainingFields, [...deletedStringsArray, message]);
+  }
 
   function chainContains1XX(chain) {
     return chain.some(f => f.tag.substring(0, 1) === '1');
@@ -146,150 +178,116 @@ export function removeInferiorChains(record, fix = true) {
     pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField));
   }
 
-  function innerRemoveInferiorChain(field) {
-    const chain = fieldToChain(field, record);
-    if (chain.length === 0 || !sameField(field, chain[0])) {
-      return;
-    }
-
-    const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
-    if (chainAsString in deletableChainsAsKeys) {
-      const triggeringField = deletableChainsAsKeys[chainAsString];
-      const triggeringChain = fieldToChain(triggeringField, record);
-
-      // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
-      if(chainContains1XX(chain)) {
-        triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
-      }
-      //nvdebug(`iRIS6C: ${chainAsString}`);
-      const deletedString = fieldsToString(chain);
-      const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
-      deletedStringsArray.push(message);
-      if (fix) {
-        nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
-        chain.forEach(currField => record.removeField(currField));
-      }
-    }
-  }
-
-  /* eslint-enable */
-  return deletedStringsArray;
 }
 
-function deriveIndividualDeletables490(fieldAsString) {
-  if (!fieldAsString.match(/^490/u)) {
-    return [];
-  }
 
-  /* eslint-disable */
-  let deletable490s = [];
+function getIdentifierlessAndKeeplessSubsets(fieldAsString) {
+  // The rules below are not perfect (in complex cases they don't catch all permutations), but good enough:
+  // Remove identifier(s) (MELKEHITYS-2383-ish):
+
+  const identifierlessString = fieldAsString.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const keeplessString = fieldAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
+
+  return [identifierlessString, keeplessString].filter(val => val !== fieldAsString);
+}
+
+function deriveIndividualDeletables490(todoList, deletables = []) {
+  const [fieldAsString, ...stillToDo] = todoList;
+  if (fieldAsString === undefined) {
+    return deletables;
+  }
+  //nvdebug(`PROCESS ${fieldAsString}`);
+  if (!fieldAsString.match(/^490/u)) {
+    return deriveIndividualDeletables490(stillToDo, deletables);
+  }
 
   // $6-less version (keep this first)
-  let tmp = fieldAsString.replace(/ ‡6 [^‡]+ ‡/u, ' ‡');
-  if ( tmp !== fieldAsString) {
-    fieldAsString = tmp; // NB! Carry on with $6-less version!
-    deletable490s.push(tmp);
-  }
+  const sixless = fieldAsString.replace(/ ‡6 [^‡]+ ‡/u, ' ‡');
 
   // Without final $v or $x:
-  tmp = fieldAsString.replace(/ *[;,] ‡[vx] [^‡]+$/u, '');
-  if ( tmp !== fieldAsString) {
-    deletable490s.push(tmp);
-  }
+  const withoutFinalVOrX = fieldAsString.replace(/ *[;,] ‡[vx] [^‡]+$/u, '');
+  // Add intermediate $x-less version
+  const xless = fieldAsString.replace(/, ‡x [^‡]+(, ‡x| ; ‡v)/u, '$1'); // eslint-disable-line prefer-named-capture-group
 
-  // Add intermedia $x-less version
-  tmp = fieldAsString.replace(/, ‡x [^‡]+(, ‡x| ; ‡v)/u, '$1');
-  // Add final $v/$x-less version
-  if ( tmp !== fieldAsString) {
-    deletable490s.push(tmp);
-  }
-
-  // Add $xv-less version
-  tmp = fieldAsString.replace(/, ‡x [^‡]+ ‡v [^‡]+$/u, '');
-  if ( tmp !== fieldAsString) {
-    deletable490s.push(tmp);
-  }
+  // Add $xv-less version (handled by recursion?)
+  const xvless = fieldAsString.replace(/, ‡x [^‡]+ ‡v [^‡]+$/u, '');
 
   // MRA-433-ish (non-chain): 490 ind1=1 vs ind1=0: remove latter
-  if (fieldAsString.match(/^490 1/) ) {
-    // TODO: $x-less and $v-less versions...
-    tmp = `490 0${fieldAsString.substring(5)}`;
-    deletable490s.push(tmp);
-    const arr = deriveIndividualDeletables490(tmp);
-    arr.forEach(val => deletable490s.push(val));
-  }
+  const modifiedInd2 = fieldAsString.match(/^490 1/u) ? `490 0${fieldAsString.substring(5)}` : fieldAsString;
 
-  nvdebug(`${deletable490s.length} derivation(s) for ${fieldAsString}`);
-  if (deletable490s.length > 0) {
-    nvdebug(deletable490s.join('\n'));
+  const arr = [sixless, withoutFinalVOrX, xless, xvless, modifiedInd2].filter(val => val !== fieldAsString);
+
+  /*
+  if (arr.length) { // eslint-disable-line functional/no-conditional-statements
+    nvdebug(`${arr.length} derivation(s) for ${fieldAsString}`);
+    nvdebug(arr.join('\n'));
   }
-   /* eslint-enable */
-  return deletable490s;
+  */
+  return arr;
 }
 
 function deriveIndividualDeletables(record) {
-  /* eslint-disable */
-  let deletableStringsArray = [];
+  const todoList = record.fields.map(f => fieldToString(f));
+  //const finishedRecord = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
 
-  const finishedRecord = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
+  const deletableStringsArray = processTodoList(todoList);
 
-  record.fields.forEach(field => fieldDeriveIndividualDeletables(field));
+  return uniqArray(deletableStringsArray);
 
-  function fieldDeriveIndividualDeletables(field) {
-    const fieldAsString = fieldToString(field);
+  function processTodoList(thingsToDo, deletables = []) {
+    const [currString, ...stillToDo] = thingsToDo;
 
-    // Proof-of-concept rule:
-    let tmp = fieldAsString;
-    if (field.tag.match(/^[1678]00$/u)) {
-      while (tmp.match(/, ‡e [^‡]+\.$/)) {
-        tmp = tmp.replace(/, ‡e [^‡]+\.$/, '.');
-        deletableStringsArray.push(tmp);
+    if (currString === undefined) {
+      return deletables;
+    }
+
+    if (currString.match(/^[1678]00/u)) {
+      // Proof-of-concpet rule. Should be improved eventually...
+      if (currString.match(/, ‡e [^‡]+\.$/u)) {
+        const tmp = currString.replace(/, ‡e [^‡]+\.$/u, '.');
+        return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
       }
     }
 
-    if (field.tag === '505') { // MRA-413-ish
-      if (fieldAsString.match(/^.0.*-- ‡t/u)) {
-        tmp = fieldAsString;
-        tmp = tmp.replace(/ -- ‡t /gu, ' -- ');
-        tmp = tmp.replace(/ ‡[rg] /gu, ' ');
-        tmp = tmp.replace(/ ‡t /u, ' ‡a '); // first $t, not
-        tmp = tmp.replace(/^505 (.)0/u, '505 $1#');
-        if (tmp !== fieldAsString) {
-          deletableStringsArray.push(tmp);
-        }
-        //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
-        //nvdebug(`505 DERIVATE: '${tmp}'`)
+    if (currString.match(/^505 .0.*-- ‡t/u)) { // MRA-413-ish
+      const tmp = currString.replace(/ -- ‡t /gu, ' -- '). // remove non-initial $t subfields
+        replace(/ ‡[rg] /gu, ' '). // remove $r and $g subfields
+        replace(/ ‡t /u, ' ‡a '). // change first $t to $a
+        // ind2: '1' => '#':
+        replace(/^505 (.)0/u, '505 $1#'); // eslint-disable-line prefer-named-capture-group
+      if (tmp !== currString) {
+        return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
       }
+      //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
+      //nvdebug(`505 DERIVATE: '${tmp}'`)
     }
 
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
-    if (field.tag === '880') {
-      tmp = fieldAsString;
-      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/)) {
-        tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/, '$1-00');
-        nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
-        deletableStringsArray.push(tmp);
-        if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /)) {
-          tmp = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/, '$1');
-          nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
-          deletableStringsArray.push(tmp);
-        }
+    if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
+      const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00'); // eslint-disable-line prefer-named-capture-group
+      //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
+      //deletableStringsArray.push(tmp);
+      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
+        const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
+        //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
+        return processTodoList(stillToDo, [...deletables, tmp, tmp2]);
       }
+      return processTodoList(stillToDo, [...deletables, tmp]);
     }
 
-    const d490 = deriveIndividualDeletables490(fieldAsString);
-    d490.forEach(str => deletableStringsArray.push(str));
+    const d490 = deriveIndividualDeletables490([currString]);
+    if (d490.length) {
+      return processTodoList([...stillToDo, ...d490], [...deletables, ...d490]);
+    }
+    // d490.forEach(str => deletables.push(str)); // eslint-disable-line functional/immutable-data
 
-    // Remove keepless versions:
-    tmp = fieldAsString;
-    while (tmp.match(/ ‡9 [A-Z]+<KEEP>/)) {
-      tmp = tmp.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
-      deletableStringsArray.push(tmp);
+    const subsets = getIdentifierlessAndKeeplessSubsets(currString); // eslint-disable-line no-param-reassign
+    if (subsets.length) {
+      return processTodoList([...stillToDo, ...subsets], [...deletables, ...subsets]);
     }
 
+    return processTodoList(stillToDo, deletables);
   }
-  /* eslint-enable */
-  return deletableStringsArray; // we should do uniq!
 
 }
 
@@ -298,32 +296,31 @@ function fieldToNormalizedString(field) {
   return fieldToString(normalizedField);
 }
 
-function deriveIndividualNormalizedDeletables(record) {
-  /* eslint-disable */
-  let deletableNormalizedStringsArray = [];
-
+function deriveIndividualNormalizedDeletables(record) { //  MET-461:
   const recordIsFinished = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
-
-  record.fields.forEach(field => fieldDeriveIndividualNormalizedDeletables(field));
-
-  function fieldDeriveIndividualNormalizedDeletables(field) {
-    const fieldAsNormalizedString = fieldToNormalizedString(field);
-    let tmp = fieldAsNormalizedString;
-
-    //  MET-461:
-    if (recordIsFinished && ['245', '246'].includes(field.tag) && fieldAsNormalizedString.match(/ ‡a /u)) {
-      tmp = fieldAsNormalizedString;
-      tmp = tmp.replace(/^(...) ../u, '946 ##'); // Ind
-      tmp = tmp.replace(" ‡a ", " ‡i nimeke onixissa ‡a "); // NB! This is added in the normalized lower-cased form!
-      tmp = tmp.replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Can $c be non-last?
-      deletableNormalizedStringsArray.push(tmp);
-      deletableNormalizedStringsArray.push(`${tmp} ‡5 MELINDA`); // MET-461 comment. NB! $5 is never normalized
-    }
+  if (!recordIsFinished) {
+    return [];
   }
+  const relevantFields = record.fields.filter(f => ['245', '246'].includes(f.tag) && fieldHasSubfield(f, 'a'));
 
-  /* eslint-enable */
-  return deletableNormalizedStringsArray; // we should do uniq!
+  return deriveDeletable946s(relevantFields);
 
+  function deriveDeletable946s(fields, results = []) {
+    const [currField, ...remainingFields] = fields;
+    if (currField === undefined) {
+      return results;
+    }
+
+    const fieldAsNormalizedString = fieldToNormalizedString(currField);
+    const tmp = fieldAsNormalizedString.replace(/^(?:...) ../u, '946 ##'). // <= Change tag to 946 and indicators to '##'
+      replace(' ‡a ', ' ‡i nimeke onixissa ‡a '). // Add $i before $a. NB! This is added in the normalized lower-cased form!
+      replace(/(?: \/)? ‡c[^‡]+$/u, ''); // Remove $c. (Can $c be non-last?)
+    const candArray = [tmp, `${tmp} ‡5 MELINDA`].filter(val => val !== fieldAsNormalizedString);
+    if (candArray.length) {
+      return deriveDeletable946s(remainingFields, [...results, ...candArray]);
+    }
+    return deriveDeletable946s(remainingFields, results);
+  }
 }
 
 export function removeIndividualInferiorDatafields(record, fix = true) { // No $6 nor $8 in field
@@ -339,7 +336,7 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 
   if (fix) { // eslint-disable-line functional/no-conditional-statements
     hits.forEach(field => {
-      nvdebug(`Remove inferior field: ${fieldToString(field)}`);
+      //nvdebug(`Remove inferior field: ${fieldToString(field)}`, debug);
       record.removeField(field);
     });
   }
@@ -367,8 +364,8 @@ export function removeInferiorDatafields(record, fix = true) {
   const removables6 = removeInferiorChains(record, fix); // Lone subfield $6 chains
   // HOW TO HANDLE $6+$8 combos? Skipping is relatively OK.
 
-  nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`);
-  nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`);
+  nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`, debug);
+  nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`, debug);
 
   const removablesAll = removables.concat(removables6); //.concat(removables8);
 
