@@ -37,7 +37,7 @@
   "dependencies": {
     "@babel/register": "^7.22.15",
     "@natlibfi/issn-verify": "^1.0.3",
-    "@natlibfi/marc-record": "^7.3.1",
+    "@natlibfi/marc-record": "https://github.com/NatLibFi/marc-record-js.git#remove_melinda_specific_sorting",
     "@natlibfi/marc-record-validate": "^8.0.1",
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
