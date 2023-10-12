@@ -1,0 +1,6 @@
+{
+  "description": "Validate dash normalization: fails as it contains dashes of various lenghts",
+  "enabled": true,
+  "fix": false,
+  "only": false
+}
