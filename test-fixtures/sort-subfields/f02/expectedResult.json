@@ -1,0 +1,26 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "Bar Records"}, {"code": "a", "value": "BARCD-1"}]},
+    { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "Bar Records"}, {"code": "a", "value": "BARCD-2"}]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "123 sivua"},
+      {"code": "b", "value": "karttoja"},
+      {"code": "c", "value": "25 cm"},
+      {"code": "e", "value": "CD-rom"}
+    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Joku pulju,"},
+      {"code": "e", "value": "kustantaja,"},
+      {"code": "0", "value": "(FI-ASTERI-N)000111222"},
+      {"code": "e", "value": "kustanantaja."}
+    ]},
+    { "tag": "946", "ind1": " ", "ind2": " ",  "subfields": [
+      { "code": "a", "value": "whatever" },
+      { "code": "5", "value": "FOOBAR" },
+      { "code": "i", "value": "Nimeke Onixissa:" }
+    ]}
+  ],
+  "leader": ""
+}

@@ -73,3 +73,8 @@ export function getCatalogingLanguage(record) {
   }
   return b.value;
 }
+
+
+export function uniqArray(arr) {
+  return arr.filter((val, i) => arr.indexOf(val) === i);
+}

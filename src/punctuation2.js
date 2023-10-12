@@ -145,16 +145,20 @@ const linkingEntryWhatever = [{'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'a
 //        Might need to work on that at some point. NOT a top priority though.
 // NB #3! Final punctuation creation is/should be handled by endind-punctuation.js validator!
 
-const crappy246 = [{'code': 'abfghinp', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc}];
+const crappy24X = [
+  {'code': 'abnp', 'followedBy': '!c', 'remove': / \/$/u},
+  {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
+  {'code': 'abfghinp', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
+  {'code': 'n', 'followedBy': 'p', 'remove': /\.$/u, 'context': dotIsProbablyPunc}, // MELINDA-8817
+  {'code': 'p', 'followedBy': 'pc', 'remove': /\.$/u, 'context': dotIsProbablyPunc} // MELINDA-8817
+];
 
 const cleanCrappyPunctuationRules = {
   '100': removeX00Whatever,
   '110': removeX10Whatever,
-  '245': [
-    {'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u},
-    {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc}
-  ],
-  '246': crappy246,
+  '240': crappy24X,
+  '245': crappy24X,
+  '246': crappy24X,
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': / *:$/u},
     {'code': 'a', 'followedBy': 'b', 'remove': /:$/u, 'context': /[^ ]:$/u},
@@ -175,7 +179,7 @@ const cleanCrappyPunctuationRules = {
   '800': removeX00Whatever,
   '810': removeX10Whatever,
   '830': remove490And830Whatever,
-  '946': crappy246
+  '946': crappy24X
 };
 
 const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
@@ -256,7 +260,9 @@ const addX10 = [addX10bDot, addX10eComma, addX10Dot, addLanguageComma, addSemico
 const add245 = [
   // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
   {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
+  {'code': 'ab', 'followedBy': 'n', 'add': '.', 'content': defaultNeedsPuncAfter},
   {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
+  {'code': 'n', 'followedBy': 'p', 'add': ',', 'context': defaultNeedsPuncAfter},
   {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
   {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
 ];
@@ -278,6 +284,7 @@ const addSeriesTitle = [ // 490 and 830
 const addPairedPunctuationRules = {
   '100': addX00,
   '110': addX10,
+  '240': add246,
   '245': add245,
   '246': add246,
   '260': [

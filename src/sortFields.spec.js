@@ -1,13 +1,13 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './sortSubfields';
+import validatorFactory from './sortFields';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'sort-subfields'],
+  path: [__dirname, '..', 'test-fixtures', 'sort-fields'],
   useMetadataFile: true,
   recurse: false,
   fixura: {
@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sortSubfields:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sortFields:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
@@ -30,23 +30,23 @@ async function testValidatorFactory() {
   expect(validator.validate).to.be.a('function');
 }
 
-async function callback({getFixture, enabled = true, fix = false, tagPattern = false}) {
+async function callback({getFixture, enabled = true, fix = true}) {
   if (enabled === false) {
     debug('TEST SKIPPED!');
     return;
   }
 
   const validator = await validatorFactory();
-  const record = new MarcRecord(getFixture('record.json'));
-  const expectedResult = getFixture('expectedResult.json');
+  const record = new MarcRecord(getFixture('input.json'));
+  const expectedResult = getFixture('result.json');
   // console.log(expectedResult); // eslint-disable-line
 
   if (!fix) {
-    const result = await validator.validate(record, tagPattern);
+    const result = await validator.validate(record);
     expect(result).to.eql(expectedResult);
     return;
   }
 
-  await validator.fix(record, tagPattern);
+  await validator.fix(record);
   expect(record).to.eql(expectedResult);
 }
