@@ -19,6 +19,7 @@ import MergeField500Lisapainokset from './mergeField500Lisapainokset';
 import MergeRelatorTermFields from './mergeRelatorTermFields';
 import MultipleSubfield0s from './multiple-subfield-0';
 import NonBreakingSpace from './non-breaking-space';
+import NormalizeDashes from './normalize-dashes';
 import NormalizeIdentifiers from './normalize-identifiers';
 import NormalizeQualifyingInformation from './normalize-qualifying-information';
 import NormalizeUTF8Diacritics from './normalize-utf8-diacritics';
@@ -65,6 +66,7 @@ export {
   MergeRelatorTermFields,
   MultipleSubfield0s,
   NonBreakingSpace,
+  NormalizeDashes,
   NormalizeIdentifiers,
   NormalizeQualifyingInformation,
   NormalizeUTF8Diacritics,
