@@ -116,11 +116,11 @@ describe('access-rights', async () => {
     });
 
     it('5061 but missing 540; Adds 540', async () => {
-      await test.fix([ldf5061, f540], [ldf5061, ldf540, f540]);
+      await test.fix([ldf5061, f540], [ldf5061, f540, ldf540]);
     });
 
     it('Both, 5061 and 540, missing; Adds 5061 and 540', async () => {
-      await test.fix([f5060, f540], [f5060, ldf5061, ldf540, f540]);
+      await test.fix([f5060, f540], [f5060, ldf5061, f540, ldf540]);
     });
   });
 });

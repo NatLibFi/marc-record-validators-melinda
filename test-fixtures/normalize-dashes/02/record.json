@@ -1,0 +1,8 @@
+{
+  "fields" : [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "Diiba - Daaba \u2015 Doh \u2013 Doh-Too" }
+    ]}
+  ]
+}
