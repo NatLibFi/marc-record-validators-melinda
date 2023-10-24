@@ -1,0 +1,6 @@
+{
+  "description": "f07j: MET-495: keep 946 as record has LDR/17=2 and 500$a Koneellisesti tuotettu tietue",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
