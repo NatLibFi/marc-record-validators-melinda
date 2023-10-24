@@ -3,7 +3,7 @@ import {fieldToChain, sameField} from './removeDuplicateDataFields';
 import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils';
 import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug, uniqArray} from './utils';
 import {fieldHasValidSubfield8} from './subfield8Utils';
-import {encodingLevelIsBetterThanPrepublication, getEncodingLevel} from './prepublicationUtils';
+import {encodingLevelIsBetterThanPrepublication, fieldRefersToKoneellisestiTuotettuTietue, getEncodingLevel} from './prepublicationUtils';
 import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
@@ -297,8 +297,10 @@ function fieldToNormalizedString(field) {
 }
 
 function deriveIndividualNormalizedDeletables(record) { //  MET-461:
-  const recordIsFinished = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
-  if (!recordIsFinished) {
+  const encodingLevel = getEncodingLevel(record);
+  const recordIsFinished = encodingLevelIsBetterThanPrepublication(encodingLevel);
+  const met495 = encodingLevel === '2' && record.fields.some(f => f.tag === '500' && fieldRefersToKoneellisestiTuotettuTietue(f));
+  if (!recordIsFinished || met495) {
     return [];
   }
   const relevantFields = record.fields.filter(f => ['245', '246'].includes(f.tag) && fieldHasSubfield(f, 'a'));
