@@ -1,0 +1,5 @@
+{
+  "description": "Validate diacritics: success, since nothing to do",
+  "enabled": true,
+  "fix": false
+}
