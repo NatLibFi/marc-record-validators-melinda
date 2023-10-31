@@ -195,8 +195,7 @@ function preferFenniKeep(fieldA, fieldB) {
 }
 
 function sortByRelatorTerm(fieldA, fieldB) {
-  // Should this be done to 6XX and 8XX fields as well? Does $t affect sorting?
-  if (!['700', '710', '711', '730'].includes(fieldA.tag)) {
+  if (!['600', '610', '611', '630', '700', '710', '711', '730', '800', '810', '811', '830'].includes(fieldA.tag)) {
     return 0;
   }
 
@@ -204,7 +203,15 @@ function sortByRelatorTerm(fieldA, fieldB) {
     if (!field.subfields) {
       return 0;
     }
-    const e = field.subfields.filter(sf => sf.code === 'e');
+    // If field has $t, it's a teos-nimeke-auktoriteetti, and thus meaningless. These should follow all $t-less fields...
+    if (fieldHasSubfield(field, 't')) {
+      return 0;
+    }
+    const relatorSubfieldCode = ['611', '711', '811'].includes(field.tag) ? 'j' : 'e';
+    const e = field.subfields.filter(sf => sf.code === relatorSubfieldCode);
+    if (e.length === 0) { // No $e is still better than having a $t
+      return 1;
+    }
     const scores = e.map(sf => scoreRelatorTerm(sf.value));
     //debugDev(`RELATOR SCORE FOR '${fieldToString(field)}': ${scores.join(', ')}`);
     return Math.max(...scores);
