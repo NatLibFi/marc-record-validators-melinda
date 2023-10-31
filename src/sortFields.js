@@ -195,7 +195,8 @@ function preferFenniKeep(fieldA, fieldB) {
 }
 
 function sortByRelatorTerm(fieldA, fieldB) {
-  if (!['600', '610', '611', '630', '700', '710', '711', '730', '800', '810', '811', '830'].includes(fieldA.tag)) {
+  //if (!['600', '610', '611', '630', '700', '710', '711', '730', '800', '810', '811', '830'].includes(fieldA.tag)) {
+  if (!['700', '710', '711', '730'].includes(fieldA.tag)) {
     return 0;
   }
 
