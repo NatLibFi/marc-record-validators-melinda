@@ -202,16 +202,16 @@ function sortByRelatorTerm(fieldA, fieldB) {
 
   function fieldGetMaxRelatorTermScore(field) {
     if (!field.subfields) {
-      return 0;
+      return -1;
     }
     // If field has $t, it's a teos-nimeke-auktoriteetti, and thus meaningless. These should follow all $t-less fields...
     if (fieldHasSubfield(field, 't')) {
-      return 0;
+      return -1;
     }
     const relatorSubfieldCode = ['611', '711', '811'].includes(field.tag) ? 'j' : 'e';
     const e = field.subfields.filter(sf => sf.code === relatorSubfieldCode);
     if (e.length === 0) { // No $e is still better than having a $t
-      return 1;
+      return 0;
     }
     const scores = e.map(sf => scoreRelatorTerm(sf.value));
     //debugDev(`RELATOR SCORE FOR '${fieldToString(field)}': ${scores.join(', ')}`);
