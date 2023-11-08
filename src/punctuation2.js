@@ -10,11 +10,11 @@
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
 import {validateSingleField} from './ending-punctuation';
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import {fieldToString, nvdebug, subfieldToString} from './utils';
 import clone from 'clone';
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
+//const debug = createDebugLogger('debug/punctuation2');
 
 export default function () {
   return {
@@ -403,7 +403,7 @@ function ruleAppliesToNextSubfield(rule, nextSubfield) {
 
 function checkRule(rule, field, subfield1, subfield2) {
   if (!ruleAppliesToField(rule, field)) {
-    nvdebug(`FAIL ON WHOLE FIELD: '${fieldToString(field)}`);
+    //nvdebug(`FAIL ON WHOLE FIELD: '${fieldToString(field)}`);
     return false;
   }
   //const name = rule.name || 'UNNAMED';
@@ -419,7 +419,7 @@ function checkRule(rule, field, subfield1, subfield2) {
     return false;
   }
 
-  nvdebug(`${rule.name ? rule.name : '<unnamed>'}: ACCEPT ${rule.code} (${subfield1.code}), SF2=${rule.followedBy} (${subfield2 ? subfield2.code : '#'})`, debug);
+  //nvdebug(`${rule.name ? rule.name : '<unnamed>'}: ACCEPT ${rule.code} (${subfield1.code}), SF2=${rule.followedBy} (${subfield2 ? subfield2.code : '#'})`, debug);
   return true;
 }
 
