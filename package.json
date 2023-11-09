@@ -52,10 +52,10 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.23.0",
-    "@babel/core": "^7.23.2",
-    "@babel/eslint-parser": "^7.22.15",
-    "@babel/preset-env": "^7.23.2",
-    "@natlibfi/eslint-config-melinda-backend": "^3.0.2",
+    "@babel/core": "^7.23.3",
+    "@babel/eslint-parser": "^7.23.3",
+    "@babel/preset-env": "^7.23.3",
+    "@natlibfi/eslint-config-melinda-backend": "^3.0.3",
     "@natlibfi/fixugen": "^2.0.2",
     "@natlibfi/fixura": "^3.0.2",
     "babel-plugin-istanbul": "^6.1.1",
@@ -63,7 +63,7 @@
     "chai": "^4.3.10",
     "chai-as-promised": "^7.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "fetch-mock": "^9.11.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0"
