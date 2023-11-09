@@ -10,11 +10,11 @@
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
 import {validateSingleField} from './ending-punctuation';
-// import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
+//import createDebugLogger from 'debug';
+import {fieldToString, nvdebug, subfieldToString} from './utils';
 import clone from 'clone';
 
-// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
+//const debug = createDebugLogger('debug/punctuation2');
 
 export default function () {
   return {
@@ -90,7 +90,7 @@ const defaultNeedsPuncAfter2 = /(?:[\]a-zA-Z0-9)]|ä|å|ö|Å|Ä|Ö)$/u;
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 
-const dotIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö)\.$/u;
+const dotIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö|(?:[A-Za-z0-9]|Å|Ä|Ö)(?:[A-Z]|Å|Ä|Ö))\.$/u;
 const puncIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö) ?[.,:;]$/u;
 // NB! 65X: Finnish terms don't use punctuation, but international ones do. Neither one is currently (2021-11-08) coded here.
 
@@ -147,6 +147,7 @@ const linkingEntryWhatever = [{'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'a
 
 const crappy24X = [
   {'code': 'abnp', 'followedBy': '!c', 'remove': / \/$/u},
+  {'code': 'abn', 'followedBy': 'c', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'abfghinp', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'n', 'followedBy': 'p', 'remove': /\.$/u, 'context': dotIsProbablyPunc}, // MELINDA-8817
@@ -260,11 +261,11 @@ const addX10 = [addX10bDot, addX10eComma, addX10Dot, addLanguageComma, addSemico
 const add245 = [
   // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
   {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
-  {'code': 'ab', 'followedBy': 'n', 'add': '.', 'content': defaultNeedsPuncAfter},
+  {'code': 'ab', 'followedBy': 'n', 'add': '.', 'context': defaultNeedsPuncAfter},
   {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
   {'code': 'n', 'followedBy': 'p', 'add': ',', 'context': defaultNeedsPuncAfter},
   {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
-  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on punctuation/ toes
+  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on "punctuation validaror's" toes
 ];
 
 const add246 = [
@@ -319,6 +320,23 @@ const addPairedPunctuationRules = {
   '946': [{'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter}]
 };
 
+/*
+function debugRule(rule) {
+  //nvdebug('');
+  nvdebug(`NAME ${rule.name ? rule.name : '<unnamed>'}`);
+  nvdebug(`SUBFIELD CODE '${rule.code}' FOLLOWED BY SUBFIELD CODE '${rule.followedBy}'`);
+  if ('add' in rule) { // eslint-disable-line functional/no-conditional-statements
+    nvdebug(`ADD '${rule.add}'`);
+  }
+  if ('remove' in rule) { // eslint-disable-line functional/no-conditional-statements
+    nvdebug(`REMOVE '${rule.remove}'`);
+  }
+  if ('context' in rule) { // eslint-disable-line functional/no-conditional-statements
+    nvdebug(`CONTEXT '${rule.context.toString()}'`);
+  }
+  //nvdebug('');
+}
+*/
 
 function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
   const negation = targetSubfieldCodes.includes('!');
@@ -345,12 +363,19 @@ function ruleAppliesToField(rule, field) {
 
 
 function ruleAppliesToCurrentSubfield(rule, subfield) {
+  //nvdebug(`  Apply rule on LHS?`);
   if (!ruleAppliesToSubfieldCode(rule.code, subfield.code)) {
+    //nvdebug(`  Reject rule!`);
     return false;
   }
-  if ('context' in rule && !subfield.value.match(rule.context)) { // njsscan-ignore: regex_injection_dos
-    return false;
+  if ('context' in rule) {
+    //nvdebug(`  Check '${subfield.value}' versus '${rule.context.toString()}'`);
+    if (!subfield.value.match(rule.context)) { // njsscan-ignore: regex_injection_dos
+      //nvdebug(`  Reject rule!`);
+      return false;
+    }
   }
+  //nvdebug(`  Apply rule!`);
   return true;
 }
 
@@ -378,7 +403,7 @@ function ruleAppliesToNextSubfield(rule, nextSubfield) {
 
 function checkRule(rule, field, subfield1, subfield2) {
   if (!ruleAppliesToField(rule, field)) {
-    nvdebug(`FAIL ON WHOLE FIELD: '${fieldToString(field)}`);
+    //nvdebug(`FAIL ON WHOLE FIELD: '${fieldToString(field)}`);
     return false;
   }
   //const name = rule.name || 'UNNAMED';
@@ -394,18 +419,12 @@ function checkRule(rule, field, subfield1, subfield2) {
     return false;
   }
 
-  //nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : '#'}`, debug);
+  //nvdebug(`${rule.name ? rule.name : '<unnamed>'}: ACCEPT ${rule.code} (${subfield1.code}), SF2=${rule.followedBy} (${subfield2 ? subfield2.code : '#'})`, debug);
   return true;
 }
 
 function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, operation = NONE) {
 
-  /*
-  if (ruleArray === null || operation === NONE) {
-    debug(`applyPunctuation(): No rules to apply!`);
-    return;
-  }
-*/
   if (!(`${field.tag}` in ruleArray) || ruleArray === null || operation === NONE) {
 
     /*
@@ -416,12 +435,18 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
     */
     return;
   }
+  nvdebug(`PUNCTUATE ${field.tag} '${subfieldToString(subfield1)}' XXX '${subfield2 ? subfieldToString(subfield2) : '#'} }`);
 
   //nvdebug(`OP=${operation} ${tag}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debug);
-  const activeRules = ruleArray[field.tag].filter(rule => checkRule(rule, field, subfield1, subfield2));
+  const candRules = ruleArray[field.tag];
+  candRules.forEach(rule => {
+    //debugRule(rule);
 
-  activeRules.forEach(rule => {
-    const originalValue = subfield1.value;
+    if (!checkRule(rule, field, subfield1, subfield2)) {
+      return;
+    }
+
+    //const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statements
       //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
@@ -429,11 +454,14 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statements
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
-      //nvdebug(`    ADDED '${rule.add}' TO '${subfield1.value}'`, debug);
+      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}'`, debug);
     }
+
+    /*
     if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statements
-      //nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
+      nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
     }
+    */
   });
 }
 
@@ -469,11 +497,12 @@ export function fieldFixPunctuation(field) {
   if (!field.subfields) {
     return field;
   }
-  nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`);
+  //nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`);
 
   field.subfields.forEach((sf, i) => {
     // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
     // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
+    // We'll need some magic for field 257 here, do we? (Also Finnish lexicons vs global lexicons in 65X fields)
     subfieldFixPunctuation(field, sf, getNextRelevantSubfield(field, i));
   });
 

@@ -5,6 +5,17 @@
     { "tag": "001", "value": "000000001" },
     { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "fin" } ] },
 
+    { "tag": "245", "ind1": "1", "ind2": "1", "subfields": [
+      { "code": "a", "value": "Suomen laki" },
+      { "code": "n", "value": "II" }
+    ] },
+
+    { "tag": "245", "ind1": "1", "ind2": "1", "subfields": [
+      { "code": "a", "value": "Suomen laki" },
+      { "code": "n", "value": "II" },
+      { "code": "c", "value": "Tekijä" }
+    ] },
+
     { "tag": "490", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "a", "value": "Suomeksi" },
         { "code": "a", "value": "Ruotsiksi" },
