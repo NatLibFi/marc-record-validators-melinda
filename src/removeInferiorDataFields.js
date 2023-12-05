@@ -242,11 +242,16 @@ function deriveIndividualDeletables(record) {
     }
 
     if (currString.match(/^[1678]00/u)) {
-      // Proof-of-concpet rule. Should be improved eventually...
+      // Proof-of-concept rule. Should be improved eventually...
       if (currString.match(/, ‡e [^‡]+\.$/u)) {
         const tmp = currString.replace(/, ‡e [^‡]+\.$/u, '.');
         return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
       }
+    }
+
+    const d490 = deriveIndividualDeletables490([currString]);
+    if (d490.length) {
+      return processTodoList([...stillToDo, ...d490], [...deletables, ...d490]);
     }
 
     if (currString.match(/^505 .0.*-- ‡t/u)) { // MRA-413-ish
@@ -275,18 +280,16 @@ function deriveIndividualDeletables(record) {
       return processTodoList(stillToDo, [...deletables, tmp]);
     }
 
-    const d490 = deriveIndividualDeletables490([currString]);
-    if (d490.length) {
-      return processTodoList([...stillToDo, ...d490], [...deletables, ...d490]);
-    }
-    // d490.forEach(str => deletables.push(str)); // eslint-disable-line functional/immutable-data
-
     const subsets = getIdentifierlessAndKeeplessSubsets(currString); // eslint-disable-line no-param-reassign
+    const ennakkotieto653 = currString.match(/^653./u) ? [`${currString} ‡g ENNAKKOTIETO`] : []; // MET-528
+
+    const newDeletables = [...deletables, ...subsets, ...ennakkotieto653];
+
     if (subsets.length) {
-      return processTodoList([...stillToDo, ...subsets], [...deletables, ...subsets]);
+      return processTodoList([...stillToDo, ...subsets], newDeletables);
     }
 
-    return processTodoList(stillToDo, deletables);
+    return processTodoList(stillToDo, newDeletables);
   }
 
 }
