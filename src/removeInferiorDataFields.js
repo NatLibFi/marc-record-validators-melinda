@@ -5,6 +5,7 @@ import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug, uniqArray} fro
 import {fieldHasValidSubfield8} from './subfield8Utils';
 import {encodingLevelIsBetterThanPrepublication, fieldRefersToKoneellisestiTuotettuTietue, getEncodingLevel} from './prepublicationUtils';
 import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison';
+import {fixComposition, precomposeFinnishLetters} from './normalize-utf8-diacritics';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -241,18 +242,20 @@ function deriveIndividualDeletables(record) {
       return deletables;
     }
 
+    const accentless = getAccentlessVersion(currString);
+    const d490 = deriveIndividualDeletables490([currString]);
+    const subsets = getIdentifierlessAndKeeplessSubsets(currString); // eslint-disable-line no-param-reassign
+    const moreToDo = [...accentless, ...d490, ...subsets];
+
+
     if (currString.match(/^[1678]00/u)) {
       // Proof-of-concept rule. Should be improved eventually...
       if (currString.match(/, ‡e [^‡]+\.$/u)) {
         const tmp = currString.replace(/, ‡e [^‡]+\.$/u, '.');
-        return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
+        return processTodoList([tmp, ...stillToDo, ...moreToDo], [...deletables, tmp]);
       }
     }
 
-    const d490 = deriveIndividualDeletables490([currString]);
-    if (d490.length) {
-      return processTodoList([...stillToDo, ...d490], [...deletables, ...d490]);
-    }
 
     if (currString.match(/^505 .0.*-- ‡t/u)) { // MRA-413-ish
       const tmp = currString.replace(/ -- ‡t /gu, ' -- '). // remove non-initial $t subfields
@@ -261,7 +264,7 @@ function deriveIndividualDeletables(record) {
         // ind2: '1' => '#':
         replace(/^505 (.)0/u, '505 $1#'); // eslint-disable-line prefer-named-capture-group
       if (tmp !== currString) {
-        return processTodoList([tmp, ...stillToDo], [...deletables, tmp]);
+        return processTodoList([tmp, ...stillToDo, ...moreToDo], [...deletables, tmp]);
       }
       //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
       //nvdebug(`505 DERIVATE: '${tmp}'`)
@@ -275,21 +278,35 @@ function deriveIndividualDeletables(record) {
       if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
         const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
         //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
-        return processTodoList(stillToDo, [...deletables, tmp, tmp2]);
+        return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp, tmp2]);
       }
-      return processTodoList(stillToDo, [...deletables, tmp]);
+      return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp]);
     }
 
-    const subsets = getIdentifierlessAndKeeplessSubsets(currString); // eslint-disable-line no-param-reassign
+
     const ennakkotieto653 = currString.match(/^653./u) ? [`${currString} ‡g ENNAKKOTIETO`] : []; // MET-528
 
-    const newDeletables = [...deletables, ...subsets, ...ennakkotieto653];
+    const newDeletables = [...deletables, ...subsets, ...accentless, ...ennakkotieto653];
 
     if (subsets.length) {
-      return processTodoList([...stillToDo, ...subsets], newDeletables);
+      return processTodoList([...stillToDo, ...moreToDo], newDeletables);
     }
 
-    return processTodoList(stillToDo, newDeletables);
+    return processTodoList([...stillToDo, ...moreToDo], newDeletables);
+  }
+
+  function getAccentlessVersion(string) { // MET-527
+    //nvdebug(`START: '${string}`);
+    // This is a sanity check: if precomposition does something, there's something wrong, and we don't want to proceed..
+    if (string !== precomposeFinnishLetters(string)) {
+      return [];
+    }
+    const accentless = String(fixComposition(string)).replace(/\p{Diacritic}/gu, '');
+    //nvdebug(`FROM '${string}'\n  TO '${accentless}'`);
+    if (accentless === string) { // Don't self-destruct
+      return [];
+    }
+    return [accentless];
   }
 
 }
