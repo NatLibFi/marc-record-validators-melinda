@@ -286,7 +286,7 @@ function deriveIndividualDeletables(record) {
 
     const ennakkotieto653 = currString.match(/^653./u) ? [`${currString} ‡g ENNAKKOTIETO`] : []; // MET-528
 
-    const newDeletables = [...deletables, ...subsets, ...accentless, ...ennakkotieto653];
+    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...ennakkotieto653];
 
     if (subsets.length) {
       return processTodoList([...stillToDo, ...moreToDo], newDeletables);
