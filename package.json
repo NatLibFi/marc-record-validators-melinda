@@ -38,7 +38,7 @@
     "@babel/register": "^7.22.15",
     "@natlibfi/issn-verify": "^1.0.3",
     "@natlibfi/marc-record": "^8.0.2",
-    "@natlibfi/marc-record-validate": "^8.0.3",
+    "@natlibfi/marc-record-validate": "^8.0.4",
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
     "debug": "^4.3.4",
@@ -48,7 +48,7 @@
     "xml2js": "^0.6.2"
   },
   "peerDependencies": {
-    "@natlibfi/marc-record-validate": "^8.0.3"
+    "@natlibfi/marc-record-validate": "^8.0.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.4",
