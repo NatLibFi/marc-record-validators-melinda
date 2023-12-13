@@ -1,0 +1,26 @@
+{
+  "_validationOptions": {},
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "000000001" },
+
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Pulun Yliopisto" },
+        { "code": "b", "value": "Yksikkö" },
+        { "code": "b", "value": "Alayksikkö" }
+    ]},
+
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Pulun Yliopisto" },
+      { "code": "b", "value": "Yksikkö" },
+      { "code": "e", "value": "julkaisija" }
+  ]},
+
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "i", "value": "Sisältää (teos)" },
+      { "code": "a", "value": "Whatever" },
+      { "code": "t", "value": "Bulebule" }
+  ]}
+
+  ]
+}

@@ -77,7 +77,7 @@ export default function () {
 
 
 // Traditionally these six are precomposed and all the rest decomposed
-function precomposeFinnishLetters(value = '') {
+export function precomposeFinnishLetters(value = '') {
   return value.
     replace(/å/gu, 'å').
     replace(/ä/gu, 'ä').
@@ -87,7 +87,7 @@ function precomposeFinnishLetters(value = '') {
     replace(/Ö/gu, 'Ö');
 }
 
-function fixComposition(value = '') {
+export function fixComposition(value = '') {
   // Target: Diacritics use Melinda internal notation.
   // General solution: Decompose everything and then compose 'å', 'ä', 'ö', 'Å', 'Ä' and 'Ö'.
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/normalize
