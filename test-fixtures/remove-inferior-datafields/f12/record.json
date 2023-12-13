@@ -1,0 +1,22 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f13" },
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Mortuí non silent ;"},
+      { "code": "v", "value": "v2"}
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Mortui non silent ;"},
+      { "code": "v", "value": "v2"}
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Sirén, Matti"}
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Siren, Matti"}
+    ]}
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}

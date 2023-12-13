@@ -14,7 +14,7 @@
     "url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
   },
   "license": "MIT",
-  "version": "10.15.1",
+  "version": "10.15.2-alpha.3",
   "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -37,8 +37,8 @@
   "dependencies": {
     "@babel/register": "^7.22.15",
     "@natlibfi/issn-verify": "^1.0.3",
-    "@natlibfi/marc-record": "^8.0.0",
-    "@natlibfi/marc-record-validate": "^8.0.3",
+    "@natlibfi/marc-record": "^8.0.2",
+    "@natlibfi/marc-record-validate": "^8.0.4",
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
     "debug": "^4.3.4",
@@ -48,22 +48,22 @@
     "xml2js": "^0.6.2"
   },
   "peerDependencies": {
-    "@natlibfi/marc-record-validate": "^8.0.3"
+    "@natlibfi/marc-record-validate": "^8.0.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.23.0",
-    "@babel/core": "^7.23.3",
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.6",
     "@babel/eslint-parser": "^7.23.3",
-    "@babel/preset-env": "^7.23.3",
+    "@babel/preset-env": "^7.23.6",
     "@natlibfi/eslint-config-melinda-backend": "^3.0.3",
-    "@natlibfi/fixugen": "^2.0.2",
-    "@natlibfi/fixura": "^3.0.2",
+    "@natlibfi/fixugen": "^2.0.3",
+    "@natlibfi/fixura": "^3.0.3",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-rewire": "^1.2.0",
     "chai": "^4.3.10",
     "chai-as-promised": "^7.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.53.0",
+    "eslint": "^8.55.0",
     "fetch-mock": "^9.11.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0"
