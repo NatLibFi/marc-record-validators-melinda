@@ -94,7 +94,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
 
       async function createURN(isbn = false) {
         if (isbn) {
-          return {generated: false, value: `http://urn.fi/URN:ISBN:${isbn}`};
+          return {generated: false, value: `https://urn.fi/URN:ISBN:${isbn}`};
         }
 
         const response = await fetch(URN_GENERATOR_URL);
@@ -102,7 +102,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
 
         // If we generated URN we could also add it to the 024
         // generated 024 should also have $9 MELINDA<TEMP>
-        return {generated: true, value: `http://urn.fi/${body}`};
+        return {generated: true, value: `https://urn.fi/${body}`};
       }
     }
 
