@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import {isElectronicMaterial} from './utils';
 import createDebugLogger from 'debug';
 
-const URN_GENERATOR_URL = 'http://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';
+const URN_GENERATOR_URL = 'https://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';
 
 export default function (isLegalDeposit = false, useMelindaTemp = true) {
   const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:urn');
