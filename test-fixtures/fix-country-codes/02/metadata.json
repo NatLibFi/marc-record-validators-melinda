@@ -1,0 +1,6 @@
+{
+  "description": "Validate 008/15-17: azu -> xxu",
+  "enabled": true,
+  "fix": false,
+  "only": false
+}
