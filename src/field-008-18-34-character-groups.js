@@ -63,7 +63,9 @@ const characterGroups = [
 const BIG_BAD_VALUE = 999999999;
 
 function justifySubstring(field, group) {
-  const content = field.value.substring(group.start, group.end + 1);
+  const originalContent = field.value.substring(group.start, group.end + 1);
+  const content = fixBlanks(originalContent);
+  console.info(`008/${group.start}-${group.end}: '${content}'`); // eslint-disable-line no-console
   const charArray = content.split('');
 
   charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
@@ -71,15 +73,21 @@ function justifySubstring(field, group) {
   });
 
   const newContent = charArray.join('');
-  if (content === newContent) {
+  if (originalContent === newContent) {
     return;
   }
 
-  //console.info(`${fieldToString(field)} =>`); // eslint-disable-line no-console
+  console.info(`'${fieldToString(field)}' =>`); // eslint-disable-line no-console
 
   field.value = `${field.value.substring(0, group.start)}${newContent}${field.value.substring(group.end + 1)}`; // eslint-disable-line functional/immutable-data
-  //console.info(`${fieldToString(field)}`); // eslint-disable-line no-console
+  console.info(`'${fieldToString(field)}'`); // eslint-disable-line no-console
 
+  function fixBlanks(str) {
+    if (str.includes('|') && str.match(/[^ |]/u)) {
+      return str.replaceAll('|', ' ');
+    }
+    return str;
+  }
   function scoreChar(c) {
     if (c === '|' || c === ' ') {
       return BIG_BAD_VALUE; // Max value, these should code last
