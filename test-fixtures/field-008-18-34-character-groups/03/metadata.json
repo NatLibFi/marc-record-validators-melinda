@@ -3,5 +3,5 @@
   "comment": "TODO: handle 00/24 vs 008/25-27 later on",
   "enabled": true,
   "fix": true,
-  "only": true
+  "only": false
 }
