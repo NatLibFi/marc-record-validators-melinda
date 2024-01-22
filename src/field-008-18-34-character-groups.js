@@ -51,25 +51,41 @@ export default function () {
 
 // Should we add legal values?
 const characterGroups = [
-  {type: 'BK', start: 18, end: 21, name: 'illustrations'},
-  {type: 'BK', start: 24, end: 27, name: 'nature of contents'},
-  {type: 'CR', start: 25, end: 27, name: 'nature of contents'},
-  {type: 'MP', start: 18, end: 21, name: 'relief'},
-  {type: 'MP', start: 33, end: 34, name: 'special format of characteristics'},
-  {type: 'MU', start: 24, end: 29, name: 'accompanying material'},
-  {type: 'MU', start: 30, end: 31, name: 'literary text for sound recordings'}
+  {type: 'BK', start: 18, end: 21, sort: true, name: 'illustrations'},
+  {type: 'BK', start: 24, end: 27, sort: true, name: 'nature of contents'}, // English doc does not explicitly mention alphabetical sorting... Finnish does.
+  {type: 'CR', start: 25, end: 27, sort: true, name: 'nature of contents'}, // NB! 24 vs 25-27 logic needs to be implemented separately
+  {type: 'MP', start: 18, end: 21, sort: false, name: 'relief'}, // Order of importance!
+  {type: 'MP', start: 33, end: 34, sort: false, name: 'special format of characteristics'}, // Order of importance!
+  {type: 'MU', start: 24, end: 29, sort: true, name: 'accompanying material'},
+  {type: 'MU', start: 30, end: 31, sort: true, name: 'literary text for sound recordings'}
 ];
 
 const BIG_BAD_VALUE = 999999999;
 
-function justifyField008CharacterGroups(field, typeOfMaterial) {
-  const relevantCharacterGroups = characterGroups.filter(gr => gr.type === typeOfMaterial);
+function justifySubstring(field, group) {
+  const content = field.value.substring(group.start, group.end + 1);
+  const charArray = content.split('');
 
-  relevantCharacterGroups.forEach(group => justifySubstring(group));
+  charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
+    return scoreChar(a) - scoreChar(b);
+  });
+
+  const newContent = charArray.join('');
+  if (content === newContent) {
+    return;
+  }
+
+  //console.info(`${fieldToString(field)} =>`); // eslint-disable-line no-console
+
+  field.value = `${field.value.substring(0, group.start)}${newContent}${field.value.substring(group.end + 1)}`; // eslint-disable-line functional/immutable-data
+  //console.info(`${fieldToString(field)}`); // eslint-disable-line no-console
 
   function scoreChar(c) {
     if (c === '|' || c === ' ') {
       return BIG_BAD_VALUE; // Max value, these should code last
+    }
+    if (!group.sort) { // more meaningful comes first: keep the original order
+      return 1;
     }
     const asciiCode = c.charCodeAt(0);
     // a-z get values 1-26:
@@ -83,23 +99,6 @@ function justifyField008CharacterGroups(field, typeOfMaterial) {
     // Others (=crap) return something between '9' and BIG BAD VALUE
     return asciiCode + 200;
   }
-
-  function justifySubstring(group) {
-    const content = field.value.substring(group.start, group.end + 1);
-    const charArray = content.split('');
-    charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
-      return scoreChar(a) - scoreChar(b);
-    });
-    const newContent = charArray.join('');
-    if (content === newContent) {
-      return;
-    }
-    //console.info(`${fieldToString(field)} =>`); // eslint-disable-line no-console
-
-    field.value = `${field.value.substring(0, group.start)}${newContent}${field.value.substring(group.end + 1)}`; // eslint-disable-line functional/immutable-data
-    //console.info(`${fieldToString(field)}`); // eslint-disable-line no-console
-  }
-
 }
 
 export function justifyAndSortField008CharacterGroups(field, typeOfMaterial) {
@@ -107,9 +106,16 @@ export function justifyAndSortField008CharacterGroups(field, typeOfMaterial) {
     return field;
   }
 
-  justifyField008CharacterGroups(field, typeOfMaterial); // Oops: also sorts...
+  console.info(typeOfMaterial); // eslint-disable-line no-console
+
+  const relevantCharacterGroups = characterGroups.filter(gr => gr.type === typeOfMaterial);
+
+  relevantCharacterGroups.forEach(group => justifySubstring(field, group));
+
+  //justifyField008CharacterGroups(field, typeOfMaterial); // Oops: also sorts...
 
   // NB! add value # and | normalizations
+  //fixBlanks(field, typeOfMaterial);
 
   return field;
 }
