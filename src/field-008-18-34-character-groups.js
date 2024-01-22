@@ -1,8 +1,9 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
 import {fieldToString} from './utils';
-
 // Author(s): Nicholas Volk
+// NB! CR 008/24 vs 008/25-27 is not supported yet!
+
 export default function () {
 
   return {
@@ -62,10 +63,10 @@ const characterGroups = [
 
 const BIG_BAD_VALUE = 999999999;
 
-function justifySubstring(field, group) {
+function processCharacterGroup(field, group) {
   const originalContent = field.value.substring(group.start, group.end + 1);
-  const content = fixBlanks(originalContent);
-  console.info(`008/${group.start}-${group.end}: '${content}'`); // eslint-disable-line no-console
+  const content = removeDuplicateValues(fixBlanks(originalContent));
+  //console.info(`008/${group.start}-${group.end}: '${originalContent}'`); // eslint-disable-line no-console
   const charArray = content.split('');
 
   charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
@@ -77,10 +78,10 @@ function justifySubstring(field, group) {
     return;
   }
 
-  console.info(`'${fieldToString(field)}' =>`); // eslint-disable-line no-console
+  //console.info(`'${fieldToString(field)}' =>`); // eslint-disable-line no-console
 
   field.value = `${field.value.substring(0, group.start)}${newContent}${field.value.substring(group.end + 1)}`; // eslint-disable-line functional/immutable-data
-  console.info(`'${fieldToString(field)}'`); // eslint-disable-line no-console
+  //console.info(`'${fieldToString(field)}'`); // eslint-disable-line no-console
 
   function fixBlanks(str) {
     if (str.includes('|') && str.match(/[^ |]/u)) {
@@ -88,6 +89,7 @@ function justifySubstring(field, group) {
     }
     return str;
   }
+
   function scoreChar(c) {
     if (c === '|' || c === ' ') {
       return BIG_BAD_VALUE; // Max value, these should code last
@@ -114,11 +116,11 @@ export function justifyAndSortField008CharacterGroups(field, typeOfMaterial) {
     return field;
   }
 
-  console.info(typeOfMaterial); // eslint-disable-line no-console
+  //console.info(typeOfMaterial); // eslint-disable-line no-console
 
   const relevantCharacterGroups = characterGroups.filter(gr => gr.type === typeOfMaterial);
 
-  relevantCharacterGroups.forEach(group => justifySubstring(field, group));
+  relevantCharacterGroups.forEach(group => processCharacterGroup(field, group));
 
   //justifyField008CharacterGroups(field, typeOfMaterial); // Oops: also sorts...
 
@@ -128,3 +130,13 @@ export function justifyAndSortField008CharacterGroups(field, typeOfMaterial) {
   return field;
 }
 
+function removeDuplicateValues(str) {
+  const arr = str.split('');
+  // Take only the first instance of a proper value-carrying character
+  const reducedStr = arr.filter((c, i) => c === ' ' || c === '|' || arr.indexOf(c) === i).join('');
+  //console.info(`I: '${str}'`); // eslint-disable-line no-console
+  //console.info(`M: '${reducedStr}'`); // eslint-disable-line no-console
+  const output = `${reducedStr}${' '.repeat(str.length - reducedStr.length)}`; // Had some weird trouble with str.padEnd(n)
+  //console.info(`M: '${output}'`); // eslint-disable-line no-console
+  return output;
+}
