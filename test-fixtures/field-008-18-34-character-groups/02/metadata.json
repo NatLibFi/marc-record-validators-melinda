@@ -1,0 +1,6 @@
+{
+  "description": "Fix BK 008/19-22 and 008/24-27",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
