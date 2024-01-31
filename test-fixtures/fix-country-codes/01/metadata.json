@@ -1,0 +1,6 @@
+{
+  "description": "Validate 008/15-17: nothing to do",
+  "enabled": true,
+  "fix": false,
+  "only": false
+}

@@ -1,0 +1,6 @@
+{
+  "description": "Fix 008/15-17: nothing to do",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
