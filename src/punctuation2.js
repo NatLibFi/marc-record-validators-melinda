@@ -87,6 +87,7 @@ export function fieldNeedsModification(field, add = true) {
 const commaNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö|\))$/u;
 const defaultNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const defaultNeedsPuncAfter2 = /(?:[\]a-zA-Z0-9)]|ä|å|ö|Å|Ä|Ö)$/u;
+const needsPuncAfterUsingNegation = /[^!?.:;,]$/u; // non-punc for pre-240/700/XXX $, note that '.' comes if preceded by ')'
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 
@@ -122,7 +123,7 @@ const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': d
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': defaultNeedsPuncAfter};
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
 
-const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': defaultNeedsPuncAfter2};
+const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': needsPuncAfterUsingNegation};
 
 // 490:
 const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxyz', 'followedBy': 'v', 'context': /[^;]$/u};
