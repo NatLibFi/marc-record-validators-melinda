@@ -81,6 +81,11 @@ function getNormalizedValue(subfield, field) {
     // MRA-614: "(elokuva, 2000)" => "(elokuva : 2000)""
     return value.replace(/\((elokuva), (19[0-9][0-9]|20[0-2][0-9])\)/u, '($1 : $2)'); // eslint-disable-line prefer-named-capture-group
   }
+
+  // Part of MET-549: Uppercase language (punctuation is handled elsewhere):
+  if (subfield.code === 'l' && ['130', '240', '243', '600', '610', '611', '630', '700', '710', '711', '730', '800', '810', '811', '830']) {
+    return `${value[0].toUpperCase()}${value.slice(1)}`;
+  }
   /* eslint-enable */
   return value;
 }
