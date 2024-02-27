@@ -1,0 +1,5 @@
+{
+  "description": "Normalize $l",
+  "comment": "Related issues: MRA-273, MRA-614...",
+  "fix": true
+}

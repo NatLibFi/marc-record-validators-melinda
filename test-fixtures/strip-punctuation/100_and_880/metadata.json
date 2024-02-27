@@ -1,0 +1,5 @@
+{
+  "description": "100_and_880: 880 uses rules for 100. Tolarate non-latin chars",
+  "fix": true,
+  "only": false
+}
