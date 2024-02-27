@@ -1,0 +1,26 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "130", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Sukunimi, A. B." },
+        { "code": "t", "value": "Opus," },
+        { "code": "l", "value": "Suomi" }
+    ]},
+    { "tag": "240", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Supo," },
+      { "code": "l", "value": "Saame" }
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, A. B." },
+      { "code": "t", "value": "Opus." },
+      { "code": "l", "value": "Suomi" }
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, A. B." },
+      { "code": "t", "value": "Opus," },
+      { "code": "l", "value": "Suomi" }
+    ]}
+  ],
+  "leader": ""
+}
