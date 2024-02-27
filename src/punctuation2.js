@@ -10,27 +10,29 @@
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
 import {validateSingleField} from './ending-punctuation';
+import {fieldGetUnambiguousTag} from './subfield6Utils';
 //import createDebugLogger from 'debug';
-import {fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldToString, nvdebug} from './utils';
 import clone from 'clone';
 
 //const debug = createDebugLogger('debug/punctuation2');
 
+const descriptionString = 'Remove invalid and add valid punctuation to data fields';
 export default function () {
   return {
-    description: 'Add punctuation to data fields',
+    description: descriptionString,
     validate, fix
   };
 
   function fix(record) {
-    nvdebug('Add punctuation to data fields: fixer');
+    nvdebug(`${descriptionString}: fixer`);
     const res = {message: [], fix: [], valid: true};
     record.fields.forEach(f => fieldFixPunctuation(f));
     return res;
   }
 
   function validate(record) {
-    nvdebug('Add punctuation to data fields: validate');
+    nvdebug(`${descriptionString}: validate`);
 
     const fieldsNeedingModification = record.fields.filter(f => fieldNeedsModification(f, true));
 
@@ -84,10 +86,9 @@ export function fieldNeedsModification(field, add = true) {
 
 
 //const stripCrap = / *[-;:,+]+$/u;
-const commaNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö|\))$/u;
 const defaultNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const defaultNeedsPuncAfter2 = /(?:[\]a-zA-Z0-9)]|ä|å|ö|Å|Ä|Ö)$/u;
-const needsPuncAfterUsingNegation = /[^!?.:;,]$/u; // non-punc for pre-240/700/XXX $, note that '.' comes if preceded by ')'
+const doesNotEndInPunc = /[^!?.:;,]$/u; // non-punc for pre-240/700/XXX $, note that '.' comes if preceded by ')'
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 
@@ -112,7 +113,8 @@ const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /
 const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context': puncIsProbablyPunc, 'remove': / *[.,:;]$/u};
 
 
-const addX00aComma = {'add': ',', 'code': 'abcqdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
+const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
+const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00aDot = {'add': '.', 'code': 'abcdet', 'followedBy': '#tu', 'context': defaultNeedsPuncAfter};
 
@@ -123,7 +125,7 @@ const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': d
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': defaultNeedsPuncAfter};
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
 
-const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': needsPuncAfterUsingNegation};
+const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': doesNotEndInPunc};
 
 // 490:
 const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxyz', 'followedBy': 'v', 'context': /[^;]$/u};
@@ -285,7 +287,7 @@ const cleanValidPunctuationRules = {
 const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
 
 
-const addX00 = [addX00aComma, addX00aComma2, addX00aDot, ...addToAllEntryFields];
+const addX00 = [addX00aComma, addX00aComma2, addX00aDot, addX00dComma, ...addToAllEntryFields];
 const addX10 = [addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
 const addX11 = [...addToAllEntryFields];
 const addX30 = [...addToAllEntryFields];
@@ -464,38 +466,40 @@ function checkRule(rule, field, subfield1, subfield2) {
   return true;
 }
 
+
 function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, operation = NONE) {
-
-  if (!(`${field.tag}` in ruleArray) || ruleArray === null || operation === NONE) {
-
-    /*
-    if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statements
-      nvdebug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`, debug);
-
-    }
-    */
+  if (operation === NONE || ruleArray === null) { // !fieldIsApplicable(field, ruleArray)) {
     return;
   }
-  nvdebug(`PUNCTUATE ${field.tag} '${subfieldToString(subfield1)}' XXX '${subfield2 ? subfieldToString(subfield2) : '#'} }`);
+  const tag2 = field.tag === '880' ? fieldGetUnambiguousTag(field) : field.tag;
+  if (!tag2) {
+    return;
+  }
+  if (!(`${tag2}` in ruleArray)) {
+    return;
+  }
 
-  //nvdebug(`OP=${operation} ${tag}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debug);
-  const candRules = ruleArray[field.tag];
+  //nvdebug(`PUNCTUATE ${field.tag}/${tag2} '${subfieldToString(subfield1)}' XXX '${subfield2 ? subfieldToString(subfield2) : '#'} }`);
+
+  //nvdebug(`OP=${operation} ${tag2}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`);
+  const candRules = ruleArray[tag2];
   candRules.forEach(rule => {
     //debugRule(rule);
-
+    //nvdebug(' WP1');
     if (!checkRule(rule, field, subfield1, subfield2)) {
       return;
     }
+    //nvdebug(' WP2');
 
     //const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statements
       //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
-      //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
+      //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`);
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statements
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
-      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}'`, debug);
+      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}'`);
     }
 
     /*
