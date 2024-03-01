@@ -1,0 +1,6 @@
+{
+  "description":"Add dot before 240$l. Note that lowercase->uppercase capitalization is done elsewhere",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
