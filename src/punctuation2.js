@@ -98,7 +98,7 @@ const puncIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö) ?[.,:;]$/u;
 
 // Will unfortunately trigger "Sukunimi, Th." type:
 const removeColons = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / *[;:]$/u};
-const removeX00Comma = {'code': 'abcqde', 'followedBy': 'abcqde#', 'context': /.,$/u, 'remove': /,$/u};
+const removeX00Comma = {'code': 'abcdenqt', 'followedBy': 'abcdenqtv#', 'context': /.,$/u, 'remove': /,$/u};
 const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
 const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#', 'context': /[0-9]-[,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': dotIsProbablyPunc, 'remove': /\.$/u};
@@ -107,6 +107,7 @@ const cleanCorruption = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / \.$/u
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj#', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
 
 const removeCommaBeforeLanguageSubfieldL = {'followedBy': 'l', 'remove': /,$/u};
+const removeCommaBeforeTitleSubfieldT = {'followedBy': 't', 'remove': /,$/u};
 
 const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /\.$/u};
 // 390, 800, 810, 830...
@@ -116,7 +117,7 @@ const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context':
 const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
-const addX00aDot = {'add': '.', 'code': 'abcdet', 'followedBy': '#tu', 'context': defaultNeedsPuncAfter};
+const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': '#fklptu', 'context': defaultNeedsPuncAfter};
 
 
 //const addX10iaComma = {'name': 'Punctuate relationship information', 'code': 'i', 'followedBy': 'a', 'context': defaultNeedsPuncAfter2};
@@ -138,10 +139,12 @@ const REMOVE_AND_ADD = 3;
 // Crappy punctuation consists of various crap that is somewhat common.
 // We strip crap for merge decisions. We are not trying to actively remove crap here.
 
-const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage, removeCommaBeforeLanguageSubfieldL];
-const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage, removeCommaBeforeLanguageSubfieldL];
-const removeX11Whatever = [removeCommaBeforeLanguageSubfieldL];
-const removeX30Whatever = [removeCommaBeforeLanguageSubfieldL];
+const removeCrapFromAllEntryFields = [removeCommaBeforeLanguageSubfieldL, removeCommaBeforeTitleSubfieldT];
+
+const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
+const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
+const removeX11Whatever = removeCrapFromAllEntryFields;
+const removeX30Whatever = removeCrapFromAllEntryFields;
 
 const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remove': /(?: *;| *=|,)$/u}];
 
@@ -287,7 +290,7 @@ const cleanValidPunctuationRules = {
 const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
 
 
-const addX00 = [addX00aComma, addX00aComma2, addX00aDot, addX00dComma, ...addToAllEntryFields];
+const addX00 = [addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
 const addX10 = [addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
 const addX11 = [...addToAllEntryFields];
 const addX30 = [...addToAllEntryFields];
