@@ -1,5 +1,6 @@
 {
-  "description": "Apply subfield internal normalization: fail, since probablematic fields",
+  "description": "Apply subfield internal normalization",
   "comment": "Related issues: MRA-273, MRA-614...",
-  "fix": true
+  "fix": true,
+  "only": false
 }
