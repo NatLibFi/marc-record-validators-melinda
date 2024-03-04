@@ -1,6 +1,8 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
 import {fieldHasSubfield, fieldToString} from './utils';
+import {fieldFixPunctuation} from './punctuation2';
+import {fieldGetUnambiguousTag} from './subfield6Utils';
 
 
 // Author(s): Nicholas Volk
@@ -69,25 +71,41 @@ function handleInitials(value, subfieldCode, field) {
     // initial space confirms us that it's an initial
     return str.match(/ (?:[A-Z]|Å|Ä|Ö)\.(?:[A-Z]|Å|Ä|Ö)/u);
   }
-
 }
+
 function getNormalizedValue(subfield, field) {
-  /* eslint-disable */
-  let value = subfield.value;
-  value = handleInitials(value, subfield.code, field);
+  return uppercaseLanguage(handleMovies(handleInitials(subfield.value, subfield.code, field)));
 
 
-  if (subfield.code === 'a' && ['130', '630', '730'].includes(field.tag)) {
-    // MRA-614: "(elokuva, 2000)" => "(elokuva : 2000)""
-    return value.replace(/\((elokuva), (19[0-9][0-9]|20[0-2][0-9])\)/u, '($1 : $2)'); // eslint-disable-line prefer-named-capture-group
+  function handleMovies(value) {
+    if (subfield.code === 'a' && ['130', '630', '730'].includes(field.tag)) {
+      // MRA-614: "(elokuva, 2000)" => "(elokuva : 2000)""
+      return value.replace(/\((elokuva), (19[0-9][0-9]|20[0-2][0-9])\)/u, '($1 : $2)'); // eslint-disable-line prefer-named-capture-group
+    }
+    return value;
   }
 
-  // Part of MET-549: Uppercase language (punctuation is handled elsewhere):
-  if (subfield.code === 'l' && ['130', '240', '243', '600', '610', '611', '630', '700', '710', '711', '730', '800', '810', '811', '830']) {
-    return `${value[0].toUpperCase()}${value.slice(1)}`;
+  function uppercaseLanguage(value) { // Part of MET-549
+    const relevantTags = ['130', '240', '243', '600', '610', '611', '630', '700', '710', '711', '730', '800', '810', '811', '830'];
+
+    if (subfield.code !== 'l') {
+      return value;
+    }
+    const targetTag = tagForUppercasing();
+    if (relevantTags.includes(targetTag)) {
+      const newValue = `${value[0].toUpperCase()}${value.slice(1)}`;
+      if (newValue !== value) {
+        fieldFixPunctuation(field); // Rather hackily try to fix prev punc on the fly
+        return newValue;
+      }
+    }
+
+    function tagForUppercasing() {
+      return field.tag === '880' ? fieldGetUnambiguousTag(field) : field.tag;
+    }
+
+    return value;
   }
-  /* eslint-enable */
-  return value;
 }
 
 function normalizeSubfieldValues(field) {
