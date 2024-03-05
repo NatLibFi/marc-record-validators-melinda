@@ -13,3 +13,19 @@ export function map336CodeToTerm(code, catLang = 'fin') {
   }
   return mapping.fin; // Default to Finnish (which should be complete, knock-knock)
 }
+
+export function getFormOfItem(record) {
+  const [f008Value] = record.get('008').map(field => field.value);
+  if (f008Value && f008Value.length === 40) {
+    const pos = getFormOfItemPosition(record);
+    return f008Value[pos];
+  }
+  return '|';
+}
+
+export function getFormOfItemPosition(record) {
+  if (record.isMP() || record.isVM()) {
+    return 29;
+  }
+  return 23;
+}
