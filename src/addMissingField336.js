@@ -29,11 +29,53 @@ export default function () {
     return {message: [msg], valid: false};
   }
 
+  function guessMissingBForMap(record, formOfItem) {
+    // Is braille and is not a model:
+    if (formOfItem === 'f' && record.fields.some(f => f.tag === '007' && f.value[0] === 'a' && f.value[1] !== 'q')) {
+      return 'crt'; // Cartographic tactile image
+    }
+    const [field008] = record.get('008');
+    if (field008 && field008.value[25] === 'd') { // globe
+      return 'crf'; // map 3D form
+    }
+    return 'cri'; // default cartographic image
+  }
+
   function guessMissingB(record) {
     const typeOfRecord = record.getTypeOfRecord();
+
+    if (typeOfRecord === 'i') {
+      return 'spw';
+    }
+    if (typeOfRecord === 'j') {
+      return 'prm'; // performed music
+    }
+
+    const formOfItem = getFormOfItem(record);
+
+    if (typeOfRecord === 'e' || typeOfRecord === 'f') {
+      return guessMissingBForMap(record, formOfItem);
+    }
+
+    if (typeOfRecord === 'k') {
+      if (formOfItem === 'f') {
+        return 'tci';
+      }
+      return 'sti';
+    }
+
+    if (typeOfRecord === 'c' || typeOfRecord === 'd') {
+      if (formOfItem === 'f') {
+        return 'tcm'; // tactile notated music
+      }
+      return 'ntm'; // notated music
+    }
+
+
     const bibliographicalLevel = record.getBibliograpicLevel();
     const isBis = ['b', 'i', 's'].includes(bibliographicalLevel); // Bloody h-missing typo...
-    const formOfItem = getFormOfItem(record);
+
+    //const f245h = getTitleMedium(record);
 
     console.info(`TYPE: ${typeOfRecord}, BIS:${bibliographicalLevel}=${isBis ? 'true' : 'false'}, FoI:${formOfItem}`); // eslint-disable-line no-console
 
@@ -45,7 +87,18 @@ export default function () {
         return 'txt'; // Default BK format is text
       }
     }
-    return false;
+
+
+    if (typeOfRecord === 'g') {
+      if (record.fields.some(f => f.tag === '007' && f.value[0] === 'g')) {
+        return 'sti'; // still image
+      }
+      if (record.fields.some(f => f.tag === '007' && ['m', 'v', 'c'].includes(f.value[0]))) {
+        return 'tdi'; // 2d moving pic
+      }
+    }
+
+    return undefined;
   }
 
   function getMissing336(record) {
