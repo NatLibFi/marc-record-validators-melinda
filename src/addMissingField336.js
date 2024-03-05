@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {map336CodeToTerm} from './utils33X';
+import {getFormOfItem, map336CodeToTerm} from './utils33X';
 
 const description = 'Add missing 336 field(s)';
 
@@ -33,11 +33,15 @@ export default function () {
     const typeOfRecord = record.getTypeOfRecord();
     const bibliographicalLevel = record.getBibliograpicLevel();
     const isBis = ['b', 'i', 's'].includes(bibliographicalLevel); // Bloody h-missing typo...
+    const formOfItem = getFormOfItem(record);
 
-    console.info(`TYPE: ${typeOfRecord}, BIS:${bibliographicalLevel}=${isBis ? 'true' : 'false'}`); // eslint-disable-line no-console
+    console.info(`TYPE: ${typeOfRecord}, BIS:${bibliographicalLevel}=${isBis ? 'true' : 'false'}, FoI:${formOfItem}`); // eslint-disable-line no-console
 
     if (typeOfRecord === 'a' || typeOfRecord === 't') {
       if (!isBis) {
+        if (formOfItem === 'f') {
+          return 'tct'; // tactile text
+        }
         return 'txt'; // Default BK format is text
       }
     }
