@@ -29,3 +29,13 @@ export function getFormOfItemPosition(record) {
   }
   return 23;
 }
+
+export function getTitleMedium(record) {
+  // Get 245$h. Very old and deprecated practise...
+  const [f245] = record.get('245');
+  if (!f245) {
+    return undefined;
+  }
+  const [h] = f245.subfields.filter(sf => sf.code === 'h');
+  return h ? h.value : undefined;
+}
