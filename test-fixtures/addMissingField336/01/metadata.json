@@ -2,6 +2,6 @@
   "description": "Validation: Add field 336",
   "comment": "Create a 336",
   "enabled": true,
-  "only": true,
+  "only": false,
   "fix": false
 }
