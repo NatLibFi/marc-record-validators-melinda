@@ -1,8 +1,10 @@
 //import createDebugLogger from 'debug';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {getFormOfItem, map336CodeToTerm} from './utils33X';
+import {getFormOfItem, getTitleMedium, map336CodeToTerm} from './utils33X';
 
 const description = 'Add missing 336 field(s)';
+
+const multimediaRegexp = /multimedia/ui;
 
 export default function () {
 
@@ -29,7 +31,71 @@ export default function () {
     return {message: [msg], valid: false};
   }
 
-  function guessMissingBForMap(record, formOfItem) {
+  function guessMissingBForComputerFile(record) {
+    const [field008] = record.get('008');
+    const typeOfComputerFile = field008 ? field008[26] : undefined;
+    if (typeOfComputerFile) {
+      if (['d', 'e'].includes(typeOfComputerFile)) {
+        return 'txt';
+      }
+      if (['b', 'f', 'g'].includes(typeOfComputerFile)) {
+        return 'cop';
+      }
+      if (['a', 'c'].includes(typeOfComputerFile)) {
+        return 'cod';
+      }
+      if (typeOfComputerFile === 'h') {
+        return 'snd';
+      }
+      if (['i', 'j', 'm'].includes(typeOfComputerFile)) {
+        return 'xxx';
+      }
+    }
+    return 'zzz'; // unspecified
+  }
+
+  function deriveLanguageMaterials336From007(record) {
+    const categoryOfMaterial = [ // 007/00
+      {category: 'a', rdacontent: 'cri'}, // cartographic image
+      {category: 'c', rdacontent: 'txt'},
+      {category: 'g', rdacontent: 'sti'},
+      {vategory: 'h', rdacontent: 'txt'},
+      {category: 'k', rdacontent: 'sti'},
+      {category: 'v', rdacontent: 'tdi'}
+    ];
+
+    // What if there are multiple 007 fields?
+    const [f007] = record.fields.get('007');
+    if (f007) {
+      const row = categoryOfMaterial.filter(row => row.category === f007[0]);
+      if (row) {
+        return row.rdacontent;
+      }
+    }
+    return undefined;
+  }
+
+  function guessMissingBForBookAndContinuingResource(record, formOfItem) {
+
+    const f245h = getTitleMedium(record);
+    if (f245h && !multimediaRegexp.test(f245h)) {
+      const result = deriveLanguageMaterials336From007(record); // Base result on 007/00. Aped from usemarcon-cyrillux. I don't like this at all... Shouldn't we check $h value as well...
+      if (result) {
+        return result;
+      }
+    }
+
+    //const bibliographicalLevel = record.getBibliograpicLevel(); // Bloody h-drop typo...
+    //const isBis = ['b', 'i', 's'].includes(bibliographicalLevel);
+    //if (!isBis) {
+    if (formOfItem === 'f') {
+      return 'tct'; // tactile text
+    }
+    return 'txt'; // Default BK format is text
+  }
+
+  function guessMissingBForMap(record) {
+    const formOfItem = getFormOfItem(record);
     // Is braille and is not a model:
     if (formOfItem === 'f' && record.fields.some(f => f.tag === '007' && f.value[0] === 'a' && f.value[1] !== 'q')) {
       return 'crt'; // Cartographic tactile image
@@ -41,7 +107,7 @@ export default function () {
     return 'cri'; // default cartographic image
   }
 
-  function guessMissingB(record) {
+  function guessMissing336B(record) {
     const typeOfRecord = record.getTypeOfRecord();
 
     if (typeOfRecord === 'i') {
@@ -51,11 +117,11 @@ export default function () {
       return 'prm'; // performed music
     }
 
-    const formOfItem = getFormOfItem(record);
-
     if (typeOfRecord === 'e' || typeOfRecord === 'f') {
-      return guessMissingBForMap(record, formOfItem);
+      return guessMissingBForMap(record);
     }
+
+    const formOfItem = getFormOfItem(record);
 
     if (typeOfRecord === 'k') {
       if (formOfItem === 'f') {
@@ -71,24 +137,6 @@ export default function () {
       return 'ntm'; // notated music
     }
 
-
-    const bibliographicalLevel = record.getBibliograpicLevel();
-    const isBis = ['b', 'i', 's'].includes(bibliographicalLevel); // Bloody h-missing typo...
-
-    //const f245h = getTitleMedium(record);
-
-    console.info(`TYPE: ${typeOfRecord}, BIS:${bibliographicalLevel}=${isBis ? 'true' : 'false'}, FoI:${formOfItem}`); // eslint-disable-line no-console
-
-    if (typeOfRecord === 'a' || typeOfRecord === 't') {
-      if (!isBis) {
-        if (formOfItem === 'f') {
-          return 'tct'; // tactile text
-        }
-        return 'txt'; // Default BK format is text
-      }
-    }
-
-
     if (typeOfRecord === 'g') {
       if (record.fields.some(f => f.tag === '007' && f.value[0] === 'g')) {
         return 'sti'; // still image
@@ -98,6 +146,23 @@ export default function () {
       }
     }
 
+    if (typeOfRecord === 'm') { // electronic
+      return guessMissingBForComputerFile(record);
+    }
+
+    if (typeOfRecord === 'a' || typeOfRecord === 't') {
+      return guessMissingBForBookAndContinuingResource(record, formOfItem);
+    }
+
+    // Note that 245$h should trigger LDR/06:a or t =>o change at some earlier point (outside this module)
+    if (typeOfRecord === 'o' || typeOfRecord === 'p') { // o: Kit p: Mixed
+      // We could guess multiple values from 300?
+      return 'xxx';
+    }
+
+    if (typeOfRecord === 'r') { // three-dimensional form
+      return 'tdf';
+    }
     return undefined;
   }
 
@@ -108,7 +173,7 @@ export default function () {
       return undefined;
     }
 
-    const b = guessMissingB(record);
+    const b = guessMissing336B(record);
 
     if (!b) {
       return undefined;
