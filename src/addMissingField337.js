@@ -4,6 +4,22 @@ import {getFormOfItem, map337CodeToTerm} from './utils33X';
 
 const description = 'Add missing 336 field(s)';
 
+// Based on https://github.com/NatLibFi/USEMARCON-Cyrillux/blob/master/008-23-337a.tbl . Extended!
+const mappings337B = [
+  {formOfItem: ' ', rdacontent: 'n'}, // unmediated - käytettävissä ilman laitetta
+  {formOfItem: '|', rdacontent: 'n'},
+  {formOfItem: 'a', rdacontent: 'h'}, // microform
+  {formOfItem: 'b', rdacontent: 'h'},
+  {formOfItem: 'c', rdacontent: 'h'},
+  {formOfItem: 'd', rdacontent: 'n'},
+  {formOfItem: 'e', rdacontent: 'n'},
+  {formOfItem: 'f', rdacontent: 'n'},
+  {formOfItem: 'o', rdacontent: 'c'}, // computer
+  {formOfItem: 'q', rdacontent: 'c'},
+  {formOfItem: 'r', rdacontent: 'n'},
+  {formOfItem: 's', rdacontent: 'c'}
+];
+
 export default function () {
 
   return {
@@ -108,23 +124,9 @@ export default function () {
 }
 
 function mapFormOfItemToField337B(formOfItem) {
-  // Based on https://github.com/NatLibFi/USEMARCON-Cyrillux/blob/master/008-23-337a.tbl . Extended!
-  const mappings = [
-    {formOfItem: ' ', rdacontent: 'n'}, // unmediated - käytettävissä ilman laitetta
-    {formOfItem: '|', rdacontent: 'n'},
-    {formOfItem: 'a', rdacontent: 'h'}, // microform
-    {formOfItem: 'b', rdacontent: 'h'},
-    {formOfItem: 'c', rdacontent: 'h'},
-    {formOfItem: 'd', rdacontent: 'n'},
-    {formOfItem: 'e', rdacontent: 'n'},
-    {formOfItem: 'f', rdacontent: 'n'},
-    {formOfItem: 'o', rdacontent: 'c'}, // computer
-    {formOfItem: 'q', rdacontent: 'c'},
-    {formOfItem: 'r', rdacontent: 'n'},
-    {formOfItem: 's', rdacontent: 'c'}
-  ];
+  nvdebug(`mapping ${formOfItem} to 337$b`);
 
-  const [result] = mappings.find(row => row.formOfItem === formOfItem);
+  const [result] = mappings337B.filter(row => row.formOfItem === formOfItem);
   if (result) {
     return result.rdacontent;
   }
