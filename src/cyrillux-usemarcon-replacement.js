@@ -7,6 +7,7 @@
 
 import {default as add336} from './addMissingField336';
 import {default as add337} from './addMissingField337';
+import {default as add338} from './addMissingField338';
 
 
 // import createDebugLogger from 'debug';
@@ -24,6 +25,7 @@ export default function () {
     nvdebug(`${description}: fix`);
     add336().fix(record);
     add337().fix(record);
+    add338().fix(record);
     const res = {message: [], fix: [], valid: true};
     return res;
   }
