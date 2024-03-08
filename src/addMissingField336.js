@@ -33,7 +33,8 @@ export default function () {
 
   function guessMissingBForComputerFile(record) {
     const [field008] = record.get('008');
-    const typeOfComputerFile = field008 ? field008[26] : undefined;
+    const typeOfComputerFile = field008 && field008.value ? field008.value[26] : undefined;
+
     if (typeOfComputerFile) {
       if (['d', 'e'].includes(typeOfComputerFile)) {
         return 'txt';
