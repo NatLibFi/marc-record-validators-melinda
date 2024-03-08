@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add missing 336 and 337 for a computer (LDR/06=m) game (008/26=g)",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}
