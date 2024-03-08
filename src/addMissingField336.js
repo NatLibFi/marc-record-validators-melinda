@@ -15,9 +15,11 @@ export default function () {
   function fix(record) {
     nvdebug(`FIX ${description}...`);
     const newField = getMissing336(record);
-    record.insertField(newField);
-
     const res = {message: [], fix: [], valid: true};
+    if (newField) {
+      record.insertField(newField);
+      return res;
+    }
     return res;
   }
 
