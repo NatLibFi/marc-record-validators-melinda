@@ -3,27 +3,35 @@ import path from 'path';
 
 const mappings336 = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'field336.json'), 'utf8'));
 const mappings337 = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'field337.json'), 'utf8'));
+const mappings338 = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'field338.json'), 'utf8'));
 
-export function map336CodeToTerm(code, catLang = 'fin') {
-  const [mapping] = mappings336.filter(m => m.code === code);
+
+function map33XCodeToTerm(mapping, catLang = 'fin') {
   if (!mapping) {
     return undefined;
   }
   if (catLang in mapping) {
     return mapping[catLang];
   }
-  return mapping.fin; // Default to Finnish (which should be complete, knock-knock)
+  if ('fin' in mapping) {
+    return mapping.fin; // Default to Finnish (which should be complete, knock-knock)
+  }
+  return undefined;
+}
+
+export function map336CodeToTerm(code, catLang = 'fin') {
+  const [mapping] = mappings336.filter(m => m.code === code);
+  return map33XCodeToTerm(mapping, catLang);
 }
 
 export function map337CodeToTerm(code, catLang = 'fin') {
   const [mapping] = mappings337.filter(m => m.code === code);
-  if (!mapping) {
-    return undefined;
-  }
-  if (catLang in mapping) {
-    return mapping[catLang];
-  }
-  return mapping.fin; // Default to Finnish (which should be complete, knock-knock)
+  return map33XCodeToTerm(mapping, catLang);
+}
+
+export function map338CodeToTerm(code, catLang = 'fin') {
+  const [mapping] = mappings338.filter(m => m.code === code);
+  return map33XCodeToTerm(mapping, catLang);
 }
 
 export function getFormOfItem(record) {
