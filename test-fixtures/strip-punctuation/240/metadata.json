@@ -1,0 +1,6 @@
+{
+  "description":"Remove comma before 240$l.",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}

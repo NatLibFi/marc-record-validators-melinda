@@ -1,0 +1,6 @@
+{
+  "description": "100_and_880: remove crappy punctuation and add proper one",
+  "comment": "Field 880 uses rules for 100 as it has $6 100-XX",
+  "fix": true,
+  "only": false
+}

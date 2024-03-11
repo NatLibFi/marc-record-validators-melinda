@@ -1,0 +1,20 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "700", "ind1": "1", "ind2": "2", "subfields": [
+      { "code": "6", "value": "880-06" },
+      { "code": "a", "value": "Jang, Gangmyeong," },
+      { "code": "d", "value": "1975-" },
+      { "code": "t", "value": "Albasaeng jareugi," },
+      { "code": "l", "value": "englanti."}
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": "2", "subfields": [
+      { "code": "6", "value": "700-06/$1" },
+      { "code": "a", "value": "장강명," },
+      { "code": "d", "value": "1975-" },
+      { "code": "t", "value": "알바생 자르기," },
+      { "code": "l", "value": "englanti."
+      }
+    ]}
+  ]
+}

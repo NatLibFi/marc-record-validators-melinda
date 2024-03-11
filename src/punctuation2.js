@@ -10,27 +10,29 @@
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
 import {validateSingleField} from './ending-punctuation';
+import {fieldGetUnambiguousTag} from './subfield6Utils';
 //import createDebugLogger from 'debug';
-import {fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldToString, nvdebug} from './utils';
 import clone from 'clone';
 
 //const debug = createDebugLogger('debug/punctuation2');
 
+const descriptionString = 'Remove invalid and add valid punctuation to data fields';
 export default function () {
   return {
-    description: 'Add punctuation to data fields',
+    description: descriptionString,
     validate, fix
   };
 
   function fix(record) {
-    nvdebug('Add punctuation to data fields: fixer');
+    nvdebug(`${descriptionString}: fixer`);
     const res = {message: [], fix: [], valid: true};
     record.fields.forEach(f => fieldFixPunctuation(f));
     return res;
   }
 
   function validate(record) {
-    nvdebug('Add punctuation to data fields: validate');
+    nvdebug(`${descriptionString}: validate`);
 
     const fieldsNeedingModification = record.fields.filter(f => fieldNeedsModification(f, true));
 
@@ -84,9 +86,9 @@ export function fieldNeedsModification(field, add = true) {
 
 
 //const stripCrap = / *[-;:,+]+$/u;
-const commaNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö|\))$/u;
 const defaultNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const defaultNeedsPuncAfter2 = /(?:[\]a-zA-Z0-9)]|ä|å|ö|Å|Ä|Ö)$/u;
+const doesNotEndInPunc = /[^!?.:;,]$/u; // non-punc for pre-240/700/XXX $, note that '.' comes if preceded by ')'
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 
@@ -96,7 +98,7 @@ const puncIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö) ?[.,:;]$/u;
 
 // Will unfortunately trigger "Sukunimi, Th." type:
 const removeColons = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / *[;:]$/u};
-const removeX00Comma = {'code': 'abcqde', 'followedBy': 'abcqde#', 'context': /.,$/u, 'remove': /,$/u};
+const removeX00Comma = {'code': 'abcdenqt', 'followedBy': 'abcdenqtv#', 'context': /.,$/u, 'remove': /,$/u};
 const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
 const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#', 'context': /[0-9]-[,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': dotIsProbablyPunc, 'remove': /\.$/u};
@@ -104,21 +106,27 @@ const cleanCorruption = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / \.$/u
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj#', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
 
+const removeCommaBeforeLanguageSubfieldL = {'followedBy': 'l', 'remove': /,$/u};
+const removeCommaBeforeTitleSubfieldT = {'followedBy': 't', 'remove': /,$/u};
+
 const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /\.$/u};
 // 390, 800, 810, 830...
 const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context': puncIsProbablyPunc, 'remove': / *[.,:;]$/u};
 
 
-const addX00aComma = {'add': ',', 'code': 'abcqdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
+const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
+const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
-const addX00aDot = {'add': '.', 'code': 'abcdet', 'followedBy': '#tu', 'context': defaultNeedsPuncAfter};
+const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': '#fklptu', 'context': defaultNeedsPuncAfter};
+
 
 //const addX10iaComma = {'name': 'Punctuate relationship information', 'code': 'i', 'followedBy': 'a', 'context': defaultNeedsPuncAfter2};
 const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter};
 const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter};
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': defaultNeedsPuncAfter};
-const addLanguageComma = {'name': 'Add comma before 810$l', 'add': ',', 'code': 'tv', 'followedBy': 'l', 'context': defaultNeedsPuncAfter2};
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
+
+const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': doesNotEndInPunc};
 
 // 490:
 const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxyz', 'followedBy': 'v', 'context': /[^;]$/u};
@@ -131,8 +139,12 @@ const REMOVE_AND_ADD = 3;
 // Crappy punctuation consists of various crap that is somewhat common.
 // We strip crap for merge decisions. We are not trying to actively remove crap here.
 
-const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage];
-const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage];
+const removeCrapFromAllEntryFields = [removeCommaBeforeLanguageSubfieldL, removeCommaBeforeTitleSubfieldT];
+
+const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
+const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
+const removeX11Whatever = removeCrapFromAllEntryFields;
+const removeX30Whatever = removeCrapFromAllEntryFields;
 
 const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remove': /(?: *;| *=|,)$/u}];
 
@@ -152,12 +164,16 @@ const crappy24X = [
   {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'abfghinp', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'n', 'followedBy': 'p', 'remove': /\.$/u, 'context': dotIsProbablyPunc}, // MELINDA-8817
-  {'code': 'p', 'followedBy': 'pc', 'remove': /\.$/u, 'context': dotIsProbablyPunc} // MELINDA-8817
+  {'code': 'p', 'followedBy': 'pc', 'remove': /\.$/u, 'context': dotIsProbablyPunc}, // MELINDA-8817
+  removeCommaBeforeLanguageSubfieldL
 ];
+
 
 const cleanCrappyPunctuationRules = {
   '100': removeX00Whatever,
   '110': removeX10Whatever,
+  '111': removeX11Whatever,
+  '130': removeX30Whatever,
   '240': crappy24X,
   '245': crappy24X,
   '246': crappy24X,
@@ -173,8 +189,12 @@ const cleanCrappyPunctuationRules = {
   '490': remove490And830Whatever,
   '600': removeX00Whatever,
   '610': removeX10Whatever,
+  '611': removeX11Whatever,
+  '630': removeX30Whatever,
   '700': removeX00Whatever,
   '710': removeX10Whatever,
+  '711': removeX11Whatever,
+  '730': removeX30Whatever,
   '773': linkingEntryWhatever,
   '774': linkingEntryWhatever,
   '776': linkingEntryWhatever,
@@ -189,15 +209,16 @@ const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /
 const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
 const cleanLegalX00iColon = {'code': 'i', 'followedBy': 'a', 'remove': / *:$/u}; // NB! context is not needed
 const cleanLegalX00Dot = {'code': 'abcdetvl', 'followedBy': 'tu#', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
-const cleanLanguageComma = {'name': 'language comma', 'code': 'tv', 'followedBy': 'l', 'context': /.,$/u, 'remove': /,$/u};
+const cleanDotBeforeLanguageSubfieldL = {'name': 'pre-language-$l dot', 'followedBy': 'l', 'context': /.\.$/u, 'remove': /\.$/u};
 
+const legalEntryField = [cleanDotBeforeLanguageSubfieldL];
 
-const legalX00punc = [cleanLegalX00Comma, cleanLegalX00iColon, cleanLegalX00bDot, cleanLegalX00Dot, cleanLanguageComma];
+const legalX00punc = [cleanLegalX00Comma, cleanLegalX00iColon, cleanLegalX00bDot, cleanLegalX00Dot, ...legalEntryField];
 
 const cleanLegalX10Comma = {'name': 'X10comma', 'code': 'abe', 'followedBy': 'e', 'context': /.,$/u, 'remove': /,$/u};
 const cleanLegalX10Dot = {'name': 'X10dot', 'code': 'abt', 'followedBy': 'bst#', 'context': /.\.$/u, 'remove': /\.$/u};
 
-const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot, cleanX00eDot, cleanLanguageComma];
+const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot, cleanX00eDot, ...legalEntryField];
 
 const cleanLegalSeriesTitle = [ // 490 and 830
   {'code': 'a', 'followedBy': 'a', 'remove': / =$/u},
@@ -213,18 +234,17 @@ const clean24X = [
   {'name': 'ABFNP:C', 'code': 'abfnp', 'followedBy': 'c', 'remove': / \/$/u},
   {'name': 'ABN:N', 'code': 'abn', 'followedBy': 'n', 'remove': /\.$/u},
   {'name': 'ABNP:#', 'code': 'abnp', 'followedBy': '#', 'remove': /\.$/u},
-  {'name': 'N:P', 'code': 'n', 'followedBy': 'p', 'remove': /,$/u}
+  {'name': 'N:P', 'code': 'n', 'followedBy': 'p', 'remove': /,$/u},
+  cleanDotBeforeLanguageSubfieldL
 ];
 
 const cleanValidPunctuationRules = {
   '100': legalX00punc,
   '110': legalX10punc,
-  '600': legalX00punc,
-  '610': legalX10punc,
-  '700': legalX00punc,
-  '710': legalX10punc,
-  '800': legalX00punc,
-  '810': legalX10punc,
+  '111': legalEntryField,
+  '130': legalEntryField,
+  '240': clean24X,
+  '243': clean24X,
   '245': clean24X,
   '246': clean24X,
   '260': [
@@ -248,34 +268,48 @@ const cleanValidPunctuationRules = {
   ],
   '490': cleanLegalSeriesTitle,
   '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
+  '600': legalX00punc,
+  '610': legalX10punc,
+  '611': legalEntryField,
+  '630': legalEntryField,
   // Experimental, MET366-ish (end punc in internationally valid, but we don't use it here in Finland):
   '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}],
-  '830': cleanLegalSeriesTitle,
+  '700': legalX00punc,
+  '710': legalX10punc,
+  '711': legalEntryField,
+  '730': legalEntryField,
+  '800': legalX00punc,
+  '810': legalX10punc,
+  '811': legalEntryField,
+  '830': [...legalEntryField, ...cleanLegalSeriesTitle],
   '946': clean24X
-
 };
 
-// addColonToRelationshipInformation only applies to 700/710 but as others don't have $i, it's fine
-const addX00 = [addX00aComma, addX00aComma2, addX00aDot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
-const addX10 = [addX10bDot, addX10eComma, addX10Dot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
 
-const add245 = [
-  // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
-  {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
-  {'code': 'ab', 'followedBy': 'n', 'add': '.', 'context': defaultNeedsPuncAfter},
-  {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
-  {'code': 'n', 'followedBy': 'p', 'add': ',', 'context': defaultNeedsPuncAfter},
-  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
-  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on "punctuation validaror's" toes
-];
+// Overgeneralizes a bit: eg. addColonToRelationshipInformation only applies to 700/710 but as others don't have $i, it's fine.
+const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
 
-const add246 = [
+
+const addX00 = [addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
+const addX10 = [addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
+const addX11 = [...addToAllEntryFields];
+const addX30 = [...addToAllEntryFields];
+
+const add24X = [
   {'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter},
   {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
   {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
-  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
+  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
+  addDotBeforeLanguageSubfieldL
 ];
 
+const add245 = [
+  ...add24X,
+  // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
+  {'code': 'ab', 'followedBy': 'n', 'add': '.', 'context': defaultNeedsPuncAfter},
+  {'code': 'n', 'followedBy': 'p', 'add': ',', 'context': defaultNeedsPuncAfter},
+  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on "punctuation validator's" toes
+];
 
 const addSeriesTitle = [ // 490 and 830
   {'code': 'a', 'followedBy': 'a', 'add': ' =', 'context': defaultNeedsPuncAfter2},
@@ -286,9 +320,12 @@ const addSeriesTitle = [ // 490 and 830
 const addPairedPunctuationRules = {
   '100': addX00,
   '110': addX10,
-  '240': add246,
+  '111': addX11,
+  '130': addX30,
+  '240': add24X,
+  '243': add24X,
   '245': add245,
-  '246': add246,
+  '246': add24X,
   '260': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
     {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
@@ -313,11 +350,16 @@ const addPairedPunctuationRules = {
   '534': [{'code': 'p', 'followedBy': 'c', 'add': ':', 'context': defaultNeedsPuncAfter2}],
   '600': addX00,
   '610': addX10,
+  '611': addX11,
+  '630': addX30,
   '700': addX00,
   '710': addX10,
+  '711': addX11,
+  '730': addX30,
   '800': addX00,
   '810': addX10,
-  '830': addSeriesTitle,
+  '811': addX11,
+  '830': [...addX30, ...addSeriesTitle],
   '946': [{'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter}]
 };
 
@@ -340,6 +382,9 @@ function debugRule(rule) {
 */
 
 function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
+  if (!targetSubfieldCodes) { // We are not interested in what subfield precedes 240$l, ',' is removed anyway
+    return true;
+  }
   const negation = targetSubfieldCodes.includes('!');
   if (negation) {
     return !targetSubfieldCodes.includes(currSubfieldCode);
@@ -424,38 +469,40 @@ function checkRule(rule, field, subfield1, subfield2) {
   return true;
 }
 
+
 function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, operation = NONE) {
-
-  if (!(`${field.tag}` in ruleArray) || ruleArray === null || operation === NONE) {
-
-    /*
-    if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statements
-      nvdebug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`, debug);
-
-    }
-    */
+  if (operation === NONE || ruleArray === null) { // !fieldIsApplicable(field, ruleArray)) {
     return;
   }
-  nvdebug(`PUNCTUATE ${field.tag} '${subfieldToString(subfield1)}' XXX '${subfield2 ? subfieldToString(subfield2) : '#'} }`);
+  const tag2 = field.tag === '880' ? fieldGetUnambiguousTag(field) : field.tag;
+  if (!tag2) {
+    return;
+  }
+  if (!(`${tag2}` in ruleArray)) {
+    return;
+  }
 
-  //nvdebug(`OP=${operation} ${tag}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debug);
-  const candRules = ruleArray[field.tag];
+  //nvdebug(`PUNCTUATE ${field.tag}/${tag2} '${subfieldToString(subfield1)}' XXX '${subfield2 ? subfieldToString(subfield2) : '#'} }`);
+
+  //nvdebug(`OP=${operation} ${tag2}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`);
+  const candRules = ruleArray[tag2];
   candRules.forEach(rule => {
     //debugRule(rule);
-
+    //nvdebug(' WP1');
     if (!checkRule(rule, field, subfield1, subfield2)) {
       return;
     }
+    //nvdebug(' WP2');
 
     //const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statements
       //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
-      //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
+      //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`);
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statements
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
-      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}'`, debug);
+      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}'`);
     }
 
     /*
