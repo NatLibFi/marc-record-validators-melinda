@@ -1,0 +1,16 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "000000001" },
+
+    { "tag": "240", "ind1": "1", "ind2": "0", "subfields": [
+        { "code": "a", "value": "Seitsemän veljestä" },
+        { "code": "l", "value": "ruotsi" }
+    ]},
+    { "tag": "240", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Seitsemän ilvestä" },
+      { "code": "l", "value": "Ruotsi" }
+    ]}
+  ]
+}
