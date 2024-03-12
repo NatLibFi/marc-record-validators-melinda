@@ -2,7 +2,7 @@
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
 import {getFormOfItem, map337CodeToTerm} from './utils33X';
 
-const description = 'Add missing 336 field(s)';
+const description = 'Add missing 337 field(s)';
 
 // Based on https://github.com/NatLibFi/USEMARCON-Cyrillux/blob/master/008-23-337a.tbl . Extended!
 const mappings337B = [
@@ -29,9 +29,12 @@ export default function () {
   function fix(record) {
     nvdebug(`FIX ${description}...`);
     const newField = getMissing337(record);
-    record.insertField(newField);
-
     const res = {message: [], fix: [], valid: true};
+    if (newField) {
+      record.insertField(newField);
+      return res;
+    }
+
     return res;
   }
 
