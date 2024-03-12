@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 338(b=hj), $a is based 040$b cat languge ('swe')",
+  "enabled": true,
+  "only": true,
+  "fix": true
+}
