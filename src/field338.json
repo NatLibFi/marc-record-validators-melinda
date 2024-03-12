@@ -22,7 +22,7 @@
   {"code": "hd", "fin": "mikrofilmikela", "swe": "mikrofilmsspole", "eng": "microfilm reel"  },
   {"code": "he", "fin": "mikrokortti", "swe": "mikrofiche", "eng": "microfiche"  },
   {"code": "hf", "fin": "mikrokorttikasetti", "swe": "mikrofichekassett", "eng": "microfiche cassette"  },
-  {"code": "hg", "fin": "mikrofiche (ogenomskinlig)", "eng": "microopaque"  },
+  {"code": "hg", "fin": "mikrokortti (läpinäkymätön)", "swe": "mikrofiche (ogenomskinlig)", "eng": "microopaque"  },
   {"code": "hh", "fin": "mikrofilmiliuska", "swe": "mikrofilmsremsa", "eng": "microfilm slip"  },
   {"code": "hj", "fin": "mikrofilmirulla", "swe": "mikrofilmsrulle", "eng": "microfilm roll"  },
   {"code": "hz", "fin": "muu", "swe": "annan", "eng": "other"  },
