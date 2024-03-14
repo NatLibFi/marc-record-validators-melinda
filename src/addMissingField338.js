@@ -44,17 +44,32 @@ export default function () {
     if (!f300) {
       return undefined;
     }
-    const [a] = record.fields.filter(sf => sf.code === 'a');
+    const [a] = f300.subfields.filter(sf => sf.code === 'a');
     if (!a) {
       return undefined;
     }
     return trimExtent(a.value);
   }
 
-  function extentToComputerCarrierType(record) {
+  function extentToComputerCarrierType(record, formOfItem = '?') {
     const extent = extractExtent(record); // trimmed 300$a
-    if (extent && extent.match(/^(?:computer card|datorkort|minneskort|muistikortti)[^ ]*$/u)) { // Melinda only muistikortti
-      return 'ck';
+    if (extent) {
+      if (extent.match(/^(?:computer chip cartridge|datorminnesmodul|piirikotelo)$/ui)) {
+        return 'cb'; // eg. Nintendo Switch games?
+      }
+      if (extent.match(/^(?:CD-ROM[^ ]*|levyke|levykettä)$/ui)) {
+        return 'cd';
+      }
+      // Might be a video as well, thus the formOfItem check:
+      if (['q', 's'].includes(formOfItem) && extent.match(/^(?:CD-levy|optinen levy|optisk skiva|optiska skivor|optista levyä)$/ui)) {
+        return 'cd';
+      }
+      if (extent.match(/^(?:computer card|datorkort|minneskort|muistikortti)[^ ]*$/u)) { // Melinda only muistikortti
+        return 'ck';
+      }
+      if (extent.match(/^(?:online resource|onlineresurs|verkkoaineisto)$/ui)) {
+        return 'cr';
+      }
     }
 
     return undefined;
@@ -63,20 +78,34 @@ export default function () {
   function getComputerCarrierType(record) {
     const formOfItem = getFormOfItem(record);
 
-    if (formOfItem === 'o') {
+    if (formOfItem === 'o') { // Online resource
       return 'cr';
     }
 
     const typeOfRecord = record.getTypeOfRecord();
 
-    if (typeOfRecord !== 'm' && !['o', 'q', 's'].includes(formOfItem)) {
+    if (typeOfRecord !== 'm' && !['o', 'q', 's'].includes(formOfItem)) { // (Actually 'o' was already handled.) Probably not a computer carrier type
       return undefined;
     }
+
+    if (typeOfRecord === 'm') {
+      const f007 = record.get('007').filter(f => f.value[0] === 'c');
+      if (f007.length === 1) {
+        // ca: none, cb: 10 or so, probably errors (typically USB)
+        if (f007.value[1] === 'o') {
+          return 'cd';
+        }
+      }
+    }
+
+
     // Check fields 300$a (extent), 256$a (computer file characteristics), 516$a (type of computer file or data note), and possible 245$h (medium)
-    const cand = extentToComputerCarrierType(record);
+    const formOfItem2 = typeOfRecord === 'm' && formOfItem === '|' ? 's' : formOfItem; // handle '|'
+    const cand = extentToComputerCarrierType(record, formOfItem2);
     if (cand) {
       return cand;
     }
+
 
     return undefined;
   }
