@@ -27,7 +27,7 @@ export default function () {
   function validate(record) {
     nvdebug(`VALIDATE ${description}...`);
     const newField = getMissing338(record);
-    if (!newField) {
+    if (newField) {
       return {message: [], valid: true};
     }
     const msg = `${description}: '${fieldToString(newField)}'`;
@@ -36,7 +36,7 @@ export default function () {
 
 
   function trimExtent(value) {
-    return value.replace(/\([^)]*\)/gu, '').replace(/[0-9]/gu, '').replace(/^ +/gu, '').replace(/ +$/gu, '').replace(/  +/gu, ' ');
+    return value.replace(/\([^)]*\)/gu, '').replace(/[0-9]/gu, '').replace(/^ +/gu, '').replace(/[ :;+]+$/gu, '').replace(/  +/gu, ' ');
   }
 
   function extractExtent(record) {
@@ -51,9 +51,34 @@ export default function () {
     return trimExtent(a.value);
   }
 
+
+  function extentToAudioCarrierType(record) {
+    const extent = extractExtent(record); // trimmed 300$a
+    if (!extent) {
+      return undefined;
+    }
+    if (extent.match(/^(?:audio discs?|[^ ]*ljudskiva|[^ ]*ljudskivor|LP-levy|LP-levyä|LP-skiva|LP-skivor|[^ ]*äänilevy)$/iu)) {
+      return 'sd';
+    }
+    // Boldly assuming here that any cassette is audio
+    if (extent.match(/^(?:audiocasettes?|C-kas[^ ]*|DAT-as[^ ]*|kasettia?|kassett|kassetter|ljudkassett|ljudkassetter|äänikasettia?)$/ui)) {
+      return 'sd';
+    }
+
+    const typeOfRecord = record.getTypeOfRecord();
+    if (['i', 'j'].includes(typeOfRecord)) {
+      if (extent.match(/^(?:LP-levy|LP-levyä|LP-skiva|LP-skivor|[^ ]*äänilevy)$/ui)) {
+        return 'sd';
+      }
+    }
+
+    return undefined;
+  }
+
   function extentToComputerCarrierType(record, formOfItem = '?') {
     const extent = extractExtent(record); // trimmed 300$a
     if (extent) {
+      // What about USB etc?!?
       if (extent.match(/^(?:computer chip cartridge|datorminnesmodul|piirikotelo)$/ui)) {
         return 'cb'; // eg. Nintendo Switch games?
       }
@@ -73,6 +98,50 @@ export default function () {
     }
 
     return undefined;
+  }
+
+  function extentToMicroformCarrierType(record) {
+    const extent = extractExtent(record); // trimmed 300$a
+    if (!extent) {
+      return undefined;
+    }
+    // No instances in Melinda map to 'ha', 'hb', 'hc'
+
+    if (extent.match(/^(?:filmikorttia?|microfiches?|mikrokorttia?)$/ui)) {
+      // May be 'hg' as well? ("mikrokortti" vs "mikrokortti (läpinäkymätön)")
+      if (getFormOfItem(record) === 'c') {
+        return 'hg'; // Mikrokortti (läpinäkymätön)
+      }
+      return 'he';
+    }
+
+    if (extent.match(/^(?:microfilm rolls?|mikrofilmirullaa?(?: kelalla)?|mikrofilmsrullar|mikrofilmsrulle)$/ui)) {
+      return 'hj';
+    }
+
+
+    return undefined;
+  }
+
+  function extentToProjectedImageCarrierType(record) { // Rare
+    const extent = extractExtent(record); // trimmed 300$a
+    if (!extent) {
+      return undefined;
+    }
+    if (extent.match(/^(?:film rolls?|filmirullaa?|filmrullar|filmrulle)$/ui)) {
+      return 'mo';
+    }
+
+
+    return undefined;
+  }
+
+  function extentToCarrierType(record) {
+    return extentToProjectedImageCarrierType(record) ||
+      extentToAudioCarrierType(record) ||
+      extentToComputerCarrierType(record) ||
+      extentToMicroformCarrierType(record) ||
+      extentToProjectedImageCarrierType(record);
   }
 
   function getComputerCarrierType(record) {
@@ -98,7 +167,6 @@ export default function () {
       }
     }
 
-
     // Check fields 300$a (extent), 256$a (computer file characteristics), 516$a (type of computer file or data note), and possible 245$h (medium)
     const formOfItem2 = typeOfRecord === 'm' && formOfItem === '|' ? 's' : formOfItem; // handle '|'
     const cand = extentToComputerCarrierType(record, formOfItem2);
@@ -106,10 +174,27 @@ export default function () {
       return cand;
     }
 
-
     return undefined;
   }
 
+  function getMicroformCarrierType(record) {
+    const f007 = record.get('007');
+    if (f007.length === 1 && f007[0].value[0] === 'h') {
+      const materialDesignation = f007[0].value.charAt(1);
+      if (['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j'].includes(materialDesignation)) {
+        return `h${materialDesignation}`;
+      }
+      // 007/00-01 sr implies online resource, but we'll probably figure it out anyways
+    }
+
+    const formOfItem = getFormOfItem(record);
+    const cand = extentToMicroformCarrierType(record, formOfItem);
+    if (cand) {
+      return cand;
+    }
+
+    return undefined;
+  }
 
   function isUnmediatedVolume(record) {
     const typeOfRecord = record.getTypeOfRecord();
@@ -133,6 +218,7 @@ export default function () {
   function formOfItemToField338(record) {
     const formOfItem = getFormOfItem(record);
     if (formOfItem === 'a') {
+      // Exception:
       if (record.get('300').some(f => f.subfields.some(sf => sf.code === 'a' && sf.value.match(/mikrofilmikela/iu)))) {
         return 'hd';
       }
@@ -148,19 +234,55 @@ export default function () {
     // 'e' sanomalehti (for CR only)
     // 'f' pistekirjoitus
     if (formOfItem === 'o') { // online resource
-      return 'cr'; // add test!
+      return 'cr';
     }
-    // if (formOfItem === 'q') { // local electronic stuff, use 300 et al to guess
+    // 'q' local electronic stuff, use 300 et al to guess. Implemented elsewhere.
     // 'r' painojäljenne, arkki vs nide?
-    // if (formOfItem === 's') { // electronic, either 'o' or 'q'... Can share some code
-
-    //if (formOfItem === 'q') {
-    // 300 USB should map to muistikortti/ck. Small sample implies that there are lots of errors in our data.
-    //}
+    // 's' electronic (might be local or online). Implemented elsewhere.
     return undefined;
   }
 
-  function typeOfRecordToField338(record) {
+  function audioToField338(record) {
+    const typeOfRecord = record.getTypeOfRecord(record);
+    if (typeOfRecord !== 'i' && typeOfRecord !== 'j') {
+      return undefined;
+    }
+    const f007 = record.get('007');
+    if (f007.length === 1 && f007[0].value[0] === 's') {
+      const materialDesignation = f007[0].value.charAt(1);
+      if (['d', 'e', 's', 't'].includes(materialDesignation)) {
+        return `s${materialDesignation}`;
+      }
+      // 007/00-01 sr implies online resource, but we'll probably figure it out anyways
+    }
+
+    const extentToCode = extentToAudioCarrierType(record); // field 300
+    if (extentToCode) {
+      return extentToCode;
+    }
+
+    return undefined;
+  }
+
+  function videoToField338(record) {
+    const typeOfRecord = record.getTypeOfRecord(record);
+    if (typeOfRecord !== 'g') {
+      return undefined;
+    }
+
+    // 007/01 is so rarely a meaningful value ('m', 'f', 'o' or 'r'), so we don't bother with them
+
+    /* IMPLEMENT!
+    const extentToCode = extentToVideoCarrierType(record); // field 300
+    if (extentToCode) {
+      return extentToCode;
+    }
+    */
+
+    return undefined;
+  }
+
+  function objectToField338(record) {
     const typeOfRecord = record.getTypeOfRecord(record);
     if (typeOfRecord === 'r') {
       // The only subdivision might be card/no. Marginal, so I'm not checking that now.
@@ -180,7 +302,14 @@ export default function () {
     // 516
     // 245$h...
     // First use form of item?
-    return getComputerCarrierType(record) || typeOfRecordToField338(record) || formOfItemToField338(record) || isUnmediatedVolume(record);
+    return getComputerCarrierType(record) || // LDR/06=m (and 007 and 300)
+      objectToField338(record) || // LDR/06=r
+      audioToField338(record) || // LDR/06=i/j (and 007 and 300)
+      videoToField338(record) || // ...
+      formOfItemToField338(record) || // 'a' 'b', 'c', 'o'
+      getMicroformCarrierType(record) ||
+      isUnmediatedVolume(record) ||
+      extentToCarrierType(record); // fallback
 
     /*
     const firstFunction = guessFunctions.find(f => f(record));
