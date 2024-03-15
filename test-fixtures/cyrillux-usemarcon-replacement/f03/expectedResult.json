@@ -10,6 +10,11 @@
         { "code": "a", "value": "123 sivua" }
     ]},
     { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "tvådimensionell rörlig bild" },
+      { "code": "b", "value": "tdi" },
+      { "code": "2", "value": "rdacontent" }
+    ]},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "datorprogram" },
       { "code": "b", "value": "cop" },
       { "code": "2", "value": "rdacontent" }
