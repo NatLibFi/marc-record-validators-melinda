@@ -48,7 +48,12 @@ export default function () {
       if (['d', 'e'].includes(typeOfComputerFile)) {
         return ['txt'];
       }
-      if (['b', 'f', 'g'].includes(typeOfComputerFile)) {
+      if (typeOfComputerFile === 'g') { // Videogame
+        // 2D moving image/tdi is an educated guess. Might be wrong for 3D games and Infocom-style text-based games.
+        // Ref.: https://www.kiwi.fi/pages/viewpage.action?pageId=115966063#PelienRDAohje-Pelienjaottelu:videopelitjafyysisetpelit
+        return ['tdi', 'cop'];
+      }
+      if (['b', 'f'].includes(typeOfComputerFile)) {
         return ['cop'];
       }
       if (['a', 'c'].includes(typeOfComputerFile)) {
