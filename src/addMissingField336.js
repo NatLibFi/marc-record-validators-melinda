@@ -46,22 +46,22 @@ export default function () {
 
     if (typeOfComputerFile) {
       if (['d', 'e'].includes(typeOfComputerFile)) {
-        return 'txt';
+        return ['txt'];
       }
       if (['b', 'f', 'g'].includes(typeOfComputerFile)) {
-        return 'cop';
+        return ['cop'];
       }
       if (['a', 'c'].includes(typeOfComputerFile)) {
-        return 'cod';
+        return ['cod'];
       }
       if (typeOfComputerFile === 'h') {
-        return 'snd';
+        return ['snd'];
       }
       if (['i', 'j', 'm'].includes(typeOfComputerFile)) {
-        return 'xxx';
+        return ['xxx'];
       }
     }
-    return 'zzz'; // unspecified
+    return ['zzz']; // unspecified
   }
 
   function deriveLanguageMaterials336sFrom007(record) {
@@ -173,7 +173,7 @@ export default function () {
     if (typeOfRecord === 'r') { // three-dimensional form
       return ['tdf'];
     }
-    return undefined;
+    return [];
   }
 
 
@@ -189,13 +189,14 @@ export default function () {
   }
 
   function getMissing336s(record) {
-    const [f336] = record.get('336');
-    if (f336) {
-      // nvdebug(fieldToString(f336));
+    const f336 = record.get('336');
+    if (f336.length > 0) {
       return [];
     }
 
     const bees = guessMissing336Bs(record); // bees = b-subfields
+    nvdebug(` WE HAVE ${bees.length} BEES: ${bees.join(', ')}`);
+
 
     return bees.map(b => codeToField(b, getCatalogingLanguage(record, 'fin')));
   }
