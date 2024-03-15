@@ -58,14 +58,14 @@ export function isControlSubfieldCode(subfieldCode) {
   return false;
 }
 
-export function getCatalogingLanguage(record) {
+export function getCatalogingLanguage(record, defaultCatalogingLanguage = undefined) {
   const [field040] = record.get(/^040$/u);
   if (!field040) {
-    return null;
+    return defaultCatalogingLanguage;
   }
   const [b] = field040.subfields.filter(sf => sf.code === 'b');
   if (!b) {
-    return null;
+    return defaultCatalogingLanguage;
   }
   return b.value;
 }
