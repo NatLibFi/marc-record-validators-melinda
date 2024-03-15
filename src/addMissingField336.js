@@ -6,6 +6,7 @@ const description = 'Add missing 336 field(s)';
 
 const multimediaRegexp = /multimedia/ui;
 
+
 export default function () {
 
   return {
@@ -14,10 +15,14 @@ export default function () {
 
   function fix(record) {
     nvdebug(`FIX ${description}...`);
-    const newField = getMissing336(record);
+    const newFields = getMissing336s(record);
+    nvdebug(` GOT ${newFields.length}...`);
+    // FFS: we actually need newFields array here! Videogame, for example, might be
+    // 336 ## ‡a kaksiulotteinen liikkuva kuva ‡b tdi ‡2 rdacontent
+    // 336 ## ‡a tietokoneohjelma ‡b cop ‡2 rdacontent
     const res = {message: [], fix: [], valid: true};
-    if (newField) {
-      record.insertField(newField);
+    if (newFields.length) {
+      newFields.forEach(f => record.insertField(f));
       return res;
     }
     return res;
@@ -25,15 +30,17 @@ export default function () {
 
   function validate(record) {
     nvdebug(`VALIDATE ${description}...`);
-    const newField = getMissing336(record);
-    if (!newField) {
+    const newFields = getMissing336s(record);
+    if (newFields.length === 0) {
       return {message: [], valid: true};
     }
-    const msg = `${description}: '${fieldToString(newField)}'`;
+    const strings = newFields.map(f => fieldToString(f));
+    const tmp = strings.join('\', \'');
+    const msg = `${description}: '${tmp}'`;
     return {message: [msg], valid: false};
   }
 
-  function guessMissingBForComputerFile(record) {
+  function guessMissingBsForComputerFile(record) {
     const [field008] = record.get('008');
     const typeOfComputerFile = field008 && field008.value ? field008.value[26] : undefined;
 
@@ -57,7 +64,7 @@ export default function () {
     return 'zzz'; // unspecified
   }
 
-  function deriveLanguageMaterials336From007(record) {
+  function deriveLanguageMaterials336sFrom007(record) {
     const categoryOfMaterial = [ // 007/00
       {category: 'a', rdacontent: 'cri'}, // cartographic image
       {category: 'c', rdacontent: 'txt'},
@@ -72,17 +79,17 @@ export default function () {
     if (f007) {
       const row = categoryOfMaterial.filter(row => row.category === f007[0]);
       if (row) {
-        return row.rdacontent;
+        return [row.rdacontent];
       }
     }
-    return undefined;
+    return [];
   }
 
-  function guessMissingBForBookAndContinuingResource(record, formOfItem) {
+  function guessMissingBsForBookAndContinuingResource(record, formOfItem) {
 
     const f245h = getTitleMedium(record);
     if (f245h && !multimediaRegexp.test(f245h)) {
-      const result = deriveLanguageMaterials336From007(record); // Base result on 007/00. Aped from usemarcon-cyrillux. I don't like this at all... Shouldn't we check $h value as well...
+      const result = deriveLanguageMaterials336sFrom007(record); // Base result on 007/00. Aped from usemarcon-cyrillux. I don't like this at all... Shouldn't we check $h value as well...
       if (result) {
         return result;
       }
@@ -92,100 +99,86 @@ export default function () {
     //const isBis = ['b', 'i', 's'].includes(bibliographicalLevel);
     //if (!isBis) {
     if (formOfItem === 'f') {
-      return 'tct'; // tactile text
+      return ['tct']; // tactile text
     }
-    return 'txt'; // Default BK format is text
+    return ['txt']; // Default BK format is text
   }
 
-  function guessMissingBForMap(record) {
+  function guessMissingBsForMap(record) {
     const formOfItem = getFormOfItem(record);
     // Is braille and is not a model:
     if (formOfItem === 'f' && record.fields.some(f => f.tag === '007' && f.value[0] === 'a' && f.value[1] !== 'q')) {
-      return 'crt'; // Cartographic tactile image
+      return ['crt']; // Cartographic tactile image
     }
     const [field008] = record.get('008');
-    if (field008 && field008.value[25] === 'd') { // globe
-      return 'crf'; // map 3D form
+    if (field008 && field008.value[25] === 'd') { // globe (cool, but we really don't have these)
+      return ['crf']; // map 3D form
     }
-    return 'cri'; // default cartographic image
+    return ['cri']; // default cartographic image
   }
 
-  function guessMissing336B(record) {
+  function guessMissing336Bs(record) {
     const typeOfRecord = record.getTypeOfRecord();
 
     if (typeOfRecord === 'i') {
-      return 'spw';
+      return ['spw'];
     }
     if (typeOfRecord === 'j') {
-      return 'prm'; // performed music
+      return ['prm']; // performed music
     }
 
     if (typeOfRecord === 'e' || typeOfRecord === 'f') {
-      return guessMissingBForMap(record);
+      return guessMissingBsForMap(record);
     }
 
     const formOfItem = getFormOfItem(record);
 
     if (typeOfRecord === 'k') {
       if (formOfItem === 'f') {
-        return 'tci';
+        return ['tci'];
       }
-      return 'sti';
+      return ['sti'];
     }
 
     if (typeOfRecord === 'c' || typeOfRecord === 'd') {
       if (formOfItem === 'f') {
-        return 'tcm'; // tactile notated music
+        return ['tcm']; // tactile notated music
       }
-      return 'ntm'; // notated music
+      return ['ntm']; // notated music
     }
 
     if (typeOfRecord === 'g') {
       if (record.fields.some(f => f.tag === '007' && f.value[0] === 'g')) {
-        return 'sti'; // still image
+        return ['sti']; // still image
       }
       if (record.fields.some(f => f.tag === '007' && ['m', 'v', 'c'].includes(f.value[0]))) {
-        return 'tdi'; // 2d moving pic
+        return ['tdi']; // 2d moving pic
       }
     }
 
     if (typeOfRecord === 'm') { // electronic
-      return guessMissingBForComputerFile(record);
+      return guessMissingBsForComputerFile(record);
     }
 
     if (typeOfRecord === 'a' || typeOfRecord === 't') {
-      return guessMissingBForBookAndContinuingResource(record, formOfItem);
+      return guessMissingBsForBookAndContinuingResource(record, formOfItem);
     }
 
     // Note that 245$h should trigger LDR/06:a or t =>o change at some earlier point (outside this module)
     if (typeOfRecord === 'o' || typeOfRecord === 'p') { // o: Kit p: Mixed
       // We could guess multiple values from 300?
-      return 'xxx';
+      return ['xxx'];
     }
 
     if (typeOfRecord === 'r') { // three-dimensional form
-      return 'tdf';
+      return ['tdf'];
     }
     return undefined;
   }
 
-  function getMissing336(record) {
-    const [f336] = record.get('336');
-    if (f336) {
-      // nvdebug(fieldToString(f336));
-      return undefined;
-    }
 
-    const b = guessMissing336B(record);
-
-    if (!b) {
-      return undefined;
-    }
-
-    const catLang = getCatalogingLanguage(record);
-    const catLang2 = catLang ? catLang : 'fin';
-    const a = map336CodeToTerm(b, catLang2);
-
+  function codeToField(b, catLang) {
+    const a = map336CodeToTerm(b, catLang);
     const data = {tag: '336', ind1: ' ', ind2: ' ', subfields: [
       {code: 'a', value: a},
       {code: 'b', value: b},
@@ -193,6 +186,18 @@ export default function () {
     ]};
 
     return data;
+  }
+
+  function getMissing336s(record) {
+    const [f336] = record.get('336');
+    if (f336) {
+      // nvdebug(fieldToString(f336));
+      return [];
+    }
+
+    const bees = guessMissing336Bs(record); // bees = b-subfields
+
+    return bees.map(b => codeToField(b, getCatalogingLanguage(record, 'fin')));
   }
 }
 
