@@ -3,23 +3,28 @@
   "leader": "12345cam a22123454i 4500",
   "fields": [
     { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "b", "value": "swe" }
+      { "code": "a", "value": "FI-A" },
+      { "code": "b", "value": "mul" },
+      { "code": "e", "value": "rda" },
+      { "code": "c", "value": "FI-C" },
+      { "code": "d", "value": "FI-D" }
+
     ]},
     { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "a", "value": "123 sivua" }
     ]},
     { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "text" },
+      { "code": "a", "value": "teksti" },
       { "code": "b", "value": "txt" },
       { "code": "2", "value": "rdacontent" }
     ]},
     { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "omedierad" },
+      { "code": "a", "value": "käytettävissä ilman laitetta" },
       { "code": "b", "value": "n" },
       { "code": "2", "value": "rdamedia" }
     ]},
     { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "volym" },
+      { "code": "a", "value": "nide" },
       { "code": "b", "value": "nc" },
       { "code": "2", "value": "rdacarrier" }
     ]}
