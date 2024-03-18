@@ -9,6 +9,7 @@ import {default as add336} from './addMissingField336';
 import {default as add337} from './addMissingField337';
 import {default as add338} from './addMissingField338';
 import {default as fixCountryCodes} from './fix-country-codes';
+import {default as fixLanguageCodes} from './fix-language-codes';
 import {sortAdjacentSubfields} from './sortSubfields';
 
 
@@ -19,7 +20,7 @@ import {nvdebug} from './utils';
 
 const description = 'Replacement for Cyrillux usemarcon rules';
 
-const skipTags = ['001', '003', '010', '012', '014', '015', '016', '019', '025', '029', '032', '035', '036', '037', '038', '042', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '350', '400', '574', '575', '577', '578', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '856', '857', '858', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
+const dropTags = ['001', '003', '010', '012', '014', '015', '016', '019', '025', '029', '032', '035', '036', '037', '038', '042', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '350', '400', '574', '575', '577', '578', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '856', '857', '858', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
 
 export default function () {
   return {
@@ -39,7 +40,7 @@ export default function () {
     record.leader = `${record.leader.substring(0, 17)}4${record.leader.substring(18, 24)}`; // eslint-disable-line functional/immutable-data
 
     fixCountryCodes().fix(record); // 008/15-17
-    // ADD 008/35-37 check
+    fixLanguageCodes().fix(record); // 008/35-37 AND 041
 
     // Field 028: use $b$a, not $a$b:
     const f028 = record.fields.filter(f => f.tag === '028');
@@ -52,7 +53,7 @@ export default function () {
     add338().fix(record);
 
     // Remove unwanted fields:
-    record.fields = record.fields.filter(f => !skipTags.includes(f.tag)); // eslint-disable-line functional/immutable-data
+    record.fields = record.fields.filter(f => !dropTags.includes(f.tag)); // eslint-disable-line functional/immutable-data
 
     const res = {message: [], fix: [], valid: true};
     return res;
