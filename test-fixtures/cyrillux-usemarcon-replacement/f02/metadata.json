@@ -1,5 +1,5 @@
 {
-  "description": "Fix: Cyrillux, BK: add fields 336 and 337",
+  "description": "Fix: Cyrillux, BK: add fields 336, 337 and 338",
   "enabled": true,
   "only": false,
   "fix": true
