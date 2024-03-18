@@ -45,6 +45,8 @@ export default function () {
     const f028 = record.fields.filter(f => f.tag === '028');
     f028.forEach(f => sortAdjacentSubfields(f));
 
+    fixField040(record); // $b 'swe' becomes 'mul'. As a side effect 33X$as are translated info Finnish, not Swedish! Ok in this domain!
+
     add336().fix(record);
     add337().fix(record);
     add338().fix(record);
@@ -62,6 +64,32 @@ export default function () {
     // Should this do everything and then produce diff etc?
     const res = {message: [], fix: [], valid: true};
     return res;
+  }
+}
+
+function fixField040(record) {
+  const f040 = record.fields.filter(f => f.tag === '040');
+
+  const subfieldsBE = [
+    {code: 'b', value: 'mul'},
+    {code: 'e', value: 'rda'}
+  ];
+
+  // Add 040 if there isn't one:
+  if (f040.length === 0) {
+    const data = {tag: '040', ind1: ' ', ind2: ' ', subfields: subfieldsBE};
+
+    record.insertField(data);
+    return;
+  }
+
+  f040.forEach(f => fixField040Subfields(f));
+
+  function fixField040Subfields(field) {
+    field.subfields = field.subfields.filter(sf => !['b', 'e'].includes(sf.code)); // eslint-disable-line functional/immutable-data
+    field.subfields.push(subfieldsBE[0]); // eslint-disable-line functional/immutable-data
+    field.subfields.push(subfieldsBE[1]); // eslint-disable-line functional/immutable-data
+    sortAdjacentSubfields(field); // put $b and $e to their proper places
   }
 
 }
