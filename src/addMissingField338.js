@@ -36,7 +36,7 @@ export default function () {
 
 
   function trimExtent(value) {
-    return value.replace(/\([^)]*\)/gu, '').replace(/[0-9]/gu, '').replace(/^ +/gu, '').replace(/[ :;+]+$/gu, '').replace(/  +/gu, ' ');
+    return value.replace(/\([^)]*\)/gu, '').replace(/\[[^\]*]\]/gu, '').replace(/[0-9]/gu, '').replace(/^ +/gu, '').replace(/[ :;+]+$/gu, '').replace(/  +/gu, ' ');
   }
 
   function extractExtent(record) {
@@ -62,13 +62,16 @@ export default function () {
     }
     // Boldly assuming here that any cassette is audio
     if (extent.match(/^(?:audiocasettes?|C-kas[^ ]*|DAT-as[^ ]*|kasettia?|kassett|kassetter|ljudkassett|ljudkassetter|äänikasettia?)$/ui)) {
-      return 'sd';
+      return 'ss';
     }
 
     const typeOfRecord = record.getTypeOfRecord();
     if (['i', 'j'].includes(typeOfRecord)) {
-      if (extent.match(/^(?:LP-levy|LP-levyä|LP-skiva|LP-skivor|[^ ]*äänilevy)$/ui)) {
+      if (extent.match(/^[^ ]*levyä?$/ui)) {
         return 'sd';
+      }
+      if (extent.match(/^[^ ]*kasettia?$/ui)) {
+        return 'ss';
       }
     }
 
@@ -123,25 +126,60 @@ export default function () {
     return undefined;
   }
 
-  function extentToProjectedImageCarrierType(record) { // Rare
+  // extentToMicroscopicCarrierType not really needed
+
+  function extentToProjectedImageCarrierType(record) {
     const extent = extractExtent(record); // trimmed 300$a
     if (!extent) {
       return undefined;
     }
+    if (extent.match(/^(?:diaa?|diabild|diabilder|slides?)$/ui)) {
+      return 'gs';
+    }
+    if (extent.match(/^(?:overhead transparencies|overhead transparency|piirtoheitinkalvoa?|transparang|transparanger)$/ui)) {
+      return 'gt';
+    }
     if (extent.match(/^(?:film rolls?|filmirullaa?|filmrullar|filmrulle)$/ui)) {
       return 'mo';
     }
+    return undefined;
+  }
 
+  // StereographicCarrierType not needed
+
+  function extentToUnmediatedCarrierType(record) {
+    const extent = extractExtent(record); // trimmed 300$a
+    if (!extent) {
+      return undefined;
+    }
 
     return undefined;
   }
 
+  function extentToVideoCarrierType(record) {
+    const extent = extractExtent(record); // trimmed 300$a
+    if (!extent) {
+      return undefined;
+    }
+    // DVD-videoskivor etc
+    if (extent.match(/^[^ ]*(?:videodiscs?|videolevyä?|videoskiva|videoskivor)$/ui)) {
+      return 'vd';
+    }
+    if (extent.match(/^(?:videocassettes?|videokassett|videokassetter|videokasettia?)$/ui)) {
+      return 'vf';
+    }
+    return undefined;
+  }
+
   function extentToCarrierType(record) {
-    return extentToProjectedImageCarrierType(record) ||
-      extentToAudioCarrierType(record) ||
+    return extentToAudioCarrierType(record) ||
       extentToComputerCarrierType(record) ||
       extentToMicroformCarrierType(record) ||
-      extentToProjectedImageCarrierType(record);
+      // Microscopic carriers don't really exist in our data
+      extentToProjectedImageCarrierType(record) ||
+      // Stereographic carriers don't really exist in our data
+      extentToUnmediatedCarrierType(record) ||
+      extentToVideoCarrierType(record);
   }
 
   function getComputerCarrierType(record) {
@@ -264,20 +302,35 @@ export default function () {
     return undefined;
   }
 
-  function videoToField338(record) {
+  function projectedToField338(record) {
     const typeOfRecord = record.getTypeOfRecord(record);
-    if (typeOfRecord !== 'g') {
+    if (typeOfRecord !== 'g') { // must be "projected"
       return undefined;
     }
 
-    // 007/01 is so rarely a meaningful value ('m', 'f', 'o' or 'r'), so we don't bother with them
+    const f007 = record.get('007');
+    if (f007.length === 1) {
+      if (f007[0].value[0] === 'g') {
+        const materialDesignation = f007[0].value.charAt(1);
+        if (['c', 'd', 'f', 's', 't'].includes(materialDesignation)) {
+          return `g${materialDesignation}`;
+        }
+        if (materialDesignation === 'o') {
+          return 'gf';
+        }
+      }
+      if (f007[0].value[0] === 'v') {
+        const materialDesignation = f007[0].value.charAt(1);
+        if (['c', 'd', 'f', 'r'].includes(materialDesignation)) {
+          return `v${materialDesignation}`;
+        }
+      }
+    }
 
-    /* IMPLEMENT!
-    const extentToCode = extentToVideoCarrierType(record); // field 300
+    const extentToCode = extentToVideoCarrierType(record) || extentToProjectedImageCarrierType(record); // field 300
     if (extentToCode) {
       return extentToCode;
     }
-    */
 
     return undefined;
   }
@@ -290,6 +343,42 @@ export default function () {
     }
 
     return undefined;
+  }
+
+  function educatedGuessIsOnlineResource(record) {
+    const typeOfRecord = record.getTypeOfRecord();
+    if (typeOfRecord !== 'm') {
+      return false;
+    }
+    return false;
+  }
+
+  function checkQualifyingInformation(record) {
+    const identifierFields = record.get('(?:015|020|024|028)').filter(f => f.subfields.some(sf => sf.code === 'q'));
+    if (identifierFields.some(f => f.subfields.some(sf => sf.code === 'q' && sf.value.match(/\b(?:hard-?cover|kierre|nid|sid|kovakant|pehmekantpärmar)/iu)))) {
+      return 'nc';
+    }
+    return undefined;
+  }
+
+  function educatedGuessToCarrierType(record) {
+
+
+    return checkQualifyingInformation(record) || educatedGuessIsOnlineResource(record) || finalFallback();
+
+
+    function finalFallback() {
+      const [f337] = record.get('337');
+      if (f337) {
+        if (f337.subfields.some(sf => sf.code === 'b' && sf.value === 'n')) { // unmediated
+          // As we are a library, most of the stuff are books
+          return 'nc';
+        }
+      }
+      return undefined;
+    }
+
+
   }
 
   function guessMissing338B(record) {
@@ -305,11 +394,12 @@ export default function () {
     return getComputerCarrierType(record) || // LDR/06=m (and 007 and 300)
       objectToField338(record) || // LDR/06=r
       audioToField338(record) || // LDR/06=i/j (and 007 and 300)
-      videoToField338(record) || // ...
+      projectedToField338(record) || // ...
       formOfItemToField338(record) || // 'a' 'b', 'c', 'o'
       getMicroformCarrierType(record) ||
       isUnmediatedVolume(record) ||
-      extentToCarrierType(record); // fallback
+      extentToCarrierType(record) || // fallback: field 300-based guess
+      educatedGuessToCarrierType(record); // 337$b='n' (käytettävissä ilman laitetta) -> nc
 
     /*
     const firstFunction = guessFunctions.find(f => f(record));
