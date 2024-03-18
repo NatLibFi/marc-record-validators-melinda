@@ -7,7 +7,7 @@
       { "code": "b", "value": "swe" }
     ]},
     { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "123 sivua" }
+        { "code": "a", "value": "1 CD-ROM-skiva" }
     ]},
     { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "tvådimensionell rörlig bild" },
@@ -23,6 +23,11 @@
       { "code": "a", "value": "dator" },
       { "code": "b", "value": "c" },
       { "code": "2", "value": "rdamedia" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "datorskiva" },
+      { "code": "b", "value": "cd" },
+      { "code": "2", "value": "rdacarrier" }
     ]}
   ]
 }

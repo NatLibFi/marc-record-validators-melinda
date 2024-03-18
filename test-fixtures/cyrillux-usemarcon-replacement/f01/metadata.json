@@ -1,5 +1,5 @@
 {
-  "description": "Fix: Add field 336 (b=txt), cat language (040$b) is 'swe'",
+  "description": "Fix: Add missing 33X fields using cat language (040$b) is 'swe'. Fix LDR/09 '#' to 'a'.",
   "enabled": true,
   "only": false,
   "fix": true
