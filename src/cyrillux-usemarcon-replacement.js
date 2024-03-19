@@ -14,6 +14,7 @@ import {default as fixLanguageCodes} from './fix-language-codes';
 import {default as fixRelatorTerms} from './fixRelatorTerms';
 import {default as fixIndicators} from './indicator-fixes';
 import {default as fixPunctuation} from './punctuation2';
+import {default as fixQualifyingInformation} from './normalize-qualifying-information';
 import {sortAdjacentSubfields} from './sortSubfields';
 
 
@@ -51,11 +52,14 @@ export default function () {
 
     function fieldSpecificStuff(field) {
       removeOwnershipSubfield5(field);
-      removeFromOldCatalog(field); // Remove LoC phrase "[from old catalog]" from strings
+      removeFromOldCatalog(field); // Remove LoC phrase "[from old catalog]" from srings
+      translateFieldToFinnish(field);
     }
 
     fixCountryCodes().fix(record); // 008/15-17
     fixLanguageCodes().fix(record); // 008/35-37 AND 041 (note that all relevant subfield codes are fixed, not just $a)
+
+    fixQualifyingInformation().fix(record); // 015, 020, 024 and 028
 
     // Field 028: use $b$a, not $a$b:
     const f028 = record.fields.filter(f => f.tag === '028');
@@ -79,7 +83,7 @@ export default function () {
       // NB! 300 (before or after 33X creation?)
       field410To490And810(field);
       field440To490And830(field);
-
+      handle505(field);
       // NB! 505 has some wierd rules...
 
     }
@@ -257,4 +261,111 @@ function field260To264(field) { // might be generic... if so, move to utils...
     }
     return subfield.value;
   }
+}
+
+function handle505(field) {
+  if (field.tag !== '505') {
+    return;
+  }
+  // Now sure how usemarcon-cyrillux is sure about ind1...
+  field.ind1 = '0'; // eslint-disable-line functional/immutable-data
+  // usemarcon-cyrillux drops irrelevant subfields, so we do the same. However, we have included some control subfields in the kept side:
+  const keptSubfields = field.subfields.filter(sf => ['a', 'g', 'r', 't', 'u', '6', '8', '9'].includes(sf.code));
+
+  if (keptSubfields.some(sf => ['a', 'g', 'r', 't', 'u'].includes(sf.code))) {
+    field.subfields = keptSubfields; // eslint-disable-line functional/immutable-data
+    return;
+  }
+}
+
+function translateFieldToFinnish(field) {
+  if (!['020', '300'].includes(field.tag)) {
+    return;
+  }
+  field.subfields?.forEach(sf => translateSubfieldToFinnish(sf));
+
+  function translateSubfieldToFinnish(subfield) {
+    if (field.tag === '020' && ['a', 'q', 'z'].includes(subfield.code)) {
+      subfield.value = finnishTranslationsAndMappings(expandFinnishAbbreviations(expandSwedishAbbreviations(expandEnglishAbbreviations(subfield.value)))); // eslint-disable-line functional/immutable-data
+      return;
+    }
+    if (field.tag === '300') {
+      subfield.value = finnishTranslationsAndMappings(expandFinnishAbbreviations(expandSwedishAbbreviations(expandEnglishAbbreviations(subfield.value)))); // eslint-disable-line functional/immutable-data
+      return;
+    }
+  }
+}
+
+function expandEnglishAbbreviations(value) {
+  return value.replace(/\bbk\.\b/gui, 'book').
+    replace(/chiefly col\./u, 'chiefly color').
+    replace(/col\. ill\./u, 'color illustrations').
+    replace(/diagrs\./u, 'diagrams').
+    replace(/\bhbk\.\b/gui, 'hardcover').replace(/\bhbk\b/gui, 'hardcover'). // expand to MTS-compliant form
+    replace(/\bill\./gu, 'illustrated'). // or illustrations (or Swedish "illustrerad" or...)
+    replace(/\billus\./gu, 'illustrated'). // or illustrations
+    replace(/incl\./gu, 'includes').
+    replace(/fold\.? maps/gu, 'folded maps').
+    replace(/\bmin\./gu, 'minutes').
+    replace(/\bmin\b/gu, 'minutes').
+    replace(/\bp\.\b/gu, 'pages').replace(/\bp\b/gu, 'pages').
+    replace(/\bpbk\.\b/gui, 'paperback').replace(/\bpbk\b/gui, 'paperback'). // expand to MTS-compliant form
+    replace(/\bports\./gu, 'portraits').
+    replace('sd., col.', 'sound, color').
+    replace(/ *\((?:chiefly col\.|chiefly color|some cols)\)/gu, '').
+    replace(/\b1 hr\./gu, '1 hour');
+}
+
+function expandFinnishAbbreviations(value) {
+  return value.replace(/\bcn\. /gu, 'noin ').
+    replace(/\bmin\./gu, 'minuuttia').
+    replace(/\bmin\b/gu, 'minuuttia').
+    replace(/\bnid\./gu, 'nidottu').replace(/\bnid\b/gu, 'nidottu').
+    replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gu, 'sidottu');
+}
+
+function expandSwedishAbbreviations(value) {
+  return value.replace(/\bca\. /gu, 'circa ').
+    replace(/\bhft\./gui, 'häftad').replace(/\bhft\b/gui, 'häftad').
+    replace(/\bmin\./gu, 'minuter').
+    replace(/\bmin\b/gu, 'minuter');
+}
+
+function finnishTranslationsAndMappings(value) {
+  return value.replace('analog', 'analoginen').
+    replace('approximately', 'noin').
+    replace('audio discs', 'äänilevyä').
+    replace('black and white', 'mustavalkoinen').
+    replace(/\bcharts\b/gu, 'kaavioita').
+    replace('chiefly color illustrations', 'pääosin värikuvitettu').
+    replace('chiefly', 'pääosin').
+    replace('color illustrations', 'värikuvitus').
+    replace(/\bdigital\b/gu, 'digitaalinen').
+    replace(/\belectronic book\b/gu, 'verkkoaineisto').
+    replace(/\bfolded sheet\b/gu, 'taitelehti').
+    replace(/\bhardback\b/gu, 'kovakantinen').
+    replace(/\bhours\b/gu, 'tuntia').
+    replace('illustrated', 'kuvitettu').
+    replace(/illustratation\b/gu, 'kuvitus'). // kuvitus/kuvitettu variation is taken from usemarcon-cyrillux...
+    replace('illustratations', 'kuvitettu').
+    replace(/\binsert\b/gu, 'liite').
+    replace(/\binserts\b/gu, 'liitteitä').
+    replace('leaves of plates', 'kuvalehteä').
+    replace(/\bmap\b/gu, 'kartta').
+    replace(/\bmaps\b/gu, 'karttoja'). // or karttaa?
+    replace('minutes', 'minuuttia').
+    replace('online resource', 'verkkoaineisto').
+    replace('pages of plates', 'kuvalehteä').
+    replace(/\bpages\b/gu, 'sivua').
+    replace(/\bpaperback\b/gu, 'pehmeäkantinen'). // MTS alt
+    replace(/\bsoftcover\b/gu, 'pehmeäkantinen'). // MTS pref
+    replace('sound, color', 'äänellinen, värillinen').
+    replace('sound cassettes', 'äänikasettia').replace('sound cassette', 'äänikasetti').
+    replace('sound discs', 'äänilevyä').replace('sound disc', 'äänilevy').
+    replace('unnumbered', 'numeroimatonta').
+    replace(/\bverkojulk\.\b/gu, 'verkkoaineisto').replace(/\bverkojulk\b/gu, 'verkkoaineisto').
+    replace('videodiscs', 'videolevyä').
+    replace('videodisc', 'videolevy').
+    replace(/\b1 hour\b/gu, '1 tunti');
+
 }
