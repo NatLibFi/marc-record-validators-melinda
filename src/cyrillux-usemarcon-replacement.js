@@ -5,6 +5,7 @@
 *
 */
 
+import clone from 'clone';
 import {default as add336} from './addMissingField336';
 import {default as add337} from './addMissingField337';
 import {default as add338} from './addMissingField338';
@@ -74,9 +75,11 @@ export default function () {
       removeSubfieldH(field); // only after 33X creation, as 245$h might be useful
 
       field260To264(field);
-      // NB! 300
-      // NB! 410 to 490
-      // NB! 430 to 490 *and* 830
+
+      // NB! 300 (before or after 33X creation?)
+      field410To490And810(field);
+      field440To490And830(field);
+
       // NB! 505 has some wierd rules...
 
     }
@@ -167,7 +170,43 @@ export function fixLeader(record) {
   record.leader = `${record.leader.substring(0, 9)}a22${record.leader.substring(12, 18)}i${record.leader.substring(19, 20)}4500`; // eslint-disable-line functional/immutable-data
 }
 
-export function field260To264(field) {
+function field410To490And810(field, record) { // might be generic... if so, move to utils...
+  if (field.tag !== '410') {
+    return;
+  }
+
+  const field810 = clone(field);
+
+  field.tag = '490'; // eslint-disable-line functional/immutable-data
+  field.ind1 = '1'; // eslint-disable-line functional/immutable-data
+  field.ind2 = ' '; // eslint-disable-line functional/immutable-data
+  sortAdjacentSubfields(field);
+  // 490: Fix punctuation elsewhere. (Note that the current support is lagging...)
+
+
+  field810.tag = '810'; // eslint-disable-line functional/immutable-data
+  field810.ind2 = ' '; // eslint-disable-line functional/immutable-data
+  // 810: Fix punctuation elsewhere. (Note that the current support is lagging...)
+  record.insertField(field810);
+}
+
+function field440To490And830(field, record) { // might be generic... if so, move to utils...
+  if (field.tag !== '440') {
+    return;
+  }
+
+  const field830 = clone(field);
+
+  field.tag = '490'; // eslint-disable-line functional/immutable-data
+  field.ind1 = '1'; // eslint-disable-line functional/immutable-data
+  field.ind2 = ' '; // eslint-disable-line functional/immutable-data
+  // 490: Fix punctuation elsewhere. (Note that the current support is lagging...)
+  field830.tag = '830'; // eslint-disable-line functional/immutable-data
+  // 830: Fix punctuation elsewhere. (Note that the current support is lagging...)
+  record.insertField(field830);
+}
+
+function field260To264(field) { // might be generic... if so, move to utils...
   // As per my quick reading of usemarcon-cyrillux
   if (field.tag !== '260') {
     return;
