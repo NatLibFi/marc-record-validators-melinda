@@ -71,10 +71,7 @@ export default function () {
     record.fields.forEach(f => fieldSpecificStuff2(f));
 
     function fieldSpecificStuff2(field) {
-      remove245H(field); // after 33X creation
-      // We apparently strip $h from these as well:
-      // NB! 246$h and 247$h (+ punctuation rules)
-      // NB! 740$h, 7[678[0-9]$h is removed as well, I think...
+      removeSubfieldH(field); // only after 33X creation, as 245$h might be useful
 
       field260To264(field);
       // NB! 300
@@ -142,10 +139,11 @@ export function removeFromOldCatalog(field) {
   }
 }
 
-function remove245H(field) {
-  if (!field.subfields || field.tag !== '245') {
+function removeSubfieldH(field) {
+  if (!field.subfields || !['245', '246', '247', '740', '760', '762', '765', '767', '770', '772', '773', '774', '775', '776', '777', '780', '785', '786', '787', '788'].includes(field.tag)) {
     return;
   }
+
   const filteredFields = field.subfields.filter(sf => sf.code !== 'h');
   if (filteredFields.length > 0) {
     field.subfields = filteredFields; // eslint-disable-line functional/immutable-data
