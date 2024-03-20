@@ -63,8 +63,16 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
       // We should check for existence of a legal deposit URN anyways
 
       f856sUrn.forEach(f => {
+        // Change phrase from old to new if field with old phrase is found
+        if (f.subfields.some(sf => hasOld856LdPhrase(sf))) { // eslint-disable-line functional/no-conditional-statements
+          f.subfields // eslint-disable-line functional/immutable-data
+            .find(sf => hasOld856LdPhrase(sf))
+            .value = 'Käytettävissä vapaakappaletyöasemilla';
+        }
+
+        // Create subfields if necessary
         ldSubfields.forEach(ldsf => {
-          if (!f.subfields.some(sf => sf.code === ldsf.code && sf.value === ldsf.value)) { // eslint-disable-line functional/no-conditional-statements
+          if (!f.subfields.some(sf => sf.code === ldsf.code && sf.value === ldsf.value && !hasOld856LdPhrase(sf))) { // eslint-disable-line functional/no-conditional-statements
             f.subfields.push(ldsf); // eslint-disable-line functional/immutable-data
           }
         });
@@ -106,6 +114,14 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
       }
     }
 
+    function hasOld856LdPhrase({code, value}) {
+      if (code === 'z' && value === 'Käytettävissä vapaakappalekirjastoissa') {
+        return true;
+      }
+
+      return false;
+    }
+
   }
 
   // Later when the new subfields that have f506/f540 -type contents, we should add also them here
@@ -113,7 +129,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
     return [
       {
         code: 'z',
-        value: 'Käytettävissä vapaakappalekirjastoissa'
+        value: 'Käytettävissä vapaakappaletyöasemilla'
       },
       {
         code: '5',
