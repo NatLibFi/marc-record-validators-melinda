@@ -306,8 +306,8 @@ function expandEnglishAbbreviations(value) {
     replace(/\billus\./gu, 'illustrated'). // or illustrations
     replace(/incl\./gu, 'includes').
     replace(/fold\.? maps/gu, 'folded maps').
-    replace(/\bmin\./gu, 'minutes').
-    replace(/\bmin\b/gu, 'minutes').
+    // replace(/\bmin\./gu, 'minutes').
+    // replace(/\bmin\b/gu, 'minutes').
     replace(/\bp\.\b/gu, 'pages').replace(/\bp\b/gu, 'pages').
     replace(/\bpbk\.\b/gui, 'paperback').replace(/\bpbk\b/gui, 'paperback'). // expand to MTS-compliant form
     replace(/\bports\./gu, 'portraits').
@@ -318,17 +318,17 @@ function expandEnglishAbbreviations(value) {
 
 function expandFinnishAbbreviations(value) {
   return value.replace(/\bcn\. /gu, 'noin ').
-    replace(/\bmin\./gu, 'minuuttia').
-    replace(/\bmin\b/gu, 'minuuttia').
+    // replace(/\bmin\./gu, 'minuuttia').
+    // replace(/\bmin\b/gu, 'minuuttia').
     replace(/\bnid\./gu, 'nidottu').replace(/\bnid\b/gu, 'nidottu').
     replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gu, 'sidottu');
 }
 
 function expandSwedishAbbreviations(value) {
   return value.replace(/\bca\. /gu, 'circa ').
-    replace(/\bhft\./gui, 'häftad').replace(/\bhft\b/gui, 'häftad').
-    replace(/\bmin\./gu, 'minuter').
-    replace(/\bmin\b/gu, 'minuter');
+    replace(/\bhft\./gui, 'häftad').replace(/\bhft\b/gui, 'häftad');
+  // replace(/\bmin\./gu, 'minuter').
+  // replace(/\bmin\b/gu, 'minuter');
 }
 
 function finnishTranslationsAndMappings(value) {
