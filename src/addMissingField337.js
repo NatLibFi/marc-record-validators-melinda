@@ -92,7 +92,7 @@ export default function () {
     if (typeOfRecord === 'i' || typeOfRecord === 'j') {
       // Ye olde stuff: 245$h might contain value 'Äänite', which returns 'a'.
       // NB! Cyrillux returns 'c'/com a bit more aggressively for j (music)
-      return 'a'; // audio
+      return 's'; // audio
     }
 
     return mapFormOfItemToField337B(getFormOfItem(record));
