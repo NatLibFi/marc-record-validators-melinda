@@ -1,0 +1,26 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cam a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s7890    fi |||| a  g        fin |"},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "b", "value": "mul" },
+        { "code": "e", "value": "rda" }
+    ]},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "teksti" },
+      { "code": "b", "value": "txt" },
+      { "code": "2", "value": "rdacontent" }
+    ]},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "mikromuoto" },
+      { "code": "b", "value": "h" },
+      { "code": "2", "value": "rdamedia" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "mikrofilmirulla" },
+      { "code": "b", "value": "hj" },
+      { "code": "2", "value": "rdacarrier" }
+    ]}
+  ]
+}
