@@ -30,6 +30,17 @@ describe('urn', async () => {
     ind2: '0',
     subfields: [
       {code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'},
+      {code: 'z', value: 'Käytettävissä vapaakappaletyöasemilla'},
+      {code: '5', value: 'FI-Vapaa'}
+    ]
+  };
+
+  const ldf856old = {
+    tag: '856',
+    ind1: '4',
+    ind2: '0',
+    subfields: [
+      {code: 'u', value: 'http://urn.fi/URN:ISBN:978-951-9155-47-0'},
       {code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
       {code: '5', value: 'FI-Vapaa'}
     ]
@@ -41,7 +52,7 @@ describe('urn', async () => {
     ind2: '0',
     subfields: [
       {code: 'u', value: 'https://urn.fi/URN:ISBN:978-951-9155-47-0'},
-      {code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'},
+      {code: 'z', value: 'Käytettävissä vapaakappaletyöasemilla'},
       {code: '5', value: 'FI-Vapaa'}
     ]
   };
@@ -143,7 +154,6 @@ describe('urn', async () => {
       await nonld.validate(true, f337, f856URN);
     });
 
-
     // we should recognize that 856 with second indicator 1 is not describing the resource itself
     it.skip('Finds the record invalid; 856 ind2: 1 with urn, and is non-legal deposit', async () => {
       await nonld.validate(false, f337, f856URNnotResource);
@@ -175,6 +185,10 @@ describe('urn', async () => {
 
     it('Finds the record valid; 856 with URN and legal deposit subfields, and is legal deposit', async () => {
       await ld.validate(true, f337, f020, ldf856);
+    });
+
+    it('Finds the record invalid; old phrase is used in $z', async () => {
+      await ld.validate(false, f337, f020, ldf856old);
     });
 
     it('Finds the record valid; 856 with URN and legal deposit subfields and other f856s, and is legal deposit', async () => {
@@ -219,6 +233,10 @@ describe('urn', async () => {
     // Fix legal deposit
     it('856 with urn and legal deposit fields, and is legal deposit; Nothing to add', async () => {
       await ld.fix([f020, f856URL, ldf856], [f020, f856URL, ldf856]);
+    });
+
+    it('856 with urn and legal deposit fields, and is legal deposit but phrase is old; change phrase to new', async () => {
+      await ld.fix([f020, f856URL, ldf856old], [f020, f856URL, ldf856]);
     });
 
     it('856 without urn, and is legal deposit; Adds 856 with urn (https) and legal deposit fields', async () => {

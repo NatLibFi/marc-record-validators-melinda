@@ -14,7 +14,18 @@ describe('access-rights', async () => {
     ]
   };
 
-  const ldf5061 = {
+  const f337nonElectronic = {
+    tag: '337',
+    ind1: ' ',
+    ind2: ' ',
+    subfields: [
+      {code: 'a', value: 'käytettävissä ilman laitetta'},
+      {code: 'b', value: 'n'},
+      {code: '2', value: 'rdamedia'}
+    ]
+  };
+
+  const ldf5061old = {
     tag: '506',
     ind1: '1',
     ind2: ' ',
@@ -26,6 +37,20 @@ describe('access-rights', async () => {
       {code: '9', value: 'FENNI<KEEP>'}
     ]
   };
+
+  const ldf5061new = {
+    tag: '506',
+    ind1: '1',
+    ind2: ' ',
+    subfields: [
+      {code: 'a', value: 'Aineisto on käytettävissä vapaakappaletyöasemilla.'},
+      {code: 'f', value: 'Online access with authorization'},
+      {code: '2', value: 'star'},
+      {code: '5', value: 'FI-Vapaa'},
+      {code: '9', value: 'FENNI<KEEP>'}
+    ]
+  };
+
 
   const ldf540 = {
     tag: '540',
@@ -89,8 +114,16 @@ describe('access-rights', async () => {
   })();
 
   describe('#validate', () => {
+    it('Finds the record valid; fields 5061 and 540 are missing but its ok since record is not electronic', async () => {
+      await test.validate(true, f337nonElectronic);
+    });
+
     it('Finds the record valid; Legal deposit fields 5061 and 540', async () => {
-      await test.validate(true, ldf5061, ldf540);
+      await test.validate(true, f337, ldf5061new, ldf540);
+    });
+
+    it('Finds the record invalid; Old phrase in 5061', async () => {
+      await test.validate(false, f337, ldf5061old, ldf540);
     });
 
     it('Finds the record invalid; Missing 5061', async () => {
@@ -98,7 +131,7 @@ describe('access-rights', async () => {
     });
 
     it('Finds the record invalid; Missing 540', async () => {
-      await test.validate(false, f337, ldf5061, f540);
+      await test.validate(false, f337, ldf5061new, f540);
     });
 
     it('Finds the record invalid; Missing 5061 and 540', async () => {
@@ -108,19 +141,23 @@ describe('access-rights', async () => {
 
   describe('#fix', () => {
     it('Legal deposit fields 5061 and 540; Nothing to add', async () => {
-      await test.fix([ldf5061, ldf540], [ldf5061, ldf540]);
+      await test.fix([ldf5061new, ldf540], [ldf5061new, ldf540]);
+    });
+
+    it('Old phrase in 5061; Overwritten with new phrase', async () => {
+      await test.fix([ldf5061old, ldf540], [ldf5061new, ldf540]);
     });
 
     it('540 but missing 5061; Adds 5061', async () => {
-      await test.fix([f5060, ldf540], [f5060, ldf5061, ldf540]);
+      await test.fix([f5060, ldf540], [f5060, ldf5061new, ldf540]);
     });
 
     it('5061 but missing 540; Adds 540', async () => {
-      await test.fix([ldf5061, f540], [ldf5061, f540, ldf540]);
+      await test.fix([ldf5061new, f540], [ldf5061new, f540, ldf540]);
     });
 
     it('Both, 5061 and 540, missing; Adds 5061 and 540', async () => {
-      await test.fix([f5060, f540], [f5060, ldf5061, f540, ldf540]);
+      await test.fix([f5060, f540], [f5060, ldf5061new, f540, ldf540]);
     });
   });
 });
