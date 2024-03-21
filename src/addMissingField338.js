@@ -219,6 +219,7 @@ export default function () {
     const f007 = record.get('007');
     if (f007.length === 1 && f007[0].value[0] === 'h') {
       const materialDesignation = f007[0].value.charAt(1);
+      // 007/00-01 does not seem exactly trustworthy, but can't blame us for crappy metadata...
       if (['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j'].includes(materialDesignation)) {
         return `h${materialDesignation}`;
       }
@@ -256,10 +257,11 @@ export default function () {
   function formOfItemToField338(record) {
     const formOfItem = getFormOfItem(record);
     if (formOfItem === 'a') {
-      // Exception:
+      // The only notable exception found in Melinda's tag=300 fields:
       if (record.get('300').some(f => f.subfields.some(sf => sf.code === 'a' && sf.value.match(/mikrofilmikela/iu)))) {
         return 'hd';
       }
+      // Empically observed default in Melinda:
       return 'hj'; // mikrofilmirulla
     }
     if (formOfItem === 'b') { // mikrokortti
@@ -417,11 +419,7 @@ export default function () {
       return undefined;
     }
 
-    const b = guessMissing338B(record);
-
-    if (!b) {
-      return undefined;
-    }
+    const b = guessMissing338B(record) || 'zu';
 
     const catLang = getCatalogingLanguage(record);
     const catLang2 = catLang ? catLang : 'fin';
