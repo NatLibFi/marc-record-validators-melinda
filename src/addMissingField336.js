@@ -45,24 +45,25 @@ export default function () {
     const typeOfComputerFile = field008 && field008.value ? field008.value[26] : undefined;
 
     if (typeOfComputerFile) {
-      if (['d', 'e'].includes(typeOfComputerFile)) {
+      if (['d', 'e'].includes(typeOfComputerFile)) { // d: N=400, e: N=50
         return ['txt'];
       }
-      if (typeOfComputerFile === 'g') { // Videogame
+      if (typeOfComputerFile === 'g') { // Videogame (N=10000+)
         // 2D moving image/tdi is an educated guess. Might be wrong for 3D games and Infocom-style text-based games.
         // Ref.: https://www.kiwi.fi/pages/viewpage.action?pageId=115966063#PelienRDAohje-Pelienjaottelu:videopelitjafyysisetpelit
         return ['tdi', 'cop'];
       }
-      if (['b', 'f'].includes(typeOfComputerFile)) {
+      if (['b', 'f'].includes(typeOfComputerFile)) { // b: N=176, f: N=2
         return ['cop'];
       }
-      if (['a', 'c'].includes(typeOfComputerFile)) {
+      if (['a', 'c'].includes(typeOfComputerFile)) { // c: N=152, a: N=36
         return ['cod'];
       }
-      if (typeOfComputerFile === 'h') {
+      if (typeOfComputerFile === 'h') { // h: N=44
         return ['snd'];
       }
-      if (['i', 'j', 'm'].includes(typeOfComputerFile)) {
+      if (['i', 'j', 'm'].includes(typeOfComputerFile)) { // (i: N=4800, m: N=566, j: N=111 )
+        // Can we use field 300/516/256 to improve guess?
         return ['xxx'];
       }
     }
@@ -140,7 +141,7 @@ export default function () {
 
     if (typeOfRecord === 'k') {
       if (formOfItem === 'f') {
-        return ['tci'];
+        return ['tci']; // tactile image
       }
       return ['sti'];
     }
@@ -169,16 +170,18 @@ export default function () {
       return guessMissingBsForBookAndContinuingResource(record, formOfItem);
     }
 
-    // Note that 245$h should trigger LDR/06:a or t =>o change at some earlier point (outside this module)
+    // Note that 245$h should trigger LDR/06:a or t =>o change at some earlier point (outside the scope of this module)
     if (typeOfRecord === 'o' || typeOfRecord === 'p') { // o: Kit p: Mixed
-      // We could guess multiple values from 300?
-      return ['xxx'];
+      if (['d', 'r'].includes(formOfItem)) { // d=isoteksti, r=eye-readable print
+        return ['txt'];
+      }
+      // Not much I can guess from 300 etc
+      return ['xxx']; // other
     }
-
     if (typeOfRecord === 'r') { // three-dimensional form
       return ['tdf'];
     }
-    return [];
+    return ['zzz']; // unspecified
   }
 
 
