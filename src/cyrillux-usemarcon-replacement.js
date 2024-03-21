@@ -243,10 +243,10 @@ function field260To264(field) { // might be generic... if so, move to utils...
 
   function field260To264Normalization2(subfield) {
     if (subfield.code === 'a') {
-      return subfield.value.replace('S.l.', 'Kustannuspaikka tuntematon').replace(/\[[Ss]\. ?l\.\]/u, '[kustannuspaikka tuntematon]');
+      return subfield.value.replace(/\b[Ss]\. ?l\./u, 'Kustannuspaikka tuntematon');
     }
     if (subfield.code === 'b') {
-      return subfield.value.replace(/\[[Ss]\. ?n\.\]/u, '[kustantaja tuntematon]');
+      return subfield.value.replace(/\b[Ss]\. ?n\./u, 'kustantaja tuntematon');
     }
     if (subfield.code === 'c') {
       const year = getCopyrightYear(subfield.value);
@@ -257,7 +257,7 @@ function field260To264(field) { // might be generic... if so, move to utils...
         }
         return `${c}${year}`;
       }
-      return subfield.value.replace(/\[[Ss]\. ?a\.\]/u, '[julkaisuaika tuntematon]');
+      return subfield.value.replace(/\b[Ss]\. ?a\./u, 'julkaisuaika tuntematon');
     }
     return subfield.value;
   }
@@ -321,7 +321,9 @@ function expandFinnishAbbreviations(value) {
     // replace(/\bmin\./gu, 'minuuttia').
     // replace(/\bmin\b/gu, 'minuuttia').
     replace(/\bnid\./gu, 'nidottu').replace(/\bnid\b/gu, 'nidottu').
-    replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gu, 'sidottu');
+    replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gu, 'sidottu').
+    replace(/^\(([^)]+)\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  // <- removal of brackets above could use a better location
 }
 
 function expandSwedishAbbreviations(value) {
