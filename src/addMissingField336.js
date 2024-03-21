@@ -1,11 +1,10 @@
 //import createDebugLogger from 'debug';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {getFormOfItem, getTitleMedium, map336CodeToTerm} from './utils33X';
+import {getFormOfItem, map336CodeToTerm} from './utils33X';
 
 const description = 'Add missing 336 field(s)';
 
-const multimediaRegexp = /multimedia/ui;
-
+// const multimediaRegexp = /multimedia/ui;
 
 export default function () {
 
@@ -62,17 +61,61 @@ export default function () {
       if (typeOfComputerFile === 'h') { // h: N=44
         return ['snd'];
       }
-      if (['i', 'j', 'm'].includes(typeOfComputerFile)) { // (i: N=4800, m: N=566, j: N=111 )
-        // Can we use field 300/516/256 to improve guess?
-        return ['xxx'];
+    }
+
+    // ADD 256/300/516/XXX-based educated guesses here
+    const guess = guessUsingFileFields();
+    if (guess) {
+      return guess;
+    }
+    function guessUsingFileFields() {
+      const characteristics = record.get('(256|516)').map(f => fieldToString(f));
+      if (characteristics.some(str => str.match(/(?:ohjelma)/gui))) {
+        return ['cop'];
       }
+      if (characteristics.some(str => str.match(/(?:daisy)/gui))) {
+        return ['spw', 'txt']; // The convention is to put just 'spw' but this is technically correct
+      }
+      if (characteristics.some(str => str.match(/(?:äänikirja)/gui))) {
+        return ['spw']; // This should be ['spw', 'txt'] but who am I to change conventions...
+      }
+      if (characteristics.some(str => str.match(/(?:book|e-bok|e-diss|e-avhand|kirja|e-thesis|tekstitiedosto|tidskrift|verkkoartikkeli|verkkokirja|verkkolehti)/gui))) {
+        return ['txt'];
+      }
+      if (characteristics.some(str => str.match(/(?:peli)/gui))) {
+        return ['tdi', 'cop'];
+      }
+      if (characteristics.some(str => str.match(/(?:data|tietokanta)/gui))) {
+        return ['cod'];
+      }
+      if (characteristics.some(str => str.match(/(?:verkkoaineisto.*[0-9]\] s|PDF)/gui)) || characteristics.some(str => str.match(/\b(?:text|tekstiä?)\b/gui))) {
+        return ['txt'];
+      }
+      if (characteristics.some(str => str.match(/(?:elokuva|liikkuva kuva)/gui))) {
+        return ['tdi'];
+      }
+      if (characteristics.some(str => str.match(/(?:kartta)/gui))) {
+        return ['cri']; // cri or crd, close enough anyhow, I guess
+      }
+      if (characteristics.some(str => str.match(/\b(?:kuvi?a)\b/gui))) {
+        return ['tdi'];
+      }
+
+      return undefined;
+    }
+
+
+    if (['i', 'j', 'm'].includes(typeOfComputerFile)) { // (i: N=4800, m: N=566, j: N=111 )
+      // Can we use field 300/516/256 to improve guess?
+      return ['xxx'];
     }
     return ['zzz']; // unspecified
   }
 
+  /*
   function deriveLanguageMaterials336sFrom007(record) {
     const categoryOfMaterial = [ // 007/00
-      {category: 'a', rdacontent: 'cri'}, // cartographic image
+      {category: 'a', rdacontent: 'cri'}, // cartographic image <- looks like a MP that has been classified as BK... One more reason to comment these..
       {category: 'c', rdacontent: 'txt'},
       {category: 'g', rdacontent: 'sti'},
       {vategory: 'h', rdacontent: 'txt'},
@@ -90,16 +133,21 @@ export default function () {
     }
     return [];
   }
+  */
 
   function guessMissingBsForBookAndContinuingResource(record, formOfItem) {
 
+
+    // This is from very old crap from usemarcon-cyrillux, but me not like it at all!
+    /*
     const f245h = getTitleMedium(record);
     if (f245h && !multimediaRegexp.test(f245h)) {
-      const result = deriveLanguageMaterials336sFrom007(record); // Base result on 007/00. Aped from usemarcon-cyrillux. I don't like this at all... Shouldn't we check $h value as well...
+      const result = deriveLanguageMaterials336sFrom007(record); // Base result on 007/00...
       if (result) {
         return result;
       }
     }
+    */
 
     //const bibliographicalLevel = record.getBibliograpicLevel(); // Bloody h-drop typo...
     //const isBis = ['b', 'i', 's'].includes(bibliographicalLevel);
@@ -112,8 +160,8 @@ export default function () {
 
   function guessMissingBsForMap(record) {
     const formOfItem = getFormOfItem(record);
-    // Is braille and is not a model:
-    if (formOfItem === 'f' && record.fields.some(f => f.tag === '007' && f.value[0] === 'a' && f.value[1] !== 'q')) {
+    // Is braille and is not a model (we have 0). Changed the original usemarcon rule 007/01!=q to 007/01=q
+    if (formOfItem === 'f' && record.fields.some(f => f.tag === '007' && f.value[0] === 'a' && f.value[1] === 'q')) {
       return ['crt']; // Cartographic tactile image
     }
     const [field008] = record.get('008');
@@ -157,7 +205,7 @@ export default function () {
       if (record.fields.some(f => f.tag === '007' && f.value[0] === 'g')) {
         return ['sti']; // still image
       }
-      if (record.fields.some(f => f.tag === '007' && ['m', 'v', 'c'].includes(f.value[0]))) {
+      if (record.fields.some(f => f.tag === '007' && ['m', 'v', 'c'].includes(f.value[0]))) { // 'c' is a bit iffy, but I'll tune it only if it makes an error...
         return ['tdi']; // 2d moving pic
       }
     }
