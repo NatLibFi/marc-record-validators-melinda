@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "leader": "12345crm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "121212s2000    fi |||| q   | | | p fin  "},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "mikroskooppinen" },
+      { "code": "b", "value": "p" },
+      { "code": "2", "value": "rdamedia" }
+    ]}
+  ]
+}
