@@ -1,0 +1,13 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cem a22123454i 4500",
+  "fields": [
+    { "tag": "007", "value": "aq234567"},
+    { "tag": "008", "value": "121212s2000    fi            f     fin  "},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "kartografinen taktiili kuva" },
+      { "code": "b", "value": "crt" },
+      { "code": "2", "value": "rdacontent" }
+    ]}
+  ]
+}

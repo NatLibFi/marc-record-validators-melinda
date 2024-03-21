@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (cri) based on LDR/06=e",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}
