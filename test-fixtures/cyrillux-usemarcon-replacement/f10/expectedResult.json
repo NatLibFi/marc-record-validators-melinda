@@ -1,0 +1,41 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cgm a22123454i 4500",
+  "fields": [
+    { "tag": "007", "value": "v12345678"},
+    { "tag": "008", "value": "012345s7890    fi ||||             fin |"},
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "1234567890" },
+      { "code": "q", "value": "kovakantinen" }
+    ]},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [{ "code": "b", "value": "mul" }, { "code": "e", "value": "rda" }]},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "kaksiulotteinen liikkuva kuva" },
+      { "code": "b", "value": "tdi" },
+      { "code": "2", "value": "rdacontent" }
+    ]},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "video" },
+      { "code": "b", "value": "v" },
+      { "code": "2", "value": "rdamedia" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "määrittelemätön" },
+      { "code": "b", "value": "zu" },
+      { "code": "2", "value": "rdacarrier" }
+    ]},
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Can't find specs for 410." }
+    ]},
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Can't find specs for 440." }
+    ]},
+    { "tag": "810", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Can't find specs for 410." }
+    ]},
+    { "tag": "830", "ind1": " ", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Can't find specs for 440." }
+    ]}
+
+  ]
+}
