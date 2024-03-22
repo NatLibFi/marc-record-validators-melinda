@@ -81,8 +81,8 @@ export default function () {
       field260To264(field);
 
       // NB! 300 (before or after 33X creation?)
-      field410To490And810(field);
-      field440To490And830(field);
+      field410To490And810(field, record);
+      field440To490And830(field, record);
       handle505(field);
       // NB! 505 has some wierd rules...
 
