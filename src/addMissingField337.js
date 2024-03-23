@@ -39,7 +39,7 @@ export default function () {
   }
 
   function validate(record) {
-    nvdebug(`VALIDATE ${description}...`);
+    nvdebug(`VALIDATE ${description}....`);
     const newField = getMissing337(record);
     if (!newField) {
       return {message: [], valid: true};
@@ -105,19 +105,14 @@ export default function () {
       return undefined;
     }
 
-    const b = guessMissing337B(record);
-
-    if (!b) {
-      return undefined;
-    }
+    const b = guessMissing337B(record) || 'z';
 
     const catLang = getCatalogingLanguage(record);
     const catLang2 = catLang ? catLang : 'fin';
     const a = map337CodeToTerm(b, catLang2);
-    const a2 = a ? a : 'z'; // unspecified
 
     const data = {tag: '337', ind1: ' ', ind2: ' ', subfields: [
-      {code: 'a', value: a2},
+      {code: 'a', value: a},
       {code: 'b', value: b},
       {code: '2', value: 'rdamedia'}
     ]};
