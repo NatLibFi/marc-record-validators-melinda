@@ -57,6 +57,7 @@ export default function () {
     if (!extent) {
       return undefined;
     }
+    nvdebug(`AUDIO EXTENT: '${extent}`);
     if (extent.match(/^(?:audio discs?|[^ ]*ljudskiva|[^ ]*ljudskivor|LP-levy|LP-levyä|LP-skiva|LP-skivor|[^ ]*äänilevy)$/iu)) {
       return 'sd';
     }
@@ -66,11 +67,11 @@ export default function () {
     }
 
     const typeOfRecord = record.getTypeOfRecord();
-    if (['i', 'j'].includes(typeOfRecord)) {
-      if (extent.match(/^[^ ]*levyä?$/ui)) {
+    if (['i', 'j'].includes(typeOfRecord) || record.fields.some(f => f.tag === '007' && f.value[0] === 's')) {
+      if (extent.match(/^[^ ]*(?:levyä?|skiva|skivor)$/ui)) {
         return 'sd';
       }
-      if (extent.match(/^[^ ]*kasettia?$/ui)) {
+      if (extent.match(/^[^ ]*(?:cassettes?|kasettia?|kassett|kassetter)$/ui)) {
         return 'ss';
       }
     }
@@ -172,6 +173,7 @@ export default function () {
   }
 
   function extentToCarrierType(record) {
+    nvdebug(`EXTENT2CARRIERTYPE`);
     return extentToAudioCarrierType(record) ||
       extentToComputerCarrierType(record) ||
       extentToMicroformCarrierType(record) ||
@@ -191,19 +193,23 @@ export default function () {
 
     const typeOfRecord = record.getTypeOfRecord();
 
-    if (typeOfRecord !== 'm' && !['o', 'q', 's'].includes(formOfItem)) { // (Actually 'o' was already handled.) Probably not a computer carrier type
-      return undefined;
+    if (typeOfRecord !== 'm') {
+      if (!['o', 'q', 's'].includes(formOfItem)) { // (Actually 'o' was already handled.) Probably not a computer carrier type
+        return undefined;
+      }
     }
 
+    /* After re-reading, this seems illegal
     if (typeOfRecord === 'm') {
-      const f007 = record.get('007').filter(f => f.value[0] === 'c');
+      const f007 = record.get('007');
       if (f007.length === 1) {
         // ca: none, cb: 10 or so, probably errors (typically USB)
-        if (f007.value[1] === 'o') {
+        if (f007[0].value[0] === 'c' && f007[0].value[1] === 'o') {
           return 'cd';
         }
       }
     }
+    */
 
     // Check fields 300$a (extent), 256$a (computer file characteristics), 516$a (type of computer file or data note), and possible 245$h (medium)
     const formOfItem2 = typeOfRecord === 'm' && formOfItem === '|' ? 's' : formOfItem; // handle '|'
@@ -235,7 +241,7 @@ export default function () {
     return undefined;
   }
 
-  function isUnmediatedVolume(record) {
+  function isUnmediatedVolume(record) { // Volume/Nide
     const typeOfRecord = record.getTypeOfRecord();
     if (!['a', 'c', 'e', 't'].includes(typeOfRecord)) {
       return false;
@@ -283,6 +289,7 @@ export default function () {
   }
 
   function audioToField338(record) {
+    nvdebug('AUDIO-TO-338');
     const typeOfRecord = record.getTypeOfRecord(record);
     if (typeOfRecord !== 'i' && typeOfRecord !== 'j') {
       return undefined;
