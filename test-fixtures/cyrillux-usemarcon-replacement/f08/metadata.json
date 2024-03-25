@@ -1,6 +1,5 @@
 {
-  "description": "Fix Cyrillux-related stuff: 020$a nd 260->264",
-  "comment": "264 final punc is added after ']'. I think it's an error, but since it's done by another fixer, I'll let it pass for now.",
+  "description": "Fix Cyrillux-related stuff: 020$q and 260->264",
   "enabled": true,
   "only": false,
   "fix": true
