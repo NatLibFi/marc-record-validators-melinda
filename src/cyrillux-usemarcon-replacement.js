@@ -6,6 +6,7 @@
 */
 
 import clone from 'clone';
+import {default as fix33X} from './fix-33X';
 import {default as add336} from './addMissingField336';
 import {default as add337} from './addMissingField337';
 import {default as add338} from './addMissingField338';
@@ -69,6 +70,7 @@ export default function () {
 
     fixRelatorTerms().fix(record);
 
+    fix33X().fix(record); // 33X$a => 33X$a$b$2
     add336().fix(record);
     add337().fix(record);
     add338().fix(record);
@@ -78,18 +80,16 @@ export default function () {
     function fieldSpecificStuff2(field) {
       removeSubfieldH(field); // only after 33X creation, as 245$h might be useful
 
-      field260To264(field);
+      field260To264s(field, record);
 
       // NB! 300 (before or after 33X creation?)
       field410To490And810(field, record);
       field440To490And830(field, record);
-      handle505(field);
-      // NB! 505 has some wierd rules...
+      // handle505(field); // not applying them usemarcon-cyrillux rules for field 505 as I can't understand their motivation.
 
     }
 
-    // Cyrillux rules such as 245I1 | 245I1  | If (Exists(@100) Or Exists(@110) Or Exists(@111) Or Exists(@130)) Then '1' Else '0'
-    // and plenty of other good stuff:
+    // The fixer below implement Cyrillux rules such as 245I1 | 245I1  | If (Exists(@100) Or Exists(@110) Or Exists(@111) Or Exists(@130)) Then '1' Else '0' and plenty of other good stuff:
     fixIndicators().fix(record);
 
     fixPunctuation().fix(record);
@@ -210,35 +210,58 @@ function field440To490And830(field, record) { // might be generic... if so, move
   record.insertField(field830);
 }
 
-function field260To264(field) { // might be generic... if so, move to utils...
+
+function field260To264s(field, record) { // might be generic... if so, move to utils...
   // As per my quick reading of usemarcon-cyrillux
   if (field.tag !== '260') {
     return;
   }
+
+  createCopyright264Field(field);
+
   field.tag = '264'; // eslint-disable-line functional/immutable-data
   field.ind1 = ' '; // eslint-disable-line functional/immutable-data
-  field.ind2 = setInd2(); // eslint-disable-line functional/immutable-data
+  field.ind2 = '1'; // eslint-disable-line functional/immutable-data
 
   // NB! Usemarcon does not handle 260$e$f$g => 264$a$b$c, so I'm not botherin with it either... (However, we could check our merge reducer code...)
 
   function getCopyrightYear(string) {
-    if (string.match(/^(?:\[?[Ccp]|[^0-9]*(?:cop|©|℗))[^0-9]+(?:1[789][0-9][0-9]|20[0-2][0-9])[^0-9]*$/u)) {
+    if (string.match(/^(?:\[?[Ccp]|[^0-9]*(?:cop|©|℗))[^0-9]*(?:1[789][0-9][0-9]|20[0-2][0-9])[^0-9]*$/u)) {
       return string.replace(/[^0-9]/ug, '');
     }
     return false;
-  }
-
-  function setInd2() {
-    if (field.subfields?.some(sf => sf.code === 'c' && getCopyrightYear(sf.value))) {
-      return '4';
-    }
-    return '1';
   }
 
   field.subfields?.forEach(sf => field260To264Normalization(sf));
 
   function field260To264Normalization(subfield) {
     subfield.value = field260To264Normalization2(subfield); // eslint-disable-line functional/immutable-data
+  }
+
+  function createCopyright264Value(field) {
+    // Extract/split copyright year to a separate field:
+    const [c] = field.subfields.filter(sf => sf.code === 'c');
+    if (!c) {
+      return undefined;
+    }
+    const copyrightYear = getCopyrightYear(c.value);
+    if (!copyrightYear) {
+      return undefined;
+    }
+    const copType = c.value.match(/(?:^\[?p|℗)/u) ? '℗' : '©';
+    const returnValue = c.value.includes('[') ? `[${copType}${copyrightYear}]` : `${copType}${copyrightYear}`;
+    // Moidy the original value:
+    c.value = `[${copyrightYear}]`; // eslint-disable-line functional/immutable-data
+    return returnValue;
+  }
+
+  function createCopyright264Field(field) {
+    const c = createCopyright264Value(field);
+    if (!c) {
+      return undefined;
+    }
+    const data = {'tag': '264', 'ind1': ' ', 'ind2': '4', 'subfields': [{'code': 'c', 'value': c}]};
+    record.insertField(data);
   }
 
   function field260To264Normalization2(subfield) {
@@ -261,13 +284,16 @@ function field260To264(field) { // might be generic... if so, move to utils...
     }
     return subfield.value;
   }
+
+
 }
 
+/*
 function handle505(field) {
   if (field.tag !== '505') {
     return;
   }
-  // Now sure how usemarcon-cyrillux is sure about ind1...
+  // Don't know how/why usemarcon-cyrillux is so sure about ind1...
   field.ind1 = '0'; // eslint-disable-line functional/immutable-data
   // usemarcon-cyrillux drops irrelevant subfields, so we do the same. However, we have included some control subfields in the kept side:
   const keptSubfields = field.subfields.filter(sf => ['a', 'g', 'r', 't', 'u', '6', '8', '9'].includes(sf.code));
@@ -277,6 +303,7 @@ function handle505(field) {
     return;
   }
 }
+*/
 
 function translateFieldToFinnish(field) {
   if (!['020', '300'].includes(field.tag)) {
