@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cdm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "121212s2000    fi                  fin  "},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "nuottikirjoitus" },
+      { "code": "b", "value": "ntm" },
+      { "code": "2", "value": "rdacontent" }
+    ]}
+  ]
+}
