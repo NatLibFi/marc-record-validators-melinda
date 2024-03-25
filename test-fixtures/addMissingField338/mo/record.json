@@ -1,0 +1,9 @@
+{
+  "leader": "12345cgm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s2000    xxunnn||||||||||||snfin| " },
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "film roll" }
+    ]}
+  ]
+}
