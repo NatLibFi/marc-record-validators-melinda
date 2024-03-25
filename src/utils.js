@@ -32,6 +32,12 @@ function normalizeIndicatorValue(val) {
   return val;
 }
 
+export function recordToString(record) {
+  const ldr = `LDR   ${record.leader}`;
+  const fields = record.fields.map(f => fieldToString(f));
+  return `${ldr}\n${fields.join('\n')}`;
+}
+
 export function fieldToString(f) {
   if ('subfields' in f) {
     return `${f.tag} ${normalizeIndicatorValue(f.ind1)}${normalizeIndicatorValue(f.ind2)}${formatSubfields(f)}`;
