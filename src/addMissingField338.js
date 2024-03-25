@@ -166,7 +166,7 @@ export default function () {
     if (extent.match(/^[^ ]*(?:videodiscs?|videolevyä?|videoskiva|videoskivor)$/ui)) {
       return 'vd';
     }
-    if (extent.match(/^(?:videocassettes?|videokassett|videokassetter|videokasettia?)$/ui)) {
+    if (extent.match(/^(?:videocassettes?|videokassett|videokassetter|videokasettia?)$/ui) || extent.match(/^(?:VHS)/ui)) {
       return 'vf';
     }
     return undefined;
@@ -229,7 +229,6 @@ export default function () {
       if (['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j'].includes(materialDesignation)) {
         return `h${materialDesignation}`;
       }
-      // 007/00-01 sr implies online resource, but we'll probably figure it out anyways
     }
 
     const formOfItem = getFormOfItem(record);
@@ -280,7 +279,7 @@ export default function () {
     // 'e' sanomalehti (for CR only)
     // 'f' pistekirjoitus
     if (formOfItem === 'o') { // online resource
-      return 'cr';
+      return 'cr'; // already handled elsewhere, but keep this here as well
     }
     // 'q' local electronic stuff, use 300 et al to guess. Implemented elsewhere.
     // 'r' painojäljenne, arkki vs nide?
@@ -355,16 +354,18 @@ export default function () {
   }
 
   function educatedGuessIsOnlineResource(record) {
-    const typeOfRecord = record.getTypeOfRecord();
-    if (typeOfRecord !== 'm') {
-      return false;
+    const fields856 = record.get('856');
+
+    if (fields856.some(f => f.ind1 === '4' && f.ind2 === '0')) {
+      return 'cr';
     }
-    return false;
+
+    return undefined;
   }
 
   function checkQualifyingInformation(record) {
     const identifierFields = record.get('(?:015|020|024|028)').filter(f => f.subfields.some(sf => sf.code === 'q'));
-    if (identifierFields.some(f => f.subfields.some(sf => sf.code === 'q' && sf.value.match(/\b(?:hard-?cover|kierre|nid|sid|kovakant|pehmekantpärmar)/iu)))) {
+    if (identifierFields.some(f => f.subfields.some(sf => sf.code === 'q' && sf.value.match(/\b(?:hard-?cover|kierre|nid|sid|kovakant|pehmekant|pärmar)/iu)))) {
       return 'nc';
     }
     return undefined;
@@ -428,9 +429,8 @@ export default function () {
 
     const b = guessMissing338B(record) || 'zu';
 
-    const catLang = getCatalogingLanguage(record);
-    const catLang2 = catLang ? catLang : 'fin';
-    const a = map338CodeToTerm(b, catLang2);
+    const catLang = getCatalogingLanguage(record) || 'fin';
+    const a = map338CodeToTerm(b, catLang);
     const a2 = a ? a : 'z'; // unspecified
 
     const data = {tag: '338', ind1: ' ', ind2: ' ', subfields: [
