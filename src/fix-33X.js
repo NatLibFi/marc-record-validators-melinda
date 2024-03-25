@@ -1,4 +1,5 @@
 //import createDebugLogger from 'debug';
+import clone from 'clone';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
 import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './utils33X';
 
@@ -371,14 +372,19 @@ export default function () {
 
   function validate(record) {
     nvdebug(`VALIDATE ${description}...`); // NOT READY YET
+    const catLang = getCatalogingLanguage(record) || 'fin';
     const fields = getRelevantFields(record);
     if (fields.length === 0) {
       return {message: [], valid: true};
     }
-    const strings = fields.map(f => fieldToString(f));
-    const tmp = strings.join('\', \'');
-    const msg = `${description}: '${tmp}'`;
-    return {message: [msg], valid: false};
+    const originalStrings = fields.map(f => fieldToString(f));
+    const clonedFields = fields.map(f => clone(f));
+    clonedFields.forEach(f => fixField(f, catLang));
+    const modifiedStrings = clonedFields.map(f => fieldToString(f));
+
+    const changes = originalStrings.map((str, i) => `'${str}' => '${modifiedStrings[i]}'`);
+
+    return {message: changes, valid: false};
   }
 
 
