@@ -1,0 +1,7 @@
+{
+  "fields" : [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "008", "value": "860616s1985    tma|||||||||||||||||nno||"},
+    { "tag": "041", "ind1": " ", "ind2": "0", "subfields": [{"code": "a", "value": "nno"}, {"code": "h", "value": "nob"}, {"code": "z", "value": "nob"}]}
+  ]
+}
