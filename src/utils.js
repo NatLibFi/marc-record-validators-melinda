@@ -1,11 +1,7 @@
 export function isElectronicMaterial(record) {
   const f337s = record.get('337');
 
-  return f337s.some(field => {
-    const mediaTypeIsC = field.subfields.some(sub => sub.code === 'b' && sub.value === 'c');
-    const sourceIsRdamedia = field.subfields.some(sub => sub.code === '2' && sub.value === 'rdamedia');
-    return mediaTypeIsC && sourceIsRdamedia;
-  });
+  return f337s.length > 0 && f337s.some(f => fieldHasSubfield(f, 'b', 'c') && fieldHasSubfield(f, '2', 'rdamedia'));
 }
 
 export function nvdebug(message, func = undefined) {
@@ -62,14 +58,14 @@ export function isControlSubfieldCode(subfieldCode) {
   return false;
 }
 
-export function getCatalogingLanguage(record) {
+export function getCatalogingLanguage(record, defaultCatalogingLanguage = undefined) {
   const [field040] = record.get(/^040$/u);
   if (!field040) {
-    return null;
+    return defaultCatalogingLanguage;
   }
   const [b] = field040.subfields.filter(sf => sf.code === 'b');
   if (!b) {
-    return null;
+    return defaultCatalogingLanguage;
   }
   return b.value;
 }
