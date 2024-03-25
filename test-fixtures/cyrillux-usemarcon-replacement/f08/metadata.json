@@ -1,0 +1,6 @@
+{
+  "description": "Fix Cyrillux-related stuff: 020$q and 260->264",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}
