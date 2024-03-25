@@ -6,6 +6,7 @@
 */
 
 import clone from 'clone';
+import {MarcRecord} from '@natlibfi/marc-record';
 import {default as fix33X} from './fix-33X';
 import {default as add336} from './addMissingField336';
 import {default as add337} from './addMissingField337';
@@ -20,7 +21,7 @@ import {sortAdjacentSubfields} from './sortSubfields';
 
 
 // import createDebugLogger from 'debug';
-import {nvdebug} from './utils';
+import {nvdebug, recordToString} from './utils';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
 
@@ -99,11 +100,19 @@ export default function () {
   }
 
   // Validation is currently done in subparts
-  function validate() {
-    nvdebug(`${description}: validate (void)`);
-    // Should this do everything and then produce diff etc?
-    const res = {message: [], fix: [], valid: true};
-    return res;
+  function validate(record) {
+    nvdebug(`${description}: validate`);
+    const originalString = recordToString(record);
+    const clonedRecord = new MarcRecord(record, {subfieldValues: false});
+    realFix(clonedRecord);
+    const modifiedString = recordToString(clonedRecord);
+
+    if (originalString === modifiedString) {
+      return {message: [], valid: true};
+    }
+
+    return {message: ['Record changed'], valid: false}; // Less than descriptive but will do...
+
   }
 }
 
