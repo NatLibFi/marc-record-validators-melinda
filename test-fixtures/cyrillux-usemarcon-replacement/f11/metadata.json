@@ -1,5 +1,5 @@
 {
-  "description": "Fix Cyrillux-related stuff: 260->264 transfer + split",
+  "description": "Fix 33X ($a-only) fields",
   "enabled": true,
   "only": false,
   "fix": true
