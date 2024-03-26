@@ -28,7 +28,7 @@ import {nvdebug, recordToString} from './utils';
 const description = 'Replacement for Cyrillux usemarcon rules';
 
 // Extended original list with 541, 561, 562, 583, 584
-const dropTags = ['001', '003', '010', '012', '014', '015', '016', '019', '025', '029', '032', '035', '036', '037', '038', '042', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '350', '400', '411', '541', '561', '562', '574', '575', '577', '578', '583', '584', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '856', '857', '858', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
+const dropTags = ['001', '003', '010', '012', '014', '015', '016', '019', '025', '029', '032', '035', '036', '037', '038', '042', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '261', '262', '350', '400', '411', '541', '561', '562', '574', '575', '577', '578', '583', '584', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '761', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '866', '867', '868', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
 
 export default function () {
   return {
@@ -67,7 +67,7 @@ export default function () {
     const f028 = record.fields.filter(f => f.tag === '028');
     f028.forEach(f => sortAdjacentSubfields(f));
 
-    fixField040(record); // $b 'swe' becomes 'mul'. As a side effect 33X$as are translated info Finnish, not Swedish! Ok in this domain!
+    fixField040(record); // All $b values are changed to 'mul'. As a side effect 33X$b=>$a mappings are in Finnish! Ok in this domain!
 
     fixRelatorTerms().fix(record);
 
@@ -401,7 +401,7 @@ function finnishTranslationsAndMappings(value) {
     replace('sound cassettes', 'äänikasettia').replace('sound cassette', 'äänikasetti').
     replace('sound discs', 'äänilevyä').replace('sound disc', 'äänilevy').
     replace('unnumbered', 'numeroimatonta').
-    replace(/\bverkojulk\.\b/gu, 'verkkoaineisto').replace(/\bverkojulk\b/gu, 'verkkoaineisto').
+    replace(/\bverkkojulk\.\b/gu, 'verkkoaineisto').replace(/\bverkojulk\b/gu, 'verkkoaineisto').
     replace('videodiscs', 'videolevyä').
     replace('videodisc', 'videolevy').
     replace(/\b1 hour\b/gu, '1 tunti');
