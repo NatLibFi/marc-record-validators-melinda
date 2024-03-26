@@ -22,6 +22,9 @@ export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
 }
 
 export function subfieldToString(sf) {
+  if (!sf.value) {
+    return `‡${sf.code}`;
+  }
   return `‡${sf.code} ${sf.value}`;
 }
 
