@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {getFormOfItem, map336CodeToTerm} from './utils33X';
+import {getFormOfItem, map336CodeToTerm} from './field33XUtils';
 
 const description = 'Add missing 336 field(s)';
 

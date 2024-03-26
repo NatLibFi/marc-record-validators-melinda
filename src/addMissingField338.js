@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {getFormOfItem, map338CodeToTerm} from './utils33X';
+import {getFormOfItem, map338CodeToTerm} from './field33XUtils';
 
 // Based mostly on USEMARCON-RDA. However, many things have been rethought, modernized etc.
 const description = 'Add missing 338 field(s)';

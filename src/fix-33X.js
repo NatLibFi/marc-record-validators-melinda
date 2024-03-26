@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './utils33X';
+import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './field33XUtils';
 
 const description = 'Fix non-RDA 33X field(s)';
 
