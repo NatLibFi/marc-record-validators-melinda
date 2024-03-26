@@ -14,25 +14,26 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fieldSanitizeVocabularySourceCode(f));
+    const relevantFields = getRelevantFields(record);
+    relevantFields.forEach(f => fieldSanitizeVocabularySourceCode(f));
     return res;
   }
 
   function validate(record) {
     const res = {message: []};
+    const relevantFields = getRelevantFields(record);
 
-    record.fields.forEach(field => {
-      validateField(field, res);
-    });
+    relevantFields.forEach(field => validateField(field, res));
 
     res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
     return res;
   }
 
+  function getRelevantFields(record) {
+    return record.fields.filter(f => f.subfields && f.tag.match(/^(?:6..|257|370|38.)$/u));
+  }
+
   function validateField(field, res) {
-    if (!field.subfields) {
-      return;
-    }
     const orig = fieldToString(field);
 
     const normalizedField = fieldSanitizeVocabularySourceCode(clone(field));
@@ -49,11 +50,8 @@ export default function () {
     return;
   }
 
-  function fieldSanitizeVocabularySourceCode(field) {
-    if (!field.tag.match(/^(?:6..|257|370|38.)$/u)) {
-      return field;
-    }
 
+  function fieldSanitizeVocabularySourceCode(field) {
     field.subfields.forEach(sf => subfieldSanitizeVocabularySourceCode(sf));
     return field;
   }
