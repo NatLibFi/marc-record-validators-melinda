@@ -365,7 +365,7 @@ export default function () {
 
   function checkQualifyingInformation(record) {
     const identifierFields = record.get('(?:015|020|024|028)').filter(f => f.subfields.some(sf => sf.code === 'q'));
-    if (identifierFields.some(f => f.subfields.some(sf => sf.code === 'q' && sf.value.match(/\b(?:hard-?cover|kierre|nid|sid|kovakant|pehmekant|pärmar)/iu)))) {
+    if (identifierFields.some(f => f.subfields.some(sf => sf.code === 'q' && sf.value.match(/\b(?:hard-?cover|kierre|nid|sid|kovakant|pehmeäkant|pärmar)/iu)))) {
       return 'nc';
     }
     return undefined;
@@ -422,6 +422,7 @@ export default function () {
   }
 
   function getMissing338(record) {
+    // Field 773 and 973 means that the record is a component record, and doesn't need field 338.
     // This will return only a single value. Multivalues must be handled before this...
     if (record.fields.some(f => ['338', '773', '973'].includes(f.tag))) {
       return undefined;
