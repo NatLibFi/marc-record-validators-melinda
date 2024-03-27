@@ -385,8 +385,8 @@ function finnishTranslationsAndMappings(value) {
     replace(/\bhardback\b/gui, 'kovakantinen').
     replace(/\bhours\b/gui, 'tuntia').
     replace('illustrated', 'kuvitettu').
-    replace(/illustratation\b/gui, 'kuvitus'). // kuvitus/kuvitettu variation is taken from usemarcon-cyrillux...
-    replace('illustratations', 'kuvitettu').
+    replace(/illustration\b/gui, 'kuvitus'). // kuvitus/kuvitettu variation is taken from usemarcon-cyrillux...
+    replace('illustrations', 'kuvitettu').
     replace(/\binsert\b/gui, 'liite').
     replace(/\binserts\b/gui, 'liitteitä').
     replace('leaves of plates', 'kuvalehteä').
