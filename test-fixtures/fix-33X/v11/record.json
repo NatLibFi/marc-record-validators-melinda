@@ -1,0 +1,22 @@
+{
+  "leader": "12345cam a22123454i 4500",
+  "fields": [
+    { "tag": "007", "value": "v12345678"},
+    { "tag": "008", "value": "012345s7890    fi ||||             fin |"},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [{ "code": "b", "value": "mul" }, { "code": "e", "value": "rda" }]},
+    { "tag": "260", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Foo :" },
+      { "code": "b", "value": "Bar," },
+      { "code": "c", "value": "[c2017]" }
+    ]},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Teksti" }
+    ]},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "ei välittävää laitetta" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "ospecificerad" }
+    ]}
+  ]
+}

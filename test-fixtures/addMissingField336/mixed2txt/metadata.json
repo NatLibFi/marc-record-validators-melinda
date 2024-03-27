@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (b=txt). Default value for LDR/06=p is overridden by form of item 008/23=r",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

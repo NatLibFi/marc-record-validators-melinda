@@ -1,0 +1,6 @@
+{
+  "description": "Validate 33X ($a-only) fields",
+  "enabled": true,
+  "only": false,
+  "fix": false
+}

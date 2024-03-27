@@ -1,0 +1,7 @@
+{
+  "description": "Fix Cyrillux-related stuff: split 410 to 490 and 810, and split 440 to 490 and 810",
+  "comment": "Also note few indicator changes",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

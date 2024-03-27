@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "leader": "12345crm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s2000    xxu|||||||||||a|||||fin| " },
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "objekti" },
+      { "code": "b", "value": "nr" },
+      { "code": "2", "value": "rdacarrier" }
+    ]}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "description": "Fix: Add missing 33X fields for a microfilm",
+  "comment #1": "336$b txt is an educated guess/fallback",
+  "comment #2": "008/23=a means microfilm 337$b=h. No 300 nor 007, so we emprirically default to 338$b hj",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

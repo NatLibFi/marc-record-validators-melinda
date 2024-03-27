@@ -1,0 +1,14 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cim a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s2000    xxu|||||||||||||||||fin| " },
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "mul" } ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [ { "code": "e", "value": "liite" } ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "määrittelemätön" },
+      { "code": "b", "value": "zu" },
+      { "code": "2", "value": "rdacarrier" }
+    ]}
+  ]
+}

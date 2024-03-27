@@ -1,0 +1,18 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cam a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s2000    xxu|||||||||||||||||fin| " },
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "whatever" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "verkkoaineisto" },
+      { "code": "b", "value": "cr" },
+      { "code": "2", "value": "rdacarrier" }
+    ]},
+    { "tag": "856", "ind1": "4", "ind2": "0", "subfields": [
+      { "code": "u", "value": "https://..." }
+    ]}
+  ]
+}

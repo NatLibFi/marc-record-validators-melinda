@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (tactile notated music), based on LDR/06=d  with 008/23 form-of-item-'f' triggered exception",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

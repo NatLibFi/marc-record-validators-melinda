@@ -53,9 +53,9 @@
     "@natlibfi/marc-record-validate": "^8.0.6"
   },
   "devDependencies": {
-    "@babel/cli": "^7.23.9",
-    "@babel/core": "^7.24.0",
-    "@babel/preset-env": "^7.24.0",
+    "@babel/cli": "^7.24.1",
+    "@babel/core": "^7.24.3",
+    "@babel/preset-env": "^7.24.3",
     "@natlibfi/eslint-config-melinda-backend": "^3.0.4",
     "@natlibfi/fixugen": "^2.0.4",
     "@natlibfi/fixura": "^3.0.4",

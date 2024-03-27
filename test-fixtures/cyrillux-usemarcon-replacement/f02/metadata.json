@@ -1,0 +1,7 @@
+{
+  "description": "Fix: Cyrillux, BK: add fields 336, 337 and 338.",
+  "comment": "Also fix LDR/18 to 'i', and add field 040.",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

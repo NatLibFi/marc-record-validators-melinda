@@ -1,0 +1,7 @@
+{
+  "description": "Validation: Don't add field 336",
+  "comment": "Don't create a 336 as there's already one",
+  "enabled": true,
+  "only": false,
+  "fix": false
+}

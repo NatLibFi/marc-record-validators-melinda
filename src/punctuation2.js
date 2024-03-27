@@ -338,7 +338,7 @@ const addPairedPunctuationRules = {
     {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
     // NB! The $c rule messes dotless exception "264 #4 $c p1983" up
     // We'll need to add a hacky postprocessor for this? Add 'hasInd1': '0123' etc?
-    {'code': 'c', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter2}
+    {'code': 'c', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter, 'ind2': ['0', '1', '2', '3']}
   ],
   '300': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
@@ -394,11 +394,11 @@ function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
 
 
 function ruleAppliesToField(rule, field) {
-  if ('ind1' in rule && field.ind1.includes(rule.ind1)) {
+  if ('ind1' in rule && !rule.ind1.includes(field.ind1)) {
     return false;
   }
 
-  if ('ind2' in rule && field.ind2.includes(rule.ind2)) {
+  if ('ind2' in rule && !rule.ind2.includes(field.ind2)) {
     return false;
   }
 
