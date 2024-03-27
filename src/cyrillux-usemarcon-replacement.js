@@ -334,30 +334,31 @@ function translateFieldToFinnish(field) {
 
 function expandEnglishAbbreviations(value) {
   return value.replace(/\bbk\.\b/gui, 'book').
-    replace(/chiefly col\./u, 'chiefly color').
-    replace(/col\. ill\./u, 'color illustrations').
-    replace(/diagrs\./u, 'diagrams').
+    replace(/chiefly col\./ui, 'chiefly color').
+    replace(/col\. ill\./ui, 'color illustrations').
+    replace(/diagrs\./ui, 'diagrams').
     replace(/\bhbk\.\b/gui, 'hardcover').replace(/\bhbk\b/gui, 'hardcover'). // expand to MTS-compliant form
-    replace(/\bill\./gu, 'illustrated'). // or illustrations (or Swedish "illustrerad" or...)
-    replace(/\billus\./gu, 'illustrated'). // or illustrations
-    replace(/incl\./gu, 'includes').
-    replace(/fold\.? maps/gu, 'folded maps').
+    replace(/\bill\./gui, 'illustrated'). // or illustrations (or Swedish "illustrerad" or...)
+    replace(/\billus\./gui, 'illustrated'). // or illustrations
+    replace(/incl\./gui, 'includes').
+    replace(/fold\.? maps/gui, 'folded maps').
     // replace(/\bmin\./gu, 'minutes').
     // replace(/\bmin\b/gu, 'minutes').
-    replace(/\bp\.\b/gu, 'pages').replace(/\bp\b/gu, 'pages').
+    replace(/\bp\.\b/gui, 'pages').replace(/\bp\b/gu, 'pages').
     replace(/\bpbk\.\b/gui, 'paperback').replace(/\bpbk\b/gui, 'paperback'). // expand to MTS-compliant form
-    replace(/\bports\./gu, 'portraits').
+    replace(/\bports\./gui, 'portraits').
     replace('sd., col.', 'sound, color').
-    replace(/ *\((?:chiefly col\.|chiefly color|some cols)\)/gu, '').
-    replace(/\b1 hr\./gu, '1 hour');
+    replace(/ *\((?:chiefly col\.|chiefly color|some cols)\)/gui, '').
+    replace(/\b1 hr\./gui, '1 hour');
 }
 
 function expandFinnishAbbreviations(value) {
   return value.replace(/\bcn\. /gu, 'noin ').
     // replace(/\bmin\./gu, 'minuuttia').
     // replace(/\bmin\b/gu, 'minuuttia').
-    replace(/\bnid\./gu, 'nidottu').replace(/\bnid\b/gu, 'nidottu').
-    replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gu, 'sidottu').
+    replace(/\bnid\./gu, 'nidottu').replace(/\bnid\b/gui, 'nidottu').
+    replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gui, 'sidottu').
+    replace(/\bverkkojulk\.\b/gu, 'verkkojulkaisu').replace(/\bverkkojulk\b/gu, 'verkkojulkaisu').
     replace(/^\(([^)]+)\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
   // <- removal of brackets above could use a better location
 }
@@ -374,36 +375,36 @@ function finnishTranslationsAndMappings(value) {
     replace('approximately', 'noin').
     replace('audio discs', 'äänilevyä').
     replace('black and white', 'mustavalkoinen').
-    replace(/\bcharts\b/gu, 'kaavioita').
+    replace(/\bcharts\b/gui, 'kaavioita').
     replace('chiefly color illustrations', 'pääosin värikuvitettu').
     replace('chiefly', 'pääosin').
     replace('color illustrations', 'värikuvitus').
-    replace(/\bdigital\b/gu, 'digitaalinen').
-    replace(/\belectronic book\b/gu, 'verkkoaineisto').
-    replace(/\bfolded sheet\b/gu, 'taitelehti').
-    replace(/\bhardback\b/gu, 'kovakantinen').
-    replace(/\bhours\b/gu, 'tuntia').
+    replace(/\bdigital\b/gui, 'digitaalinen').
+    replace(/\belectronic book\b/gui, 'verkkoaineisto').
+    replace(/\bfolded sheet\b/gui, 'taitelehti').
+    replace(/\bhardback\b/gui, 'kovakantinen').
+    replace(/\bhours\b/gui, 'tuntia').
     replace('illustrated', 'kuvitettu').
-    replace(/illustratation\b/gu, 'kuvitus'). // kuvitus/kuvitettu variation is taken from usemarcon-cyrillux...
+    replace(/illustratation\b/gui, 'kuvitus'). // kuvitus/kuvitettu variation is taken from usemarcon-cyrillux...
     replace('illustratations', 'kuvitettu').
-    replace(/\binsert\b/gu, 'liite').
-    replace(/\binserts\b/gu, 'liitteitä').
+    replace(/\binsert\b/gui, 'liite').
+    replace(/\binserts\b/gui, 'liitteitä').
     replace('leaves of plates', 'kuvalehteä').
-    replace(/\bmap\b/gu, 'kartta').
-    replace(/\bmaps\b/gu, 'karttoja'). // or karttaa?
+    replace(/\bmap\b/gui, 'kartta').
+    replace(/\bmaps\b/gui, 'karttoja'). // or karttaa?
     replace('minutes', 'minuuttia').
     replace('online resource', 'verkkoaineisto').
     replace('pages of plates', 'kuvalehteä').
-    replace(/\bpages\b/gu, 'sivua').
-    replace(/\bpaperback\b/gu, 'pehmeäkantinen'). // MTS alt
-    replace(/\bsoftcover\b/gu, 'pehmeäkantinen'). // MTS pref
+    replace(/\bpages\b/gui, 'sivua').
+    replace(/\bpaperback\b/gui, 'pehmeäkantinen'). // MTS alt
+    replace(/\bsoftcover\b/gui, 'pehmeäkantinen'). // MTS pref
     replace('sound, color', 'äänellinen, värillinen').
     replace('sound cassettes', 'äänikasettia').replace('sound cassette', 'äänikasetti').
     replace('sound discs', 'äänilevyä').replace('sound disc', 'äänilevy').
     replace('unnumbered', 'numeroimatonta').
-    replace(/\bverkkojulk\.\b/gu, 'verkkoaineisto').replace(/\bverkojulk\b/gu, 'verkkoaineisto').
+    replace(/\bverkkojulkaisu\b/gui, 'verkkoaineisto').
     replace('videodiscs', 'videolevyä').
     replace('videodisc', 'videolevy').
-    replace(/\b1 hour\b/gu, '1 tunti');
+    replace(/\b1 hour\b/gui, '1 tunti');
 
 }
