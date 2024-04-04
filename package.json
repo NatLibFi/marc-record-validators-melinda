@@ -44,7 +44,7 @@
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
     "debug": "^4.3.4",
-    "isbn3": "^1.1.46",
+    "isbn3": "^1.1.47",
     "langs": "^2.0.0",
     "node-fetch": "^2.7.0",
     "xml2js": "^0.6.2"
@@ -54,8 +54,8 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.24.1",
-    "@babel/core": "^7.24.3",
-    "@babel/preset-env": "^7.24.3",
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
     "@natlibfi/eslint-config-melinda-backend": "^3.0.4",
     "@natlibfi/fixugen": "^2.0.4",
     "@natlibfi/fixura": "^3.0.4",
@@ -66,7 +66,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "fetch-mock": "^9.11.0",
-    "mocha": "^10.3.0",
+    "mocha": "^10.4.0",
     "nyc": "^15.1.0"
   },
   "eslintConfig": {
