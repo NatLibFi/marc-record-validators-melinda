@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (b=xxx). Default value for LDR/06=p",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

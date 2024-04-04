@@ -1,0 +1,9 @@
+{
+  "description": "f03: MELKEHITYS-2894",
+  "enabled": true,
+  "fix": true,
+  "only": false,
+  "_validationOptions": {
+    "subfieldValues": false
+  }
+}

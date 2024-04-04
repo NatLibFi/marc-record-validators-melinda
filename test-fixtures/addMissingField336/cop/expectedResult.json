@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cmm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "121212s2000    fi |||| q  b| | | | fin  "},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "tietokoneohjelma" },
+      { "code": "b", "value": "cop" },
+      { "code": "2", "value": "rdacontent" }
+    ]}
+  ]
+}

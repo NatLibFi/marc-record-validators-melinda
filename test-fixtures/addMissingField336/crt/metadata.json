@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (crt) based on LDR/06=e, form of item=f (braille) and 007/00-01=aq",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

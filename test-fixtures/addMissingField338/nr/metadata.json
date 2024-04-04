@@ -1,0 +1,7 @@
+{
+  "description": "Fix: Add field 338(b=nr), as LDR/06=r",
+  "comment": "ignores form of item, which is artificially crappy here",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

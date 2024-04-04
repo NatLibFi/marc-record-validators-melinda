@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cmm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "121212s2000    fi |||| q   | | | | fin  "},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "whatever" },
+      { "code": "b", "value": "x" },
+      { "code": "2", "value": "rdacontent" }
+    ]}
+  ]
+}

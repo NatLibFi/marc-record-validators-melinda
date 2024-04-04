@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (tactile image), based on LDR/06=k",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

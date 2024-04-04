@@ -1,0 +1,27 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cjm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s7890    fi ||||             fin |"},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "b", "value": "mul" },
+        { "code": "e", "value": "rda" }
+    ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [{ "code": "a", "value": "2 äänilevyä" }]},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "esitetty musiikki" },
+      { "code": "b", "value": "prm" },
+      { "code": "2", "value": "rdacontent" }
+    ]},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "audio" },
+      { "code": "b", "value": "s" },
+      { "code": "2", "value": "rdamedia" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "äänilevy" },
+      { "code": "b", "value": "sd" },
+      { "code": "2", "value": "rdacarrier" }
+    ]}
+  ]
+}

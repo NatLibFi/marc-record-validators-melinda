@@ -1,0 +1,12 @@
+{
+  "leader": "12345cmm a22123458i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s7890    fi |||| q  g        fin |"},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "b", "value": "swe" }
+    ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "1 CD-ROM-skiva" }
+    ]}
+  ]
+}

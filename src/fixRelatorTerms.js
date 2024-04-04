@@ -115,7 +115,7 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
     return;
   }
   nvdebug(`Relator cand subfield: '${subfieldToString(subfield)}', lang: ${language ? language : 'NULL'}`, debugDev);
-  if (language === null || language === 'mul') {
+  if (!language || language === 'mul') {
     subfieldHandleRelatorTermAbbreviation(subfield, 'fin');
     // Maybe later add Swedish here...
     return;

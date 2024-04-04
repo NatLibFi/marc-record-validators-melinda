@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (still image) , based on LDR/06=k and form of item",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

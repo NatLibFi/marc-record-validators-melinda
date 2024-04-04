@@ -1,0 +1,9 @@
+
+{
+  "message": [
+    "'336 ## ‡a Teksti' => '336 ## ‡a teksti ‡b txt ‡2 rdacontent'",
+    "'337 ## ‡a ei välittävää laitetta' => '337 ## ‡a käytettävissä ilman laitetta ‡b n ‡2 rdamedia'",
+    "'338 ## ‡a ospecificerad' => '338 ## ‡a määrittelemätön ‡b zu ‡2 rdacarrier'"
+  ],
+  "valid": false
+}

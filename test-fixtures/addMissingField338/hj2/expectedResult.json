@@ -1,0 +1,15 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cam a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s2000    xxu|||||||||||||||||fin| " },
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "1 mikrofilmirulla" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "mikrofilmirulla" },
+      { "code": "b", "value": "hj" },
+      { "code": "2", "value": "rdacarrier" }
+    ]}
+  ]
+}

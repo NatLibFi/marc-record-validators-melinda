@@ -1,0 +1,6 @@
+{
+  "description": "Fix language codes: nothing to do",
+  "enabled": true,
+  "fix": true,
+  "only": false
+}
