@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (b=spw). Decision based on field 516",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

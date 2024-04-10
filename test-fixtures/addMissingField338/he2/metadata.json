@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 338(b=he) based on LDR/06 and 008/23=b form of item",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

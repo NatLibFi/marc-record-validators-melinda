@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (b=cod). Decision based on CF's 008/26=a)",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

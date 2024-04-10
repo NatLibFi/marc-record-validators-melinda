@@ -1,0 +1,9 @@
+{
+  "leader": "12345cam a22123454j 4500",
+  "fields": [
+    { "tag": "008", "value": "121212s2000    fi abcd f     000 1 fin  "},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "123 sivua" }
+    ]}
+  ]
+}

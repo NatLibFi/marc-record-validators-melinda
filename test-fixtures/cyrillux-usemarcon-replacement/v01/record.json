@@ -1,0 +1,20 @@
+{
+  "leader": "12345cam  22123454i 4500",
+  "fields": [
+    { "tag": "001", "value": "12345"},
+    { "tag": "003", "value": "(FOOBAR)"},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "FI-A" },
+      { "code": "b", "value": "swe" },
+      { "code": "c", "value": "FI-C" },
+      { "code": "d", "value": "FI-D" },
+      { "code": "e", "value": "i" }
+    ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "123 sivua" }
+    ]},
+    { "tag": "790", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Drop me!" }
+    ]}
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Fix: Add missing 33X fields using cat language (040$b) is 'swe'.",
+  "comment": "Also fix LDR/09 '#' to 'a', and modify field 040",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}

@@ -1,0 +1,6 @@
+{
+  "description": "Fix: Add field 336 (sti) based on LDR/06=g + 007/00=g",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}
