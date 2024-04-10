@@ -39,7 +39,7 @@
   "dependencies": {
     "@babel/register": "^7.23.7",
     "@natlibfi/issn-verify": "^1.0.3",
-    "@natlibfi/marc-record": "^8.1.0",
+    "@natlibfi/marc-record": "^8.1.1",
     "@natlibfi/marc-record-validate": "^8.0.6",
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
