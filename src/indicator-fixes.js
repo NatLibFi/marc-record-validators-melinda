@@ -121,6 +121,9 @@ function determineNonFilingIndicatorValue(field, languages = undefined) {
   if (match) {
     return `${match.length}`;
   }
+  if (name.match(/^a /u) && !languages.includes('hun') && !name.match(/^a (?:b |la )/u)) { // Skip "a b c", "a la carte"...
+    return '2';
+  }
 
   return '0';
 }
