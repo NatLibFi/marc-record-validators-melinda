@@ -111,6 +111,9 @@ function determineNonFilingIndicatorValue(field, languages = undefined) {
     if (match) {
       return `${match.length}`;
     }
+    if (name.match(/^de[nt] /u) && !name.match(/^de[nt] som /u)) {
+      return '4';
+    }
   }
 
   // Fallback-ish: try to guess even without languages:
@@ -182,7 +185,7 @@ function getLanguages(record) {
   return langFields[0].subfields.filter(sf => isRelevantSubfield(sf)).map(subfield => subfield.value);
 
   function isRelevantSubfield(subfield) {
-    if (subfield.code !== 'a' && subfield.code !== 'd') {
+    if (!['a', 'd', 'h'].includes(subfield.code)) {
       return false;
     }
     if (subfield.value.length !== 3) {
