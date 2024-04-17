@@ -47,17 +47,9 @@
       ]
 
     },
-    {
-      "tag": "730",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Der Alte"
-        }
-      ]
-    },
+    { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "Der Alte"}]},
+    { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "Det som levde"}]},
+    { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "Den döda man"}]},
     {
       "tag": "730",
       "ind1": " ",

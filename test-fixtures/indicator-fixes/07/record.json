@@ -1,0 +1,14 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+
+    { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "A Tale of Two Cities"}]},
+    { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "A B C"}]},
+    { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "A la care"}]}
+  ],
+  "leader": ""
+}

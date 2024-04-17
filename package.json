@@ -14,7 +14,7 @@
     "url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
   },
   "license": "MIT",
-  "version": "11.1.0",
+  "version": "11.1.1-alpha.1",
   "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -40,7 +40,7 @@
     "@babel/register": "^7.23.7",
     "@natlibfi/issn-verify": "^1.0.3",
     "@natlibfi/marc-record": "^8.1.1",
-    "@natlibfi/marc-record-validate": "^8.0.6",
+    "@natlibfi/marc-record-validate": "^8.0.7",
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
     "debug": "^4.3.4",
@@ -50,7 +50,7 @@
     "xml2js": "^0.6.2"
   },
   "peerDependencies": {
-    "@natlibfi/marc-record-validate": "^8.0.6"
+    "@natlibfi/marc-record-validate": "^8.0.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.1",
