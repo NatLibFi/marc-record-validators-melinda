@@ -86,7 +86,8 @@ const relatorTerms = [
   {'code': 'pht', 'eng': 'photographer', 'fin': 'valokuvaaja', 'swe': 'fotograf'},
   {'code': 'prf', 'eng': 'performer', 'fin': 'esittäjä', 'swe': 'framförande'},
   {'code': 'pro', 'eng': 'producer', 'fin': 'tuottaja', 'swe': 'producent'},
-  {'code': 'trl', 'eng': 'translator', 'fin': 'kääntäjä', 'swe': 'översättare'}
+  {'code': 'trl', 'eng': 'translator', 'fin': 'kääntäjä', 'swe': 'översättare'},
+  {'code': '__FAKE_VALUE1__', 'fin': 'sarjakuvantekijä', 'swe': 'serieskapare'}
 ];
 
 /*

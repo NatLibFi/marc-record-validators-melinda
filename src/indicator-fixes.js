@@ -111,12 +111,18 @@ function determineNonFilingIndicatorValue(field, languages = undefined) {
     if (match) {
       return `${match.length}`;
     }
+    if (name.match(/^de[nt] /u) && !name.match(/^de[nt] som /u)) {
+      return '4';
+    }
   }
 
   // Fallback-ish: try to guess even without languages:
   const match = valueBeginsWithDeterminer(name, ['the ']);
   if (match) {
     return `${match.length}`;
+  }
+  if (name.match(/^a /u) && !languages.includes('hun') && !name.match(/^a (?:b |la )/u)) { // Skip "a b c", "a la carte"...
+    return '2';
   }
 
   return '0';
@@ -182,7 +188,7 @@ function getLanguages(record) {
   return langFields[0].subfields.filter(sf => isRelevantSubfield(sf)).map(subfield => subfield.value);
 
   function isRelevantSubfield(subfield) {
-    if (subfield.code !== 'a' && subfield.code !== 'd') {
+    if (!['a', 'd', 'h'].includes(subfield.code)) {
       return false;
     }
     if (subfield.value.length !== 3) {
