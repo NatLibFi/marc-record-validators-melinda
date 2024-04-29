@@ -2,7 +2,7 @@
   "leader": "12345cgm a22123454i 4500",
   "fields": [
     { "tag": "007", "value": "v12345678"},
-    { "tag": "008", "value": "012345s7890    fi ||||             fin |"},
+    { "tag": "008", "value": "012345s7890    fi ||||             ||| |"},
     { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "1234567890" },
       { "code": "q", "value": "(sid.)" }

@@ -1,5 +1,5 @@
 {
-  "description": "Fix Cyrillux-related stuff: set 245 ind1 and remove 245$h, remove $5s",
+  "description": "09: Fix Cyrillux-related stuff: set 245 ind1 and remove 245$h, remove $5s",
   "enabled": true,
   "only": false,
   "fix": true
