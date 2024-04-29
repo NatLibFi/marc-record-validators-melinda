@@ -1,0 +1,9 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "710", "ind1": "2", "ind2": "2", "subfields": [
+      { "code": "a", "value": "Nimi (yhtiö)" },
+      { "code": "e", "value": "kustantaja" }
+    ]}
+  ]
+}
