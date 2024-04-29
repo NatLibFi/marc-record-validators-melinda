@@ -8,6 +8,7 @@
 import clone from 'clone';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {default as fix33X} from './fix-33X';
+import {default as add041} from './addMissingField041';
 import {default as add336} from './addMissingField336';
 import {default as add337} from './addMissingField337';
 import {default as add338} from './addMissingField338';
@@ -68,6 +69,7 @@ export default function () {
     f028.forEach(f => sortAdjacentSubfields(f));
 
     fixField040(record); // All $b values are changed to 'mul'. As a side effect 33X$b=>$a mappings are in Finnish! Ok in this domain!
+    add041().fix(record);
 
     fixRelatorTerms().fix(record);
 
