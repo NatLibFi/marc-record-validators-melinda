@@ -340,6 +340,8 @@ function expandEnglishAbbreviations(value) {
     replace(/col\. ill\./ui, 'color illustrations').
     replace(/diagrs\./ui, 'diagrams').
     replace(/\bhbk\.\b/gui, 'hardcover').replace(/\bhbk\b/gui, 'hardcover'). // expand to MTS-compliant form
+    replace(/\b1 hr\./gui, '1 hour').
+    replace(/\bhr\./gui, 'hours').
     replace(/\bill\./gui, 'illustrated'). // or illustrations (or Swedish "illustrerad" or...)
     replace(/\billus\./gui, 'illustrated'). // or illustrations
     replace(/incl\./gui, 'includes').
@@ -348,9 +350,10 @@ function expandEnglishAbbreviations(value) {
     // replace(/\bmin\b/gu, 'minutes').
     replace(/\bp\.\b/gui, 'pages').replace(/\bp\b/gu, 'pages').
     replace(/\bpbk\.\b/gui, 'paperback').replace(/\bpbk\b/gui, 'paperback'). // expand to MTS-compliant form
+    replace(/\bpdf\b/gui, 'PDF').
     replace(/\bports\./gui, 'portraits').
     replace('sd., col.', 'sound, color').
-    replace(/ *\((?:chiefly col\.|chiefly color|some cols)\)/gui, '').
+    replace(/ *\((?:chiefly col\.|chiefly color|some col[s.])\)/gui, '').
     replace(/\b1 hr\./gui, '1 hour');
 }
 
@@ -377,33 +380,51 @@ function finnishTranslationsAndMappings(value) {
     replace('approximately', 'noin').
     replace('audio discs', 'äänilevyä').
     replace('black and white', 'mustavalkoinen').
+    replace(/\bbilaga\b/gui, 'liite').
+    replace(/\bbilagor\b/gui, 'liitettä').
     replace(/\bcharts\b/gui, 'kaavioita').
     replace('chiefly color illustrations', 'pääosin värikuvitettu').
     replace('chiefly', 'pääosin').
+    replace(/\bcirca\b/gui, 'noin').
+    replace(/coil[- ]?bound/gui, 'kierreselkä').
     replace('color illustrations', 'värikuvitus').
+    replace(/comb[- ]?bound/gui, 'kierreselkä').
     replace(/\bdigital\b/gui, 'digitaalinen').
     replace(/\belectronic book\b/gui, 'verkkoaineisto').
+    replace('(flera nummersviter)', '(useita numerointijaksoja)').
     replace(/\bfolded sheet\b/gui, 'taitelehti').
-    replace(/\bhardback\b/gui, 'kovakantinen').
+    replace(/\bfärgillustratione[nr]\b/gui, 'värikuvitus').
+    replace(/\bhard(?:back|cover)\b/gui, 'kovakantinen').
     replace(/\bhours\b/gui, 'tuntia').
+    replace(/\bi flera nummersviter/gui, 'useina numerointijaksoina').
     replace('illustrated', 'kuvitettu').
-    replace(/illustration\b/gui, 'kuvitus'). // kuvitus/kuvitettu variation is taken from usemarcon-cyrillux...
-    replace('illustrations', 'kuvitettu').
+    replace(/illustrations?\b/gui, 'kuvitettu'). // Based on usemacron-bookwhere (NB! usemarcon-cyrillux had kuvitus/kuvitettu)
+    replace(/\binbunden\b/gui, 'kovakantinen'). // swe
     replace(/\binsert\b/gui, 'liite').
     replace(/\binserts\b/gui, 'liitteitä').
+    replace(/\bin various pagings/gui, 'useina numerointijaksoina').
     replace('leaves of plates', 'kuvalehteä').
+    replace(/\bljudskiva\b/gui, 'äänilevy').
+    replace(/\bljudskivor\b/gui, 'äänilevyä').
     replace(/\bmap\b/gui, 'kartta').
     replace(/\bmaps\b/gui, 'karttoja'). // or karttaa?
     replace('minutes', 'minuuttia').
+    replace('mjuka pärmar', 'pehmeäkantinen').
     replace('online resource', 'verkkoaineisto').
+    replace('onlineresurs', 'verkkoaineisto').
+    replace('onumrerade', 'numeroimatonta').
     replace('pages of plates', 'kuvalehteä').
     replace(/\bpages\b/gui, 'sivua').
     replace(/\bpaperback\b/gui, 'pehmeäkantinen'). // MTS alt
+    replace(/\bSeiten\b/gu, 'sivua').
     replace(/\bsoftcover\b/gui, 'pehmeäkantinen'). // MTS pref
     replace('sound, color', 'äänellinen, värillinen').
     replace('sound cassettes', 'äänikasettia').replace('sound cassette', 'äänikasetti').
-    replace('sound discs', 'äänilevyä').replace('sound disc', 'äänilevy').
+    replace('sound discs', 'äänilevyä').replace(/sound disc\b/gui, 'äänilevy').
+    replace(/(?:spiral[- ]?bound|spiralrygg)/gui, 'kierreselkä').
+    replace('svartvit', 'mustavalkoinen').
     replace('unnumbered', 'numeroimatonta').
+    replace('(various pagings)', '(useita numerointijaksoja)').
     replace(/\bverkkojulkaisu\b/gui, 'verkkoaineisto').
     replace('videodiscs', 'videolevyä').
     replace('videodisc', 'videolevy').
