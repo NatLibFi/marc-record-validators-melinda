@@ -1,6 +1,5 @@
 {
   "description": "F02: $6 has gaps in occurrence numbers",
-  "enabled": true,
   "fix": true,
   "only": false
 }

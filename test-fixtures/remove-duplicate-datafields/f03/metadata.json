@@ -1,6 +1,5 @@
 {
   "description": "Fix-03: remove 520$8 chain + 880",
-  "enabled": true,
   "fix": true,
   "only": false
 }

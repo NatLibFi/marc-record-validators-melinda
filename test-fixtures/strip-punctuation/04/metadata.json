@@ -1,6 +1,5 @@
 {
   "description":"field 245 both non-punc and punc fields: pick some",
-  "enabled": true,
   "fix": false,
   "only": false
 }

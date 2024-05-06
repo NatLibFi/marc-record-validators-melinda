@@ -1,7 +1,6 @@
 {
   "description": "f03: show difference between titlepartful and titlepartless fields",
   "comment": "still remove orcid, but keep unkwown $0 in title part is present",
-  "enabled": true,
   "fix": true,
   "only": false
 }

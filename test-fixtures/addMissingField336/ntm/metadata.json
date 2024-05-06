@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 336 (notated music), based on LDR/06=d (does not have exceptions)",
-  "enabled": true,
   "only": false,
   "fix": true
 }

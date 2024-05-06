@@ -1,6 +1,5 @@
 {
   "description":"field 245 non-punctuation test",
-  "enabled": true,
   "fix": false,
   "only": false
 }

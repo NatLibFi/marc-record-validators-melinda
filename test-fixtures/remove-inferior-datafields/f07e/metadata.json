@@ -1,7 +1,6 @@
 {
   "description": "f07e: MET-461 (comments): 946$ does not prevent field deletion'",
   "comment": "2023-08-31: Not relevant here, but note that '!' is currently retained in normalization. Not sure if it's a bug or a feature. Or good or bad...",
-  "enabled": true,
   "fix": true,
   "only": false
 }

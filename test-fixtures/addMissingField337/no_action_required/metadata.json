@@ -1,7 +1,6 @@
 {
   "description": "337: Nothing to do, as 337 already exists",
   "comment": "337 is a bit illegal (on purpose), so this test might break down eventually",
-  "enabled": true,
   "only": false,
   "fix": true
 }

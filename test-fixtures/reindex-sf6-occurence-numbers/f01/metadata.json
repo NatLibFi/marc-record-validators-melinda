@@ -1,6 +1,5 @@
 {
   "description": "F01: no changes. Contains only 01...NN occurence numbers.",
-  "enabled": true,
   "fix": true,
   "only": false
 }

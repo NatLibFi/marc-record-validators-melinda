@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 338(b=hd), $a is based default cat language ('fin')",
-  "enabled": true,
   "only": false,
   "fix": true
 }

@@ -1,6 +1,5 @@
 {
   "description": "f10/MRA-271",
-  "enabled": true,
   "fix": true,
   "only": false
 }

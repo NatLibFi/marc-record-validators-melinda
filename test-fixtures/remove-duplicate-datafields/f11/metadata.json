@@ -1,6 +1,5 @@
 {
   "description": "Fix-11: record contains duplicate in a $8+$6+$8",
-  "enabled": true,
   "fix": true,
   "only": false
 }

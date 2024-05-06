@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 338(b=gc). Decision is based of LDR/06=g and 007/00-01",
-  "enabled": true,
   "only": false,
   "fix": true
 }

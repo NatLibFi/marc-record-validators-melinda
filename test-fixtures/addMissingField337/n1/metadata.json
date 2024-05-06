@@ -1,6 +1,5 @@
 {
   "description": "337: LDR/06=r and no exception found, so 337$b=n",
-  "enabled": true,
   "only": false,
   "fix": true
 }

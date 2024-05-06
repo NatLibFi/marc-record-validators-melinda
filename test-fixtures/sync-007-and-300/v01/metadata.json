@@ -1,6 +1,5 @@
 {
   "description": "v01: Fixable 007 found",
-  "enabled": true,
   "fix": false,
   "only": false
 }

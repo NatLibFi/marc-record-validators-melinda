@@ -1,6 +1,5 @@
 {
   "description": "V02: $6 has pairless occurrence numbers",
-  "enabled": true,
   "fix": false,
   "only": false
 }

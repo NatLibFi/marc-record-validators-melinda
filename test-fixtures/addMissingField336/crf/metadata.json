@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 336 (crf) based on LDR/06=g + 008/25=d/globe",
-  "enabled": true,
   "only": false,
   "fix": true
 }

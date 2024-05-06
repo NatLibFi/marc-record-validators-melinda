@@ -1,7 +1,6 @@
 {
   "description": "Val-03: has only paired $6 occurrence numbers ",
   "comment": "expected result has two failed rows, the second one is a bug, and it won't happen when the first issue is fixed",
-  "enabled": true,
   "fix": false,
   "only": false
 }

@@ -1,6 +1,5 @@
 {
   "description": "Fix-05: remove duplicate $8 chain, some fields and some subfields",
-  "enabled": true,
   "fix": true,
   "only": false
 }

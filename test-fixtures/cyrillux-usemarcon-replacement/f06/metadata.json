@@ -1,7 +1,6 @@
 {
   "description": "Fix: Add missing 33X fields for music",
   "comment": "LDR/06=j triggers 336$b=prm and 337$b=s, 300 is both translated and used for 338$b sf",
-  "enabled": true,
   "only": false,
   "fix": true
 }

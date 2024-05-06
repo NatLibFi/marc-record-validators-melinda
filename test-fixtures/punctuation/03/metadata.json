@@ -1,5 +1,4 @@
 {
   "description": "Fix - Creates punctuation for field 100",
-  "enabled": true,
   "fix": true
 }

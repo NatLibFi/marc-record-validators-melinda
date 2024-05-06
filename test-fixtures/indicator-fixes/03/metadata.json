@@ -1,5 +1,4 @@
 {
   "description": "03: Fix field 490 indicators (no 8XX fields)",
-  "enabled": true,
   "fix": true
 }

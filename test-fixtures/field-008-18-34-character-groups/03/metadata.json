@@ -1,7 +1,6 @@
 {
   "description": "Fix CR 008/19-22 and 008/25-27",
   "comment": "TODO: handle 008/24 vs 008/25-27 later on",
-  "enabled": true,
   "fix": true,
   "only": false
 }

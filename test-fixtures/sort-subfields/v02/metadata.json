@@ -1,6 +1,5 @@
 {
   "description": "v02: some fields need sorting",
-  "enabled": true,
   "fix": false,
   "only": false
 }
