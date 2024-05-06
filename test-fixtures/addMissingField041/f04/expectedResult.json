@@ -1,0 +1,8 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cjm a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s7890    fi ||||             foo |"},
+    { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [{ "code": "d", "value": "foo"}]}
+  ]
+}

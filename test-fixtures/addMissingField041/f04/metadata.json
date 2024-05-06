@@ -1,0 +1,6 @@
+{
+  "description": "Fixer 04: Add field 041$d foo",
+  "enabled": true,
+  "only": false,
+  "fix": true
+}
