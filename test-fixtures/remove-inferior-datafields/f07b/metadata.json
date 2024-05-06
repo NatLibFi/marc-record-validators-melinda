@@ -1,6 +1,5 @@
 {
   "description": "f07b: MET-461: remove 946 fields if they match with 245 or 246 fields",
-  "enabled": true,
   "fix": true,
   "only": false
 }

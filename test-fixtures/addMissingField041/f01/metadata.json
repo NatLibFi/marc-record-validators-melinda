@@ -1,0 +1,5 @@
+{
+  "description": "Fixer 01: no action required, won't add 'mul'",
+  "only": false,
+  "fix": true
+}

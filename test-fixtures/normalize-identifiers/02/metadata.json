@@ -1,5 +1,4 @@
 {
   "description": "Fix (normalize) various identifiers)",
-  "enabled": true,
   "fix": true
 }

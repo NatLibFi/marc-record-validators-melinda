@@ -1,6 +1,5 @@
 {
   "description": "Fix 33X ($a-only) fields",
-  "enabled": true,
   "only": false,
   "fix": true
 }

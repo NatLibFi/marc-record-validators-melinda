@@ -1,6 +1,5 @@
 {
   "description": "Fix-07: single duplicate datafield fixed (bug found via reducer)",
-  "enabled": true,
   "fix": true,
   "only": false
 }

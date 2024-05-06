@@ -1,6 +1,5 @@
 {
   "description":"Fix 95 - to add or not to add 264 punctuation (based on $c value and ind2).",
-  "enabled": true,
   "fix": true,
   "only": false
 }

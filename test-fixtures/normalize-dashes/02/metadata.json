@@ -1,5 +1,4 @@
 {
   "description": "Fix field 521 dashes",
-  "enabled": true,
   "fix": true
 }

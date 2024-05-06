@@ -1,6 +1,5 @@
 {
   "description": "f05: worse 100-880 chain vs better 700-880: don't worse 100. However, worse of the two 700-880s gets deleted",
-  "enabled": true,
   "fix": true,
   "only": false
 }

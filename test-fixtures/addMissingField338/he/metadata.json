@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 338(b=he) based on LDR/06 and 300. $a is based default cat languge ('fin')",
-  "enabled": true,
   "only": false,
   "fix": true
 }

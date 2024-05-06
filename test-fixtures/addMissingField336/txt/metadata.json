@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 336 (b=txt). LDR/06=m, but not other information avaiable",
-  "enabled": true,
   "only": false,
   "fix": true
 }

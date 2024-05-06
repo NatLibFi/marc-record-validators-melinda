@@ -1,7 +1,6 @@
 {
   "description": "Fix language codes: both 'nob' and 'nno' result in 'nor' created a bit funny 041...",
   "comment": "Note that illegal subfield $z is not affected",
-  "enabled": true,
   "fix": true,
   "only": false
 }

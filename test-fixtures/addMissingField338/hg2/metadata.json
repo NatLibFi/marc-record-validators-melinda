@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 338(b=hg) based on LDR/06 and form of item, as 300$a extent does not help",
-  "enabled": true,
   "only": false,
   "fix": true
 }

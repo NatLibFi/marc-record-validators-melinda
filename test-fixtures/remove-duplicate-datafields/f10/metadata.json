@@ -1,6 +1,5 @@
 {
   "description": "Fix-10: remove duplicate 1XX-7XX $6-chains",
-  "enabled": true,
   "fix": true,
   "only": false
 }

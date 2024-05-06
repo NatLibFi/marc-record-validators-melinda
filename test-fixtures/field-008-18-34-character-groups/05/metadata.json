@@ -1,7 +1,6 @@
 {
   "description": "Fix MP 008/18-21 and 008/33-34",
   "comment": "Note that alphanumerical stuff comes in priority order and is not sorted",
-  "enabled": true,
   "fix": true,
   "only": false
 }

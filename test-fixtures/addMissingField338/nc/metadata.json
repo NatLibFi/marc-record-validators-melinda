@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 338(b=nc). Decision is based on 020$q",
-  "enabled": true,
   "only": false,
   "fix": true
 }

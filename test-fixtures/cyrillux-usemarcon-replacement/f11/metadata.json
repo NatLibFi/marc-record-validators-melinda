@@ -1,6 +1,5 @@
 {
-  "description": "Fix 33X ($a-only) fields",
-  "enabled": true,
+  "description": "Add 041 and fix 33X ($a-only) fields",
   "only": false,
   "fix": true
 }

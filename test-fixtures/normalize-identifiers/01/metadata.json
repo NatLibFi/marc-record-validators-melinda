@@ -1,5 +1,4 @@
 {
   "description": "Validate fields (look for normalizable subfields)",
-  "enabled": true,
   "fix": false
 }

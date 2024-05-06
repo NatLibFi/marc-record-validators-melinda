@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 338(b=sd). Decision is based on LDR/06=i and 300",
-  "enabled": true,
   "only": false,
   "fix": true
 }
