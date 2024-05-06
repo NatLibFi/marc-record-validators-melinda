@@ -46,9 +46,6 @@ export default function () {
       return null;
     }
     const subfieldCode = determineSubfieldCode(record);
-    if (!subfieldCode) {
-      return null;
-    }
     // NB! Usemarcon-bookwhere had IND1=0...
     return {tag: '041', ind1: ' ', ind2: ' ', subfields: [{code: subfieldCode, value: languageCode}]};
   }
