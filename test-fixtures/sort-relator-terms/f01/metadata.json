@@ -1,6 +1,5 @@
 {
   "description": "f01: Nothing to do, as $e fields are not adjacent",
-  "enabled": true,
   "fix": true,
   "only": false
 }

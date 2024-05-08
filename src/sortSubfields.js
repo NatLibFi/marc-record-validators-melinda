@@ -66,6 +66,7 @@ export default function (tagPattern) {
 
 
 // X00, X10, X11 and X130 could also for their own sets...
+// (ouch! sometimes $c comes after $d...): LoC: 100 0# ‡a Black Foot, ‡c Chief, ‡d d. 1877 ‡c (Spirit)
 const sortOrderForX00 = ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '5', '9']; // skip $g. Can't remember why, though...
 const sortOrderForX10 = ['6', 'i', 'a', 'b', 't', 'n', 'e', 'v', 'w', 'x', 'y', 'z', '0', '5', '9']; // somewhat iffy
 const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];

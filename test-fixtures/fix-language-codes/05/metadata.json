@@ -1,6 +1,5 @@
 {
   "description": "Fix 008/15-17: sanity check against missing 008 field",
-  "enabled": true,
   "fix": true,
   "only": false
 }

@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 336 (3D form), based solely on LDR/06=r",
-  "enabled": true,
   "only": false,
   "fix": true
 }

@@ -1,6 +1,5 @@
 {
   "description": "Fix-03b: handle 520-880 where 880 is $8 chain",
-  "enabled": true,
   "fix": true,
   "only": false
 }

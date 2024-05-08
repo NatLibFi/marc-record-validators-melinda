@@ -1,6 +1,5 @@
 {
   "description": "f12/MET-527: diacriticful > diacriticless",
-  "enabled": true,
   "fix": true,
   "only": false
 }

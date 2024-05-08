@@ -1,6 +1,5 @@
 {
   "description": "Fix MU 008/24-29 and 008/30-31",
-  "enabled": true,
   "fix": true,
   "only": false
 }

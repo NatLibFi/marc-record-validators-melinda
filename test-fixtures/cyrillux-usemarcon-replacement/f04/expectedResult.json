@@ -7,6 +7,9 @@
         { "code": "b", "value": "mul" },
         { "code": "e", "value": "rda" }
     ]},
+    { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "fin" }
+    ]},
     { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "teksti" },
       { "code": "b", "value": "txt" },

@@ -1,6 +1,5 @@
 {
   "description": "Fix-08: record that caused issues on the reducer side",
-  "enabled": true,
   "fix": true,
   "only": false
 }

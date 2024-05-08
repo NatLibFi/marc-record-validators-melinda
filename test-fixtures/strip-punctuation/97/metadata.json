@@ -1,6 +1,5 @@
 {
   "description":"Fix 97 - fix punctuation of 490 and 830",
-  "enabled": true,
   "fix": true,
   "only": false
 }

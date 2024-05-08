@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 336 (b=txt), cat kanguage (040$b) is 'swe'",
-  "enabled": true,
   "only": false,
   "fix": true
 }

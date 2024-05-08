@@ -2,7 +2,7 @@
   "_validationOptions": {},
   "leader": "12345cam a22123454i 4500",
   "fields": [
-    { "tag": "008", "value": "121212s2000    fi abcd f     000 1 fin  "},
+    { "tag": "008", "value": "121212s2000    fi abcd f     000 1 zxx  "},
     { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "b", "value": "mul" },
       { "code": "e", "value": "rda" }

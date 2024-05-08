@@ -1,6 +1,5 @@
 {
   "description": "f09/MRA-252",
-  "enabled": true,
   "fix": true,
   "only": false
 }

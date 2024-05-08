@@ -1,7 +1,6 @@
 {
   "description": "Fix: Add field 338(b=hg) based on LDR/06 and 300 and form of item. $a is based default cat languge ('fin')",
   "comment": "exception to test 'he'",
-  "enabled": true,
   "only": false,
   "fix": true
 }

@@ -1,6 +1,5 @@
 {
   "description": "Fix: Add field 336 (spw) based on LDR/06=i",
-  "enabled": true,
   "only": false,
   "fix": true
 }

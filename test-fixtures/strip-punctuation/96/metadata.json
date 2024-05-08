@@ -1,6 +1,5 @@
 {
   "description":"Fix 96 - fix punctuation of X10 fields.",
-  "enabled": true,
   "fix": true,
   "only": false
 }

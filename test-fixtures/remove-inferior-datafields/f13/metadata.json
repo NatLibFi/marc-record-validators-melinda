@@ -1,6 +1,5 @@
 {
   "description": "f13/MET-528-ish: remove ENNAKKOTIETO version, ennakkotietoless pair exists",
-  "enabled": true,
   "fix": true,
   "only": false
 }

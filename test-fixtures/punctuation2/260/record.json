@@ -1,0 +1,12 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "260", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Paikka 1" },
+      { "code": "b", "value": "Kustajantaja 1" },
+      { "code": "a", "value": "Paikka 2" },
+      { "code": "b", "value": "Kustajantaja 2" },
+      { "code": "c", "value": "2022" }
+    ]}
+  ]
+}

@@ -86,7 +86,7 @@ export function fieldNeedsModification(field, add = true) {
 
 
 //const stripCrap = / *[-;:,+]+$/u;
-const defaultNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
+const needsPuncAfterAlphanumeric = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const defaultNeedsPuncAfter2 = /(?:[\]a-zA-Z0-9)]|ä|å|ö|Å|Ä|Ö)$/u;
 const doesNotEndInPunc = /[^!?.:;,]$/u; // non-punc for pre-240/700/XXX $, note that '.' comes if preceded by ')'
 const blocksPuncRHS = /^(?:\()/u;
@@ -105,7 +105,6 @@ const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': dotIsPr
 const cleanCorruption = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / \.$/u};
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj#', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
-
 const removeCommaBeforeLanguageSubfieldL = {'followedBy': 'l', 'remove': /,$/u};
 const removeCommaBeforeTitleSubfieldT = {'followedBy': 't', 'remove': /,$/u};
 
@@ -113,17 +112,16 @@ const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /
 // 390, 800, 810, 830...
 const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context': puncIsProbablyPunc, 'remove': / *[.,:;]$/u};
 
-
 const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
-const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': '#fklptu', 'context': defaultNeedsPuncAfter};
+const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': '#fklptu', 'context': needsPuncAfterAlphanumeric};
 
 
-//const addX10iaComma = {'name': 'Punctuate relationship information', 'code': 'i', 'followedBy': 'a', 'context': defaultNeedsPuncAfter2};
-const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter};
-const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter};
-const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': defaultNeedsPuncAfter};
+const addX10iColon = {'name': 'Punctuate relationship information', 'code': 'i', 'context': defaultNeedsPuncAfter2};
+const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': needsPuncAfterAlphanumeric};
+const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter2};
+const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': needsPuncAfterAlphanumeric};
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
 
 const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': doesNotEndInPunc};
@@ -248,6 +246,7 @@ const cleanValidPunctuationRules = {
   '245': clean24X,
   '246': clean24X,
   '260': [
+    {'code': 'abc', 'followedBy': 'a', 'remove': / ;$/u},
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
     {'code': 'b', 'followedBy': 'c', 'remove': /,$/u},
     {'code': 'c', 'followedBy': '#', 'remove': /\.$/u},
@@ -291,29 +290,29 @@ const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVo
 
 
 const addX00 = [addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
-const addX10 = [addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
+const addX10 = [addX10iColon, addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
 const addX11 = [...addToAllEntryFields];
 const addX30 = [...addToAllEntryFields];
 
 const add24X = [
-  {'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter},
-  {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
-  {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
-  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter},
+  {'code': 'i', 'followedBy': 'a', 'add': ':', 'context': needsPuncAfterAlphanumeric},
+  {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': needsPuncAfterAlphanumeric},
+  {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': needsPuncAfterAlphanumeric},
+  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': needsPuncAfterAlphanumeric},
   addDotBeforeLanguageSubfieldL
 ];
 
 const add245 = [
   ...add24X,
   // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
-  {'code': 'ab', 'followedBy': 'n', 'add': '.', 'context': defaultNeedsPuncAfter},
-  {'code': 'n', 'followedBy': 'p', 'add': ',', 'context': defaultNeedsPuncAfter},
-  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter} // Stepping on "punctuation validator's" toes
+  {'code': 'ab', 'followedBy': 'n', 'add': '.', 'context': needsPuncAfterAlphanumeric},
+  {'code': 'n', 'followedBy': 'p', 'add': ',', 'context': defaultNeedsPuncAfter2},
+  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': needsPuncAfterAlphanumeric} // Stepping on "punctuation validator's" toes
 ];
 
 const addSeriesTitle = [ // 490 and 830
   {'code': 'a', 'followedBy': 'a', 'add': ' =', 'context': defaultNeedsPuncAfter2},
-  {'code': 'axyz', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
+  {'code': 'axyz', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter2},
   addSemicolonBeforeVolumeDesignation //  eg. 490$axyz-$v
 ];
 
@@ -328,7 +327,7 @@ const addPairedPunctuationRules = {
   '246': add24X,
   '260': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
-    {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
+    {'code': 'ab', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
     {'code': 'abc', 'followedBy': 'a', 'add': ' ;', 'context': defaultNeedsPuncAfter2},
     {'code': 'e', 'followedBy': 'f', 'add': ' :', 'context': defaultNeedsPuncAfter2},
     {'code': 'f', 'followedBy': 'g', 'add': ',', 'context': defaultNeedsPuncAfter2}
@@ -338,7 +337,7 @@ const addPairedPunctuationRules = {
     {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
     // NB! The $c rule messes dotless exception "264 #4 $c p1983" up
     // We'll need to add a hacky postprocessor for this? Add 'hasInd1': '0123' etc?
-    {'code': 'c', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter, 'ind2': ['0', '1', '2', '3']}
+    {'code': 'c', 'followedBy': '#', 'add': '.', 'context': needsPuncAfterAlphanumeric, 'ind2': ['0', '1', '2', '3']}
   ],
   '300': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
@@ -360,7 +359,7 @@ const addPairedPunctuationRules = {
   '810': addX10,
   '811': addX11,
   '830': [...addX30, ...addSeriesTitle],
-  '946': [{'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter}]
+  '946': [{'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter2}]
 };
 
 /*

@@ -1,6 +1,5 @@
 {
   "description": "01: has only paired $6 occurrence numbers ",
-  "enabled": true,
   "fix": false,
   "only": false
 }

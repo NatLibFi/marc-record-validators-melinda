@@ -1,6 +1,5 @@
 {
   "description": "337: LDR/06=m and 008/33=p, thus 337$b=p",
-  "enabled": true,
   "only": false,
   "fix": true
 }

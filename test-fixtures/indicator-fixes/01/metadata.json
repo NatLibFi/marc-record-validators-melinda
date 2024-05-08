@@ -1,5 +1,4 @@
 {
   "description": "01: Validate fields against suspicious indicators, English 041",
-  "enabled": true,
   "fix": false
 }

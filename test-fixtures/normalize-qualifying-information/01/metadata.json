@@ -1,7 +1,6 @@
 {
   "description": "Validate qualifying information terms",
   "comment": "MELINDA-8740",
-  "enabled": true,
   "fix": false,
   "only": false
 }

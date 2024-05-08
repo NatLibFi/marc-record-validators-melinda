@@ -1,6 +1,5 @@
 {
   "description": "02: sort subfields using tagPattern. Same record.json as in f01, but tag pattern affects result",
-  "enabled": true,
   "fix": true,
   "only": false,
   "tagPattern": "^(028|300)$"

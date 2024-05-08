@@ -1,7 +1,6 @@
 {
   "description": "Fix: Add missing 33X fields for a computer (LDR/06=m) game (008/26=g).",
   "comment": "Also apply Cyrillux specific fix for LDR/17, and modify 040.",
-  "enabled": true,
   "only": false,
   "fix": true
 }

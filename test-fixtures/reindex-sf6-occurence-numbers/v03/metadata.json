@@ -1,6 +1,5 @@
 {
   "description": "Validate-03: $6 has shared occurrence numbers",
-  "enabled": true,
   "fix": false,
   "only": false
 }

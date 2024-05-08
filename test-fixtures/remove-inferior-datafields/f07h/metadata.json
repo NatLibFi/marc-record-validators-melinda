@@ -1,6 +1,5 @@
 {
   "description": "f07h: MET-461 (comments): subfield code difference prevents field 946 removal",
-  "enabled": true,
   "fix": true,
   "only": false
 }

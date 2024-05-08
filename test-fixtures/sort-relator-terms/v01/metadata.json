@@ -1,6 +1,5 @@
 {
   "description": "v01: no fields need sorting",
-  "enabled": true,
   "fix": false,
   "only": false
 }

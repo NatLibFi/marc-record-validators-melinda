@@ -1,6 +1,5 @@
 {
   "description": "v02: multiple $0s to remove",
-  "enabled": true,
   "fix": false,
   "only": false
 }

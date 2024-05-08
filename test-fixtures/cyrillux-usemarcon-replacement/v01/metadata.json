@@ -1,6 +1,5 @@
 {
   "description": "Validate: Add missing 33X fields using cat language (040$b) is 'swe'.",
-  "enabled": true,
   "only": false,
   "fix": false
 }

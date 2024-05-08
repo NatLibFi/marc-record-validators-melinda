@@ -1,6 +1,5 @@
 {
   "description": "Val-04: has duplicate $8 chain",
-  "enabled": true,
   "fix": false,
   "only": false
 }
