@@ -151,8 +151,7 @@ export function fieldHasValidSubfield6(field) {
   return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
 }
 
-
-function isSubfield6Pair(field, otherField) {
+export function isSubfield6Pair(field, otherField) {
   // No need to log this:
   //nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`);
   if (!fieldHasValidSubfield6(field) || !fieldHasValidSubfield6(otherField)) {
