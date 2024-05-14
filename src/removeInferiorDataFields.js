@@ -256,6 +256,20 @@ function deriveIndividualDeletables(record) {
       }
     }
 
+    if (currString.match(/^500 ## ‡a Lisäpainokset: Lisäpainos /u)) { // MET-569
+      const tmp1 = currString.replace(' Lisäpainos ', ' [Lisäpainos] ');
+      const tmp2 = currString.replace(' Lisäpainos ', ' ');
+      if (tmp1 !== currString && tmp2 !== currString) {
+        return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp1, tmp2]);
+      }
+    }
+
+    if (currString.match(/^500 ## ‡a Lisäpainokset: \[Lisäpainos\] /u)) { // MET-569
+      const tmp = currString.replace(' [Lisäpainos] ', ' ');
+      if (tmp !== currString) {
+        return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp]);
+      }
+    }
 
     if (currString.match(/^505 .0.*-- ‡t/u)) { // MRA-413-ish
       const tmp = currString.replace(/ -- ‡t /gu, ' -- '). // remove non-initial $t subfields

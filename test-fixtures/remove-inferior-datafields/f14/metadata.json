@@ -1,0 +1,5 @@
+{
+  "description": "f13/MET-569: remove inferior Lisäpainokset fields",
+  "fix": true,
+  "only": false
+}

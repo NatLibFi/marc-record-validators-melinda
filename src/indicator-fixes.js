@@ -153,6 +153,17 @@ function normalize245Indicator1(field, record) {
   field.ind1 = field1XX.length === 0 ? '0' : '1'; // eslint-disable-line functional/immutable-data
 }
 
+function normalize776Indicator2(field) {
+  if (field.tag !== '776') {
+    return;
+  }
+  // If subfield $i exists, ind2 must me '8'
+  if (field.subfields.some(sf => sf.code === 'i')) {
+    field.ind2 = '8'; // eslint-disable-line functional/immutable-data
+    return;
+  }
+}
+
 
 function recordNormalize490(record) {
   const fields490 = record.get('^490$');
@@ -214,4 +225,5 @@ function fieldNormalizeIndicators(field, record, languages) {
   normalize245Indicator1(field, record);
   normalizeNonFilingIndicator1(field, languages);
   normalizeNonFilingIndicator2(field, languages);
+  normalize776Indicator2(field);
 }

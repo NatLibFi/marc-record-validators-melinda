@@ -1,7 +1,10 @@
 /*
   Note that this file contains very powerful normalizations and spells that are:
   - meant for comparing similarity/mergability of two fields (clone, normalize, compare),
-  - and NOT for modifying the actual data!
+  - and NOT for modifying the actual field!
+
+  This is mainly used by melinda-marc-record-merge-reducers. However, also removeInferiorDataFields fixer also used this.
+  Thus it is here. However, most of the testing is done via merge-reducers...
 */
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation2';
@@ -262,7 +265,7 @@ function removeCharsThatDontCarryMeaning(value, tag, subfieldCode) {
   }
   /* eslint-disable */
   // 3" refers to inches, but as this is for comparison only we don't mind...
-  value = value.replace(/['"]/gu, '');
+  value = value.replace(/['‘’"„“”«»]/gu, ''); // MET-570 et al. Subset of https://hexdocs.pm/ex_unicode/Unicode.Category.QuoteMarks.html
   // MRA-273: Handle X00$a name initials.
   // NB #1: that we remove spaces for comparison (as it simpler), though actually space should be used. Doesn't matter as this is comparison only.
   // NB #2: we might/should eventually write a validator/fixer that adds those spaces. After that point, this expection should become obsolete.
