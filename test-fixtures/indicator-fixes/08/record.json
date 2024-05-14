@@ -1,0 +1,14 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "776", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "i", "value": "Verkkoaineisto:"},
+      {"code": "z", "value": "978-951-882-653-1"}
+    ]},
+    { "tag": "776", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "z", "value": "978-951-882-653-2"}
+    ]}
+  ],
+  "leader": ""
+}

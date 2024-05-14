@@ -19,15 +19,40 @@ export function subfieldContainsPartData(tag, subfieldCode) {
 }
 
 function splitPartData(originalValue) {
-  // Remove brackets from number-only:
-  const value = originalValue.replace(/^\[([0-9]+)\][-.,:; ]*$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
-  const splitPoint = value.lastIndexOf(' '); // MRA-627: "5, 2017" should be split here. Think of this later on...
+  // This a very hacky function, but cand really help it, as the the data is very iffy as well...
+  // Remove punctuation and brackets:
+  const value = originalValue.replace(/[-.,:; ]+$/ui, '').replace(/^\[([0-9]+)\]$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
+
+  const [year, rest] = extractYear(value);
+
+  const splitPoint = rest.lastIndexOf(' '); // MRA-627: "5, 2017" should be split here. Think of this later on...
   if (splitPoint === -1) {
+    return [undefined, year, rest];
+  }
+  const lhs = rest.substr(0, splitPoint);
+  const rhs = rest.substr(splitPoint + 1);
+  return [lhs, year, rhs];
+
+  function extractYear(value) {
+    // NB! Note that this is far for perfect. It cover just some very common cases...
+
+    // "2023, 3" => ["2023", "3"]
+    if (value.match(/^(?:1[89][0-9][0-9]|20[012][0-9]), (?:nro |n:o)?[1-9][0-9]{0,2}$/ui)) {
+      return [value.substr(0, 4), value.substr(6)];
+    }
+    // "2023/12" => ["2023", "12"]
+    if (value.match(/^(?:1[89][0-9][0-9]|20[012][0-9])[/:][1-9][0-9]{0,2}$/u)) {
+      return [value.substr(0, 4), value.substr(5)];
+    }
+    // "Vol. 3/2023" => ["2023", "Vol. 3"]
+    if (value.match(/^[^0-9]*[1-9][0-9]{0,2}\/(?:1[89][0-9][0-9]|20[012][0-9])$/u)) {
+      const len = value.length;
+      return [value.substr(len - 4), value.substr(0, len - 5)];
+    }
+
+
     return [undefined, value];
   }
-  const lhs = value.substr(0, splitPoint);
-  const rhs = value.substr(splitPoint + 1);
-  return [lhs, rhs];
 }
 
 function normalizePartType(originalValue) {
@@ -66,12 +91,10 @@ function normalizePartNumber(value) {
 
 function splitAndNormalizePartData(value) {
   // This is just a stub. Does not handle eg. "Levy 2, raita 15"
-  const [lhs, rhs] = splitPartData(value);
-  nvdebug(`  LHS: '${lhs}'`, debugDev);
-  nvdebug(`  RHS: '${rhs}'`, debugDev);
-  const partType = normalizePartType(lhs);
-  const partNumber = normalizePartNumber(rhs);
-  return [partType, partNumber];
+  const [partType, partYear, partNumber] = splitPartData(value);
+  //nvdebug(`  LHS: '${lhs}'`, debugDev);
+  //nvdebug(`  RHS: '${rhs}'`, debugDev);
+  return [normalizePartType(partType), partYear, normalizePartNumber(partNumber)];
 }
 
 export function partsAgree(value1, value2, tag, subfieldCode) {
@@ -80,17 +103,22 @@ export function partsAgree(value1, value2, tag, subfieldCode) {
   if (!subfieldContainsPartData(tag, subfieldCode)) {
     return false;
   }
-  const [partType1, partNumber1] = splitAndNormalizePartData(value1);
-  const [partType2, partNumber2] = splitAndNormalizePartData(value2);
+  const [partType1, partYear1, partNumber1] = splitAndNormalizePartData(value1);
+  const [partType2, partYear2, partNumber2] = splitAndNormalizePartData(value2);
+  //nvdebug(`P1: ${partType1} | ${partYear1} | ${partNumber1}`);
+  //nvdebug(`P2: ${partType2} | ${partYear2} | ${partNumber2}`);
   if (partNumber1 !== partNumber2) {
-    // MRA-627: This should/could accept 5/1997
     return false;
   }
-  if (partType1 === undefined || partType2 === undefined || partType1 === partType2) {
-    return true;
+  if (partType1 !== undefined && partType2 !== undefined && partType1 !== partType2) {
+    return false;
+  }
+  if (partYear1 !== undefined && partYear2 !== undefined && partYear1 !== partYear2) {
+    return false;
   }
 
-  return false;
+
+  return true;
 }
 
 export function normalizePartData(value, subfieldCode, tag) {
@@ -99,9 +127,15 @@ export function normalizePartData(value, subfieldCode, tag) {
     return value;
   }
 
-  const [partType, partNumber] = splitAndNormalizePartData(value);
+  const [partType, partYear, partNumber] = splitAndNormalizePartData(value);
   if (partType === undefined) {
-    return partNumber;
+    if (partYear === undefined) {
+      return partNumber;
+    }
+    return `${partNumber}/${partYear}`;
   }
-  return `${partType} ${partNumber}`;
+  if (partYear === undefined) {
+    return `${partType} ${partNumber}`;
+  }
+  return `${partType} ${partNumber}/${partYear}`;
 }
