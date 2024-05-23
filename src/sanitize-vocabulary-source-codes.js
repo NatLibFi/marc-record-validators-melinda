@@ -88,6 +88,10 @@ function fieldHasUnfixableVocabularySourceCode(field) {
 }
 
 function subfieldHasUnfixableVocabularySourceCode(subfield) {
+  if (subfield.code !== '2') {
+    return false;
+  }
+
   // As we can't fix this here, apply this yso-rule only when validating!
   if (subfield.value.indexOf('yso/') === 0) {
     return !['yso/eng', 'yso/fin', 'yso/sme', 'yso/swe'].includes(subfield.value);
