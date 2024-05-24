@@ -30,6 +30,9 @@
       { "code": "a", "value": "määrittelemätön" },
       { "code": "b", "value": "zu"},
       { "code": "2", "value": "rdacarrier" }
+    ]},
+    { "tag": "FOO", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "whatever" }
     ]}
   ]
 }
