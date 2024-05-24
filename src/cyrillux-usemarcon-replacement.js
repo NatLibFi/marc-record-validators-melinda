@@ -22,7 +22,7 @@ import {sortAdjacentSubfields} from './sortSubfields';
 
 
 // import createDebugLogger from 'debug';
-import {nvdebug, recordToString} from './utils';
+import {nvdebug, recordRemoveValuelessSubfields, recordToString} from './utils';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
 
@@ -44,6 +44,8 @@ export default function () {
   }
 
   function realFix(record) {
+    recordRemoveValuelessSubfields(record);
+
     // Fix leader: standard fixes + update LDR/17 to '4'
     fixLeader(record);
     record.leader = `${record.leader.substring(0, 17)}4${record.leader.substring(18, 24)}`; // eslint-disable-line functional/immutable-data
