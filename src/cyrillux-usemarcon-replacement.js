@@ -20,7 +20,6 @@ import {default as fixPunctuation} from './punctuation2';
 import {default as fixQualifyingInformation} from './normalize-qualifying-information';
 import {sortAdjacentSubfields} from './sortSubfields';
 
-
 // import createDebugLogger from 'debug';
 import {nvdebug, recordRemoveValuelessSubfields, recordToString} from './utils';
 
@@ -43,15 +42,16 @@ export default function () {
     return res;
   }
 
-  function realFix(record) {
-    recordRemoveValuelessSubfields(record);
-
-    // Fix leader: standard fixes + update LDR/17 to '4'
-    fixLeader(record);
+  function realFixNonAleph(record) {
+    if (isAlephRecord(record)) {
+      return;
+    }
+    // Update LDR/17 to '4'
     record.leader = `${record.leader.substring(0, 17)}4${record.leader.substring(18, 24)}`; // eslint-disable-line functional/immutable-data
 
     // Remove unwanted fields:
     record.fields = record.fields.filter(f => !dropTags.includes(f.tag)); // eslint-disable-line functional/immutable-data
+
 
     record.fields.forEach(f => fieldSpecificStuff(f));
 
@@ -61,24 +61,7 @@ export default function () {
       translateFieldToFinnish(field);
     }
 
-    fixCountryCodes().fix(record); // 008/15-17
-    fixLanguageCodes().fix(record); // 008/35-37 AND 041 (note that all relevant subfield codes are fixed, not just $a)
-
-    fixQualifyingInformation().fix(record); // 015, 020, 024 and 028
-
-    // Field 028: use $b$a, not $a$b:
-    const f028 = record.fields.filter(f => f.tag === '028');
-    f028.forEach(f => sortAdjacentSubfields(f));
-
     fixField040(record); // All $b values are changed to 'mul'. As a side effect 33X$b=>$a mappings are in Finnish! Ok in this domain!
-    add041().fix(record);
-
-    fixRelatorTerms().fix(record);
-
-    fix33X().fix(record); // 33X$a => 33X$a$b$2
-    add336().fix(record);
-    add337().fix(record);
-    add338().fix(record);
 
     record.fields.forEach(f => fieldSpecificStuff2(f));
 
@@ -91,13 +74,49 @@ export default function () {
       field410To490And810(field, record);
       field440To490And830(field, record);
       // handle505(field); // not applying them usemarcon-cyrillux rules for field 505 as I can't understand their motivation.
-
     }
 
-    // The fixer below implement Cyrillux rules such as 245I1 | 245I1  | If (Exists(@100) Or Exists(@110) Or Exists(@111) Or Exists(@130)) Then '1' Else '0' and plenty of other good stuff:
+  }
+
+  function realFixAll1(record) {
+    fixLeader(record); // Fix defaults, esp. LDR/18=i
+
+    fixCountryCodes().fix(record); // 008/15-17
+    fixLanguageCodes().fix(record); // 008/35-37 AND 041 (note that all relevant subfield codes are fixed, not just $a)
+
+    recordRemoveValuelessSubfields(record);
+
+    // Field 028: use $b$a, not $a$b:
+    const f028 = record.fields.filter(f => f.tag === '028');
+    f028.forEach(f => sortAdjacentSubfields(f));
+
+    add041().fix(record);
+
+    fixRelatorTerms().fix(record);
+
+  }
+
+  function realFixAll2(record) {
+    fixQualifyingInformation().fix(record); // 015, 020, 024 and 028
+
+    // Cyrillux specific code might change 040$b and thus affect these rules:
+    fix33X().fix(record); // 33X$a => 33X$a$b$2
+    add336().fix(record);
+    add337().fix(record);
+    add338().fix(record);
+
+    // The fixer below implements Cyrillux rules such as 245I1 | 245I1  | If (Exists(@100) Or Exists(@110) Or Exists(@111) Or Exists(@130)) Then '1' Else '0' and plenty of other good stuff:
     fixIndicators().fix(record);
 
     fixPunctuation().fix(record);
+  }
+
+  function realFix(record) {
+    realFixAll1(record);
+
+    realFixNonAleph(record);
+
+    realFixAll2(record);
 
     const res = {message: [], fix: [], valid: true};
     return res;
@@ -226,6 +245,10 @@ function field440To490And830(field, record) { // might be generic... if so, move
   record.insertField(field830);
 }
 
+function isAlephRecord(record) {
+  // Records that are already in aleph are not processed as aggressively ad genuinely new ones:
+  return record.fields.some(field => ['CAT', 'LKR', 'LOW', 'SID'].includes(field.tag));
+}
 
 function field260To264s(field, record) { // might be generic... if so, move to utils...
   // As per my quick reading of usemarcon-cyrillux
