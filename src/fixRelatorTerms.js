@@ -108,7 +108,10 @@ const finnishAbbreviations = {
   'san.': 'sanoittaja',
   'sov.': 'sovittaja',
   'säv.': 'säveltäjä',
-  'toim.': 'toimittaja'
+  'toim.': 'toimittaja',
+  // Quick and dirty implementation of https://github.com/NatLibFi/USEMARCON-BOOKWHERE-RDA/blob/master/bw_rda_kyril.rul#L651
+  'сост.': 'toimittaja',
+  'ред.': 'toimittaja'
 };
 
 function subfieldHandleRelatorTermAbbreviation(subfield, language) {
@@ -127,7 +130,7 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
   const lcValue = value.toLowerCase(); // Check Å, Ä, Ö...
 
   // NB: Policy: if no language or multi-language: apply all rules! (Not much overlap I hope...)
-  if (language === 'fin') {
+  if (language === 'fin' || language === 'mul') {
     nvdebug(`Relator try Finnish for '${lcValue}}'...`, debugDev);
     if (lcValue in finnishAbbreviations) {
       const hit = `${finnishAbbreviations[lcValue]}${punc}`;
