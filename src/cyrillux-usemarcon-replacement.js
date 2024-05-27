@@ -21,7 +21,7 @@ import {default as fixQualifyingInformation} from './normalize-qualifying-inform
 import {sortAdjacentSubfields} from './sortSubfields';
 
 // import createDebugLogger from 'debug';
-import {nvdebug, recordRemoveValuelessSubfields, recordToString} from './utils';
+import {fieldHasSubfield, nvdebug, recordRemoveValuelessSubfields, recordToString} from './utils';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
 
@@ -71,6 +71,17 @@ export default function () {
 
     function fieldSpecificStuff2(field) {
       removeSubfieldH(field); // only after 33X creation, as 245$h might be useful
+
+      field100eKirjoittaja(field);
+
+      function field100eKirjoittaja(f) { // LL 2019 USEMARCON-RDA rule
+        if (f.tag === '100' && !fieldHasSubfield(f, 'e') && record.isBK()) {
+          f.subfields = [{code: 'e', value: 'kirjoittaja.'}, ...f.subfields]; // eslint-disable-line functional/immutable-data
+          sortAdjacentSubfields(f);
+          // Punctuation will be done later on...
+          return;
+        }
+      }
 
       field260To264s(field, record);
 
