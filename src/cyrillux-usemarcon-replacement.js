@@ -425,6 +425,9 @@ function finnishTranslationsAndMappings(value) {
     replace('black and white', 'mustavalkoinen').
     replace(/\bbilaga\b/gui, 'liite').
     replace(/\bbilagor\b/gui, 'liitettä').
+    // https://github.com/NatLibFi/USEMARCON-BOOKWHERE-RDA/blob/master/bw_rda_kyril.rul#L365
+    replace(/\b1 с\./gui, '1 sivu'). // NB! It's not 'c', it's a cyrillic letter.
+    replace(/(\d) с\./gui, '$1 sivua'). // eslint-disable-line prefer-named-capture-group
     replace(/\bcharts\b/gui, 'kaavioita').
     replace('chiefly color illustrations', 'pääosin värikuvitettu').
     replace('chiefly', 'pääosin').
