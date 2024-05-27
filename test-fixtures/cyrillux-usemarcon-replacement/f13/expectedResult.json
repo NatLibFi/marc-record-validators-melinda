@@ -15,6 +15,9 @@
       { "code": "a", "value": "Sukunimi, Etunimi," },
       { "code": "e", "value": "kirjoittaja." }
     ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "123 sivua" }
+    ]},
     { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "teksti" },
       { "code": "b", "value": "txt"},

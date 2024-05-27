@@ -6,6 +6,9 @@
     { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "Sukunimi, Etunimi." }
     ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "123 с." }
+    ]},
     { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "teksti" },
       { "code": "b", "value": "txt"},
