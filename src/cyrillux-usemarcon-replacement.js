@@ -28,7 +28,9 @@ import {nvdebug, recordRemoveValuelessSubfields, recordToString} from './utils';
 const description = 'Replacement for Cyrillux usemarcon rules';
 
 // Extended original list with 541, 561, 562, 583, 584
-const dropTags = ['001', '003', '010', '012', '014', '015', '016', '019', '025', '029', '032', '035', '036', '037', '038', '042', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '261', '262', '350', '400', '411', '541', '561', '562', '574', '575', '577', '578', '583', '584', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '751', '761', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '866', '867', '868', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
+// 017, 044... et al are LL additions from 2019 (via USEMARCON-RDA)
+const dropTags = ['001', '003', '010', '012', '014', '015', '016', '017', '019', '025', '029', '032', '035', '036', '037', '038', '042', '044', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '261', '262', '350', '400', '411', '541', '561', '562', '574', '575', '577', '578', '583', '584', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '751', '761', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '866', '867', '868', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
+
 
 export default function () {
   return {
@@ -52,6 +54,8 @@ export default function () {
     // Remove unwanted fields:
     record.fields = record.fields.filter(f => !dropTags.includes(f.tag)); // eslint-disable-line functional/immutable-data
 
+    // Remove 084 fields that don't have $2 ykl (based on USEMARCON-RDA/bw_rda_kyril.rul code by LL 2019)
+    record.fields = record.fields.filter(f => f.tag !== '084' || f.subfields.some(sf => sf.code === '2' && sf.value === 'ykl')); // eslint-disable-line functional/immutable-data
 
     record.fields.forEach(f => fieldSpecificStuff(f));
 
