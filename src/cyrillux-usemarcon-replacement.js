@@ -57,20 +57,34 @@ export default function () {
     // Remove 084 fields that don't have $2 ykl (based on USEMARCON-RDA/bw_rda_kyril.rul code by LL 2019)
     record.fields = record.fields.filter(f => f.tag !== '084' || f.subfields.some(sf => sf.code === '2' && sf.value === 'ykl')); // eslint-disable-line functional/immutable-data
 
-    record.fields.forEach(f => fieldSpecificStuff(f));
+    fieldSpecificStuff(record.fields);
 
-    function fieldSpecificStuff(field) {
+    function fieldSpecificStuff(fields) {
+      const [field, ...rest] = fields;
+
+      if (field === undefined) {
+        return;
+      }
+
       removeOwnershipSubfield5(field);
       removeFromOldCatalog(field); // Remove LoC phrase "[from old catalog]" from srings
       translateFieldToFinnish(field);
+
+      return fieldSpecificStuff(rest);
     }
 
     fixField040(record); // All $b values are changed to 'mul'. As a side effect 33X$b=>$a mappings are in Finnish! Ok in this domain!
 
-    record.fields.forEach(f => fieldSpecificStuff2(f));
+    fieldSpecificStuff2(record.fields);
 
-    function fieldSpecificStuff2(field) {
-      removeSubfieldH(field); // only after 33X creation, as 245$h might be useful
+    function fieldSpecificStuff2(fields) {
+      const [field, ...rest] = fields;
+
+      if (field === undefined) {
+        return;
+      }
+
+      removeSubfieldH(field); // NB! Do this only after 33X creation, as 245$h might be useful there!
 
       field100eKirjoittaja(field);
 
@@ -89,6 +103,7 @@ export default function () {
       field410To490And810(field, record);
       field440To490And830(field, record);
       // handle505(field); // not applying them usemarcon-cyrillux rules for field 505 as I can't understand their motivation.
+      return fieldSpecificStuff2(rest);
     }
 
   }
@@ -261,7 +276,7 @@ function field440To490And830(field, record) { // might be generic... if so, move
 }
 
 function isAlephRecord(record) {
-  // Records that are already in aleph are not processed as aggressively ad genuinely new ones:
+  // Records that are already in Aleph are not processed as aggressively as genuinely new ones:
   return record.fields.some(field => ['CAT', 'LKR', 'LOW', 'SID'].includes(field.tag));
 }
 
