@@ -42,15 +42,19 @@ export function recordToString(record) {
 }
 
 export function recordRemoveValuelessSubfields(record) {
-  // We sometimes have subfields with undefined value. Get rid of these...
-  const fields = record.fields.filter(f => f.subfields);
-  fields.forEach(f => fieldRemoveValuelessSubfields(f));
-
-  function fieldRemoveValuelessSubfields(field) {
+  record.fields = record.fields.map(field => { // eslint-disable-line functional/immutable-data
+    if (!field.subfields) { // Keep control fields
+      return field;
+    }
+    // Remove empty subfields from datafields:
     field.subfields = field.subfields.filter(sf => sf.value); // eslint-disable-line functional/immutable-data
-  }
 
-  record.fields = record.fields.filter(f => !f.subfields || f.subfields.length > 0); // eslint-disable-line functional/immutable-data
+    if (field.subfields && field.subfields.length === 0) {
+      return false; // Return false instead of a field if field has no subfields left. These will soon be filtered out.
+    }
+
+    return field; //if field has subfields return it
+  }).filter(field => field); // Filter those falses out
 }
 
 export function fieldToString(f) {
