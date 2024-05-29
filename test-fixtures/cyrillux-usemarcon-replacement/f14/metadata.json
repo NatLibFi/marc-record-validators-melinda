@@ -1,0 +1,6 @@
+{
+  "description": "f14: Add 100$e kirjoittaja, translate 300$a and 700$e ",
+  "comment": "Based on a USEMARCON-RDA/bw_rda_kyril.rul code (as per MI's wishes)",
+  "only": false,
+  "fix": true
+}
