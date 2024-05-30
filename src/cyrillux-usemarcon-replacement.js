@@ -20,16 +20,17 @@ import {default as fixPunctuation} from './punctuation2';
 import {default as fixQualifyingInformation} from './normalize-qualifying-information';
 import {sortAdjacentSubfields} from './sortSubfields';
 
-
 // import createDebugLogger from 'debug';
-import {nvdebug, recordToString} from './utils';
+import {fieldHasSubfield, nvdebug, recordRemoveValuelessSubfields, recordToString} from './utils';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
 
 const description = 'Replacement for Cyrillux usemarcon rules';
 
 // Extended original list with 541, 561, 562, 583, 584
-const dropTags = ['001', '003', '010', '012', '014', '015', '016', '019', '025', '029', '032', '035', '036', '037', '038', '042', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '261', '262', '350', '400', '411', '541', '561', '562', '574', '575', '577', '578', '583', '584', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '761', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '866', '867', '868', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
+// 017, 044... et al are LL additions from 2019 (via USEMARCON-RDA)
+const dropTags = ['001', '003', '010', '012', '014', '015', '016', '017', '019', '025', '029', '032', '035', '036', '037', '038', '042', '044', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '261', '262', '350', '400', '411', '541', '561', '562', '574', '575', '577', '578', '583', '584', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '751', '761', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '866', '867', '868', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
+
 
 export default function () {
   return {
@@ -43,45 +44,58 @@ export default function () {
     return res;
   }
 
-  function realFix(record) {
-    // Fix leader: standard fixes + update LDR/17 to '4'
-    fixLeader(record);
+  function realFixNonAleph(record) {
+    if (isAlephRecord(record)) {
+      return;
+    }
+    // Update LDR/17 to '4'
     record.leader = `${record.leader.substring(0, 17)}4${record.leader.substring(18, 24)}`; // eslint-disable-line functional/immutable-data
 
     // Remove unwanted fields:
     record.fields = record.fields.filter(f => !dropTags.includes(f.tag)); // eslint-disable-line functional/immutable-data
 
-    record.fields.forEach(f => fieldSpecificStuff(f));
+    // Remove 084 fields that don't have $2 ykl (based on USEMARCON-RDA/bw_rda_kyril.rul code by LL 2019)
+    record.fields = record.fields.filter(f => f.tag !== '084' || f.subfields.some(sf => sf.code === '2' && sf.value === 'ykl')); // eslint-disable-line functional/immutable-data
 
-    function fieldSpecificStuff(field) {
+    fieldSpecificStuff(record.fields);
+
+    function fieldSpecificStuff(fields) {
+      const [field, ...rest] = fields;
+
+      if (field === undefined) {
+        return;
+      }
+
       removeOwnershipSubfield5(field);
       removeFromOldCatalog(field); // Remove LoC phrase "[from old catalog]" from srings
       translateFieldToFinnish(field);
+
+      return fieldSpecificStuff(rest);
     }
 
-    fixCountryCodes().fix(record); // 008/15-17
-    fixLanguageCodes().fix(record); // 008/35-37 AND 041 (note that all relevant subfield codes are fixed, not just $a)
-
-    fixQualifyingInformation().fix(record); // 015, 020, 024 and 028
-
-    // Field 028: use $b$a, not $a$b:
-    const f028 = record.fields.filter(f => f.tag === '028');
-    f028.forEach(f => sortAdjacentSubfields(f));
-
     fixField040(record); // All $b values are changed to 'mul'. As a side effect 33X$b=>$a mappings are in Finnish! Ok in this domain!
-    add041().fix(record);
 
-    fixRelatorTerms().fix(record);
+    fieldSpecificStuff2(record.fields);
 
-    fix33X().fix(record); // 33X$a => 33X$a$b$2
-    add336().fix(record);
-    add337().fix(record);
-    add338().fix(record);
+    function fieldSpecificStuff2(fields) {
+      const [field, ...rest] = fields;
 
-    record.fields.forEach(f => fieldSpecificStuff2(f));
+      if (field === undefined) {
+        return;
+      }
 
-    function fieldSpecificStuff2(field) {
-      removeSubfieldH(field); // only after 33X creation, as 245$h might be useful
+      removeSubfieldH(field); // NB! Do this only after 33X creation, as 245$h might be useful there!
+
+      field100eKirjoittaja(field);
+
+      function field100eKirjoittaja(f) { // LL 2019 USEMARCON-RDA rule
+        if (f.tag === '100' && !fieldHasSubfield(f, 'e') && record.isBK()) {
+          f.subfields = [{code: 'e', value: 'kirjoittaja.'}, ...f.subfields]; // eslint-disable-line functional/immutable-data
+          sortAdjacentSubfields(f);
+          // Punctuation will be done later on...
+          return;
+        }
+      }
 
       field260To264s(field, record);
 
@@ -89,13 +103,50 @@ export default function () {
       field410To490And810(field, record);
       field440To490And830(field, record);
       // handle505(field); // not applying them usemarcon-cyrillux rules for field 505 as I can't understand their motivation.
-
+      return fieldSpecificStuff2(rest);
     }
 
-    // The fixer below implement Cyrillux rules such as 245I1 | 245I1  | If (Exists(@100) Or Exists(@110) Or Exists(@111) Or Exists(@130)) Then '1' Else '0' and plenty of other good stuff:
+  }
+
+  function realFixAll1(record) {
+    fixLeader(record); // Fix defaults, esp. LDR/18=i
+
+    fixCountryCodes().fix(record); // 008/15-17
+    fixLanguageCodes().fix(record); // 008/35-37 AND 041 (note that all relevant subfield codes are fixed, not just $a)
+
+    recordRemoveValuelessSubfields(record);
+
+    // Field 028: use $b$a, not $a$b:
+    const f028 = record.fields.filter(f => f.tag === '028');
+    f028.forEach(f => sortAdjacentSubfields(f));
+
+    add041().fix(record);
+
+    fixRelatorTerms().fix(record);
+
+  }
+
+  function realFixAll2(record) {
+    fixQualifyingInformation().fix(record); // 015, 020, 024 and 028
+
+    // Cyrillux specific code might change 040$b and thus affect these rules:
+    fix33X().fix(record); // 33X$a => 33X$a$b$2
+    add336().fix(record);
+    add337().fix(record);
+    add338().fix(record);
+
+    // The fixer below implements Cyrillux rules such as 245I1 | 245I1  | If (Exists(@100) Or Exists(@110) Or Exists(@111) Or Exists(@130)) Then '1' Else '0' and plenty of other good stuff:
     fixIndicators().fix(record);
 
     fixPunctuation().fix(record);
+  }
+
+  function realFix(record) {
+    realFixAll1(record);
+
+    realFixNonAleph(record);
+
+    realFixAll2(record);
 
     const res = {message: [], fix: [], valid: true};
     return res;
@@ -146,6 +197,9 @@ function fixField040(record) {
 }
 
 export function removeFromOldCatalog(field) {
+  if (!field.tag.match(/^(?:240|65[0135]|[1678](?:00|10|11|30))$/u)) {
+    return;
+  }
   // See https://catalog.loc.gov/vwebv/ui/en_US/htdocs/help/faqs.html for motivation
   field.subfields?.forEach(sf => removeFromOldCatalogFromSubfield(sf));
 
@@ -221,6 +275,10 @@ function field440To490And830(field, record) { // might be generic... if so, move
   record.insertField(field830);
 }
 
+function isAlephRecord(record) {
+  // Records that are already in Aleph are not processed as aggressively as genuinely new ones:
+  return record.fields.some(field => ['CAT', 'LKR', 'LOW', 'SID'].includes(field.tag));
+}
 
 function field260To264s(field, record) { // might be generic... if so, move to utils...
   // As per my quick reading of usemarcon-cyrillux
@@ -382,6 +440,11 @@ function finnishTranslationsAndMappings(value) {
     replace('black and white', 'mustavalkoinen').
     replace(/\bbilaga\b/gui, 'liite').
     replace(/\bbilagor\b/gui, 'liitettä').
+    // https://github.com/NatLibFi/USEMARCON-BOOKWHERE-RDA/blob/master/bw_rda_kyril.rul#L365
+    replace(/(\b1\]?) с\./gui, '$1 sivu'). // eslint-disable-line prefer-named-capture-group
+    replace(/(\d\]?) с\./gui, '$1 sivua'). // eslint-disable-line prefer-named-capture-group
+    replace(/(\d) см/gui, '$1 cm'). // eslint-disable-line prefer-named-capture-group
+
     replace(/\bcharts\b/gui, 'kaavioita').
     replace('chiefly color illustrations', 'pääosin värikuvitettu').
     replace('chiefly', 'pääosin').

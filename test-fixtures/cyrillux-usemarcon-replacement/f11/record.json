@@ -17,6 +17,14 @@
     ]},
     { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "ospecificerad" }
+    ]},
+    { "tag": "FOO", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "whatever" },
+      { "code": "b"  }
+    ]},
+    { "tag": "BAR", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a" }
     ]}
+
   ]
 }

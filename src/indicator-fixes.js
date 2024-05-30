@@ -144,6 +144,24 @@ function normalizeNonFilingIndicator2(field, languages = []) {
   field.ind2 = determineNonFilingIndicatorValue(field, languages); // eslint-disable-line functional/immutable-data
 }
 
+const fiktiivisenAineistonLisaluokatFI = ['Eläimet', 'Erotiikka', 'Erä', 'Fantasia', 'Historia', 'Huumori', 'Jännitys', 'Kauhu', 'Novellit', 'Romantiikka', 'Scifi', 'Sota', 'Urheilu', 'Uskonto'];
+
+function containsFiktiivisenAineistonLisaluokka(field) {
+  // Should we check Swedish versions as well?
+  return field.subfields.some(sf => sf.code === 'a' && fiktiivisenAineistonLisaluokatFI.includes(sf.value));
+}
+
+function normalize084Indicator1(field) {
+  if (field.tag !== '084') {
+    return;
+  }
+
+  // https://marc21.kansalliskirjasto.fi/bib/05X-08X.htm#084 and https://finto.fi/ykl/fi/page/fiktioluokka
+  if (field.ind1 !== '9' && containsFiktiivisenAineistonLisaluokka(field) && field.subfields.some(sf => sf.code === '2' && sf.value === 'ykl')) {
+    field.ind1 = '9'; // eslint-disable-line functional/immutable-data
+    return;
+  }
+}
 
 function normalize245Indicator1(field, record) {
   if (field.tag !== '245') {
@@ -222,6 +240,7 @@ export function recordNormalizeIndicators(record) {
 }
 
 function fieldNormalizeIndicators(field, record, languages) {
+  normalize084Indicator1(field);
   normalize245Indicator1(field, record);
   normalizeNonFilingIndicator1(field, languages);
   normalizeNonFilingIndicator2(field, languages);

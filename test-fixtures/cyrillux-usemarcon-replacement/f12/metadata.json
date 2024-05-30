@@ -1,0 +1,6 @@
+{
+  "description": "f12: Remove 084 field if it does not have a $2 ykl",
+  "comment": "Based on a USEMARCON-RDA/bw_rda_kyril.rul code by LL 2019. Added keep-$2 ykl part",
+  "only": false,
+  "fix": true
+}

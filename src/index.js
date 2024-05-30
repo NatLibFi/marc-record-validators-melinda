@@ -1,16 +1,25 @@
 import AccessRights from './access-rights';
+import AddMissingField041 from './addMissingField041';
+import AddMissingField336 from './addMissingField336';
+import AddMissingField337 from './addMissingField337';
+import AddMissingField338 from './addMissingField338';
+import CyrilluxUsemarconReplacement from './cyrillux-usemarcon-replacement';
 import DoubleCommas from './double-commas';
 import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
 import EndingPunctuation from './ending-punctuation';
 import EndingWhitespace from './ending-whitespace';
+import Field008CharacterGroups from './field-008-18-34-character-groups';
 import Field505Separators from './field-505-separators';
 import Field521Fix from './field-521-fix';
 import FieldExclusion from './field-exclusion';
 import FieldStructure from './field-structure';
 import FieldsPresent from './fields-present';
-import FixedFields from './fixed-fields';
+import Fix33X from './fix-33X';
+import FixCountryCodes from './fix-country-codes';
+import FixLanguageCodes from './fix-language-codes';
 import FixRelatorTerms from './fixRelatorTerms';
+import FixedFields from './fixed-fields';
 import IdenticalFields from './identical-fields';
 import IndicatorFixes from './indicator-fixes';
 import IsbnIssn from './isbn-issn';
@@ -25,11 +34,11 @@ import NormalizeQualifyingInformation from './normalize-qualifying-information';
 import NormalizeUTF8Diacritics from './normalize-utf8-diacritics';
 import Punctuation from './punctuation/';
 import Punctuation2 from './punctuation2';
-import ResolveOrphanedSubfield6s from './resolveOrphanedSubfield6s'; // Do this before reindexing! (thus not in alphabetical order)
 import ReindexSubfield6OccurenceNumbers from './reindexSubfield6OccurenceNumbers';
 import RemoveDuplicateDataFields from './removeDuplicateDataFields';
 import RemoveInferiorDataFields from './removeInferiorDataFields';
 import ResolvableExtReferences from './resolvable-ext-references-melinda';
+import ResolveOrphanedSubfield6s from './resolveOrphanedSubfield6s';
 import SanitizeVocabularySourceCodes from './sanitize-vocabulary-source-codes';
 import SortFields from './sortFields';
 import SortRelatorTerms from './sortRelatorTerms';
@@ -46,16 +55,25 @@ import Urn from './urn';
 
 export {
   AccessRights,
+  AddMissingField041,
+  AddMissingField336,
+  AddMissingField337,
+  AddMissingField338,
+  CyrilluxUsemarconReplacement,
   DoubleCommas,
   DuplicatesInd1,
   EmptyFields,
   EndingPunctuation,
   EndingWhitespace,
+  Field008CharacterGroups,
   Field505Separators,
   Field521Fix,
   FieldExclusion,
   FieldsPresent,
   FieldStructure,
+  Fix33X,
+  FixCountryCodes,
+  FixLanguageCodes,
   FixRelatorTerms,
   FixedFields,
   IdenticalFields,
@@ -72,7 +90,7 @@ export {
   NormalizeUTF8Diacritics,
   Punctuation,
   Punctuation2,
-  ResolveOrphanedSubfield6s,
+  ResolveOrphanedSubfield6s, // Do this before reindexing! (thus I'm not sticking with alphabetical order here)
   ReindexSubfield6OccurenceNumbers,
   RemoveDuplicateDataFields,
   RemoveInferiorDataFields,

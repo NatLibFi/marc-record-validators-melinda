@@ -1,0 +1,74 @@
+{
+  "leader": "01470cam a22004214i 4500",
+  "_validationOptions": { },
+  "fields" : [
+    { "tag": "001", "value": "001173044" },
+    { "tag": "003", "value": "FI-MELINDA" },
+    { "tag": "005", "value": "20160810215731.0" },
+    { "tag": "008", "value": "880603s1978    gw |||||||||||||||||ger||" },
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "3-7613-0117-0" }
+    ]},
+    { "tag": "035", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "(FI-MELINDA)001173044" }
+    ]},
+    { "tag": "041", "ind1": "0", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "ger" }
+    ]},
+    { "tag": "050", "ind1": " ", "ind2": "4", "subfields" : [
+        { "code": "a", "value": "BX485" }
+    ]},
+    { "tag": "080", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "281.93:27" },
+        { "code": "x", "value": "(47)" }
+    ]},
+    { "tag": "080", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "281.93" }
+    ]},
+    { "tag": "080", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "27" },
+        { "code": "x", "value": "(47)" }
+    ]},
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "Immekus, Erwin." }
+    ]},
+    { "tag": "245", "ind1": "1", "ind2": "4", "subfields" : [
+        { "code": "a", "value": "Die russisch-orthodoxe Landpfarrei zu Beginn des XX. Jahrhunderts nach dem Gutachten der Diözesanbischöfe /" },
+        { "code": "c", "value": "Erwin Immekus." }
+    ]},
+    { "tag": "260", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "Würzburg :" },
+        { "code": "b", "value": "Augustinus-Verlag," },
+        { "code": "c", "value": "1978." }
+    ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "xvi, 284 p. ;" },
+        { "code": "c", "value": "23 cm" }
+    ]},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "teksti" },
+        { "code": "b", "value": "txt" },
+        { "code": "2", "value": "rdacontent" }
+    ]},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "käytettävissä ilman laitetta" },
+        { "code": "b", "value": "n" },
+        { "code": "2", "value": "rdamedia" }
+    ]},
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "nide" },
+        { "code": "b", "value": "nc" },
+        { "code": "2", "value": "rdacarrier" }
+    ]},
+
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields" : [
+        { "code": "a", "value": "japaninkielinen kirjallisuus" },
+        { "code": "2", "value": "local" }
+    ]},
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields" : [
+        { "code": "a", "value": "käännökset" },
+        { "code": "2", "value": "slm/fin" },
+        { "code": "0" }
+    ]}
+  ]
+}
