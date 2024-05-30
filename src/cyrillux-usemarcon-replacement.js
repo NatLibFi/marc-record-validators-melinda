@@ -125,14 +125,13 @@ export default function () {
 
     add041().fix(record);
 
-    fixRelatorTerms().fix(record);
-
   }
 
   function realFixAll2(record) {
     fixQualifyingInformation().fix(record); // 015, 020, 024 and 028
 
     // Cyrillux specific code might change 040$b and thus affect these rules:
+    fixRelatorTerms().fix(record);
     fix33X().fix(record); // 33X$a => 33X$a$b$2
     add336().fix(record);
     add337().fix(record);
@@ -173,7 +172,7 @@ export default function () {
 }
 
 function fixField040(record) {
-  const f040 = record.fields.filter(f => f.tag === '040');
+  const f040 = record.get('040');
 
   const subfieldsBE = [
     {code: 'b', value: 'mul'},
