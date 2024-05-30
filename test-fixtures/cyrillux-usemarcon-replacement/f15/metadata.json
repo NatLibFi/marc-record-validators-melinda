@@ -1,0 +1,5 @@
+{
+  "description": "f15: Remove 020$c",
+  "only": false,
+  "fix": true
+}
