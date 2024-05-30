@@ -41,6 +41,19 @@ export function recordToString(record) {
   return `${ldr}\n${fields.join('\n')}`;
 }
 
+export function removeSubfield(record, tag, subfieldCode) {
+  record.fields = record.fields.map(field => { // eslint-disable-line functional/immutable-data
+    if (field.tag !== tag || !field.subsfields) { // Don't procss irrelevant fields
+      return field;
+    }
+    field.subsfields = field.subfields.filter(sf => sf.code !== subfieldCode); // eslint-disable-line functional/immutable-data
+    if (field.subfields.length === 0) {
+      return false;
+    }
+    return field;
+  }).filter(field => field);
+}
+
 export function recordRemoveValuelessSubfields(record) {
   record.fields = record.fields.map(field => { // eslint-disable-line functional/immutable-data
     if (!field.subfields) { // Keep control fields
