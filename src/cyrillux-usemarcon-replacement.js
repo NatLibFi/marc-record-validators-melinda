@@ -21,7 +21,7 @@ import {default as fixQualifyingInformation} from './normalize-qualifying-inform
 import {sortAdjacentSubfields} from './sortSubfields';
 
 // import createDebugLogger from 'debug';
-import {fieldHasSubfield, nvdebug, recordRemoveValuelessSubfields, recordToString} from './utils';
+import {fieldHasSubfield, nvdebug, recordRemoveValuelessSubfields, recordToString, removeSubfield} from './utils';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
 
@@ -48,11 +48,14 @@ export default function () {
     if (isAlephRecord(record)) {
       return;
     }
+
     // Update LDR/17 to '4'
     record.leader = `${record.leader.substring(0, 17)}4${record.leader.substring(18, 24)}`; // eslint-disable-line functional/immutable-data
 
     // Remove unwanted fields:
     record.fields = record.fields.filter(f => !dropTags.includes(f.tag)); // eslint-disable-line functional/immutable-data
+
+    removeSubfield(record, '020', 'c');
 
     // Remove 084 fields that don't have $2 ykl (based on USEMARCON-RDA/bw_rda_kyril.rul code by LL 2019)
     record.fields = record.fields.filter(f => f.tag !== '084' || f.subfields.some(sf => sf.code === '2' && sf.value === 'ykl')); // eslint-disable-line functional/immutable-data

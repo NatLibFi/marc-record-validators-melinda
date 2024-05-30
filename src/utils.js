@@ -43,10 +43,10 @@ export function recordToString(record) {
 
 export function removeSubfield(record, tag, subfieldCode) {
   record.fields = record.fields.map(field => { // eslint-disable-line functional/immutable-data
-    if (field.tag !== tag || !field.subsfields) { // Don't procss irrelevant fields
+    if (field.tag !== tag || !field.subfields) { // Don't procss irrelevant fields
       return field;
     }
-    field.subsfields = field.subfields.filter(sf => sf.code !== subfieldCode); // eslint-disable-line functional/immutable-data
+    field.subfields = field.subfields.filter(sf => sf.code !== subfieldCode); // eslint-disable-line functional/immutable-data
     if (field.subfields.length === 0) {
       return false;
     }
