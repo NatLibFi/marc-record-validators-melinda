@@ -1,5 +1,5 @@
 {
-  "description": "f15: Remove 020$c",
+  "description": "f15: Remove 020$c, translate 700$e",
   "only": false,
   "fix": true
 }
