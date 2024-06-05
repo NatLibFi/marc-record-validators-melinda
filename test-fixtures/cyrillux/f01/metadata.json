@@ -1,0 +1,5 @@
+{
+  "description": "Fix: field 100 required translitteration",
+  "only": false,
+  "fix": true
+}

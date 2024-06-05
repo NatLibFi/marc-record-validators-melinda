@@ -1,0 +1,23 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cam  22123454i 4500",
+  "fields": [
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01"},
+      { "code": "a", "value": "Modin, Ûrij Ivanovič." },
+      { "code": "9", "value": "ISO9 <TRANS>"}
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "100-01"},
+      {"code": "a", "value": "Модин, Юрий Иванович."},
+      {"code": "9", "value": "CYRILLIC <TRANS>"}
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "100-01"},
+      {"code": "a", "value": "Modin, Juri Ivanovitš."},
+      {"code": "9", "value": "SFS4900 <TRANS>"}
+    ]}
+
+  ]
+}
+

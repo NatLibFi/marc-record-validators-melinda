@@ -1,0 +1,5 @@
+{
+  "description": "Validate: no action required",
+  "only": false,
+  "fix": false
+}
