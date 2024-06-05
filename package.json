@@ -44,10 +44,13 @@
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
     "debug": "^4.3.4",
+    "iso9_1995": "^0.0.2",
     "isbn3": "^1.1.48",
     "langs": "^2.0.0",
     "node-fetch": "^2.7.0",
-    "xml2js": "^0.6.2"
+    "sfs4900": "^0.0.1",
+    "xml2js": "^0.6.2",
+    "xregexp": "^5.1.1"
   },
   "peerDependencies": {
     "@natlibfi/marc-record-validate": "^8.0.7"
