@@ -71,7 +71,7 @@ export default function (config = {}) {
     const normalizedFields = processField(clone(field), record);
     const mod = fieldsToString(normalizedFields).replace(/\t__SEPARATOR__\t/ug, ', ').replace(/ (‡6 [0-9][0-9][0-9])-[0-9][0-9]+/gu, ' $1-NN'); // eslint-disable-line prefer-named-capture-group
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`TODO: ${orig} => ${mod}`); // eslint-disable-line functional/immutable-data
+      res.message.push(`CHANGE: ${orig} => ${mod}`); // eslint-disable-line functional/immutable-data
       return;
     }
     return;
@@ -117,6 +117,7 @@ export default function (config = {}) {
       return;
     }
     subfield.value = iso9.convertToLatin(subfield.value); // eslint-disable-line functional/immutable-data
+    return subfield;
   }
 
 
@@ -126,6 +127,7 @@ export default function (config = {}) {
       return;
     }
     subfield.value = sfs4900.convertToLatin(subfield.value).result; // eslint-disable-line functional/immutable-data
+    return subfield; // make map work
   }
 
 
@@ -156,12 +158,10 @@ export default function (config = {}) {
   }
 
   function convertFieldToSfs4900Field880(field, occurrenceNumber) {
-    // Looks like there's no need to fix composition, but I haven't tested extensively/checked
-    field.subfields.forEach(sf => convertSubfieldToSfs4900(sf));
 
     const subfields = [
       {code: '6', value: `${field.tag}-${occurrenceNumber}`},
-      ...field.subfields,
+      ...field.subfields.map(sf => convertSubfieldToSfs4900(sf)),
       {code: '9', value: 'SFS4900 <TRANS>'}
     ];
 
