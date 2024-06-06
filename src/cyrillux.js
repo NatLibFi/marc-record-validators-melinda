@@ -7,6 +7,7 @@ import {intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInte
 import XRegExp from 'xregexp';
 import * as sfs4900 from 'sfs4900';
 import {default as sortFields} from './sortFields';
+import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers';
 
 export default function (config = {}) {
 
@@ -38,6 +39,7 @@ export default function (config = {}) {
     record.fields = processFields(record.fields); // eslint-disable-line functional/immutable-data
 
     if (nBefore < record.fields.length) { // eslint-disable-line functional/no-conditional-statements
+      reindexSubfield6OccurenceNumbers().fix(record);
       sortFields().fix(record);
     }
 
