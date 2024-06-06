@@ -11,15 +11,8 @@ import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6Occ
 
 export default function (config = {}) {
 
-  /*
-  const exampleConfig = {
-    doISO9Transliteration: true,
-    doSFS4900Transliteration: true
-  };
-  */
-
   return {
-    description: 'Cyrillux functionality: detect cyrillic fields, convert field to 880 and convert original content to ISO-9 latinitsa',
+    description: 'Cyrillux functionality: convert original field to latinitsa (ISO-9) and add 880s for original cyrillic and latinitsa (SFS-4900)',
     validate, fix
   };
 
