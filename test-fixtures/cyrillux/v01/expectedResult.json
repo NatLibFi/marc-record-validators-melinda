@@ -1,7 +1,7 @@
 
 {
   "message": [
-    "TODO: 100 1# ‡a Модин, Юрий Иванович. => 100 1# ‡6 880-NN ‡a Modin, Ûrij Ivanovič. ‡9 ISO9 <TRANS>, 880 1# ‡6 100-NN ‡a Модин, Юрий Иванович. ‡9 CYRILLIC <TRANS>, 880 1# ‡6 100-NN ‡a Modin, Juri Ivanovitš. ‡9 SFS4900 <TRANS>"
+    "CHANGE: 100 1# ‡a Модин, Юрий Иванович. => 100 1# ‡6 880-NN ‡a Modin, Ûrij Ivanovič. ‡9 ISO9 <TRANS>, 880 1# ‡6 100-NN ‡a Модин, Юрий Иванович. ‡9 CYRILLIC <TRANS>, 880 1# ‡6 100-NN ‡a Modin, Juri Ivanovitš. ‡9 SFS4900 <TRANS>"
   ],
   "valid": false
 }
