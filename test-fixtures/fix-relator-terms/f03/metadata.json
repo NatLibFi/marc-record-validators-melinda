@@ -1,0 +1,5 @@
+{
+  "description": "F03: Fix relator terms: expand abbreviations based on 040$b=mul",
+  "fix": true,
+  "only": false
+}

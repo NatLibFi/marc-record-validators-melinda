@@ -148,7 +148,16 @@ const map336 = {
   'unbewegtes Bild': 'sti',
   'unspecified': 'zzz',
   'Ääni': 'snd',
-  'ääni': 'snd'
+  'ääni': 'snd',
+  'Электронная программа': 'cop', // computer program
+  'Изображение (картографическое)': 'cri',
+  'Музыка (знаковая)': 'ntm', // notated music
+  'Музыка (исполнительская)': 'prm', // performed music
+  'Устная речь': 'spw',
+  'Изображение (неподвижное)': 'sti',
+  'Изображение (движущееся)': 'tdi', // 2D moving image
+  'Текст': 'txt',
+  'Текст (визуальный)': 'txt'
 };
 
 const map337 = {
@@ -195,7 +204,14 @@ const map337 = {
   'unspecified': 'z',
   'useita mediatyyppejä': 'z',
   'video': 'v',
-  'övrig': 'x'
+  'övrig': 'x',
+  // Cyrillic (sorted by result):
+  'электронн': 'c',
+  'электронный': 'c',
+  'непосредственн': 'n',
+  'непосредственный': 'n',
+  'аудио': 's', // audio
+  'видео': 'v'
 };
 
 const map338 = {
