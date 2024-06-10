@@ -127,7 +127,6 @@ export function fieldGetMaxSubfield6OccurrenceNumberAsInteger(field) {
   return Math.max(...vals);
 }
 
-
 export function fieldHasWantedTagAndOccurrenceNumber(field, tagAndOccurrenceNumber) {
   return field.subfields && field.subfields.some(sf => subfield6HasWantedTagAndOccurrenceNumber(sf, tagAndOccurrenceNumber));
 }
@@ -459,14 +458,16 @@ export function recordGetSubfield6ChainHeads(record) {
 }
 
 export function recordGetMaxSubfield6OccurrenceNumberAsInteger(record) {
+  if (record.fields.length === 0) {
+    return 0;
+  }
   // Should we cache the value here?
   const vals = record.fields.map((field) => fieldGetMaxSubfield6OccurrenceNumberAsInteger(field));
   return Math.max(...vals);
 }
 
-
 export function get6s(field, candidateFields) { // NB! Convert field to fields!!!
-  // Get all fields with given occurence number
+  // Get all fields with given occurrence number
   const sixes = field.subfields.filter(sf => isValidSubfield6(sf));
 
   if (sixes.length === 0) {

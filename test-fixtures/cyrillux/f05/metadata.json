@@ -1,0 +1,5 @@
+{
+  "description": "Fix: ignore fields taht already have $6",
+  "only": false,
+  "fix": true
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Sort by occurrence number (in field 880) with multiple same occurrence numbers",
+  "skip": false,
+  "only": false
+}
