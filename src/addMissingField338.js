@@ -27,7 +27,7 @@ export default function () {
   function validate(record) {
     nvdebug(`VALIDATE ${description}...`);
     const newField = getMissing338(record);
-    if (newField) {
+    if (!newField) {
       return {message: [], valid: true};
     }
     const msg = `${description}: '${fieldToString(newField)}'`;

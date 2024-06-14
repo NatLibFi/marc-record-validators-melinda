@@ -1,0 +1,11 @@
+{
+  "leader": "01714cam a22005057i 4500",
+  "fields": [
+    { "tag": "008", "value": "900214s1980 sw ||||||m |||||||eng||" },
+    { "tag": "338", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "nide"},
+      {"code": "b", "value": "nc"},
+      {"code": "2", "value": "rdacarrier"}
+    ]}
+  ]
+}
