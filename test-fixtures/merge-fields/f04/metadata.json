@@ -1,0 +1,5 @@
+{
+  "description": "Fix: merge two 700 fields",
+  "only": false,
+  "fix": true
+}
