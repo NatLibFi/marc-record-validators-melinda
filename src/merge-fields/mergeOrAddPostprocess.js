@@ -3,6 +3,8 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldFixPunctuation} from '../punctuation2';
 import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
+import {sortAdjacentSubfields} from '../sortSubfields';
+import {sortAdjacentESubfields} from '../sortRelatorTerms';
 
 function postprocessBaseRecord(base) {
 
@@ -17,6 +19,10 @@ function postprocessBaseRecord(base) {
       // in marc-record-validators-melinda and ust called from here.
       fieldRemoveDuplicateSubfields(field);
       fieldFixPunctuation(field); // NB! This will fix only fields with merged content
+      sortAdjacentSubfields(field); // Put the added $e subfield to proper places.
+      sortAdjacentESubfields(field); // Sort $e subfields with each other
+      fieldFixPunctuation(field);
+
       delete field.merged; // eslint-disable-line functional/immutable-data
     }
 
