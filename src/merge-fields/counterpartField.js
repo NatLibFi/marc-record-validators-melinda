@@ -27,6 +27,14 @@ const counterpartRegexps = { // NB! tag is from source!
   '940': /^[29]40$/u, '973': /^[79]73$/u
 };
 
+const counterpartRegexpsSingle = {
+  // when base===source, never merge 1XX to 7XX, always 7XX to 1XX!
+  '260': /^26[04]$/u, '264': /^26[04]$/u,
+  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u,
+  // Hacks:
+  '940': /^[29]40$/u, '973': /^[79]73$/u
+};
+
 /*
 function differentPublisherSubfields(field1, field2) {
   if (field1.tag === '260' && field2.tag === '264' && field2.ind2 === '3') {
@@ -312,8 +320,10 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
 
 }
 
-
-function tagToRegexp(tag) {
+function tagToRegexp(tag, internalMerge = false) {
+  if (internalMerge && tag in counterpartRegexpsSingle) {
+    return counterpartRegexpsSingle[tag];
+  }
   if (tag in counterpartRegexps) { // eg. 700 looks for tag /^[17]00$/...
     const regexp = counterpartRegexps[tag];
     //nvdebug(`regexp for ${tag} found: ${regexp}`, debugDev);
@@ -650,7 +660,7 @@ function field264Exception(baseField, sourceRecord, sourceField, config) {
 }
 
 function getCounterpartCandidates(field, record) {
-  const counterpartCands = record.get(tagToRegexp(field.tag));
+  const counterpartCands = record.get(tagToRegexp(field.tag, record.internalMerge));
 
   // MELKEHITYS-2969: copyright years should not merge with non-copyright years
   if (field.tag === '260' && isNotCopyrightYear(field)) {

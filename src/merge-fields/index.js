@@ -29,9 +29,10 @@ export default function () {
 
   function fix(record, config = undefined) {
     const config2 = config || defaultConfig;
+    record.internalMerge = true; // eslint-disable-line functional/immutable-data
     mergeFieldsWithinRecord(record, config2);
     // Remove deleted fields and field.merged marks:
-
+    delete record.internalMerge; // eslint-disable-line functional/immutable-data
     postprocessRecords(record, record);
 
     const res = {message: [], fix: [], valid: true};
