@@ -1,3 +1,15 @@
+import createDebugLogger from 'debug';
+
+import fs from 'fs';
+import path from 'path';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
+
+const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'melindaCustomMergeFields.json'), 'utf8'));
+
+
 export function isElectronicMaterial(record) {
   const f337s = record.get('337');
 
@@ -112,3 +124,70 @@ export function getCatalogingLanguage(record, defaultCatalogingLanguage = undefi
 export function uniqArray(arr) {
   return arr.filter((val, i) => arr.indexOf(val) === i);
 }
+
+export function fieldsAreIdentical(field1, field2) {
+  if (field1.tag !== field2.tag) { // NB! We are skipping normalizations here on purpose! They should be done beforehand...
+    return false;
+  }
+  return fieldToString(field1) === fieldToString(field2);
+
+  // The order of subfields is relevant! Bloody JS idiotisms make people use conditions such as:
+  // return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
+}
+
+export function fieldHasNSubfields(field, subfieldCode/*, subfieldValue = null*/) {
+  const relevantSubfields = field.subfields.filter(sf => sf.code === subfieldCode);
+  //if (subfieldValue === null) {
+  return relevantSubfields.length;
+  //}
+  //const subset = relevantSubfields.filter(value => value === subfieldValue);
+  //return subset.length;
+}
+
+export function removeCopyright(value) {
+  return value.replace(/^(?:c|p|©|℗|Cop\. ?) ?((?:1[0-9][0-9][0-9]|20[012][0-9])\.?)$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
+}
+
+function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
+  // Put these into config or so...
+  if (tag === '264') {
+    return ['a', 'b', 'c'].includes(subfieldCode);
+  }
+
+  if (['336', '337', '338'].includes(tag)) {
+    return ['a', 'b', '2'].includes(subfieldCode);
+  }
+
+  return false;
+}
+
+
+export function subfieldIsRepeatable(tag, subfieldCode) {
+
+  if (isNonStandardNonrepeatableSubfield(tag, subfieldCode)) {
+    return false;
+  }
+
+  // These we know or "know":
+  // NB! $5 is (according to MARC21 format) non-repeatable, and not usable in all fields, but Melinda has a local exception to this, see MET-300
+  if ('0159'.indexOf(subfieldCode) > -1) {
+    // Uh, can $0 appear on any field?
+    return true;
+  }
+
+  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  if (fieldSpecs.length !== 1) {
+    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
+    return true;
+  }
+
+  const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === subfieldCode);
+  // Currently we don't support multiple $6 fields due to re-indexing limitations...
+  // Well, $6 is non-repeatable, isn't it?!?
+  // (This might actually already be fixed... Marginal issue, but check eventually.)
+  if (subfieldSpecs.length !== 1 || subfieldCode === '6') {
+    return false; // repeatable if not specified, I guess. Maybe add log or warn?
+  }
+  return subfieldSpecs[0].repeatable;
+}
+
