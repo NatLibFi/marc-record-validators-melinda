@@ -1,5 +1,5 @@
 {
-  "description": "Fix: merge two 700 fields",
-  "only": false,
+  "description": "F04: Fix: merge multiple fields into one",
+  "only": true,
   "fix": true
 }
