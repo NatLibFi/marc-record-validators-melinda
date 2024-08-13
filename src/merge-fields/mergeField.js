@@ -154,7 +154,7 @@ function skipMergeField(baseRecord, sourceField, config) {
   }
 
   // Skip duplicate field:
-  if (baseRecord.fields.some(baseField => fieldsAreIdentical(sourceField, baseField))) {
+  if (baseRecord.fields.some(baseField => !baseField.mergeCandidate && fieldsAreIdentical(sourceField, baseField))) {
     nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' already exists! No merge required!`, debugDev);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
@@ -201,9 +201,11 @@ function swapDataBetweenFields(field1, field2) {
 export function mergeField(baseRecord, sourceRecord, sourceField, config) {
   nvdebug(`SELF: ${fieldToString(sourceField)}`, debugDev);
 
+  sourceField.mergeCandidate = true; // eslint-disable-line functional/immutable-data
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
     nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debugDev);
+    delete sourceField.mergeCandidate; // eslint-disable-line functional/immutable-data
     return false;
   }
 
@@ -220,10 +222,12 @@ export function mergeField(baseRecord, sourceRecord, sourceField, config) {
     nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
     mergeField2(baseRecord, counterpartField, sourceField, config, candFieldPairs880);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
+    delete sourceField.mergeCandidate; // eslint-disable-line functional/immutable-data
     return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
   debugDev(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`);
+  delete sourceField.mergeCandidate; // eslint-disable-line functional/immutable-data
   return false;
 }
 

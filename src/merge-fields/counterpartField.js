@@ -681,7 +681,7 @@ export function getCounterpart(baseRecord, sourceRecord, field, config) {
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
   //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`, debugDev);
-  const counterpartCands = getCounterpartCandidates(field, baseRecord);
+  const counterpartCands = getCounterpartCandidates(field, baseRecord).filter(f => !f.mergeCandidate);
 
   if (!counterpartCands || counterpartCands.length === 0) {
     //nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debugDev);
