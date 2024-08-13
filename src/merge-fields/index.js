@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import {mergeField} from './mergeField';
 import {MarcRecord} from '@natlibfi/marc-record';
+import {postprocessRecords} from './mergeOrAddPostprocess.js';
 
 const description = 'Merge fields within record';
 
@@ -29,6 +30,10 @@ export default function () {
   function fix(record, config = undefined) {
     const config2 = config || defaultConfig;
     mergeFieldsWithinRecord(record, config2);
+    // Remove deleted fields and field.merged marks:
+
+    postprocessRecords(record, record);
+
     const res = {message: [], fix: [], valid: true};
     return res;
   }
