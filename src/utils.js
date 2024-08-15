@@ -218,3 +218,8 @@ export function marc21GetTagsLegalInd2Value(tag) {
 export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
   subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
 }
+
+export function subfieldsAreIdentical(subfieldA, subfieldB) {
+  return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
+}
+
