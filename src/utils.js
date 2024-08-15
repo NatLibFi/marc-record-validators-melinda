@@ -226,3 +226,8 @@ export function subfieldsAreIdentical(subfieldA, subfieldB) {
 export function fieldHasMultipleSubfields(field, subfieldCode/*, subfieldValue = null*/) {
   return fieldHasNSubfields(field, subfieldCode) > 1;
 }
+
+export function hasCopyright(value) {
+  const modValue = removeCopyright(value);
+  return value !== modValue;
+}
