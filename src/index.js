@@ -26,6 +26,7 @@ import IndicatorFixes from './indicator-fixes';
 import IsbnIssn from './isbn-issn';
 import ItemLanguage from './item-language';
 import MergeField500Lisapainokset from './mergeField500Lisapainokset';
+import MergeFields from './merge-fields/';
 import MergeRelatorTermFields from './mergeRelatorTermFields';
 import MultipleSubfield0s from './multiple-subfield-0';
 import NonBreakingSpace from './non-breaking-space';
@@ -108,5 +109,6 @@ export {
   UnicodeDecomposition,
   UpdateField540,
   Urn,
-  SortFields // Keep this as last
+  SortFields, // Keep this penultimateas last
+  MergeFields // Run this last *iff* you want to use this at all
 };
