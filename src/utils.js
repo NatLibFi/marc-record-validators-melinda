@@ -215,3 +215,6 @@ export function marc21GetTagsLegalInd2Value(tag) {
   return indicator.ind2;
 }
 
+export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
+  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
+}
