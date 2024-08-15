@@ -18,7 +18,8 @@ export default function () {
   };
 
   function mergeFieldsWithinRecord(record, config) {
-    const candFields = record.fields.toReversed(); // Filter via config?
+    //const candFields = record.fields.toReversed(); // Node 20+ only! Filter via config?
+    const candFields = record.fields.filter(f => f).reverse();
     const mergedField = candFields.find(f => mergeField(record, record, f, config));
     if (!mergedField) {
       return;
@@ -31,8 +32,8 @@ export default function () {
     const config2 = config || defaultConfig;
     record.internalMerge = true; // eslint-disable-line functional/immutable-data
     mergeFieldsWithinRecord(record, config2);
-    // Remove deleted fields and field.merged marks:
     delete record.internalMerge; // eslint-disable-line functional/immutable-data
+    // Remove deleted fields and field.merged marks:
     postprocessRecords(record, record);
 
     const res = {message: [], fix: [], valid: true};
