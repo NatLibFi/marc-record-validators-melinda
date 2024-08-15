@@ -483,3 +483,13 @@ export function get6s(field, candidateFields) { // NB! Convert field to fields!!
   return relevantFields;
 }
 
+export function resetSubfield6Tag(subfield, tag) {
+  if (!isValidSubfield6(subfield)) {
+    return;
+  }
+  // NB! mainly for 1XX<->7XX transfers
+  const newValue = `${tag}-${subfield.value.substring(4)}`;
+  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
+  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+}
+
