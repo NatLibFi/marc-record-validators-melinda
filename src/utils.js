@@ -191,3 +191,27 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
   return subfieldSpecs[0].repeatable;
 }
 
+function marc21GetTagsLegalIndicators(tag) {
+  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  if (fieldSpecs.length === 0) {
+    return undefined;
+  }
+  return fieldSpecs[0].indicators;
+}
+
+export function marc21GetTagsLegalInd1Value(tag) {
+  const indicator = marc21GetTagsLegalIndicators(tag);
+  if (indicator === undefined) {
+    return undefined;
+  }
+  return indicator.ind1;
+}
+
+export function marc21GetTagsLegalInd2Value(tag) {
+  const indicator = marc21GetTagsLegalIndicators(tag);
+  if (indicator === undefined) {
+    return undefined;
+  }
+  return indicator.ind2;
+}
+
