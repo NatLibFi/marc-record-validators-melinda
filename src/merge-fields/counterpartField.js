@@ -28,9 +28,9 @@ const counterpartRegexps = { // NB! tag is from source!
 };
 
 const counterpartRegexpsSingle = {
-  // when base===source, never merge 1XX to 7XX, always 7XX to 1XX!
-  '260': /^26[04]$/u, '264': /^26[04]$/u,
-  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u,
+  // when base===source, never merge 1XX to 7XX, always 7XX to 1XX! Also, don't merge 264 to 260.
+  '260': /^26[04]$/u,
+  '700': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
   // Hacks:
   '940': /^[29]40$/u, '973': /^[79]73$/u
 };
@@ -324,7 +324,7 @@ function tagToRegexp(tag, internalMerge = false) {
   if (internalMerge && tag in counterpartRegexpsSingle) {
     return counterpartRegexpsSingle[tag];
   }
-  if (tag in counterpartRegexps) { // eg. 700 looks for tag /^[17]00$/...
+  if (!internalMerge && tag in counterpartRegexps) { // eg. 700 looks for tag /^[17]00$/...
     const regexp = counterpartRegexps[tag];
     //nvdebug(`regexp for ${tag} found: ${regexp}`, debugDev);
     return regexp;
@@ -478,15 +478,11 @@ function pairableName(baseField, sourceField) {
   // First check that name matches...
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
     nvdebug(`    name match: '${fieldToString(reducedField1)}'`, debugDev);
-
     return true;
   }
 
-
-  // However, name mismatch is not critical! If Asteri ID matches, it's still a match!
-  // *NOT* sure whether this a good idea.
-  // 2023-01-24 Disable this. Caretaker can fix these later on. Not a job for merge.
-  // We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
+  // However, name mismatch is not critical! If Asteri ID matches, it's still a match! *NOT* sure whether this a good idea.
+  // 2023-01-24 Disable this. Caretaker can fix these later on. Not a job for merge. We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
   // 2023-03-07: Enable this again!
   if (pairableAsteriIDs(baseField, sourceField)) {
     //nvdebug(`    name match based on ASTERI $0'`, debugDev);
@@ -678,7 +674,7 @@ function getCounterpartCandidates(field, record) {
     if (field.tag === '264') {
       return !isCopyrightField264(field);
     }
-    // Copyright year does not contain $a or $b:
+    // Field 260: copyright year does not contain $a or $b:
     return !field.subfields.some(sf => sf.code === 'a' && sf.code === 'b');
   }
 
@@ -687,8 +683,8 @@ function getCounterpartCandidates(field, record) {
 }
 
 export function getCounterpart(baseRecord, sourceRecord, field, config) {
-  // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
-  // Tags 260 and 264 are lumped together.
+  // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal, and tags 260 and 264 are lumped together.
+  // (<= Note that self-merge behaves differently from two records here.)
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
   //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`, debugDev);
   const counterpartCands = getCounterpartCandidates(field, baseRecord).filter(f => !f.mergeCandidate);
@@ -724,3 +720,4 @@ export function getCounterpart(baseRecord, sourceRecord, field, config) {
 
   return null;
 }
+
