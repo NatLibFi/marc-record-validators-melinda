@@ -17,15 +17,19 @@ export default function () {
     description, validate, fix
   };
 
+
   function mergeFieldsWithinRecord(record, config) {
     //const candFields = record.fields.toReversed(); // Node 20+ only! Filter via config?
-    const candFields = record.fields.filter(f => f).reverse();
-    const mergedField = candFields.find(f => mergeField(record, record, f, config));
+    const fields = config && config.tagPattern ? record.get(config.tagPattern) : record.get(/^[1678](?:00|10|11|30)$/u);
+
+    fields.reverse(); // eslint-disable-line functional/immutable-data
+    const mergedField = fields.find(f => mergeField(record, record, f, config));
     if (!mergedField) {
       return;
     }
     record.removeField(mergedField);
     mergeFieldsWithinRecord(record, config);
+
   }
 
   function fix(record, config = undefined) {
