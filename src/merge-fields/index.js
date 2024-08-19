@@ -1,3 +1,10 @@
+// NB! This validator is build on code that merged two different records originally in marc-record-merge-reducers.
+// The idea was to write a validator that can merge fields in one record. (This is a good idea at least for field tags /^[1678](00|10|11|30)$/.)
+// As we don't want copypaste coding everything was moved here, and marc-record-merge-reducers exports mergeField() function.
+// That function uses a lot of stuff that is meant for the two-record-merge case only. Thus the tests for this validator are pretty limited here,
+// and the test coverage is low. The extensive set of tests in in marc-record-merge-reducers for this code.
+
+
 //import createDebugLogger from 'debug';
 import fs from 'fs';
 import path from 'path';
@@ -6,6 +13,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
 
 const description = 'Merge fields within record';
+
 
 // const multimediaRegexp = /multimedia/ui;
 
