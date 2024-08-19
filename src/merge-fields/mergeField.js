@@ -23,52 +23,6 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:me
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-//const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
-
-
-// Should this load default configuration?
-//export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
-
-/*
-export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (baseRecord, sourceRecord) => {
-  nvdebug(`ENTERING mergeField.js`, debugDev);
-
-  const activeTagPattern = getTagPattern(tagPattern, config);
-
-  normalizeEncoding().fix(baseRecord);
-  normalizeEncoding().fix(sourceRecord);
-
-  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
-
-  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));
-
-  const candidateFields = sourceRecord.get(activeTagPattern);
-  //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
-
-
-  candidateFields.forEach(candField => {
-    debugDev(`Now merging (or trying to) field ${fieldToString(candField)}`);
-    mergeField(baseRecord, sourceRecord, candField, config);
-  });
-
-  // Remove deleted fields and field.merged marks:
-  postprocessRecords(baseRecord, sourceRecord);
-
-  return {base: baseRecord, source: sourceRecord};
-  //return {baseRecord2, sourceRecord2};
-
-  function getTagPattern(tagPattern, config) {
-    if (tagPattern) {
-      return tagPattern;
-    }
-    if (config.tagPattern) {
-      return config.tagPattern;
-    }
-    return defCandFieldsRegexp;
-  }
-};
-*/
-
 // NB! Can be do this via config.json?
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
