@@ -1,6 +1,8 @@
-//import {nvdebug} from './utils';
+//import {nvdebug} from '../utils';
 
 export function valueCarriesMeaning(tag, subfieldCode, value) {
+  // Some data is pretty meaningless and as meaningless is pretty close to nothing, this meaningless data should no prevent merge.
+  // The list below is incomples (swedish translations etc)
   if (tag === '260' || tag === '264') {
     // We drop these, instead of normalizing, as KV does not put this information in place...
     if (subfieldCode === 'a') {
