@@ -682,6 +682,13 @@ function getCounterpartCandidates(field, record) {
 
 }
 
+export function baseIsSource(base, source) {
+  base.localTest = true; // eslint-disable-line functional/immutable-data
+  const result = source.localTest;
+  delete base.localTest; // eslint-disable-line functional/immutable-data
+  return result;
+}
+
 export function getCounterpart(baseRecord, sourceRecord, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal, and tags 260 and 264 are lumped together.
   // (<= Note that self-merge behaves differently from two records here.)
@@ -700,10 +707,16 @@ export function getCounterpart(baseRecord, sourceRecord, field, config) {
 
   nvdebug(`Norm to: '${fieldToString(normalizedField)}'`, debugDev);
 
+  const uniqueAlternativeNames = getUniqueAlernativeNames();
 
-  // Try to look for alternative names from base and source record's 9XX fields:
-  const alternativeNames = getAlternativeNamesFrom9XX(baseRecord, field).concat(getAlternativeNamesFrom9XX(sourceRecord, field));
-  const uniqueAlternativeNames = alternativeNames.filter((name, i) => alternativeNames.indexOf(name) === i);
+  function getUniqueAlernativeNames() {
+    if (baseIsSource(baseRecord, sourceRecord)) {
+      return [];
+    }
+    // Try to look for alternative names from base and source record's 9XX fields:
+    const alternativeNames = getAlternativeNamesFrom9XX(baseRecord, field).concat(getAlternativeNamesFrom9XX(sourceRecord, field));
+    return alternativeNames.filter((name, i) => alternativeNames.indexOf(name) === i);
+  }
 
   //nvdebug(` S: ${fieldToString(normalizedField)}`, debugDev);
   // Then find (the index of) the first mathing candidate field and return it.
