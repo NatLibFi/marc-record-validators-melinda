@@ -1,0 +1,5 @@
+{
+  "description": "Validation: merge two 700 fields",
+  "only": false,
+  "fix": false
+}

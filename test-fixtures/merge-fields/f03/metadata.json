@@ -1,0 +1,7 @@
+{
+  "description": "merge relator terms 7XX: merge termless",
+  "comment": "Note that Sukunimi2's $e subfields are not sorted. Nothing is added to the original/earlier field, thus field.merged flag is not set.",
+  "only": false,
+  "fix": true
+
+}

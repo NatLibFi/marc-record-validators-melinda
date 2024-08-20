@@ -1,0 +1,5 @@
+{
+  "description": "F04: Fix: merge a 100 field and multiple 700 fields into a one 100 field",
+  "only": false,
+  "fix": true
+}
