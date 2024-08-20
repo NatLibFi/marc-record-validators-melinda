@@ -14,9 +14,6 @@ import {postprocessRecords} from './mergeOrAddPostprocess.js';
 
 const description = 'Merge fields within record';
 
-
-// const multimediaRegexp = /multimedia/ui;
-
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'merge-fields', 'config.json'), 'utf8'));
 
 export default function () {
