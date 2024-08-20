@@ -1,8 +1,12 @@
-// import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 // const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield6Utils');
 
 import {add8s, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, isValidSubfield8} from './subfield8Utils';
 import {fieldHasSubfield, fieldToString, fieldsToString, nvdebug, subfieldToString} from './utils';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // NB! Subfield 6 is non-repeatable and it should always comes first!
 // NB! Index size should always be 2 (preceding 0 required for 01..09) However, support for 100+ was added on 2023-02-27.
@@ -483,3 +487,12 @@ export function get6s(field, candidateFields) { // NB! Convert field to fields!!
   return relevantFields;
 }
 
+export function resetSubfield6Tag(subfield, tag) {
+  if (!isValidSubfield6(subfield)) {
+    return;
+  }
+  // NB! mainly for 1XX<->7XX transfers
+  const newValue = `${tag}-${subfield.value.substring(4)}`;
+  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
+  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+}
