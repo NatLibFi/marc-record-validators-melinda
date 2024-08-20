@@ -127,7 +127,7 @@ function sourceRecordIsBetter(baseField, sourceField) {
   }
 
   function isAsteriField(field) {
-    if (field.subfields.some(sf => sf.code === '0' && sf.value.match(/^\((?:FI-ASTERI-N|FIN11)\)[0-9]{9}$/u))) {
+    if (field.subfields.some(sf => sf.code === '0' && sf.value.match(/^\((?:FI-ASTERI-[NW]|FIN1[13])\)[0-9]{9}$/u))) {
       return true;
     }
   }
