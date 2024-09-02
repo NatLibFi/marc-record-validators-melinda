@@ -6,15 +6,17 @@
 
 
 //import createDebugLogger from 'debug';
-import fs from 'fs';
-import path from 'path';
+//import fs from 'fs';
+//import path from 'path';
 import {mergeField} from './mergeField';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
 
 const description = 'Merge fields within record';
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'merge-fields', 'config.json'), 'utf8'));
+import {mergeConfig as defaultConfig} from './mergeConfig.js';
+
+//const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'merge-fields', 'config.json'), 'utf8'));
 
 export default function () {
 
