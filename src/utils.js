@@ -1,14 +1,15 @@
 import createDebugLogger from 'debug';
 
-import fs from 'fs';
-import path from 'path';
+//import fs from 'fs';
+//import path from 'path';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'melindaCustomMergeFields.json'), 'utf8'));
+import {melindaCustomMergeFields as melindaFields} from './melindaCustomMergeFields';
 
+//JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'melindaCustomMergeFields.json'), 'utf8'));
 
 export function isElectronicMaterial(record) {
   const f337s = record.get('337');

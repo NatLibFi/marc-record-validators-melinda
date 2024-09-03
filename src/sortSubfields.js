@@ -121,6 +121,7 @@ const subfieldSortOrder = [
   {'tag': '810', 'sortOrder': sortOrderForX10},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
+  {'tag': '856', 'sortOrder': ['3', 'u', 'q', 'x', 'y', 'z', '5']}, // incomplete, LoC examples are inconclusive
   {'tag': '880', 'sortOrder': ['6', 'a']},
   {'tag': '946', 'sortOrder': sortOrderFor246},
   {'tag': 'LOW', 'sortOrder': ['a', 'b', 'c', 'l', 'h']},

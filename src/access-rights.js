@@ -1,6 +1,6 @@
 import {isElectronicMaterial} from './utils';
 
-export default function () {
+export default function (isViolaRecord = false) {
   const sf506 = [{code: 'a', value: /aineisto on käytettävissä vapaakappaletyöasemilla/ui}];
   const sf506old = [{code: 'a', value: /aineisto on käytettävissä vapaakappalekirjastoissa/ui}];
   const sf540 = [{code: 'c', value: /laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä/ui}];
@@ -10,27 +10,27 @@ export default function () {
 
     // If material is electronic add theis if missing
     if (!hasTag(record, '506', sf506) && !hasTag(record, '506', sf506old)) { // eslint-disable-line functional/no-conditional-statements
+      const subfield9 = isViolaRecord ? [{code: '9', value: 'VIOLA<KEEP>'}] : [{code: '9', value: 'FENNI<KEEP>'}];
+      const staticSubfields = [
+        {
+          code: 'a',
+          value: 'Aineisto on käytettävissä vapaakappaletyöasemilla.'
+        }, {
+          code: 'f',
+          value: 'Online access with authorization'
+        }, {
+          code: '2',
+          value: 'star'
+        }, {
+          code: '5',
+          value: 'FI-Vapaa'
+        }
+      ];
+
       record.insertField({
         tag: '506',
         ind1: '1',
-        subfields: [
-          {
-            code: 'a',
-            value: 'Aineisto on käytettävissä vapaakappaletyöasemilla.'
-          }, {
-            code: 'f',
-            value: 'Online access with authorization'
-          }, {
-            code: '2',
-            value: 'star'
-          }, {
-            code: '5',
-            value: 'FI-Vapaa'
-          }, {
-            code: '9',
-            value: 'FENNI<KEEP>'
-          }
-        ]
+        subfields: staticSubfields.concat(subfield9)
       });
     }
 
@@ -42,7 +42,7 @@ export default function () {
         .value = 'Aineisto on käytettävissä vapaakappaletyöasemilla.';
     }
 
-    if (!hasTag(record, '540', sf540)) { // eslint-disable-line functional/no-conditional-statements
+    if (!hasTag(record, '540', sf540) && !isViolaRecord) { // eslint-disable-line functional/no-conditional-statements
       record.insertField({
         tag: '540',
         subfields: [
@@ -78,7 +78,7 @@ export default function () {
       return {valid: true};
     }
 
-    return {valid: hasTag(record, '506', sf506) && hasTag(record, '540', sf540)};
+    return {valid: hasTag(record, '506', sf506) && (hasTag(record, '540', sf540) || isViolaRecord)};
   }
 
   return {
