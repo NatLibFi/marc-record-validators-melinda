@@ -1368,6 +1368,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1384,6 +1385,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1608,6 +1610,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1674,6 +1677,31 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'c', 'repeatable': true},
         {'code': 'g', 'repeatable': true},
         {'code': '6', 'repeatable': false},
+        {'code': '8', 'repeatable': true}
+      ]
+    },
+    {
+      'tag': '361',
+      'repeatable': true,
+      'fieldType': 'dataField',
+      'indicators': {'ind1': [' ', '0', '1'], 'ind2': ' '},
+      'subfields': [
+        {'code': 'a', 'repeatable': false},
+        {'code': 'f', 'repeatable': true},
+        {'code': 'k', 'repeatable': false},
+        {'code': 'l', 'repeatable': false},
+        {'code': 'o', 'repeatable': true},
+        {'code': 's', 'repeatable': false},
+        {'code': 'u', 'repeatable': true},
+        {'code': 'x', 'repeatable': true},
+        {'code': 'y', 'repeatable': false},
+        {'code': 'z', 'repeatable': true},
+        {'code': '0', 'repeatable': true},
+        {'code': '1', 'repeatable': true},
+        {'code': '3', 'repeatable': false},
+        {'code': '5', 'repeatable': false},
+        {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1780,6 +1808,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '3', 'repeatable': false},
         {'code': '4', 'repeatable': true},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1796,6 +1825,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1811,6 +1841,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1828,6 +1859,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1852,6 +1884,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1869,6 +1902,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1883,6 +1917,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '1', 'repeatable': true},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1901,6 +1936,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1921,6 +1957,35 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '3', 'repeatable': false},
         {'code': '4', 'repeatable': true},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
+        {'code': '8', 'repeatable': true}
+      ]
+    },
+    {
+      'tag': '387',
+      'repeatable': true,
+      'fieldType': 'dataField',
+      'indicators': {'ind1': ' ', 'ind2': ' '},
+      'subfields': [
+        {'code': 'a', 'repeatable': true},
+        {'code': 'b', 'repeatable': true},
+        {'code': 'c', 'repeatable': true},
+        {'code': 'd', 'repeatable': true},
+        {'code': 'e', 'repeatable': true},
+        {'code': 'f', 'repeatable': true},
+        {'code': 'g', 'repeatable': true},
+        {'code': 'h', 'repeatable': true},
+        {'code': 'i', 'repeatable': true},
+        {'code': 'j', 'repeatable': true},
+        {'code': 'k', 'repeatable': true},
+        {'code': 'l', 'repeatable': true},
+        {'code': 'm', 'repeatable': true},
+        {'code': '0', 'repeatable': true},
+        {'code': '1', 'repeatable': true},
+        {'code': '2', 'repeatable': false},
+        {'code': '3', 'repeatable': false},
+        {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1936,6 +2001,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1964,6 +2030,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '3', 'repeatable': false},
         {'code': '5', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1976,6 +2043,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'a', 'repeatable': false},
         {'code': '5', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -1992,6 +2060,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'g', 'repeatable': false},
         {'code': 'o', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2019,6 +2088,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 't', 'repeatable': true},
         {'code': 'u', 'repeatable': true},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2064,6 +2134,7 @@ export const melindaCustomMergeFields = {'fields':
       'subfields': [
         {'code': 'a', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2094,6 +2165,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'x', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2152,6 +2224,7 @@ export const melindaCustomMergeFields = {'fields':
       'subfields': [
         {'code': 'a', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2197,6 +2270,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '2', 'repeatable': false},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2501,6 +2575,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'b', 'repeatable': true},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2523,6 +2598,7 @@ export const melindaCustomMergeFields = {'fields':
       'subfields': [
         {'code': 'a', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2567,6 +2643,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'u', 'repeatable': true},
         {'code': '3', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -2718,6 +2795,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': '3', 'repeatable': false},
         {'code': '5', 'repeatable': false},
         {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': true},
         {'code': '8', 'repeatable': true}
       ]
     },
@@ -3760,6 +3838,28 @@ export const melindaCustomMergeFields = {'fields':
       ]
     },
     {
+      'tag': '778',
+      'repeatable': true,
+      'fieldType': 'dataField',
+      'indicators': {'ind1': ['0', '1'], 'ind2': [' ', '8']},
+      'subfields': [
+        {'code': 'a', 'repeatable': false},
+        {'code': 'b', 'repeatable': false},
+        {'code': 'd', 'repeatable': false},
+        {'code': 'e', 'repeatable': false},
+        {'code': 'i', 'repeatable': true},
+        {'code': 'n', 'repeatable': true},
+        {'code': 's', 'repeatable': false},
+        {'code': 't', 'repeatable': false},
+        {'code': 'w', 'repeatable': true},
+        {'code': 'x', 'repeatable': false},
+        {'code': '4', 'repeatable': true},
+        {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': false},
+        {'code': '8', 'repeatable': true}
+      ]
+    },
+    {
       'tag': '780',
       'repeatable': true,
       'fieldType': 'dataField',
@@ -3882,6 +3982,7 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'y', 'repeatable': false},
         {'code': 'z', 'repeatable': true},
         {'code': '4', 'repeatable': true},
+        {'code': '5', 'repeatable': false},
         {'code': '6', 'repeatable': false},
         {'code': '7', 'repeatable': false},
         {'code': '8', 'repeatable': true}
@@ -4196,28 +4297,31 @@ export const melindaCustomMergeFields = {'fields':
         {'code': 'e', 'repeatable': false}
       ]
     },
+    // The new specs
     {
       'tag': '856',
       'repeatable': true,
       'fieldType': 'dataField',
-      'indicators': {'ind1': [' ', '0', '1', '2', '3', '4', '7'], 'ind2': ['0', '1', '2', '8']},
+      'indicators': {'ind1': [' ', '0', '1', '2', '3', '4', '7'], 'ind2': ['0', '1', '2', '3', '4', '8']},
       'subfields': [
         {'code': 'a', 'repeatable': true},
-        {'code': 'b', 'repeatable': true},
+        // {'code': 'b', 'repeatable': true},
         {'code': 'c', 'repeatable': true},
         {'code': 'd', 'repeatable': true},
+        {'code': 'e', 'repeatable': true},
         {'code': 'f', 'repeatable': true},
-        {'code': 'h', 'repeatable': false},
-        {'code': 'i', 'repeatable': true},
-        {'code': 'j', 'repeatable': false},
-        {'code': 'k', 'repeatable': false},
-        {'code': 'l', 'repeatable': false},
+        {'code': 'g', 'repeatable': true},
+        {'code': 'h', 'repeatable': true},
+        //{'code': 'i', 'repeatable': true},
+        //{'code': 'j', 'repeatable': false},
+        //{'code': 'k', 'repeatable': false},
+        {'code': 'l', 'repeatable': true},
         {'code': 'm', 'repeatable': true},
-        {'code': 'n', 'repeatable': false},
+        {'code': 'n', 'repeatable': true},
         {'code': 'o', 'repeatable': false},
         {'code': 'p', 'repeatable': false},
-        {'code': 'q', 'repeatable': false},
-        {'code': 'r', 'repeatable': false},
+        {'code': 'q', 'repeatable': true},
+        {'code': 'r', 'repeatable': true},
         {'code': 's', 'repeatable': true},
         {'code': 't', 'repeatable': true},
         {'code': 'u', 'repeatable': true},
