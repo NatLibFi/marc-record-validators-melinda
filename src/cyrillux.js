@@ -112,15 +112,11 @@ export default function (config = {}) {
     if (!field.subfields) {
       return false;
     }
-    // MELINDA-10330: $6 should not prevent translittaration per se.
-    // Skip fields that already have a translitteration.
-    /*
-    if (field.subfields.some(sf => sf.code === '6')) {
+    // MELINDA-10330: $6 should not prevent translittaration per se, so this restriction is no longer applied!
+
+    if (field.subfields.some(sf => sf.code === '9' && sf.value.includes('<TRANS>'))) {
       return false;
     }
-    */
-
-    // NB! We should check corresponging 880 fields here!
 
     return fieldContainsCyrillicCharacters(field); // We have something to translitterate:
   }
@@ -222,7 +218,7 @@ export default function (config = {}) {
     if (!config.doSFS4900Transliteration) {
       return false;
     }
-    return !existingPairedFields.some(f => fieldHasSubfield(f, '9', 'SFS4900 <TRANS>'));
+    return !existingPairedFields.some(f => fieldHasSubfield(f, '9', sfs4900Trans));
   }
 
   function processField(originalField, record, maxCreatedOccurrenceNumber = 0) {
