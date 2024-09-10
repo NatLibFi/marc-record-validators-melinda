@@ -1,0 +1,10 @@
+{
+  "description": "Fix: fields 100  and 245 require translitteration, even if they already have unnamed 880 pair",
+  "comment": "Tests incrementation of occurrence numbers and usage of config",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": true,
+    "doSFS4900Transliteration": true
+  }
+}
