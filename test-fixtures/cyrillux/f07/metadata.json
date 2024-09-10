@@ -1,0 +1,10 @@
+{
+  "description": "Fix: fields 100  and 245: one translation is missing and the other one exists: add missing translation, keep existin (crappy translation) ",
+  "comment": "Tests also incrementation of occurrence number.",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": true,
+    "doSFS4900Transliteration": true
+  }
+}
