@@ -135,15 +135,17 @@ export default function (config = {}) {
 
   function mapFieldToIso9(field, occurrenceNumber) {
     // This is the original non-880 field, that will be converted from Cyrillic to ISO
+
+    // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
+    if (!config.doISO9Transliteration && !config.doSFS4900Transliteration) {
+      const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
+      return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
+    }
+
     const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
     const subfield9 = fieldHasSubfield(field, '9', iso9Trans) ? [] : [{code: '9', value: iso9Trans}];
 
     const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToIso9(sf));
-
-    // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
-    if (!config.doISO9Transliteration && !config.doSFS4900Transliteration) {
-      return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
-    }
 
     return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
   }
