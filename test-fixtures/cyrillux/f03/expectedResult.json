@@ -9,11 +9,11 @@
       { "code": "a", "value": "Sudʹby razvedčikov." }
     ]},
     {"tag": "500", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "8", "value": "880-01"},
+      { "code": "6", "value": "880-01"},
       { "code": "a", "value": "FOO."}
     ]},
     {"tag": "880", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "8", "value": "500-01"},
+      { "code": "6", "value": "500-01"},
       { "code": "a", "value": "BAR."}
     ]}
   ]
