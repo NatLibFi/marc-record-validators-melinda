@@ -80,7 +80,6 @@ export function subfield6HasWantedTagAndOccurrenceNumber(subfield, tagAndOccurre
 export function fieldGetUnambiguousTag(field) {
   const tags = field.subfields.filter(sf => subfield6GetTag(sf));
   if (tags.length === 1) {
-    nvdebug(`   GOT ${tags.length} tag(s): ${subfieldToString(tags[0])}`);
     return subfield6GetTag(tags[0]);
   }
   return undefined;
