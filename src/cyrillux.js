@@ -104,7 +104,9 @@ export default function (config = {}) {
   }
 
   function fieldCanBeTransliterated(field) {
-    // Skip certain tags ('880' is the actual skip-me beef here, but we have seen other no-nos as well)
+    // Skip certain tags ('880' is the actual skip-me beef here, but we have seen other no-nos as well).
+    // Discussion: We should probably also skip others like 05X-08X, 648, 650, 651, and 655, but this needs thinking...
+    // Also I'd like to co CYRILLIC->ISO-9 for field 300 (and others?) without 880 mappings...
     if (['336', '337', '338', '880'].includes(field.tag)) {
       return false;
     }
