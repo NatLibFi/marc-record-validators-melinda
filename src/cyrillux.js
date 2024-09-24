@@ -122,18 +122,12 @@ export default function (config = {}) {
   }
 
 
-  function mapSubfieldToIso9(subfield, tag) {
+  function mapSubfieldToIso9(subfield) {
     if (!subfieldShouldTransliterateToIso9(subfield)) {
       return {code: subfield.code, value: subfield.code}; // just clone
     }
-    const value = iso9.convertToLatin(localHacks(subfield.value));
+    const value = iso9.convertToLatin(subfield.value);
 
-    function localHacks(value) {
-      if (tag === '300') { // we want 'cm' not 'sm' :)
-        return value.replace(/ см($|[ .,:;])/gu, ' cm$1'); // eslint-disable-line prefer-named-capture-group
-      }
-      return value;
-    }
     return {code: subfield.code, value};
   }
 
@@ -148,14 +142,14 @@ export default function (config = {}) {
 
     // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
     if (!config.doISO9Transliteration && !config.doSFS4900Transliteration) {
-      const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf, field.tag));
+      const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 
     const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
     const subfield9 = fieldHasSubfield(field, '9', iso9Trans) ? [] : [{code: '9', value: iso9Trans}];
 
-    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToIso9(sf, field.tag));
+    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToIso9(sf));
 
     return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
   }
