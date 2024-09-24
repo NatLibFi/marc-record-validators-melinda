@@ -126,7 +126,7 @@ export default function (config = {}) {
 
   function mapSubfieldToIso9(subfield) {
     if (!subfieldShouldTransliterateToIso9(subfield)) {
-      return {code: subfield.code, value: subfield.code}; // just clone
+      return {code: subfield.code, value: subfield.value}; // just clone
     }
     const value = iso9.convertToLatin(subfield.value);
 
