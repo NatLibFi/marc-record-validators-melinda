@@ -1,6 +1,7 @@
 {
   "description": "Fix MELINDA-10330: fields 100  and 245 are already in SFS-4900 and their only 880 pairs are Cyrillic",
   "comment": "Use 880 to create 100/245 in ISO-9. Move original SFS-4900 to 880, add $9s",
+  "comment #2": "Note that the original punctuation in 100/245 is overwritten with punctuation from paired 880",
   "only": false,
   "fix": true,
   "config": {
