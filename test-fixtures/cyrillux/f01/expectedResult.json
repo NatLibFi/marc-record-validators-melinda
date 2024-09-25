@@ -4,7 +4,8 @@
   "fields": [
     { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "880-01"},
-      { "code": "a", "value": "Modin, Ûrij Ivanovič." },
+      { "code": "a", "value": "Modin, Ûrij Ivanovič," },
+      { "code": "e", "value": "testaaja." },
       { "code": "9", "value": "ISO9 <TRANS>"}
     ]},
     { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
@@ -19,12 +20,14 @@
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       {"code": "6", "value": "100-01"},
-      {"code": "a", "value": "Модин, Юрий Иванович."},
+      {"code": "a", "value": "Модин, Юрий Иванович,"},
+      { "code": "e", "value": "testaaja." },
       {"code": "9", "value": "CYRILLIC <TRANS>"}
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       {"code": "6", "value": "100-01"},
-      {"code": "a", "value": "Modin, Juri Ivanovitš."},
+      {"code": "a", "value": "Modin, Juri Ivanovitš,"},
+      { "code": "e", "value": "testaaja." },
       {"code": "9", "value": "SFS4900 <TRANS>"}
     ]},
     { "tag": "880", "ind1": " ", "ind2": " ", "subfields": [

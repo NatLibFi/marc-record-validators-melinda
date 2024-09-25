@@ -2,7 +2,8 @@
   "leader": "12345cam  22123454i 4500",
   "fields": [
     { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
-        { "code": "a", "value": "Модин, Юрий Иванович." }
+        { "code": "a", "value": "Модин, Юрий Иванович," },
+        { "code": "e", "value": "testaaja." }
     ]},
     { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "5 см." }
