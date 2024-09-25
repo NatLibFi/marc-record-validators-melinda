@@ -1,0 +1,104 @@
+{
+  "leader": "00000cam a22008174i 4500",
+  "fields": [
+    { "tag": "001", "value": "019168678" },
+    { "tag": "003", "value": "FI-MELINDA" },
+    { "tag": "005", "value": "20240909171519.0" },
+    { "tag": "008", "value": "240903s2024    ru a          000|0|rus|c" },
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "FI-He" },
+      { "code": "b", "value": "fin" },
+      { "code": "e", "value": "rda" },
+      { "code": "d", "value": "FI-Piki" }
+    ]},
+    { "tag": "041", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "rus" }
+    ]},
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01" },
+      { "code": "a", "value": "Moskalenko, N. V.," },
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "6", "value": "880-02" },
+      { "code": "a", "value": "Sekrety peterburgskih dvortsov :" },
+      { "code": "b", "value": "ih tainy, simvoly i sozdateli /" },
+      { "code": "c", "value": "Moskalenko N.V." }
+    ]},
+    { "tag": "246", "ind1": "3", "ind2": "0", "subfields": [
+      { "code": "6", "value": "880-03" },
+      { "code": "a", "value": "Ih tainy, simvoly i sozdateli" }
+    ]},
+    { "tag": "246", "ind1": "3", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sekrety peterburgskih dvorcov" }
+    ]},
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "6", "value": "880-04" },
+      { "code": "a", "value": "Moskva :" },
+      { "code": "b", "value": "BOMBORA," },
+      { "code": "c", "value": "2024." }
+    ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "204 sivua" }
+    ]},
+    { "tag": "336", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "teksti" },
+      { "code": "b", "value": "txt" },
+      { "code": "2", "value": "rdacontent" }
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-05" },
+      { "code": "a", "value": "Dva serdtsa Rossii. Podarochnye izdanija" }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "100-01" },
+      { "code": "a", "value": "Москаленко, Н. В." },
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "6", "value": "245-02" },
+      { "code": "a", "value": "Секреты петербургских дворцов :" },
+      { "code": "b", "value": "их тайны, символы и создатели /" },
+      { "code": "c", "value": "Москаленко Н.В." }
+    ]},
+    { "tag": "880", "ind1": "3", "ind2": "0", "subfields": [
+      { "code": "6", "value": "246-03" },
+      { "code": "a", "value": "Их тайны, символы и создатели" }
+    ]},
+    { "tag": "880", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "6", "value": "264-04" },
+      { "code": "a", "value": "Москва :" },
+      { "code": "b", "value": "БОМБОРА Издательство," },
+      { "code": "c", "value": "2024." }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-05" },
+      { "code": "a", "value": "Два сердца России. Подарочные издания" }
+    ]},
+    { "tag": "884", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Helmet to Melinda MARC transformation" },
+      { "code": "g", "value": "20240903" },
+      { "code": "k", "value": "HELMET:6ab959d4b216289318aebf01167b80d38fa7a2d6844c5d55588823cb63dd1fe3" },
+      { "code": "q", "value": "FI-NL" },
+      { "code": "5", "value": "MELINDA" }
+    ]},
+    { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "c", "value": "2587473" },
+      { "code": "b", "value": "helme" }
+    ]},
+    { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "c", "value": "(ANDL100008)5557598" },
+      { "code": "b", "value": "piki" }
+    ]},
+    { "tag": "CAT", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "IMP_HELMET" },
+      { "code": "b", "value": "30" },
+      { "code": "c", "value": "20240903" },
+      { "code": "l", "value": "FIN01" },
+      { "code": "h", "value": "1858" }
+    ]},
+    { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "PIKI" }
+    ]}
+  ]
+}
