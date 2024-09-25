@@ -2,12 +2,13 @@
 import clone from 'clone';
 import {fieldHasSubfield, fieldToString, fieldsToString, isControlSubfieldCode, nvdebug} from './utils';
 import * as iso9 from 'iso9_1995';
-import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils';
+import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils';
 
 import XRegExp from 'xregexp';
 import * as sfs4900 from 'sfs4900';
 import {default as sortFields} from './sortFields';
 import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers';
+import {fieldStripPunctuation} from './punctuation2';
 
 const iso9Trans = 'ISO9 <TRANS>';
 const cyrillicTrans = 'CYRILLIC <TRANS>';
@@ -103,18 +104,25 @@ export default function (config = {}) {
     return containsCyrillicCharacters(subfield.value);
   }
 
+  function tagCanBeTransliterated(tag) {
+    return !['336', '337', '338', '880'].includes(tag);
+  }
+
   function fieldCanBeTransliterated(field) {
     // Skip certain tags ('880' is the actual skip-me beef here, but we have seen other no-nos as well).
     // Discussion: We should probably also skip others like 05X-08X, 648, 650, 651, and 655, but this needs thinking...
-    // Also I'd like to co CYRILLIC->ISO-9 for field 300 (and others?) without 880 mappings...
-    if (['336', '337', '338', '880'].includes(field.tag)) {
+    // Also I'd like to convert do CYRILLIC->ISO-9 in field 300 (and others?) without 880 mappings... (<- not implemented)
+
+    // nvdebug(`fieldCanBeTransliterated('${fieldToString(field)}') in...`);
+    if (!tagCanBeTransliterated(field.tag)) {
       return false;
     }
+
     // Skip control fields:
     if (!field.subfields) {
       return false;
     }
-    // MELINDA-10330: $6 should not prevent translittaration per se, so this restriction is no longer applied!
+    // When doing MELINDA-10330-ish, we noticed that $6 should not prevent translittaration per se, so this restriction is no longer applied!
 
     if (field.subfields.some(sf => sf.code === '9' && sf.value.includes('<TRANS>'))) {
       return false;
@@ -126,7 +134,7 @@ export default function (config = {}) {
 
   function mapSubfieldToIso9(subfield) {
     if (!subfieldShouldTransliterateToIso9(subfield)) {
-      return {code: subfield.code, value: subfield.code}; // just clone
+      return {code: subfield.code, value: subfield.value}; // just clone
     }
     const value = iso9.convertToLatin(subfield.value);
 
@@ -182,7 +190,7 @@ export default function (config = {}) {
     ];
 
     const newField = {tag: '880', ind1: field.ind1, ind2: field.ind2, subfields};
-    nvdebug(`       CYR 880      ${fieldToString(newField)}`);
+    nvdebug(`   New CYR 880      ${fieldToString(newField)}`);
     return newField;
   }
 
@@ -229,21 +237,84 @@ export default function (config = {}) {
     return !existingPairedFields.some(f => fieldHasSubfield(f, '9', sfs4900Trans));
   }
 
+  function sfs4900PairCanBeTransliterated(field, record) {
+    // MELINDA-10330: we already have public library data: (unmarked) SFS-4900 in FIELD and (unmarked) Cyrillic in 880
+    if (!tagCanBeTransliterated(field.tag) || !config.doISO9Transliteration) {
+      return false;
+    }
+
+    // Original field: $9 ISO9 <TRANS> is the only legal <TRANS>
+    if (fieldContainsCyrillicCharacters(field) || field.subfields.some(sf => sf.code === '9' && sf.value.includes('<TRANS>') && sf.value !== iso9Trans)) {
+      return false;
+    }
+
+    const existingPairedFields = fieldGetOccurrenceNumberPairs(field, record.get('880'));
+    if (existingPairedFields.length !== 1) {
+      return false;
+    }
+
+    // Paired field: $9 CYRILLIC <TRANS> is the only legal <TRANS>
+    const [pairedField] = existingPairedFields;
+    if (!fieldContainsCyrillicCharacters(pairedField) || pairedField.subfields.some(sf => sf.code === '9' && sf.value.includes('<TRANS>') && sf.value !== cyrillicTrans)) {
+      return false;
+    }
+
+    // Actually check that original field and and sfs-4900-fied cyrillic field are equal (after punctuation clean-up),
+    // and thus it's a real case of MELINDA-10330 ISO9 adding:
+    const occurrenceNumberAsString = fieldGetUnambiguousOccurrenceNumber(field);
+    const field2 = fieldToString(createFieldForSfs4900Comparison(mapFieldToSfs4900Field880(pairedField, occurrenceNumberAsString), field.tag));
+    const field1 = fieldToString(createFieldForSfs4900Comparison(field, field.tag));
+    nvdebug(`COMPARE CONTENTS:\n  '${field1}' vs\n  '${field2}': ${field1 === field2 ? 'OK' : 'FAIL'}`);
+    return field1 === field2;
+  }
+
+  function createFieldForSfs4900Comparison(field, tag) {
+    const clonedField = clone(field);
+    clonedField.tag = tag; // eslint-disable-line functional/immutable-data
+    clonedField.subfields = clonedField.subfields.filter(sf => sf.code !== '9' || sf.value !== sfs4900Trans); // eslint-disable-line functional/immutable-data
+    return fieldStripPunctuation(clonedField);
+  }
+
+  function transliterateSfs4900Pair(field, record) {
+    // Handle MELINDA-10330: Field is already in SFS-4900 and the only paired field is in Cyrillic!
+    const [pairedField] = fieldGetOccurrenceNumberPairs(field, record.get('880'));
+
+    const occurrenceNumberAsString = fieldGetUnambiguousOccurrenceNumber(field);
+
+    const tmpField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, 'subfields': pairedField.subfields};
+
+    const newMainField = mapFieldToIso9(tmpField, occurrenceNumberAsString); // Cyrillic => ISO-9
+    const newCyrillicField = mapFieldToCyrillicField880(tmpField, occurrenceNumberAsString); // CYRILLIC
+    const newSFS4900Field = mapFieldToSfs4900Field880(field, occurrenceNumberAsString); // SFS-4900
+
+    // Trigger the drop of original counterpart $6 :
+    pairedField.cyrilluxSkip = 1; // eslint-disable-line functional/immutable-data
+
+    return [newMainField, newCyrillicField, newSFS4900Field].filter(f => f);
+  }
+
+
   function processField(originalField, record, maxCreatedOccurrenceNumber = 0) {
     if (!fieldCanBeTransliterated(originalField)) {
+      if (sfs4900PairCanBeTransliterated(originalField, record)) { // MELINDA-10330
+        return transliterateSfs4900Pair(originalField, record);
+      }
+      if (originalField.cyrilluxSkip) { // MELINDA-10330 hack to remove 880 fields that were replaced/sort-of processed with their counterpair.
+        return [];
+      }
       return [originalField];
     }
 
-    nvdebug(`PROCESSING: ${fieldToString(originalField)}`);
+    // nvdebug(`PROCESSING: ${fieldToString(originalField)}`);
 
     const newOccurrenceNumberAsInt = getNewOccurrenceNumber(originalField, record, maxCreatedOccurrenceNumber);
     const newOccurrenceNumberAsString = intToOccurrenceNumberString(newOccurrenceNumberAsInt);
 
-    nvdebug(`NEW OCCURRENCE NUMBER: '${newOccurrenceNumberAsString}'`);
+    // nvdebug(`NEW OCCURRENCE NUMBER: '${newOccurrenceNumberAsString}'`);
 
     const existingPairedFields = fieldGetOccurrenceNumberPairs(originalField, record.get('880'));
 
-    nvdebug(`NUMBER OF PAIRED 880 FIELDS: ${existingPairedFields.length}`);
+    // nvdebug(`NUMBER OF PAIRED 880 FIELDS: ${existingPairedFields.length}`);
 
     const newMainField = mapFieldToIso9(originalField, newOccurrenceNumberAsString); // ISO-9
     const newCyrillicField = needsIso9Transliteration(existingPairedFields) ? mapFieldToCyrillicField880(originalField, newOccurrenceNumberAsString) : undefined; // CYRILLIC

@@ -1,0 +1,27 @@
+{
+  "leader": "12345cam  22123454i 4500",
+  "fields": [
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01"},
+      { "code": "a", "value": "Modin, Juri Ivanovitš M.," },
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "245", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-02"},
+      { "code": "a", "value": "Sekrety peterburgskih dvortsov :" },
+      { "code": "b", "value": "ih tainy, simvoly i sozdateli /" },
+      { "code": "c", "value": "Moskalenko N.V."}
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "100-01"},
+      {"code": "a", "value": "Модин, Юрий Иванович М."},
+      {"code": "e", "value": "kirjoittaja."}
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "245-02"},
+      {"code": "a", "value": "Секреты петербургских дворцов :"},
+      {"code": "b", "value": "их тайны, символы и создатели /"},
+      {"code": "c", "value": "Москаленко Н.В."}
+    ]}
+  ]
+}
