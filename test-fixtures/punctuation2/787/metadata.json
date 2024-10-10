@@ -1,0 +1,5 @@
+{
+  "description":"Remove punctuation from 787",
+  "fix": true,
+  "only": false
+}
