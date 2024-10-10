@@ -1,0 +1,7 @@
+{
+  "description": "F15: MET-573. Similar to F14? Should this have a 020?",
+  "fix": true,
+  "skip": true,
+  "only": false,
+  "isLegalDeposit": true
+}
