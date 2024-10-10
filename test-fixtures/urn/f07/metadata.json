@@ -1,0 +1,6 @@
+{
+  "description": "F07. 856 with urn and legal deposit fields, and is legal deposit but phrase is old; change phrase to new",
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": true
+}

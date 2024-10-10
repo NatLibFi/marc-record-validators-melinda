@@ -1,0 +1,6 @@
+{
+  "description": "Finds the record valid; non-electronic record",
+  "fix": false,
+  "only": false,
+  "isLegalDeposit": false
+}

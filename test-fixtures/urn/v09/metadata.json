@@ -1,0 +1,6 @@
+{
+  "description": "Finds the record valid; 856 with URN and legal deposit subfields, and is legal deposit",
+  "fix": false,
+  "only": false,
+  "isLegalDeposit": true
+}

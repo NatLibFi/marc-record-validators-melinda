@@ -1,0 +1,6 @@
+{
+  "description": "Finds the record invalid; 856 ind2: 1 with urn, and is non-legal deposit",
+  "fix": false,
+  "only": false,
+  "isLegalDeposit": false
+}
