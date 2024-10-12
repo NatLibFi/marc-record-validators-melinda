@@ -1,0 +1,5 @@
+{
+  "description":"Add punctuation from 787",
+  "fix": true,
+  "only": false
+}

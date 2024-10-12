@@ -1,0 +1,6 @@
+{
+  "description": "F14: 856 with non-resource-urn, and is legal deposit; Adds another f856 with URN and legal deposit fields",
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": true
+}

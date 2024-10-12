@@ -1,0 +1,6 @@
+{
+  "description": "Finds the record invalid; 856 with URN and partial legal deposit subfields, and is legal deposit. Same as MET-573",
+  "fix": false,
+  "only": false,
+  "isLegalDeposit": true
+}

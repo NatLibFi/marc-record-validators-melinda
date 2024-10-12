@@ -1,0 +1,6 @@
+{
+  "description": "Finds the record invalid; Missing 856, and is legal deposit",
+  "fix": false,
+  "only": false,
+  "isLegalDeposit": true
+}

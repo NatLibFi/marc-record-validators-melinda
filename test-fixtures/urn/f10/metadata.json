@@ -1,0 +1,7 @@
+{
+  "description": "we should test creating Melinda-temp field",
+  "skip": true,
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": true
+}

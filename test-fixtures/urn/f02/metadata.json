@@ -1,0 +1,7 @@
+{
+  "description": "F02. 856 without urn, and is non-legal deposit; Adds 856 with urn (https)",
+  "comment": "should we actually add non-resolvable urns?",
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": false
+}

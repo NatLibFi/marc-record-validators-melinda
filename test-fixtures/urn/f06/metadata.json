@@ -1,0 +1,6 @@
+{
+  "description": "F06. 856 with urn and legal deposit fields, and is legal deposit; Nothing to add",
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": true
+}

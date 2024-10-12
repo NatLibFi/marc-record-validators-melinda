@@ -1,0 +1,6 @@
+{
+  "description": "F08. 856 without urn, and is legal deposit; Adds 856 with urn (https) and legal deposit fields",
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": true
+}

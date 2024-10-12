@@ -1,0 +1,9 @@
+{
+  "description": "F05. Missing 856, and is non-legal deposit, two 020 fields; Adds 856 with urn from first 020 (https)",
+  "comment": "should we actually add non-resolvable urns?",
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": false,
+  "comment #2": "we should think about how to choose the isbn to use in case of several ISBNs",
+  "skip": true
+}

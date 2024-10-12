@@ -1,0 +1,7 @@
+{
+  "description": "we should test generating the URN in case of no ISBN",
+  "skip": true,
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": true
+}

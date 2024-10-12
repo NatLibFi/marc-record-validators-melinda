@@ -1,0 +1,7 @@
+{
+  "description": "F04. Missing 856, and is non-legal deposit, two 020 fields; Adds 856 with urn from second 020 (https)",
+  "comment": "should we actually add non-resolvable urns?",
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": false
+}
