@@ -91,6 +91,8 @@ const defaultNeedsPuncAfter2 = /(?:[\]a-zA-Z0-9)]|ä|å|ö|Å|Ä|Ö)$/u;
 const doesNotEndInPunc = /[^!?.:;,]$/u; // non-punc for pre-240/700/XXX $, note that '.' comes if preceded by ')'
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
+const aToZ = 'abcdefghijklmnopqrstuvwxyz';
+
 
 const dotIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö|(?:[A-Za-z0-9]|Å|Ä|Ö)(?:[A-Z]|Å|Ä|Ö))\.$/u;
 const puncIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö) ?[.,:;]$/u;
@@ -146,7 +148,11 @@ const removeX30Whatever = removeCrapFromAllEntryFields;
 
 const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remove': /(?: *;| *=|,)$/u}];
 
-const linkingEntryWhatever = [{'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'abdghiklmnopqrstuwxyz', 'remove': /\. -$/u}];
+const linkingEntryRemoveWhatever = [
+  {'code': 'i', 'followedBy': 'at', 'remove': / ?:$/u}, // ':'
+  {'code': 'at', 'remove': /\.$/u},
+  {'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'abdghiklmnopqrstuwxyz', 'remove': /\. -$/u}
+];
 
 
 // '!' means negation, thus '!b' means any other subfield but 'b'.
@@ -193,9 +199,10 @@ const cleanCrappyPunctuationRules = {
   '710': removeX10Whatever,
   '711': removeX11Whatever,
   '730': removeX30Whatever,
-  '773': linkingEntryWhatever,
-  '774': linkingEntryWhatever,
-  '776': linkingEntryWhatever,
+  '773': linkingEntryRemoveWhatever,
+  '774': linkingEntryRemoveWhatever,
+  '776': linkingEntryRemoveWhatever,
+  '787': linkingEntryRemoveWhatever,
   '800': removeX00Whatever,
   '810': removeX10Whatever,
   '830': remove490And830Whatever,
@@ -316,6 +323,12 @@ const addSeriesTitle = [ // 490 and 830
   addSemicolonBeforeVolumeDesignation //  eg. 490$axyz-$v
 ];
 
+const addLinkingEntry = [ // NB! Music 773 uses different punctuation rules, that are not implement here (can they even be?)
+  {'code': 'i', 'followedBy': aToZ, 'add': ':', 'context': defaultNeedsPuncAfter2},
+  {'code': 'a', 'followedBy': 't', 'add': '.', 'context': defaultNeedsPuncAfter2},
+  {'code': 't', 'followedBy': 'dghoz', 'add': '.', 'context': defaultNeedsPuncAfter2}
+];
+
 const addPairedPunctuationRules = {
   '100': addX00,
   '110': addX10,
@@ -355,6 +368,8 @@ const addPairedPunctuationRules = {
   '710': addX10,
   '711': addX11,
   '730': addX30,
+  '773': addLinkingEntry,
+  '787': addLinkingEntry,
   '800': addX00,
   '810': addX10,
   '811': addX11,
@@ -485,23 +500,23 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
 
   //nvdebug(`OP=${operation} ${tag2}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`);
   const candRules = ruleArray[tag2];
-  candRules.forEach(rule => {
+  candRules.every(rule => { // uses "every", not "forEach", so that only one rule is applies to the given subfields
     //debugRule(rule);
-    //nvdebug(' WP1');
     if (!checkRule(rule, field, subfield1, subfield2)) {
-      return;
+      return true;
     }
-    //nvdebug(' WP2');
 
     //const originalValue = subfield1.value;
-    if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statements
+    if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) {
       //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
       //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`);
+      return false;
     }
-    if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statements
+    if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) {
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
       //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}'`);
+      return false;
     }
 
     /*
@@ -509,6 +524,8 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
       nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
     }
     */
+
+    return true;
   });
 }
 

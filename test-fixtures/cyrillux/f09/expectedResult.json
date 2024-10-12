@@ -108,12 +108,12 @@
       { "code": "5", "value": "MELINDA" }
     ]},
     { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "c", "value": "(ANDL100008)5557598" },
-      { "code": "b", "value": "piki" }
-    ]},
-    { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "c", "value": "2587473" },
       { "code": "b", "value": "helme" }
+    ]},
+    { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "c", "value": "(ANDL100008)5557598" },
+      { "code": "b", "value": "piki" }
     ]},
     { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "PIKI" }

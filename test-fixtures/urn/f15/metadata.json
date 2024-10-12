@@ -1,0 +1,7 @@
+{
+  "description": "F15: MET-573. Similar to F14.",
+  "fix": true,
+  "skip": false,
+  "only": false,
+  "isLegalDeposit": true
+}

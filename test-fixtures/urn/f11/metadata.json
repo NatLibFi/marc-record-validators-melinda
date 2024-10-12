@@ -1,0 +1,7 @@
+{
+  "description": "We shouldn't lock the open URN for legal deposit use",
+  "skip": true,
+  "fix": true,
+  "only": false,
+  "isLegalDeposit": true
+}

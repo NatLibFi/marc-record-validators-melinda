@@ -8,12 +8,26 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
   const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:urn');
   const debugData = debug.extend('data');
 
+  //console.log(`IS LEGAL DEPOSIT? ${isLegalDeposit ? 'YES' : 'NO'}`); // eslint-disable-line no-console
+
   // We should check that the f856 with URN has second indicator '0' (Resource), ' ' (No information provided) or '8' (No display constant generated)
   // - if second indicator is '1' (Version of resource) or '2' (Related resource) the URN in f856 is not correct for the resource described in the record
 
   // This checks only the existence of URNs from the Finnish urn.fi -resolver
 
-  const hasURN = f => f.tag === '856' && f.subfields.some(({code, value}) => code === 'u' && (/urn.fi/u).test(value));
+  function hasLegalDepositURN(field) {
+    if (field.tag !== '856' || ['1', '2', '3', '4'].includes(field.ind2)) {
+      return false;
+    }
+
+    // First attempt to fix MET-573. However, does useMelindaTemp come into play as well?
+    if (isLegalDeposit && !field.subfields.some(sf => sf.code === '5' && sf.value === 'FI-Vapaa')) {
+      return false;
+    }
+
+    return field.subfields.some(sf => sf.code === 'u' && (/^https?:\/\/urn\.fi/u).test(sf.value));
+  }
+
 
   return {
     description: 'Adds URN for record, to 856-field (if not existing). If isLegalDeposit is active, adds legal deposit subfields to the f856s with URN.',
@@ -22,7 +36,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
   };
 
   async function fix(record) {
-    const f856sUrn = record.fields.filter(hasURN);
+    const f856sUrn = record.fields.filter(hasLegalDepositURN);
     debugData(`f856sUrn: ${JSON.stringify(f856sUrn)}`);
 
     const ldSubfields = isLegalDeposit ? createLDSubfields() : [];
@@ -163,7 +177,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
       return {valid: true};
     }
 
-    const f856sUrn = record.fields.filter(hasURN);
+    const f856sUrn = record.fields.filter(hasLegalDepositURN);
 
     if (f856sUrn.length > 0) {
       debug(`Record has ${f856sUrn.length} URN fields`);

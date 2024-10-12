@@ -1,0 +1,6 @@
+{
+  "description": "Finds the record invalid; old phrase is used in $z",
+  "fix": false,
+  "only": false,
+  "isLegalDeposit": true
+}
