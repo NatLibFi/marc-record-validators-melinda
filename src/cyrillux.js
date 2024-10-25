@@ -5,7 +5,7 @@ import * as iso9 from 'iso9_1995';
 import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils';
 
 import XRegExp from 'xregexp';
-import * as sfs4900 from 'sfs4900';
+import * as sfs4900 from '@natlibfi/sfs-4900';
 import {default as sortFields} from './sortFields';
 import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers';
 import {fieldStripPunctuation} from './punctuation2';
