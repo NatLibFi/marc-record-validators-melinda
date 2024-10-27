@@ -11,14 +11,6 @@ export default function () {
     description, validate, fix
   };
 
-  function getLanguageCode(record) {
-    const [f008] = record.get('008');
-    if (f008 && f008.value.length === 40) {
-      return f008.value.substring(35, 38);
-    }
-    return '|||';
-  }
-
   function isRealLanguageCode(languageCode = '|||') {
     nvdebug(`Language code 008/35-37: ${languageCode}`);
     if (!languageCode.match(/^[a-z]{3}$/u) || ['mul', 'und', 'zxx'].includes(languageCode)) {
@@ -72,3 +64,10 @@ export default function () {
   }
 }
 
+export function getLanguageCode(record) {
+  const [f008] = record.get('008');
+  if (f008 && f008.value.length === 40) {
+    return f008.value.substring(35, 38);
+  }
+  return '|||';
+}
