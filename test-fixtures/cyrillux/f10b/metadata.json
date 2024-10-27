@@ -1,0 +1,9 @@
+{
+  "description": "Fix 10b: convert to SFS-4900 using rules for Ukrainian (language based on 008/35-37)",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": true,
+    "doSFS4900Transliteration": true
+  }
+}
