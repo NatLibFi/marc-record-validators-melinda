@@ -14,7 +14,7 @@
     "url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
   },
   "license": "MIT",
-  "version": "11.3.7",
+  "version": "11.3.8-alpha.1",
   "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -37,18 +37,18 @@
     "cover:report": "nyc report"
   },
   "dependencies": {
-    "@babel/register": "^7.25.7",
+    "@babel/register": "^7.25.9",
     "@natlibfi/issn-verify": "^1.0.4",
-    "@natlibfi/marc-record": "^9.0.2",
-    "@natlibfi/marc-record-validate": "^8.0.10",
+    "@natlibfi/marc-record": "^9.1.1",
+    "@natlibfi/marc-record-validate": "^8.0.11",
+    "@natlibfi/sfs-4900": "^1.1.0",
     "cld3-asm": "^3.1.1",
     "clone": "^2.1.2",
     "debug": "^4.3.7",
     "iso9_1995": "^0.0.2",
-    "isbn3": "^1.2.2",
+    "isbn3": "^1.2.3",
     "langs": "^2.0.0",
     "node-fetch": "^2.7.0",
-    "sfs4900": "^0.0.1",
     "xml2js": "^0.6.2",
     "xregexp": "^5.1.1"
   },
@@ -56,9 +56,9 @@
     "@natlibfi/marc-record-validate": "^8.0.10"
   },
   "devDependencies": {
-    "@babel/cli": "^7.25.7",
-    "@babel/core": "^7.25.8",
-    "@babel/preset-env": "^7.25.8",
+    "@babel/cli": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "@natlibfi/eslint-config-melinda-backend": "^3.0.5",
     "@natlibfi/fixugen": "^2.0.10",
     "@natlibfi/fixura": "^3.0.10",
@@ -69,7 +69,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
     "fetch-mock": "^11.1.5",
-    "mocha": "^10.7.3",
+    "mocha": "^10.8.2",
     "nyc": "^17.1.0"
   },
   "eslintConfig": {
