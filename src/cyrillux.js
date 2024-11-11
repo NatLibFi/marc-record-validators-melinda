@@ -159,11 +159,45 @@ export default function (config = {}) {
     }
 
     const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
-    const subfield9 = fieldHasSubfield(field, '9', iso9Trans) ? [] : [{code: '9', value: iso9Trans}];
+    const subfield9 = fieldHasSubfield(field, '9', iso9Trans) ? [] : [{code: '9', value: iso9Trans}]; // Add only if needed
 
     const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToIso9(sf));
 
     return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
+  }
+
+  function mapFieldToSfs4900(field, occurrenceNumber, lang) {
+
+
+    const subfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
+    const subfield9 = fieldHasSubfield(field, '9', sfs4900Trans) ? [] : [{code: '9', value: sfs4900Trans}]; // Add only if needed
+
+    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToSfs4900(sf, lang));
+
+    return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
+  }
+
+  function mapFieldToSfs4900Field880(field, occurrenceNumber, lang = 'rus') {
+    nvdebug(`Derive SFS 880 from ${fieldToString(field)}`);
+    const newField = mapFieldToSfs4900(field, occurrenceNumber, lang);
+    const subfield6 = newField.subfields.find(sf => sf.code === '6');
+    newField.tag = '880'; // eslint-disable-line functional/immutable-data
+    resetSubfield6Tag(subfield6, field.tag);
+    return newField;
+
+    /*
+    const newSubfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
+    const newSubfield9 = fieldHasSubfield(field, '9', sfs4900Trans) ? [] : [{code: '9', value: sfs4900Trans}];
+    const subfields = [
+      newSubfield6,
+      ...field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToSfs4900(sf, lang)),
+      ...newSubfield9
+    ];
+
+    const newField = {tag: '880', ind1: field.ind1, ind2: field.ind2, subfields};
+    nvdebug(`       SFS 880      ${fieldToString(newField)}`);
+    return newField;
+    */
   }
 
   function deriveSubfield6(tag, subfields, occurrenceNumber) {
@@ -193,21 +227,6 @@ export default function (config = {}) {
 
     const newField = {tag: '880', ind1: field.ind1, ind2: field.ind2, subfields};
     nvdebug(`   New CYR 880      ${fieldToString(newField)}`);
-    return newField;
-  }
-
-  function mapFieldToSfs4900Field880(field, occurrenceNumber, lang = 'rus') {
-    nvdebug(`Derive SFS 880 from ${fieldToString(field)}`);
-    const newSubfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
-    const newSubfield9 = fieldHasSubfield(field, '9', sfs4900Trans) ? [] : [{code: '9', value: sfs4900Trans}];
-    const subfields = [
-      newSubfield6,
-      ...field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToSfs4900(sf, lang)),
-      ...newSubfield9
-    ];
-
-    const newField = {tag: '880', ind1: field.ind1, ind2: field.ind2, subfields};
-    nvdebug(`       SFS 880      ${fieldToString(newField)}`);
     return newField;
   }
 
