@@ -66,6 +66,7 @@ export default function () {
     const finnishOnly = getMisses(finnishFields, swedishFields);
     const swedishOnly = getMisses(swedishFields, finnishFields);
 
+    //console.log(` Looking at ${finnishOnly.length} + ${swedishOnly.length} fields`); // eslint-disable-line no-console
     return [...finnishOnly, ...swedishOnly].filter(f => tagAndFieldAgree(f));
 
     function tagAndFieldAgree(field) {
@@ -80,7 +81,7 @@ export default function () {
 
     /* eslint-disable */
     // Dunno how to handle loop+promise combo in our normal coding style. Spent half a day trying... (I reckon it takes like 2 minuts to do this properly...)
-    let prefLabels = []; 
+    let prefLabels = [];
     for (let i=0; i < pairlessFields.length; i += 1) {
       prefLabels[i] = await getPrefLabel(pairlessFields[i]);
     }
@@ -94,17 +95,16 @@ export default function () {
     if (!prefLabels) {
       return undefined;
     }
-    //console.log(`pairFiled() WP 1: ${fieldToString(field)}`); // eslint-disable-line no-console
+    //console.log(`pairField() WP 1: ${fieldToString(field)}`); // eslint-disable-line no-console
     const lexAndLang = getLexiconAndLanguage(field);
-    //console.log(`pairFiled() WP 2: ${JSON.stringify(lexAndLang)}`); // eslint-disable-line no-console
+    //console.log(`pairField() WP 2: ${JSON.stringify(lexAndLang)}`); // eslint-disable-line no-console
     const twoLetterOtherLang = swapLanguageCodeBetweenLanguages(changeAbbr(lexAndLang.lang));
     const prefLabel = prefLabels.find(l => l.lang === twoLetterOtherLang);
-    //console.log(`pairFiled() WP 4: ${JSON.stringify(prefLabel)}`); // eslint-disable-line no-console
+    //console.log(`pairField() WP 4: ${JSON.stringify(prefLabel)}`); // eslint-disable-line no-console
     const sfA = {'code': 'a', 'value': prefLabel.value}; // field.subfields.field(sf => sf.code === 'a');
     const sf0 = clone(field.subfields.find(sf => sf.code === '0'));
     const sf2 = {'code': '2', 'value': `${lexAndLang.lex}/${lexAndLang.lang === 'fin' ? 'swe' : 'fin'}`}; // swap fin <=> swe
     const newField = {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [sfA, sf2, sf0]};
-    //console.log(`DERIVATE: ${JSON.stringify(newField)}`); // eslint-disable-line no-console
     return newField;
   }
 
@@ -128,8 +128,12 @@ export default function () {
   async function getPrefLabel(field) {
     // Tag vs $2 correlation has already been checked!
     const uri = fieldToUri(field);
+    if (!uri) { // $0 is invalid or sumthing
+      return undefined;
+    }
     const prefLabels = await getTermData(uri);
     if (!prefLabels) { // Sanity check. Miss caused by illegal id etc.
+      nvdebug(`No labels found for ${uri}`, debug);
       return undefined;
     }
     const lexData = getLexiconAndLanguage(field); // $2 data
@@ -141,7 +145,7 @@ export default function () {
     const prefLabel = prefLabels.find(pl => pl.lang === lang);
     //console.info(`Compare prefLabel '${prefLabel.value}' AND $a '${subfieldA.value}'`); // eslint-disable-line no-console
     if (prefLabel.value === subfieldA.value) {
-      nvdebug(`${fieldToString(field)} needs to be translated`, debug);
+      nvdebug(`'${fieldToString(field)}' requires translating`, debug);
       return prefLabels;
     }
     return undefined;
@@ -207,7 +211,7 @@ export default function () {
       return `http://www.yso.fi/onto/yso/p${id}`;
     }
     if (lex === 'slm') {
-      return `http%3A%2F%2Furn.fi%2FURN:NBN:au:slm:s${id}`;
+      return `http://urn.fi/URN:NBN:fi:au:slm:s${id}`;
     }
     return undefined;
   }
@@ -215,6 +219,7 @@ export default function () {
   function isRelevantField(field, lang) {
     const fieldAsString = fieldToString(field);
 
+    // We should probably allow an optional $8 as the first subfield.
     if (!fieldAsString.match(/^... #7 ‡a [^‡]+ ‡2 [^‡]+ ‡0 [^‡]+(?: ‡9 [A-Z]+<(?:KEEP|DROP)>)*$/u)) {
       return false;
     }
@@ -223,6 +228,11 @@ export default function () {
     if (!fieldHasSubfield(field, '2', lexLang)) {
       return false;
     }
+    return fieldHasValidSubfield0(field);
+  }
+
+  function fieldHasValidSubfield0(field) {
+    const lex = mapTagToLex(field.tag);
     const subfield0 = field.subfields.find(sf => sf.code === '0');
     if (lex === 'yso' && subfield0.value.match(/^http:\/\/www\.yso\.fi\/onto\/yso\/p[0-9]+$/u)) {
       return true;
