@@ -1,6 +1,6 @@
 {
-  "description": "01: insert one fin->swe and one swe->fin translation",
+  "description": "02: insert one fin->swe (yso-aika) and one swe->fin (slm) translation",
   "comment": "Fields are inserted in tag order. Inserted fields are not sorted.",
   "fix": true,
-  "only": true
+  "only": false
 }
