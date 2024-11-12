@@ -1,0 +1,17 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+        { "code": "a", "value": "1960-luku" },
+        { "code": "2", "value": "yso/fin" },
+        { "code": "0", "value": "http://www.yso.fi/onto/yso/p6196061969" }
+      ]
+    },
+    { "tag": "651", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "länsimurteet" },
+      { "code": "2", "value": "yso/fin" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p13378"}
+    ]}
+  ]
+}
