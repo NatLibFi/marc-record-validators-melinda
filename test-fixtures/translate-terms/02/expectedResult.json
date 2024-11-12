@@ -1,0 +1,37 @@
+{
+  "_validationOptions": {},
+    "fields": [
+    { "tag": "648", "ind1": " ", "ind2": "7", "subfields": [
+        { "code": "a", "value": "1960-luku" },
+        { "code": "2", "value": "yso/fin" },
+        { "code": "0", "value": "http://www.yso.fi/onto/yso/p6196061969" }
+      ]
+    },
+    { "tag": "648", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "1960-talet" },
+      { "code": "2", "value": "yso/swe" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p6196061969" }
+    ]},
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "damtidningar" },
+      { "code": "2", "value": "slm/swe" },
+      { "code": "0", "value": "http://urn.fi/URN:NBN:fi:au:slm:s161" }
+    ]},
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "nekrologit" },
+      { "code": "2", "value": "slm/fin" },
+      { "code": "0", "value": "http://urn.fi/URN:NBN:fi:au:slm:s1324" }
+    ]},
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "nekrologer" },
+      { "code": "2", "value": "slm/swe" },
+      { "code": "0", "value": "http://urn.fi/URN:NBN:fi:au:slm:s1324" }
+    ]},
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "naistenlehdet" },
+      { "code": "2", "value": "slm/fin" },
+      { "code": "0", "value": "http://urn.fi/URN:NBN:fi:au:slm:s161" }
+    ]}
+  ],
+  "leader": ""
+}
