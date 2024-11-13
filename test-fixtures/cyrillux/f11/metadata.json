@@ -1,0 +1,9 @@
+{
+  "description": "03: transliterate (ISO-9 only)",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": true,
+    "doSFS4900Transliteration": false
+  }
+}
