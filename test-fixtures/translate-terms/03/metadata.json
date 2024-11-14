@@ -1,0 +1,5 @@
+{
+  "description": "03: various non-translating corrupted rows",
+  "fix": true,
+  "only": false
+}

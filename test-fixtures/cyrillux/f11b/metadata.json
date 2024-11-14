@@ -1,0 +1,9 @@
+{
+  "description": "f11b: use output from the f11",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": true,
+    "doSFS4900Transliteration": false
+  }
+}

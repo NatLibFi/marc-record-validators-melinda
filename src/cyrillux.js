@@ -16,6 +16,7 @@ const cyrillicTrans = 'CYRILLIC <TRANS>';
 const sfs4900Trans = 'SFS4900 <TRANS>';
 
 export default function (config = {}) {
+  // console.log(`CONFIG=${JSON.stringify(config)}`); // eslint-disable-line no-console
 
   return {
     description: 'Cyrillux functionality: convert original field to latinitsa (ISO-9) and add 880s for original cyrillic and latinitsa (SFS-4900)',
@@ -23,15 +24,17 @@ export default function (config = {}) {
   };
 
   function preprocessConfig() {
+    config.retainCyrillic = typeof config.retainCyrillic === 'undefined' ? true : config.retainCyrillic; // eslint-disable-line functional/immutable-data
     config.doISO9Transliteration = typeof config.doISO9Transliteration === 'undefined' ? true : config.doISO9Transliteration; // eslint-disable-line functional/immutable-data
     config.doSFS4900Transliteration = typeof config.doSFS4900Transliteration === 'undefined' ? true : config.doSFS4900Transliteration; // eslint-disable-line functional/immutable-data
   }
 
   function fix(record) {
+    // console.log(`FIX has CONFIG=${JSON.stringify(config)}`); // eslint-disable-line no-console
     // Fix always succeeds
     const res = {message: [], fix: [], valid: true};
 
-    preprocessConfig(config);
+    preprocessConfig();
 
     const nBefore = record.fields.length;
 
@@ -61,7 +64,7 @@ export default function (config = {}) {
   function validate(record) {
     const res = {message: [], valid: true};
 
-    preprocessConfig(config);
+    preprocessConfig();
 
     record.fields?.forEach(field => {
       validateField(field, res, record);
@@ -150,20 +153,45 @@ export default function (config = {}) {
 
 
   function mapFieldToIso9(field, occurrenceNumber) {
-    // This is the original non-880 field, that will be converted from Cyrillic to ISO
-
+    if (!config.doISO9Transliteration) {
+      return undefined;
+    }
     // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
-    if (!config.doISO9Transliteration && !config.doSFS4900Transliteration) {
+    if (!config.retainCyrillic && !config.doSFS4900Transliteration) {
       const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 
     const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
-    const subfield9 = fieldHasSubfield(field, '9', iso9Trans) ? [] : [{code: '9', value: iso9Trans}];
+    const subfield9 = fieldHasSubfield(field, '9', iso9Trans) ? [] : [{code: '9', value: iso9Trans}]; // Add only if needed
 
     const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToIso9(sf));
 
     return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
+  }
+
+  function mapFieldToSfs4900(field, occurrenceNumber, lang = 'rus') {
+    // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
+    if (!config.retainCyrillic && !config.doISO9Transliteration) {
+      const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
+      return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
+    }
+
+    const subfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
+    const subfield9 = fieldHasSubfield(field, '9', sfs4900Trans) ? [] : [{code: '9', value: sfs4900Trans}]; // Add only if needed
+
+    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToSfs4900(sf, lang));
+
+    const newField = {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
+
+    if (!config.doISO9Transliteration) {
+      return newField;
+    }
+
+    //const subfield6 = newField.subfields.find(sf => sf.code === '6');
+    newField.tag = '880'; // eslint-disable-line functional/immutable-data
+    resetSubfield6Tag(subfield6, field.tag);
+    return newField;
   }
 
   function deriveSubfield6(tag, subfields, occurrenceNumber) {
@@ -182,6 +210,9 @@ export default function (config = {}) {
   }
 
   function mapFieldToCyrillicField880(field, occurrenceNumber) {
+    if (!config.retainCyrillic) {
+      return undefined;
+    }
     nvdebug(`Derive CYR 880 from ${fieldToString(field)}`);
     const newSubfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
     const newSubfield9 = fieldHasSubfield(field, '9', cyrillicTrans) ? [] : [{code: '9', value: cyrillicTrans}];
@@ -193,21 +224,6 @@ export default function (config = {}) {
 
     const newField = {tag: '880', ind1: field.ind1, ind2: field.ind2, subfields};
     nvdebug(`   New CYR 880      ${fieldToString(newField)}`);
-    return newField;
-  }
-
-  function mapFieldToSfs4900Field880(field, occurrenceNumber, lang = 'rus') {
-    nvdebug(`Derive SFS 880 from ${fieldToString(field)}`);
-    const newSubfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
-    const newSubfield9 = fieldHasSubfield(field, '9', sfs4900Trans) ? [] : [{code: '9', value: sfs4900Trans}];
-    const subfields = [
-      newSubfield6,
-      ...field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToSfs4900(sf, lang)),
-      ...newSubfield9
-    ];
-
-    const newField = {tag: '880', ind1: field.ind1, ind2: field.ind2, subfields};
-    nvdebug(`       SFS 880      ${fieldToString(newField)}`);
     return newField;
   }
 
@@ -223,12 +239,12 @@ export default function (config = {}) {
     return recordGetMaxSubfield6OccurrenceNumberAsInteger(record) + 1;
   }
 
-  function needsIso9Transliteration(existingPairedFields) {
-    if (!config.doISO9Transliteration) {
+  function retainCyrillic(existingPairedFields) {
+    // Should we move cyrillic content from a normali field to a 880?
+    if (!config.retainCyrillic) {
       return false;
     }
-    // Actually normal field is always converted to ISO-9, and this function checks where we move original cyrillic field to 880.
-    // Thus we look for field 880$9 "CYRILLIC <TRANS>" here, and not "ISO9 <TRANS>"!
+    // Fail if we already have a paired 880 $9 <CYRILLIC> TRANS
     return !existingPairedFields.some(f => fieldHasSubfield(f, '9', cyrillicTrans));
   }
 
@@ -257,7 +273,12 @@ export default function (config = {}) {
 
     // Paired field: $9 CYRILLIC <TRANS> is the only legal <TRANS>
     const [pairedField] = existingPairedFields;
-    if (!fieldContainsCyrillicCharacters(pairedField) || pairedField.subfields.some(sf => sf.code === '9' && sf.value.includes('<TRANS>') && sf.value !== cyrillicTrans)) {
+    nvdebug(`LOOKING FOR SFS4900 PAIR: ${fieldToString(field)}`);
+    nvdebug(`     HAVING PAIRED FIELD: ${fieldToString(pairedField)}`);
+    if (!fieldContainsCyrillicCharacters(pairedField)) {
+      return false;
+    }
+    if (pairedField.subfields.some(sf => sf.code === '9' && sf.value.includes('<TRANS>') && sf.value !== cyrillicTrans)) {
       return false;
     }
 
@@ -265,7 +286,7 @@ export default function (config = {}) {
     // and thus it's a real case of MELINDA-10330 ISO9 adding:
     const occurrenceNumberAsString = fieldGetUnambiguousOccurrenceNumber(field);
     const languageCode = getLanguageCode(record);
-    const field2 = fieldToString(createFieldForSfs4900Comparison(mapFieldToSfs4900Field880(pairedField, occurrenceNumberAsString, languageCode), field.tag));
+    const field2 = fieldToString(createFieldForSfs4900Comparison(mapFieldToSfs4900(pairedField, occurrenceNumberAsString, languageCode), field.tag));
     const field1 = fieldToString(createFieldForSfs4900Comparison(field, field.tag));
     nvdebug(`COMPARE CONTENTS:\n  '${field1}' vs\n  '${field2}': ${field1 === field2 ? 'OK' : 'FAIL'}`);
     return field1 === field2;
@@ -280,6 +301,9 @@ export default function (config = {}) {
 
   function transliterateSfs4900Pair(field, record) {
     // Handle MELINDA-10330: Field is already in SFS-4900 and the only paired field is in Cyrillic!
+    if (!config.doISO9Transliteration) {
+      return [];
+    }
     const [pairedField] = fieldGetOccurrenceNumberPairs(field, record.get('880'));
 
     const occurrenceNumberAsString = fieldGetUnambiguousOccurrenceNumber(field);
@@ -287,9 +311,9 @@ export default function (config = {}) {
 
     const tmpField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, 'subfields': pairedField.subfields};
 
-    const newMainField = mapFieldToIso9(tmpField, occurrenceNumberAsString); // Cyrillic => ISO-9
-    const newCyrillicField = mapFieldToCyrillicField880(tmpField, occurrenceNumberAsString); // CYRILLIC
-    const newSFS4900Field = mapFieldToSfs4900Field880(field, occurrenceNumberAsString, languageCode); // SFS-4900
+    const newMainField = config.doISO9Transliteration ? mapFieldToIso9(tmpField, occurrenceNumberAsString) : undefined; // Cyrillic => ISO-9
+    const newCyrillicField = config.retainCyrillic ? mapFieldToCyrillicField880(tmpField, occurrenceNumberAsString) : undefined; // CYRILLIC
+    const newSFS4900Field = config.doSFS4900Transliteration ? mapFieldToSfs4900(field, occurrenceNumberAsString, languageCode) : undefined; // SFS-4900
 
     // Trigger the drop of original counterpart $6 :
     pairedField.cyrilluxSkip = 1; // eslint-disable-line functional/immutable-data
@@ -322,8 +346,8 @@ export default function (config = {}) {
     // nvdebug(`NUMBER OF PAIRED 880 FIELDS: ${existingPairedFields.length}`);
 
     const newMainField = mapFieldToIso9(originalField, newOccurrenceNumberAsString); // ISO-9
-    const newCyrillicField = needsIso9Transliteration(existingPairedFields) ? mapFieldToCyrillicField880(originalField, newOccurrenceNumberAsString) : undefined; // CYRILLIC
-    const newSFS4900Field = needsSfs4900Transliteration(existingPairedFields) ? mapFieldToSfs4900Field880(originalField, newOccurrenceNumberAsString, languageCode) : undefined; /// SFS-4900
+    const newCyrillicField = retainCyrillic(existingPairedFields) ? mapFieldToCyrillicField880(originalField, newOccurrenceNumberAsString) : undefined; // CYRILLIC
+    const newSFS4900Field = needsSfs4900Transliteration(existingPairedFields) ? mapFieldToSfs4900(originalField, newOccurrenceNumberAsString, languageCode) : undefined; /// SFS-4900
 
     return [newMainField, newCyrillicField, newSFS4900Field].filter(f => f);
   }
