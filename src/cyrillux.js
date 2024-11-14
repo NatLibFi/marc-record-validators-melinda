@@ -122,6 +122,10 @@ export default function (config = {}) {
       return false;
     }
 
+    if (!config.doISO9Transliteration && !config.doSFS4900Transliteration) {
+      return false;
+    }
+
     // Skip control fields:
     if (!field.subfields) {
       return false;
