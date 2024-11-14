@@ -50,6 +50,7 @@ import SortTags from './sort-tags';
 import SubfieldValueNormalizations from './subfieldValueNormalizations';
 import SubfieldExclusion from './subfield-exclusion';
 import Sync007And300 from './sync-007-and-300';
+import TranslateTerms from './translate-terms';
 import TypeOfDateF008 from './typeOfDate-008';
 import UnicodeDecomposition from './unicode-decomposition';
 import UpdateField540 from './update-field-540';
@@ -106,9 +107,10 @@ export {
   SubfieldValueNormalizations,
   Sync007And300,
   TypeOfDateF008,
+  TranslateTerms,
   UnicodeDecomposition,
   UpdateField540,
   Urn,
-  SortFields, // Keep this penultimateas last
+  SortFields, // Keep this penultimate
   MergeFields // Run this last *iff* you want to use this at all
 };
