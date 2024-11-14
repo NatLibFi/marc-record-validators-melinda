@@ -1,0 +1,10 @@
+{
+  "description": "13: do nothing (don't move cyrillic text to 880 as no translliterations are done",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": false,
+    "doSFS4900Transliteration": false,
+    "retainCyrillic": true
+  }
+}
