@@ -1,10 +1,11 @@
 {
-  "description": "Fix: just convert field 100 to ISO-9 latinitsa",
+  "description": "03 Fix: just convert field 100 to ISO-9 latinitsa, don't retain the original nor do sfs4900",
   "comment": "Tests usage of config and omitting of $6 and $9",
   "only": false,
   "fix": true,
   "config": {
-    "doISO9Transliteration": false,
-    "doSFS4900Transliteration": false
+    "doISO9Transliteration": true,
+    "doSFS4900Transliteration": false,
+    "retainCyrillic": false
   }
 }

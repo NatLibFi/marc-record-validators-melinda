@@ -1,0 +1,7 @@
+{
+  "description": "04: yso term gets translated in a wrong yso field",
+  "comment": "not fixing this yet, waiting for comments",
+  "fix": true,
+  "only": false,
+  "skip": true
+}
