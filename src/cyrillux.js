@@ -177,7 +177,7 @@ export default function (config = {}) {
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 
-    const subfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
+    const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
     const subfield9 = fieldHasSubfield(field, '9', sfs4900Trans) ? [] : [{code: '9', value: sfs4900Trans}]; // Add only if needed
 
     const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToSfs4900(sf, lang));
