@@ -1,0 +1,18 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cam  22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "01234567890123456789012345678901234ukr89"},
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "6", "value": "880-01" },
+        { "code": "a", "value": "Hohol." },
+        { "code": "9", "value": "SFS4900 <TRANS>" }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "100-01" },
+      { "code": "a", "value": "Гоголь." },
+      { "code": "9", "value": "CYRILLIC <TRANS>" }
+    ]}
+  ]
+}
+
