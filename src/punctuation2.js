@@ -120,11 +120,13 @@ const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'cont
 const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': '#fklptu', 'context': needsPuncAfterAlphanumeric};
 
 
-const addX10iColon = {'name': 'Punctuate relationship information', 'code': 'i', 'context': defaultNeedsPuncAfter2};
-const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': needsPuncAfterAlphanumeric};
+const addX10iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2};
+const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter2};
 const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter2};
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': needsPuncAfterAlphanumeric};
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
+
+const addX11Spacecolon = {name: '611 space colon(y :-)', add: ' :', code: 'nd', followedBy: 'dc', 'context': defaultNeedsPuncAfter2};
 
 const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': doesNotEndInPunc};
 
@@ -143,7 +145,7 @@ const removeCrapFromAllEntryFields = [removeCommaBeforeLanguageSubfieldL, remove
 
 const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
 const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
-const removeX11Whatever = removeCrapFromAllEntryFields;
+const removeX11Whatever = [...removeCrapFromAllEntryFields];
 const removeX30Whatever = removeCrapFromAllEntryFields;
 
 const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remove': /(?: *;| *=|,)$/u}];
@@ -218,6 +220,7 @@ const cleanDotBeforeLanguageSubfieldL = {'name': 'pre-language-$l dot', 'followe
 
 const legalEntryField = [cleanDotBeforeLanguageSubfieldL];
 
+const legalX11SpaceColon = {name: 'legal X11 spacecolony', code: 'nd', followedBy: 'dc', context: / :$/u, remove: / :$/u};
 const legalX00punc = [cleanLegalX00Comma, cleanLegalX00iColon, cleanLegalX00bDot, cleanLegalX00Dot, ...legalEntryField];
 
 const cleanLegalX10Comma = {'name': 'X10comma', 'code': 'abe', 'followedBy': 'e', 'context': /.,$/u, 'remove': /,$/u};
@@ -243,10 +246,12 @@ const clean24X = [
   cleanDotBeforeLanguageSubfieldL
 ];
 
+const legalX11Punc = [...legalEntryField, legalX11SpaceColon];
+
 const cleanValidPunctuationRules = {
   '100': legalX00punc,
   '110': legalX10punc,
-  '111': legalEntryField,
+  '111': legalX11Punc,
   '130': legalEntryField,
   '240': clean24X,
   '243': clean24X,
@@ -276,17 +281,17 @@ const cleanValidPunctuationRules = {
   '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
   '600': legalX00punc,
   '610': legalX10punc,
-  '611': legalEntryField,
+  '611': legalX11Punc,
   '630': legalEntryField,
   // Experimental, MET366-ish (end punc in internationally valid, but we don't use it here in Finland):
   '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}],
   '700': legalX00punc,
   '710': legalX10punc,
-  '711': legalEntryField,
+  '711': legalX11Punc,
   '730': legalEntryField,
   '800': legalX00punc,
   '810': legalX10punc,
-  '811': legalEntryField,
+  '811': legalX11Punc,
   '830': [...legalEntryField, ...cleanLegalSeriesTitle],
   '946': clean24X
 };
@@ -298,7 +303,7 @@ const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVo
 
 const addX00 = [addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
 const addX10 = [addX10iColon, addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
-const addX11 = [...addToAllEntryFields];
+const addX11 = [...addToAllEntryFields, addX11Spacecolon];
 const addX30 = [...addToAllEntryFields];
 
 const add24X = [
