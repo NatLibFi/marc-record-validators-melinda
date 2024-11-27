@@ -68,7 +68,8 @@ export default function (tagPattern) {
 // X00, X10, X11 and X130 could also for their own sets...
 // (ouch! sometimes $c comes after $d...): LoC: 100 0# ‡a Black Foot, ‡c Chief, ‡d d. 1877 ‡c (Spirit)
 const sortOrderForX00 = ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '5', '9']; // skip $g. Can't remember why, though...
-const sortOrderForX10 = ['6', 'i', 'a', 'b', 't', 'n', 'e', 'v', 'w', 'x', 'y', 'z', '0', '5', '9']; // somewhat iffy
+const sortOrderForX10 = ['6', 'i', 'a', 'b', 't', 'n', 'c', 'e', 'v', 'w', 'x', 'y', 'z', '0', '5', '9']; // somewhat iffy
+const sortOrderForX11 = ['6', 'a', 'n', 'd', 'c', 'e', 'g', 'j', '0', '5', '9'];
 const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
 const sortOrderFor246 = ['i', 'a', 'b', 'n', 'p', 'f', '5', '9']; // Used by field 946 as well
 
@@ -82,7 +83,7 @@ const subfieldSortOrder = [
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': sortOrderForX00},
   {'tag': '110', 'sortOrder': sortOrderForX10},
-  {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
+  {'tag': '111', 'sortOrder': sortOrderForX11},
   {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['6', 'a', 'b', 'n', 'p', 'k', 'f', 'c']},
@@ -96,11 +97,11 @@ const subfieldSortOrder = [
   {'tag': '540', 'sortOrder': ['a', 'b', 'c', 'd', 'f', '2', 'u']},
   {'tag': '600', 'sortOrder': sortOrderForX00},
   {'tag': '610', 'sortOrder': sortOrderForX10},
-  {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
+  {'tag': '611', 'sortOrder': sortOrderForX11},
   {'tag': '650', 'sortOrder': ['a', 'x', 'y', 'z']},
   {'tag': '700', 'sortOrder': sortOrderForX00},
   {'tag': '710', 'sortOrder': sortOrderForX10},
-  {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
+  {'tag': '711', 'sortOrder': sortOrderForX11},
   {'tag': '760', 'sortOrder': sortOrderFor7XX},
   {'tag': '762', 'sortOrder': sortOrderFor7XX},
   {'tag': '765', 'sortOrder': sortOrderFor7XX},
@@ -119,7 +120,7 @@ const subfieldSortOrder = [
   {'tag': '788', 'sortOrder': sortOrderFor7XX},
   {'tag': '800', 'sortOrder': sortOrderForX00},
   {'tag': '810', 'sortOrder': sortOrderForX10},
-  {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
+  {'tag': '811', 'sortOrder': sortOrderForX11},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '856', 'sortOrder': ['3', 'u', 'q', 'x', 'y', 'z', '5']}, // incomplete, LoC examples are inconclusive
   {'tag': '880', 'sortOrder': ['6', 'a']},
