@@ -1,0 +1,11 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "610", "ind1": "4", "ind2": "2", "subfields": [
+      { "code": "a", "value": "Nimi (yhtiö)" },
+      { "code": "b", "value": "alanimi" }
+    ]}
+  ],
+  "leader": ""
+}
