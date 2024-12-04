@@ -10,7 +10,7 @@ import {scoreRelatorTerm} from './sortFields';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortRelatorTerms');
 //const debugData = debug.extend('data');
 
-const WORST_WORK = 98;
+const WORST_WORK = 81;
 
 
 export default function () {
@@ -22,9 +22,10 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
+    const typeOfMaterial = recordToTypeOfMaterial(record);
 
     record.fields.forEach(field => {
-      sortAdjacentESubfields(field);
+      sortAdjacentESubfields(field, typeOfMaterial);
     });
 
     return res;
@@ -33,9 +34,11 @@ export default function () {
   function validate(record) {
     const res = {message: []};
 
+    const typeOfMaterial = recordToTypeOfMaterial(record);
+
     record.fields.forEach(field => {
       const clonedField = clone(field);
-      sortAdjacentESubfields(clonedField);
+      sortAdjacentESubfields(clonedField, typeOfMaterial);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);
       if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
@@ -48,23 +51,37 @@ export default function () {
   }
 }
 
-function swapESubfields(field) {
+
+function recordToTypeOfMaterial(record) {
+  if (!record.leader) {
+    return undefined;
+  }
+
+  if (record.leader.charAt(6) === 'i') { // Audio books should follow rules of a book, I guess...
+    return 'BK';
+  }
+
+  return record.getTypeOfMaterial();
+}
+
+function swapESubfields(field, typeOfMaterial = undefined) {
   if (!field.subfields) {
     return;
   }
 
   const loopAgain = field.subfields.some((sf, index) => {
+    // NB! we should fix 'e' to 'e' or 'j'....
     if (index === 0 || sf.code !== 'e') {
       return false;
     }
-    const currScore = scoreRelatorTerm(sf.value);
+    const currScore = scoreRelatorTerm(sf.value, typeOfMaterial);
 
     const prevSubfield = field.subfields[index - 1];
     if (currScore === 0 || prevSubfield.code !== 'e') {
       return false;
     }
-    const prevScore = scoreRelatorTerm(prevSubfield.value);
-
+    const prevScore = scoreRelatorTerm(prevSubfield.value, typeOfMaterial);
+    console.log(`PREV: ${prevScore}, CURR: ${currScore}`); // eslint-disable-line no-console
 
     // If this subfield maps to a Work, then subfields can be swapped, even if we don't have a score for the prev subfield!
     if (prevScore === 0 && currScore < WORST_WORK) {
@@ -93,11 +110,11 @@ function swapESubfields(field) {
 
 }
 
-export function sortAdjacentESubfields(field) {
+export function sortAdjacentESubfields(field, typeOfMaterial = undefined) {
   if (!field.subfields) {
     return field;
   }
-  swapESubfields(field);
+  swapESubfields(field, typeOfMaterial);
 
   return field;
 }
