@@ -64,24 +64,33 @@ function recordToTypeOfMaterial(record) {
   return record.getTypeOfMaterial();
 }
 
+function getRelatorTermSubfieldCode(field) {
+  if (['111', '611', '711', '811'].includes(field.tag)) {
+    return 'j';
+  }
+  return 'e';
+}
+
 function swapESubfields(field, typeOfMaterial = undefined) {
   if (!field.subfields) {
     return;
   }
 
+  const subfieldCode = getRelatorTermSubfieldCode(field);
+
   const loopAgain = field.subfields.some((sf, index) => {
     // NB! we should fix 'e' to 'e' or 'j'....
-    if (index === 0 || sf.code !== 'e') {
+    if (index === 0 || sf.code !== subfieldCode) {
       return false;
     }
     const currScore = scoreRelatorTerm(sf.value, typeOfMaterial);
 
     const prevSubfield = field.subfields[index - 1];
-    if (currScore === 0 || prevSubfield.code !== 'e') {
+    if (currScore === 0 || prevSubfield.code !== subfieldCode) {
       return false;
     }
     const prevScore = scoreRelatorTerm(prevSubfield.value, typeOfMaterial);
-    console.log(`PREV: ${prevScore}, CURR: ${currScore}`); // eslint-disable-line no-console
+    //console.log(`PREV: ${prevScore}, CURR: ${currScore}`); // eslint-disable-line no-console
 
     // If this subfield maps to a Work, then subfields can be swapped, even if we don't have a score for the prev subfield!
     if (prevScore === 0 && currScore < WORST_WORK) {
