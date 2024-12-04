@@ -10,7 +10,7 @@ import clone from 'clone';
 import {fieldFixPunctuation, fieldStripPunctuation} from './punctuation2';
 import {fieldToString, nvdebug} from './utils';
 import {sortAdjacentSubfields} from './sortSubfields';
-import {sortAdjacentESubfields} from './sortRelatorTerms';
+import {sortAdjacentRelatorTerms} from './sortRelatorTerms';
 //import createDebugLogger from 'debug';
 /*
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeRelatorTermFields');
@@ -126,7 +126,7 @@ function mergeRelatorTermFields(record, fix = false) {
         copyRelatorSubfields(mergableField, currField);
         fieldFixPunctuation(currField);
         sortAdjacentSubfields(currField); // Put the added $e subfield to proper places.
-        sortAdjacentESubfields(currField); // Sort $e subfields with each other
+        sortAdjacentRelatorTerms(currField); // Sort $e subfields with each other
         fieldFixPunctuation(currField);
 
       }
