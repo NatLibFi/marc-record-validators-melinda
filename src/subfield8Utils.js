@@ -16,7 +16,7 @@ export function isValidSubfield8(subfield) {
   return match && match.length > 0;
 }
 
-function getSubfield8Value(subfield) {
+export function getSubfield8Value(subfield) {
   if (!isValidSubfield8(subfield)) {
     return undefined;
   }
