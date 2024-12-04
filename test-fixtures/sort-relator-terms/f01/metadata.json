@@ -1,5 +1,5 @@
 {
-  "description": "f01: Nothing to do, as $e fields are not adjacent",
+  "description": "f01: Nothing to do, for varios reasons (wrong field, not adjacent, already right order)",
   "fix": true,
   "only": false
 }
