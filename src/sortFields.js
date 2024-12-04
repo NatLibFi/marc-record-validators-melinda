@@ -73,7 +73,7 @@ export const relatorTermScore = { // Here bigger is better
 
 };
 
-export function scoreRelatorTerm(value) { // sortRelatorTerms.js validator should call this on future version
+export function scoreRelatorTerm(value) {
   const normValue = value.replace(/[.,]+$/u, '');
   if (normValue in relatorTermScore) {
     return relatorTermScore[normValue];
