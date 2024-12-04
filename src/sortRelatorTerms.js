@@ -25,7 +25,7 @@ export default function () {
     const typeOfMaterial = recordToTypeOfMaterial(record);
 
     record.fields.forEach(field => {
-      sortAdjacentESubfields(field, typeOfMaterial);
+      sortRelatorTerms(field, typeOfMaterial);
     });
 
     return res;
@@ -38,7 +38,7 @@ export default function () {
 
     record.fields.forEach(field => {
       const clonedField = clone(field);
-      sortAdjacentESubfields(clonedField, typeOfMaterial);
+      sortRelatorTerms(clonedField, typeOfMaterial);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);
       if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
@@ -71,7 +71,7 @@ function getRelatorTermSubfieldCode(field) {
   return 'e';
 }
 
-function swapESubfields(field, typeOfMaterial = undefined) {
+function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
   if (!field.subfields) {
     return;
   }
@@ -111,7 +111,7 @@ function swapESubfields(field, typeOfMaterial = undefined) {
   });
 
   if (loopAgain) {
-    swapESubfields(field); // uh, evil recursion...
+    swapRelatorTermSubfields(field, typeOfMaterial); // uh, evil recursion...
     return;
   }
 
@@ -119,11 +119,11 @@ function swapESubfields(field, typeOfMaterial = undefined) {
 
 }
 
-export function sortAdjacentESubfields(field, typeOfMaterial = undefined) {
-  if (!field.subfields) {
+export function sortRelatorTerms(field, typeOfMaterial = undefined) {
+  if (!field.subfields || !['100', '110', '111', '600', '610', '611', '700', '710', '711', '800', '810', '811'].includes(field.tag)) {
     return field;
   }
-  swapESubfields(field, typeOfMaterial);
+  swapRelatorTermSubfields(field, typeOfMaterial);
 
   return field;
 }
