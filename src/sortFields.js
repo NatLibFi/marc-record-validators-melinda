@@ -46,37 +46,134 @@ export default function () {
 }
 
 
-export const relatorTermScore = { // Here bigger is better
+const relatorTermScore = { // Here bigger is better
   // NB! This is exportable as field internal $e sorting in marc-record-validators-js uses this.
   // NB! The more abstract, the earlier it appears.
   // Note that terms with same abstraction level might also have order preferences
   // We should 1) check the order of these, and 2) add translations (support Swedish at the very least)
-  // work/teos > expression/ekspressio > manifestation/manifestaatio
+  // work/teos > expression/ekspressio > manifestation/manifestaatin, https://finto.fi/mts/fi/page/m1298
   'säveltäjä': 100, 'composer': 100,
-  'kirjoittaja': 99, 'author': 100,
+  'kirjoittaja': 99, 'author': 99,
   'sarjakuvantekijä': 99,
-  'taiteilija': 98,
+  'taiteilija': 98, 'kartantekijä': 98,
   'sanoittaja': 90,
-  'käsikirjoittaja': 90,
-  // expression:
-  'toimittaja': 80, 'editor': 80,
-  'sovittaja': 80, 'arranger': 80,
-  'kuvittaja': 75,
+  'käsikirjoittaja': 90, 'soitonoppaan tekijä': 90,
+  'teoksella kunnioitettu': 81, 'gratulaation kohde': 81,
+  // expression: https://finto.fi/mts/fi/page/m153
+  'sovittaja': 79, 'arranger': 79,
+  'kuvittaja': 78,
+  'esipuheen kirjoittaja': 77,
+  'alkusanojen kirjoittaja': 76, 'loppusanojen kirjoittaja': 76,
+  'toimittaja': 75, 'editor': 75,
+  'esittäjä': 74,
+  'johtaja': 73, // orkesterinjohtaja
   'editointi': 71, // for music, editor/toimittaja is another thing
   'kääntäjä': 70,
-  'lukija': 61,
-  // Manifestation level
-  'esittäjä': 60,
-  'johtaja': 50, // orkesterinjohtaja
+  'lukija': 61, 'kertoja': 61,
+  // Manifestation level: https://finto.fi/mts/fi/page/m491
+
   'kustantaja': 41,
   'julkaisija': 40
-
+  // Item level: https://finto.fi/mts/fi/page/m1157
 };
 
-export function scoreRelatorTerm(value) {
-  const normValue = value.replace(/[.,]+$/u, '');
-  if (normValue in relatorTermScore) {
-    return relatorTermScore[normValue];
+const relatorTermScoreBk = {
+  // https://finto.fi/mts/fi/page/m1298 100-81
+  'libretisti': 100, 'sarjakuvantekijä': 100,
+  'kirjoittaja': 99, 'author': 99, 'soitonoppaan tekijä': 99,
+  'kuvaaja': 98, 'valokuvaaja': 98,
+  'kokoaja': 85,
+  'teoksella kunnioitettu': 84, 'gratulaation kohde': 84,
+  'julkaisija': 83,
+  'säveltäjä': 82, // if 300$e has CD etc
+  'sanoittaja': 81,
+  // expression: https://finto.fi/mts/fi/page/m153
+  'kuvittaja': 80,
+  'esipuheen kirjoittaja': 79,
+  'alkusanojen kirjoittaja': 78, 'loppusanojen kirjoittaja': 78,
+  'kääntäjä': 70,
+
+  'sovittaja': 50,
+  // kappale
+  'sitoja': 25,
+  'gratulaation kirjoittaja': 24
+};
+
+const relatorTermScoreMu = {
+  'säveltäjä': 100,
+  'sanoittaja': 99,
+  'soitonoppaan tekijä': 98,
+  'teoksella kunnioitettu': 81,
+  // expression: https://finto.fi/mts/fi/page/m153
+  'sovittaja': 79,
+  'johtaja': 78,
+  'esittäjä': 77,
+  'lukija': 76,
+  'miksaaja': 75
+};
+
+const relatorTermScoreVm = {
+  // Work
+  'ohjaaja': 100,
+  'kirjoittaja': 99, 'author': 99, // Here we assume that film/whatever is based on author's book
+  'käsikirjoittaja': 98,
+  'kuvaaja': 89,
+  'säveltäjä': 82, // volatile
+  // Expression
+  'leikkaaja': 80,
+  'sovittaja': 79,
+  'johtaja': 78,
+  'esittäjä': 77,
+  'lukija': 76,
+  'miksaaja': 75,
+  'kääntäjä': 70
+  // Manifestation
+
+  // Item
+};
+
+function normalizeValue(value) {
+  // Removing last punc char is good enough for our purposes.
+  // We don't handle abbreviations here etc.
+  // Brackets should not happen either, should they?
+  return value.replace(/[.,]$/u, '');
+}
+
+function scoreRelatorTermBk(normalizedValue) {
+  if (normalizedValue in relatorTermScoreBk) {
+    return relatorTermScoreBk[normalizedValue];
+  }
+  return 0;
+}
+
+function scoreRelatorTermMu(normalizedValue) {
+  if (normalizedValue in relatorTermScoreMu) {
+    return relatorTermScoreMu[normalizedValue];
+  }
+  return 0;
+}
+
+function scoreRelatorTermVm(normalizedValue) {
+  if (normalizedValue in relatorTermScoreVm) {
+    return relatorTermScoreVm[normalizedValue];
+  }
+  return 0;
+}
+
+export function scoreRelatorTerm(value, typeOfMaterial = undefined) {
+  // NB! We are currently using type of material only for sorting relator terms, not 7XX fields!
+  const normalizedValue = normalizeValue(value);
+  if (typeOfMaterial === 'BK') { // Books
+    return scoreRelatorTermBk(normalizedValue);
+  }
+  if (typeOfMaterial === 'MU') { // Music (NB: audio books should be BK in this context!)
+    return scoreRelatorTermMu(normalizedValue);
+  }
+  if (typeOfMaterial === 'VM') { // video material
+    return scoreRelatorTermVm(normalizedValue);
+  }
+  if (normalizedValue in relatorTermScore) {
+    return relatorTermScore[normalizedValue];
   }
   return 0;
 }
