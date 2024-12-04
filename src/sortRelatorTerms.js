@@ -25,7 +25,7 @@ export default function () {
     const typeOfMaterial = recordToTypeOfMaterial(record);
 
     record.fields.forEach(field => {
-      sortRelatorTerms(field, typeOfMaterial);
+      sortAdjacentRelatorTerms(field, typeOfMaterial);
     });
 
     return res;
@@ -38,7 +38,7 @@ export default function () {
 
     record.fields.forEach(field => {
       const clonedField = clone(field);
-      sortRelatorTerms(clonedField, typeOfMaterial);
+      sortAdjacentRelatorTerms(clonedField, typeOfMaterial);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);
       if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
@@ -119,8 +119,8 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
 
 }
 
-export function sortRelatorTerms(field, typeOfMaterial = undefined) {
-  if (!field.subfields || !['100', '110', '111', '600', '610', '611', '700', '710', '711', '800', '810', '811'].includes(field.tag)) {
+export function sortAdjacentRelatorTerms(field, typeOfMaterial = undefined) {
+  if (!field.subfields || !['100', '110', '111', '600', '610', '611', '700', '710', '711', '720', '800', '810', '811'].includes(field.tag)) {
     return field;
   }
   swapRelatorTermSubfields(field, typeOfMaterial);
