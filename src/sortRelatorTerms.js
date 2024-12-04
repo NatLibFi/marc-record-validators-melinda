@@ -6,19 +6,12 @@ import clone from 'clone';
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
 import {fieldFixPunctuation} from './punctuation2';
-import {relatorTermScore} from './sortFields';
+import {scoreRelatorTerm} from './sortFields';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortRelatorTerms');
 //const debugData = debug.extend('data');
 
 const WORST_WORK = 98;
 
-function scoreRelatorTerm(term) {
-  const normalizedTerm = normalizeValue(term);
-  if (normalizedTerm in relatorTermScore) {
-    return relatorTermScore[normalizedTerm];
-  }
-  return 0;
-}
 
 export default function () {
 
@@ -54,15 +47,6 @@ export default function () {
     return res;
   }
 }
-
-
-function normalizeValue(value) {
-  // Removing last punc char is good enough for our purposes.
-  // We don't handle abbreviations here etc.
-  // Brackets should not happen either, should they?
-  return value.replace(/[.,]$/u, '');
-}
-
 
 function swapESubfields(field) {
   if (!field.subfields) {
