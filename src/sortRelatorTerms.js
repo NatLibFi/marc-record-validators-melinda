@@ -64,11 +64,19 @@ function recordToTypeOfMaterial(record) {
   return record.getTypeOfMaterial();
 }
 
-function getRelatorTermSubfieldCode(field) {
-  if (['111', '611', '711', '811'].includes(field.tag)) {
+export function tagToRelatorTermSubfieldCode(tag) {
+  if (['100', '110', '600', '610', '700', '710', '720', '751', '752', '800', '810'].includes(tag)) {
+    return 'e';
+  }
+  if (['111', '611', '711', '811'].includes(tag)) {
     return 'j';
   }
-  return 'e';
+  return '?'; // No need to complain. Nothing is found.
+}
+
+function isRelatorTermTag(tag) {
+  // NV: 111/711, 751 and 752 are very rare
+  return ['e', 'j'].includes(tagToRelatorTermSubfieldCode(tag));
 }
 
 function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
@@ -76,7 +84,7 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
     return;
   }
 
-  const subfieldCode = getRelatorTermSubfieldCode(field);
+  const subfieldCode = tagToRelatorTermSubfieldCode(field.tag);
 
   const loopAgain = field.subfields.some((sf, index) => {
     // NB! we should fix 'e' to 'e' or 'j'....
@@ -120,7 +128,7 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
 }
 
 export function sortAdjacentRelatorTerms(field, typeOfMaterial = undefined) {
-  if (!field.subfields || !['100', '110', '111', '600', '610', '611', '700', '710', '711', '720', '800', '810', '811'].includes(field.tag)) {
+  if (!field.subfields || !isRelatorTermTag(field.tag)) {
     return field;
   }
   swapRelatorTermSubfields(field, typeOfMaterial);
