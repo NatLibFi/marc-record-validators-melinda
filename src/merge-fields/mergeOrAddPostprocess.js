@@ -4,7 +4,7 @@
 import {fieldFixPunctuation} from '../punctuation2';
 import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
 import {sortAdjacentSubfields} from '../sortSubfields';
-import {sortAdjacentESubfields} from '../sortRelatorTerms';
+import {sortAdjacentRelatorTerms} from '../sortRelatorTerms';
 
 function postprocessBaseRecord(base) {
 
@@ -20,7 +20,7 @@ function postprocessBaseRecord(base) {
       fieldRemoveDuplicateSubfields(field);
       fieldFixPunctuation(field); // NB! This will fix only fields with merged content
       sortAdjacentSubfields(field); // Put the added $e subfield to proper places.
-      sortAdjacentESubfields(field); // Sort $e subfields with each other
+      sortAdjacentRelatorTerms(field); // Sort $e subfields with each other
       fieldFixPunctuation(field);
 
       delete field.merged; // eslint-disable-line functional/immutable-data

@@ -10,7 +10,7 @@ import clone from 'clone';
 import {fieldFixPunctuation, fieldStripPunctuation} from './punctuation2';
 import {fieldToString, nvdebug} from './utils';
 import {sortAdjacentSubfields} from './sortSubfields';
-import {sortAdjacentESubfields} from './sortRelatorTerms';
+import {sortAdjacentRelatorTerms, tagToRelatorTermSubfieldCode} from './sortRelatorTerms';
 //import createDebugLogger from 'debug';
 /*
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeRelatorTermFields');
@@ -53,23 +53,13 @@ function createNormalizedCloneWithoutRelatorTerms(field) {
   return clonedField;
 }
 
-function fieldToRelatorTermSubfieldCode(field) {
-  if (['100', '110', '700', '710', '720', '751', '752'].includes(field.tag)) {
-    return 'e';
-  }
-  if (field.tag === '111' || field.tag === '711') {
-    return 'j';
-  }
-  return '?'; // No need to complain. Nothing is found.
-}
-
 function getRelatorTermStrings(relatorTermSubfieldCode, field) {
   return field.subfields.filter(sf => sf.code === relatorTermSubfieldCode).map(sf => sf.value);
 
 }
 
 function extractAddableRelatorTerms(fromField, toField) {
-  const relatorTermSubfieldCode = fieldToRelatorTermSubfieldCode(fromField);
+  const relatorTermSubfieldCode = tagToRelatorTermSubfieldCode(fromField.tag);
   const normalizedFromFieldRelatorTerms = getRelatorTermStrings(relatorTermSubfieldCode, fromField);
   if (normalizedFromFieldRelatorTerms.length === 0) {
     return [];
@@ -81,7 +71,7 @@ function extractAddableRelatorTerms(fromField, toField) {
 
 
 function copyRelatorSubfields(fromField, toField) {
-  const relatorTermSubfieldCode = fieldToRelatorTermSubfieldCode(fromField);
+  const relatorTermSubfieldCode = tagToRelatorTermSubfieldCode(fromField.tag);
   const newRelatorTerms = extractAddableRelatorTerms(fromField, toField);
 
   newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term})); // eslint-disable-line functional/immutable-data
@@ -90,7 +80,7 @@ function copyRelatorSubfields(fromField, toField) {
 
 function mergeRelatorTermFields(record, fix = false) {
   /* eslint-disable */
-  // NV: 111/711, 751 and 752 where so rare that I did not add them here
+  // NV: 111/711, 751 and 752 where so rare that I did not add them here. Can't remember why I skipped 6XX and 8XX...
   let fields = record.get('(?:[17][01]0|720)'); 
   let result = [];
   const comparisonFieldsAsString = fields.map(f => fieldToString(createNormalizedCloneWithoutRelatorTerms(f)));
@@ -126,7 +116,7 @@ function mergeRelatorTermFields(record, fix = false) {
         copyRelatorSubfields(mergableField, currField);
         fieldFixPunctuation(currField);
         sortAdjacentSubfields(currField); // Put the added $e subfield to proper places.
-        sortAdjacentESubfields(currField); // Sort $e subfields with each other
+        sortAdjacentRelatorTerms(currField); // Sort $e subfields with each other
         fieldFixPunctuation(currField);
 
       }

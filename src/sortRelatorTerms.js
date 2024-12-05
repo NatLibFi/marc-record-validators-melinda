@@ -6,19 +6,12 @@ import clone from 'clone';
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils';
 import {fieldFixPunctuation} from './punctuation2';
-import {relatorTermScore} from './sortFields';
+import {scoreRelatorTerm} from './sortFields';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortRelatorTerms');
 //const debugData = debug.extend('data');
 
-const WORST_WORK = 98;
+const WORST_WORK = 81;
 
-function scoreRelatorTerm(term) {
-  const normalizedTerm = normalizeValue(term);
-  if (normalizedTerm in relatorTermScore) {
-    return relatorTermScore[normalizedTerm];
-  }
-  return 0;
-}
 
 export default function () {
 
@@ -29,9 +22,10 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
+    const typeOfMaterial = recordToTypeOfMaterial(record);
 
     record.fields.forEach(field => {
-      sortAdjacentESubfields(field);
+      sortAdjacentRelatorTerms(field, typeOfMaterial);
     });
 
     return res;
@@ -40,9 +34,11 @@ export default function () {
   function validate(record) {
     const res = {message: []};
 
+    const typeOfMaterial = recordToTypeOfMaterial(record);
+
     record.fields.forEach(field => {
       const clonedField = clone(field);
-      sortAdjacentESubfields(clonedField);
+      sortAdjacentRelatorTerms(clonedField, typeOfMaterial);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);
       if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
@@ -56,31 +52,53 @@ export default function () {
 }
 
 
-function normalizeValue(value) {
-  // Removing last punc char is good enough for our purposes.
-  // We don't handle abbreviations here etc.
-  // Brackets should not happen either, should they?
-  return value.replace(/[.,]$/u, '');
+function recordToTypeOfMaterial(record) {
+  if (!record.leader) {
+    return undefined;
+  }
+
+  if (record.leader.charAt(6) === 'i') { // Audio books should follow rules of a book, I guess...
+    return 'BK';
+  }
+
+  return record.getTypeOfMaterial();
 }
 
+export function tagToRelatorTermSubfieldCode(tag) {
+  if (['100', '110', '600', '610', '700', '710', '720', '751', '752', '800', '810'].includes(tag)) {
+    return 'e';
+  }
+  if (['111', '611', '711', '811'].includes(tag)) {
+    return 'j';
+  }
+  return '?'; // No need to complain. Nothing is found.
+}
 
-function swapESubfields(field) {
+function isRelatorTermTag(tag) {
+  // NV: 111/711, 751 and 752 are very rare
+  return ['e', 'j'].includes(tagToRelatorTermSubfieldCode(tag));
+}
+
+function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
   if (!field.subfields) {
     return;
   }
 
+  const subfieldCode = tagToRelatorTermSubfieldCode(field.tag);
+
   const loopAgain = field.subfields.some((sf, index) => {
-    if (index === 0 || sf.code !== 'e') {
+    // NB! we should fix 'e' to 'e' or 'j'....
+    if (index === 0 || sf.code !== subfieldCode) {
       return false;
     }
-    const currScore = scoreRelatorTerm(sf.value);
+    const currScore = scoreRelatorTerm(sf.value, typeOfMaterial);
 
     const prevSubfield = field.subfields[index - 1];
-    if (currScore === 0 || prevSubfield.code !== 'e') {
+    if (currScore === 0 || prevSubfield.code !== subfieldCode) {
       return false;
     }
-    const prevScore = scoreRelatorTerm(prevSubfield.value);
-
+    const prevScore = scoreRelatorTerm(prevSubfield.value, typeOfMaterial);
+    //console.log(`PREV: ${prevScore}, CURR: ${currScore}`); // eslint-disable-line no-console
 
     // If this subfield maps to a Work, then subfields can be swapped, even if we don't have a score for the prev subfield!
     if (prevScore === 0 && currScore < WORST_WORK) {
@@ -101,7 +119,7 @@ function swapESubfields(field) {
   });
 
   if (loopAgain) {
-    swapESubfields(field); // uh, evil recursion...
+    swapRelatorTermSubfields(field, typeOfMaterial); // uh, evil recursion...
     return;
   }
 
@@ -109,11 +127,11 @@ function swapESubfields(field) {
 
 }
 
-export function sortAdjacentESubfields(field) {
-  if (!field.subfields) {
+export function sortAdjacentRelatorTerms(field, typeOfMaterial = undefined) {
+  if (!field.subfields || !isRelatorTermTag(field.tag)) {
     return field;
   }
-  swapESubfields(field);
+  swapRelatorTermSubfields(field, typeOfMaterial);
 
   return field;
 }

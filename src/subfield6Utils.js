@@ -20,7 +20,7 @@ export function isValidSubfield6(subfield) {
   return subfield.value.match(sf6Regexp);
 }
 
-function subfield6GetTag(subfield) {
+export function subfield6GetTag(subfield) {
   if (isValidSubfield6(subfield)) {
     return subfield.value.substring(0, 3);
   }

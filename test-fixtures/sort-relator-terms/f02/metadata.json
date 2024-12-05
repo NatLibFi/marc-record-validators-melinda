@@ -1,5 +1,5 @@
 {
-  "description": "f02: sort $e subfields and punctuate",
+  "description": "f02: sort X00$e and X11$j subfields and punctuate",
   "fix": true,
   "only": false
 }

@@ -1,0 +1,5 @@
+{
+  "description": "f03: In BK records kirjoittaja precedes säveltäjä",
+  "fix": true,
+  "only": false
+}
