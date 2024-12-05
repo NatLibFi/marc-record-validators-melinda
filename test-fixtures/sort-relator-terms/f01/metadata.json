@@ -1,5 +1,5 @@
 {
-  "description": "f01: Nothing to do, for varios reasons (wrong field, not adjacent, already right order)",
+  "description": "f01: Nothing to do, for various reasons (wrong field, not adjacent, already in the right order)",
   "fix": true,
   "only": false
 }
