@@ -27,6 +27,14 @@ export default function (config = {}) {
     config.retainCyrillic = typeof config.retainCyrillic === 'undefined' ? true : config.retainCyrillic; // eslint-disable-line functional/immutable-data
     config.doISO9Transliteration = typeof config.doISO9Transliteration === 'undefined' ? true : config.doISO9Transliteration; // eslint-disable-line functional/immutable-data
     config.doSFS4900Transliteration = typeof config.doSFS4900Transliteration === 'undefined' ? true : config.doSFS4900Transliteration; // eslint-disable-line functional/immutable-data
+    config.preferSFS4900 = setPreference(); // eslint-disable-line functional/immutable-data
+
+    function setPreference() {
+      if (typeof config.preferSFS4900 === 'undefined') {
+        return !config.doISO9Transliteration && config.doSFS4900Transliteration;
+      }
+      return config.preferSFS4900;
+    }
   }
 
   function fix(record) {
@@ -98,10 +106,10 @@ export default function (config = {}) {
   }
 
   function fieldContainsCyrillicCharacters(field) { // based on melinda-ui-cyrillux
-    return field.subfields && field.subfields.some(sf => subfieldShouldTransliterateToIso9(sf));
+    return field.subfields && field.subfields.some(sf => subfieldRequiresTransliteration(sf));
   }
 
-  function subfieldShouldTransliterateToIso9(subfield) {
+  function subfieldRequiresTransliteration(subfield) {
     if (isControlSubfieldCode(subfield.code)) {
       return false;
     }
@@ -141,7 +149,7 @@ export default function (config = {}) {
 
 
   function mapSubfieldToIso9(subfield) {
-    if (!subfieldShouldTransliterateToIso9(subfield)) {
+    if (!subfieldRequiresTransliteration(subfield)) {
       return {code: subfield.code, value: subfield.value}; // just clone
     }
     const value = iso9.convertToLatin(subfield.value);
@@ -151,51 +159,64 @@ export default function (config = {}) {
 
   function mapSubfieldToSfs4900(subfield, lang = 'rus') {
     const inputLang = lang === 'ukr' ? 'ukr' : 'rus'; // Support 'ukr' and 'rus', default to 'rus'
-    const value = subfieldShouldTransliterateToIso9(subfield) ? sfs4900.convertToLatin(subfield.value, inputLang).result : subfield.value;
+    const value = subfieldRequiresTransliteration(subfield) ? sfs4900.convertToLatin(subfield.value, inputLang).result : subfield.value;
+    console.log(`VAL: ${subfield.value} => ${value} using ${lang}`); // eslint-disable-line no-console
     return {code: subfield.code, value};
   }
 
+  function mapField(field, occurrenceNumber, iso9 = true, lang = 'rus') {
+    const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
+    const transliterationText = iso9 ? iso9Trans : sfs4900Trans;
+
+    const subfield9 = fieldHasSubfield(field, '9', transliterationText) ? [] : [{code: '9', value: transliterationText}]; // Add only if needed
+    const transliterationFunc = iso9 ? mapSubfieldToIso9 : mapSubfieldToSfs4900;
+
+    // NB! iso9 won't use lang
+    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => transliterationFunc(sf, lang));
+
+    const newField = {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
+
+    // Transliteration goes to the original field:
+    if (!iso9 && config.preferSFS4900) {
+      return newField;
+    }
+    if (iso9 && !config.preferSFS4900) {
+      return newField;
+    }
+    // Translitetation goes to field 880:
+
+    //const subfield6 = newField.subfields.find(sf => sf.code === '6');
+    newField.tag = '880'; // eslint-disable-line functional/immutable-data
+    resetSubfield6Tag(subfield6, field.tag);
+    return newField;
+
+  }
 
   function mapFieldToIso9(field, occurrenceNumber) {
     if (!config.doISO9Transliteration) {
       return undefined;
     }
     // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
-    if (!config.retainCyrillic && !config.doSFS4900Transliteration) {
+    if (!config.retainCyrillic && !config.preferSFS4900) {
       const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 
-    const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
-    const subfield9 = fieldHasSubfield(field, '9', iso9Trans) ? [] : [{code: '9', value: iso9Trans}]; // Add only if needed
+    return mapField(field, occurrenceNumber, true, 'rus');
 
-    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToIso9(sf));
-
-    return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
   }
 
   function mapFieldToSfs4900(field, occurrenceNumber, lang = 'rus') {
-    // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
-    if (!config.retainCyrillic && !config.doISO9Transliteration) {
+    if (!config.doSFS4900Transliteration) {
+      return undefined;
+    }
+    // Just converts the field to SFS-4900 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
+    if (!config.retainCyrillic && config.preferSFS4900) {
       const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 
-    const subfield6 = deriveSubfield6('880', field.subfields, occurrenceNumber);
-    const subfield9 = fieldHasSubfield(field, '9', sfs4900Trans) ? [] : [{code: '9', value: sfs4900Trans}]; // Add only if needed
-
-    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => mapSubfieldToSfs4900(sf, lang));
-
-    const newField = {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
-
-    if (!config.doISO9Transliteration) {
-      return newField;
-    }
-
-    //const subfield6 = newField.subfields.find(sf => sf.code === '6');
-    newField.tag = '880'; // eslint-disable-line functional/immutable-data
-    resetSubfield6Tag(subfield6, field.tag);
-    return newField;
+    return mapField(field, occurrenceNumber, false, lang);
   }
 
   function deriveSubfield6(tag, subfields, occurrenceNumber) {
@@ -230,6 +251,7 @@ export default function (config = {}) {
     nvdebug(`   New CYR 880      ${fieldToString(newField)}`);
     return newField;
   }
+
 
   function getNewOccurrenceNumber(originalField, record, maxCreatedOccurrenceNumber = 0) {
     const occurrenceNumber = fieldGetMaxSubfield6OccurrenceNumberAsInteger(originalField);
