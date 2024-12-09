@@ -3,10 +3,10 @@
   "leader": "12345cam  22123454i 4500",
   "fields": [
     { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "a", "value": "Modin, Ûrij Ivanovič." }
+      { "code": "a", "value": "Modin, Juri Ivanovitš." }
     ]},
     { "tag": "245", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "a", "value": "Sudʹby razvedčikov." }
+      { "code": "a", "value": "Sudby razvedtšikov." }
     ]},
     {"tag": "500", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "6", "value": "880-01"},

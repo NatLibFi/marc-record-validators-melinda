@@ -212,7 +212,7 @@ export default function (config = {}) {
     }
     // Just converts the field to SFS-4900 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
     if (!config.retainCyrillic && config.preferSFS4900) {
-      const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
+      const subfields = field.subfields.map(sf => mapSubfieldToSfs4900(sf, lang));
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 
