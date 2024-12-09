@@ -283,7 +283,7 @@ export default function (config = {}) {
 
   function sfs4900PairCanBeTransliterated(field, record) {
     // MELINDA-10330: we already have public library data: (unmarked) SFS-4900 in FIELD and (unmarked) Cyrillic in 880
-    if (!field.subfields || !tagCanBeTransliterated(field.tag) || !config.doISO9Transliteration) {
+    if (!field.subfields || !tagCanBeTransliterated(field.tag) || !config.doISO9Transliteration || !config.retainCyrillic || !config.doSFS4900Transliteration) {
       return false;
     }
 
