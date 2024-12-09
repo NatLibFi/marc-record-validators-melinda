@@ -1,0 +1,5 @@
+{
+  "description": "f04: In MU records säveltäjä precedes kirjoittaja",
+  "fix": true,
+  "only": false
+}
