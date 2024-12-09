@@ -1,0 +1,19 @@
+{
+  "leader": "01234cjm  2223456 i 4500",
+  "fields": [
+    { "tag": "001", "value": "f01" },
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Nimi1,"},
+      {"code": "d", "value": "1901-2001,"},
+      {"code": "e", "value": "säveltäjä,"},
+      {"code": "e", "value": "kirjoittaja."}
+    ]},
+    { "tag": "001", "value": "f01" },
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Nimi2,"},
+      {"code": "d", "value": "1902-2002,"},
+      {"code": "e", "value": "kirjoittaja,"},
+      {"code": "e", "value": "säveltäjä."}
+    ]}
+  ]
+}
