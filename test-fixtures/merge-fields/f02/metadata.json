@@ -1,5 +1,5 @@
 {
-  "description": "merge relator terms fields 100 + 700",
+  "description": "F02: merge relator terms fields 100 + 700",
   "comment": "Note that relator term sorting is used from another validator",
   "fix": true,
   "only": false

@@ -1,0 +1,9 @@
+{
+  "description": "01b Fix: field 100 required translitteration, but prefer SFS 4900 in original field and put ISO9 to field 880",
+  "comment": "Note that the order of 880 fields with the same occurrence number is currently hard-coded to ISO9, CYRILLIC, SFS4900.",
+  "only": false,
+  "fix": true,
+  "config": {
+    "preferSFS4900": true
+  }
+}

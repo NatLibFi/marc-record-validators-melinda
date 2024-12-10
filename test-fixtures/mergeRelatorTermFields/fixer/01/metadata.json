@@ -1,6 +1,7 @@
 {
   "description": "merge relator terms fields 100 + 700",
   "comment": "Note that relator term sorting is used from another validator",
+  "comment #2": "kirjoittaja and valokuvaaja are work level terms, kuvittaja is expression level term, thus last",
   "fix": true,
   "only": false
 }

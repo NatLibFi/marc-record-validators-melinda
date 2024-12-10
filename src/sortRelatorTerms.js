@@ -86,44 +86,50 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
 
   const subfieldCode = tagToRelatorTermSubfieldCode(field.tag);
 
-  const loopAgain = field.subfields.some((sf, index) => {
+  console.log(`Processing ${fieldToString(field)}`); // eslint-disable-line no-console
+
+  const swapPosition = field.subfields.findIndex((subfield, index) => isSwappable(subfield, index));
+
+  if (swapPosition > 0) {
+    swapRelatorTermPair(swapPosition);
+    swapRelatorTermSubfields(field, typeOfMaterial); // uh, evil recursion...
+    return;
+  }
+
+  console.log(`END ${fieldToString(field)}`); // eslint-disable-line no-console
+
+  function swapRelatorTermPair(index) {
+    console.log(` SWAP`); // eslint-disable-line no-console
+
+    // Swap:
+    const tmp = field.subfields[index - 1];
+    field.subfields[index - 1] = field.subfields[index]; // eslint-disable-line functional/immutable-data
+    field.subfields[index] = tmp; // eslint-disable-line functional/immutable-data
+    fieldFixPunctuation(field);
+    return true;
+  }
+
+  function isSwappable(sf, index) {
     // NB! we should fix 'e' to 'e' or 'j'....
     if (index === 0 || sf.code !== subfieldCode) {
       return false;
     }
     const currScore = scoreRelatorTerm(sf.value, typeOfMaterial);
-
+    if (currScore === 0) {
+      return false;
+    }
     const prevSubfield = field.subfields[index - 1];
-    if (currScore === 0 || prevSubfield.code !== subfieldCode) {
+    if (prevSubfield.code !== subfieldCode) {
       return false;
     }
     const prevScore = scoreRelatorTerm(prevSubfield.value, typeOfMaterial);
-    //console.log(`PREV: ${prevScore}, CURR: ${currScore}`); // eslint-disable-line no-console
-
+    console.log(`PREV: ${prevSubfield.value}/${prevScore}, CURR: ${sf.value}/${currScore}`); // eslint-disable-line no-console
     // If this subfield maps to a Work, then subfields can be swapped, even if we don't have a score for the prev subfield!
     if (prevScore === 0 && currScore < WORST_WORK) {
       return false;
     }
-
-    if (currScore > prevScore) {
-      // Swap:
-      const tmp = field.subfields[index - 1];
-      field.subfields[index - 1] = sf; // eslint-disable-line functional/immutable-data
-      field.subfields[index] = tmp; // eslint-disable-line functional/immutable-data
-      fieldFixPunctuation(field);
-      return true;
-    }
-
-    return false;
-
-  });
-
-  if (loopAgain) {
-    swapRelatorTermSubfields(field, typeOfMaterial); // uh, evil recursion...
-    return;
+    return currScore > prevScore;
   }
-
-  return;
 
 }
 
