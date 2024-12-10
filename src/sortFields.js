@@ -63,7 +63,8 @@ const relatorTermScore = { // Here bigger is better
   'käsikirjoittaja': 90,
 
   'kuvaaja': 89, 'valokuvaaja': 89,
-  'kokoaja': 85,
+  'kokoaja': 86,
+  'alkuperäisidean luoja': 85,
   'teoksella kunnioitettu': 84, 'gratulaation kohde': 84,
   'julkaisija': 82,
   'tuottaja': 81,
@@ -88,7 +89,8 @@ const relatorTermScoreBk = {
   'libretisti': 100, 'sarjakuvantekijä': 100,
   'kirjoittaja': 99, 'author': 99, 'soitonoppaan tekijä': 99,
   'kuvaaja': 98, 'valokuvaaja': 98,
-  'kokoaja': 85,
+  'kokoaja': 86,
+  'alkuperäisidean luoja': 85,
   'teoksella kunnioitettu': 84, 'gratulaation kohde': 84,
   'julkaisija': 83,
   'säveltäjä': 82, // if 300$e has CD etc
@@ -109,6 +111,7 @@ const relatorTermScoreMu = {
   'säveltäjä': 100,
   'sanoittaja': 99,
   'soitonoppaan tekijä': 98,
+  'alkuperäisidean luoja': 85,
   'teoksella kunnioitettu': 81,
   // expression: https://finto.fi/mts/fi/page/m153
   'sovittaja': 79,
@@ -124,7 +127,8 @@ const relatorTermScoreVm = { // Visual Material
   'kirjoittaja': 99, 'author': 99, // Here we assume that film/whatever is based on author's book
   'käsikirjoittaja': 98,
   'kuvaaja': 89,
-  'säveltäjä': 83, // Volatile. John Williams?
+  'säveltäjä': 86, // Volatile. John Williams?
+  'alkuperäisidean luoja': 85,
   'julkaisija': 82,
   'tuottaja': 81,
   // Expression
