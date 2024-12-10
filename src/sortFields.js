@@ -51,14 +51,22 @@ const relatorTermScore = { // Here bigger is better
   // NB! The more abstract, the earlier it appears.
   // Note that terms with same abstraction level might also have order preferences
   // We should 1) check the order of these, and 2) add translations (support Swedish at the very least)
-  // work/teos > expression/ekspressio > manifestation/manifestaatin, https://finto.fi/mts/fi/page/m1298
+  // work/teos > expression/ekspressio > manifestation/manifestaatin,
+  // Work https://finto.fi/mts/fi/page/m1298
   'säveltäjä': 100, 'composer': 100,
-  'kirjoittaja': 99, 'author': 99,
-  'sarjakuvantekijä': 99,
-  'taiteilija': 98, 'kartantekijä': 98,
+  'kirjoittaja': 100, 'author': 100,
+  'libretisti': 100,
+  'sarjakuvantekijä': 100, 'soitonoppaan tekijä': 100,
+  'kartantekijä': 99,
+  'taiteilija': 98,
   'sanoittaja': 90,
-  'käsikirjoittaja': 90, 'soitonoppaan tekijä': 90,
-  'teoksella kunnioitettu': 81, 'gratulaation kohde': 81,
+  'käsikirjoittaja': 90,
+
+  'kuvaaja': 89, 'valokuvaaja': 89,
+  'kokoaja': 85,
+  'teoksella kunnioitettu': 84, 'gratulaation kohde': 84,
+  'julkaisija': 82,
+  'tuottaja': 81,
   // expression: https://finto.fi/mts/fi/page/m153
   'sovittaja': 79, 'arranger': 79,
   'kuvittaja': 78,
@@ -71,14 +79,12 @@ const relatorTermScore = { // Here bigger is better
   'kääntäjä': 70,
   'lukija': 61, 'kertoja': 61,
   // Manifestation level: https://finto.fi/mts/fi/page/m491
-
-  'kustantaja': 41,
-  'julkaisija': 40
+  'kustantaja': 41
   // Item level: https://finto.fi/mts/fi/page/m1157
 };
 
 const relatorTermScoreBk = {
-  // https://finto.fi/mts/fi/page/m1298 100-81
+  // https://finto.fi/mts/fi/page/m34 100-81
   'libretisti': 100, 'sarjakuvantekijä': 100,
   'kirjoittaja': 99, 'author': 99, 'soitonoppaan tekijä': 99,
   'kuvaaja': 98, 'valokuvaaja': 98,
@@ -112,13 +118,15 @@ const relatorTermScoreMu = {
   'miksaaja': 75
 };
 
-const relatorTermScoreVm = {
+const relatorTermScoreVm = { // Visual Material
   // Work
   'ohjaaja': 100,
   'kirjoittaja': 99, 'author': 99, // Here we assume that film/whatever is based on author's book
   'käsikirjoittaja': 98,
   'kuvaaja': 89,
-  'säveltäjä': 82, // volatile
+  'säveltäjä': 83, // Volatile. John Williams?
+  'julkaisija': 82,
+  'tuottaja': 81,
   // Expression
   'leikkaaja': 80,
   'sovittaja': 79,
