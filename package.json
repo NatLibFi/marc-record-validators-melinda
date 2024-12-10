@@ -40,7 +40,7 @@
     "@natlibfi/issn-verify": "^1.0.4",
     "@natlibfi/marc-record": "^9.1.1",
     "@natlibfi/marc-record-validate": "^8.0.12",
-    "@natlibfi/sfs-4900": "^1.1.0",
+    "@natlibfi/sfs-4900": "https://github.com/NatLibFi/sfs-4900",
     "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
     "debug": "^4.4.0",
@@ -51,6 +51,7 @@
     "xml2js": "^0.6.2",
     "xregexp": "^5.1.1"
   },
+  "nvolkComment": "sfs-4900 has deployment issues, thus npmjs.com has only sfs-4900 1.1.0; use github version for now",
   "peerDependencies": {
     "@natlibfi/marc-record-validate": "^8.0.12"
   },
@@ -70,8 +71,10 @@
     "eslint": "^8.57.1",
     "fetch-mock": "^11.1.5",
     "mocha": "^11.0.1",
-    "nyc": "^17.1.0"
+    "nyc": "^17.1.0",
+    "@jridgewell/gen-mapping": "0.3.5"
   },
+  "nvolkComment2": "@jridgewell/gen-mapping 0.3.6 seems to break things. Remove whole gen-mapping dev dependency after 0.3.7 appears.",
   "eslintConfig": {
     "extends": [
       "@natlibfi/melinda-backend"
