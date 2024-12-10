@@ -30,8 +30,14 @@ export default function (config = {}) {
     config.preferSFS4900 = setPreference(); // eslint-disable-line functional/immutable-data
 
     function setPreference() {
+      if (!config.doSFS4900Transliteration) {
+        return false;
+      }
+      if (!config.doISO9Transliteration && config.doSFS4900Transliteration) {
+        return true;
+      }
       if (typeof config.preferSFS4900 === 'undefined') {
-        return !config.doISO9Transliteration && config.doSFS4900Transliteration;
+        return false;
       }
       return config.preferSFS4900;
     }
