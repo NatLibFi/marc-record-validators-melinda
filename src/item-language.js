@@ -139,7 +139,7 @@ export default async function (tagPattern, treshold = 0.9) {
     }
 
     function getLanguageCode(record) {
-      const f008 = record.get(/^008$/u).shift(); // eslint-disable-line functional/immutable-data
+      const [f008] = record.get(/^008$/u);
 
       if (f008) {
         const code = f008.value.slice(35, 38);
@@ -148,7 +148,7 @@ export default async function (tagPattern, treshold = 0.9) {
         }
       }
 
-      const f041 = record.get(/^041$/u).shift(); // eslint-disable-line functional/immutable-data
+      const [f041] = record.get(/^041$/u);
 
       if (f041) {
         const code = f041.subfields.find(sf => sf.code === 'a').value;
