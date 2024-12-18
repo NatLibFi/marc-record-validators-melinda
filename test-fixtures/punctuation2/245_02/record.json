@@ -1,0 +1,11 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "000000001" },
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "MELINDA-10869?" },
+      { "code": "b", "value": "uhka vai mahdollisuus?" },
+      { "code": "c", "value": "Jira" }
+    ]}
+  ]
+}

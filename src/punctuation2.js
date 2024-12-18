@@ -167,6 +167,7 @@ const linkingEntryRemoveWhatever = [
 const crappy24X = [
   {'code': 'abnp', 'followedBy': '!c', 'remove': / \/$/u},
   {'code': 'abn', 'followedBy': 'c', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
+  {'code': 'abn', 'followedBy': 'c', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'abc', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'abfghinp', 'followedBy': '#', 'remove': /\.$/u, 'context': dotIsProbablyPunc},
   {'code': 'n', 'followedBy': 'p', 'remove': /\.$/u, 'context': dotIsProbablyPunc}, // MELINDA-8817
@@ -308,9 +309,9 @@ const addX30 = [...addToAllEntryFields];
 
 const add24X = [
   {'code': 'i', 'followedBy': 'a', 'add': ':', 'context': needsPuncAfterAlphanumeric},
-  {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': needsPuncAfterAlphanumeric},
+  {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': '[^:]$'},
   {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': needsPuncAfterAlphanumeric},
-  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': needsPuncAfterAlphanumeric},
+  {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': '[^/]$'},
   addDotBeforeLanguageSubfieldL
 ];
 
@@ -319,7 +320,7 @@ const add245 = [
   // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
   {'code': 'ab', 'followedBy': 'n', 'add': '.', 'context': needsPuncAfterAlphanumeric},
   {'code': 'n', 'followedBy': 'p', 'add': ',', 'context': defaultNeedsPuncAfter2},
-  {'code': 'abc', 'followedBy': '#', 'add': '.', 'context': needsPuncAfterAlphanumeric} // Stepping on "punctuation validator's" toes
+  {'code': 'abnpc', 'followedBy': '#', 'add': '.', 'context': needsPuncAfterAlphanumeric} // Stepping on "punctuation validator's" toes
 ];
 
 const addSeriesTitle = [ // 490 and 830
