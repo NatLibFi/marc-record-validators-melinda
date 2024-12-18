@@ -51,7 +51,6 @@
     "xml2js": "^0.6.2",
     "xregexp": "^5.1.1"
   },
-  "nvolkComment": "sfs-4900 has deployment issues, thus npmjs.com has only sfs-4900 1.1.0; use github version for now",
   "peerDependencies": {
     "@natlibfi/marc-record-validate": "^8.0.12"
   },
@@ -73,6 +72,10 @@
     "mocha": "^11.0.1",
     "nyc": "^17.1.0"
   },
+  "overrides": {
+    "nanoid": "^3.3.8"
+  },
+  "nvolkComment": "cld3-asm 4.0.0 uses emscripten-wasm-loader ^3.0.3 which uses problematic, non-secure nanoid version 2.X.X",
   "eslintConfig": {
     "extends": [
       "@natlibfi/melinda-backend"
