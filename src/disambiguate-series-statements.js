@@ -11,7 +11,7 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:disamb
 const ELECTRONIC = 1;
 const PRINTED = 2;
 const UNDEFINED = 0;
-const SRU_API_URL = 'https://bib-sru.melinda.kansalliskirjasto.fi/prv';
+const SRU_API_URL = 'https://sru.api.melinda.kansalliskirjasto.fi/bib';
 
 // Author(s): Nicholas Volk
 export default function () {
