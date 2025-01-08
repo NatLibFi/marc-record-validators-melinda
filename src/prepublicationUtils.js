@@ -36,14 +36,16 @@ export function fieldRefersToKoneellisestiTuotettuTietue(field) {
 
 
 export function fieldRefersToTarkistettuEnnakkotieto(field) {
-  return containsSubstringInSubfieldA(field, 'TARKISTETTU ENNAKKOTIETO');
+  return containsSubstringInSubfieldA(field, 'TARKISTETTU ENNAKKOTIETO') || containsSubstringInSubfieldA(field, 'arkistettu ennakkotieto');
 }
 
 
 export function fieldRefersToEnnakkotieto(field) {
   // NB! This no longer matches 'TARKISTETTU ENNAKKOTIETO' case! Bug or Feature?
-  if (containsSubstringInSubfieldA(field, 'ENNAKKOTIETO') && !fieldRefersToTarkistettuEnnakkotieto(field)) {
-    return true;
+  if (!fieldRefersToTarkistettuEnnakkotieto(field)) {
+    if (containsSubstringInSubfieldA(field, 'ENNAKKOTIETO') || containsSubstringInSubfieldA(field, 'nnakkotieto')) {
+      return true;
+    }
   }
   // MRA-420: "EI VIELÄ ILMESTYNYT" is a Helmet note, that is semantically similar to ENNAKKOTIETO:
   return containsSubstringInSubfieldA(field, 'EI VIELÄ ILMESTYNYT');
@@ -75,6 +77,7 @@ export function firstFieldHasBetterPrepubEncodingLevel(field1, field2) {
 
 /*
 function hasEnnakkotietoSubfield(field) {
+  // NB! This has apparently changed to lower case 'ennakkotieto'...
   return field.subfields.some(sf => ['g', '9'].includes(sf.code) && sf.value.includes('ENNAKKOTIETO'));
 }
 */
@@ -229,8 +232,11 @@ export function isEnnakkotietoSubfield(subfield) {
     return false;
   }
   // Length <= 13 allows punctuation, but does not require it:
-  if (subfield.value.substr(0, 12) === 'ENNAKKOTIETO' && subfield.value.length <= 13) {
-    return true;
+  if (subfield.value.length <= 13) {
+    const coreString = subfield.value.substr(0, 12);
+    if (coreString === 'ENNAKKOTIETO' || coreString === 'ennakkotieto') { // Lowercase term first seen in MET-575
+      return true;
+    }
   }
   return false;
 }
