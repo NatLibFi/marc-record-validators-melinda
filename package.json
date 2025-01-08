@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@natlibfi/issn-verify": "^1.0.6",
-    "@natlibfi/marc-record": "^9.1.1",
+    "@natlibfi/marc-record": "^9.1.2",
     "@natlibfi/marc-record-validate": "^8.0.12",
     "@natlibfi/sfs-4900": "github:NatLibFi/sfs-4900",
     "cld3-asm": "^4.0.0",
