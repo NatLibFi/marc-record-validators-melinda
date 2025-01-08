@@ -39,7 +39,10 @@
   "dependencies": {
     "@natlibfi/issn-verify": "^1.0.6",
     "@natlibfi/marc-record": "^9.1.2",
+    "@natlibfi/marc-record-serializers": "^10.1.2",
     "@natlibfi/marc-record-validate": "^8.0.12",
+    "@natlibfi/melinda-commons": "^13.0.18",
+    "@natlibfi/sru-client": "^6.0.17",
     "@natlibfi/sfs-4900": "github:NatLibFi/sfs-4900",
     "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
