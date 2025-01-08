@@ -42,7 +42,7 @@ export default function () {
       return {'message': [], 'valid': true};
     }
 
-    const deletableFieldsAsStrings = deletableFields.map(f => fieldToString(f));
+    const deletableFieldsAsStrings = deletableFields.map(f => `REMOVE '${fieldToString(f)}'`);
 
     return {'message': deletableFieldsAsStrings, 'valid': false};
   }
@@ -74,7 +74,7 @@ export default function () {
     //console.info(`getDeletableSeriesStatementFields(), N CANDS=${seriesStatementFields.length}`); // eslint-disable-line no-console
 
     if (seriesStatementFields.length === 0) {
-     //console.info(` DONE`); // eslint-disable-line no-console
+      //console.info(` DONE`); // eslint-disable-line no-console
       return deletableFields;
     }
 
