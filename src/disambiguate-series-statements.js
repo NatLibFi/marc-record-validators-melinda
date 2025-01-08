@@ -14,8 +14,8 @@ const UNDEFINED = 0;
 const SRU_API_URL = 'https://bib-sru.melinda.kansalliskirjasto.fi/prv';
 
 // Author(s): Nicholas Volk
-export default async function () {
-  const sruClient = await createSruClient(SRU_API_URL);
+export default function () {
+  const sruClient = createSruClient(SRU_API_URL);
 
   return {
     description: 'Disambiguate between printed and electonic series statements (field 490)',
@@ -23,7 +23,7 @@ export default async function () {
   };
 
   async function fix(record) {
-    console.log(`fix(record)`); // eslint-disable-line no-console
+    //console.log(`fix(record)`); // eslint-disable-line no-console
     const deletableFields = await getDeletableFields(record);
 
     const deletableFieldsAsStrings = deletableFields.map(f => fieldToString(f));
@@ -49,14 +49,14 @@ export default async function () {
 
   async function getDeletableFields(record) {
     const recordType = getRecordType(record);
-    console.info(`getDeletableFields(record), type: ${recordType}`); // eslint-disable-line no-console
+    //console.info(`getDeletableFields(record), type: ${recordType}`); // eslint-disable-line no-console
     if (recordType === UNDEFINED) {
       return [];
     }
 
     const seriesStatements = record.get('490').filter(f => fieldHasSubfield(f, 'x'));
 
-    console.info(`N STATEMENTS=${seriesStatements.length}`); // eslint-disable-line no-console
+    //console.info(`N STATEMENTS=${seriesStatements.length}`); // eslint-disable-line no-console
     if (seriesStatements.length < 2) {
       return [];
     }
@@ -71,17 +71,17 @@ export default async function () {
   }
 
   async function getDeletableSeriesStatementFields(recordType, seriesStatementFields, deletableFields = []) {
-    console.info(`getDeletableSeriesStatementFields(), N CANDS=${seriesStatementFields.length}`); // eslint-disable-line no-console
+    //console.info(`getDeletableSeriesStatementFields(), N CANDS=${seriesStatementFields.length}`); // eslint-disable-line no-console
 
     if (seriesStatementFields.length === 0) {
-      console.info(` DONE`); // eslint-disable-line no-console
+     //console.info(` DONE`); // eslint-disable-line no-console
       return deletableFields;
     }
 
     const [currStatementField, ...rest] = seriesStatementFields;
 
     const removeMe = await isRemovableField(currStatementField);
-    console.info(` ${removeMe ? 'REMOVE' : 'KEEP'}: ${fieldToString(currStatementField)}`); // eslint-disable-line no-console
+    //console.info(` ${removeMe ? 'REMOVE' : 'KEEP'}: ${fieldToString(currStatementField)}`); // eslint-disable-line no-console
 
     const deletableFields2 = removeMe ? [...deletableFields, currStatementField] : deletableFields;
 
@@ -89,14 +89,14 @@ export default async function () {
     return result;
 
     async function isRemovableField(seriesStatementField) {
-      console.info(` isRemovableField() in...`); // eslint-disable-line no-console
+      //console.info(` isRemovableField() in...`); // eslint-disable-line no-console
       const issn = getIssn(seriesStatementField);
       if (!issn) {
         return false;
       }
-      console.info(` got ISSN ${issn}`); // eslint-disable-line no-console
+      //console.info(` got ISSN ${issn}`); // eslint-disable-line no-console
       const issnRecords = await issnToRecords(issn);
-      console.info(` ISSN returned ${issnRecords.length} record(s)`); // eslint-disable-line no-console
+      //console.info(` ISSN returned ${issnRecords.length} record(s)`); // eslint-disable-line no-console
       // TEE: konvertoi tietueet objekteiksi!
       if (issnRecords.some(r => !isMismatchingRecord(r))) {
         return false;
@@ -115,9 +115,9 @@ export default async function () {
   }
 
   async function issnToRecords(issn) {
-    console.log('issnToRecords() in...'); // eslint-disable-line no-console
+    //console.log('issnToRecords() in...'); // eslint-disable-line no-console
     const records = await search(sruClient, `bath.issn=${issn}`);
-    console.log(`ISSN2RECORDS got ${records.length} record(s)!`); // eslint-disable-line no-console
+    //console.log(`ISSN2RECORDS got ${records.length} record(s)!`); // eslint-disable-line no-console
     return records;
   }
 
@@ -155,7 +155,7 @@ export default async function () {
 
 }
 
-// The code below is copied from melinda-ui-artikkelit/src/services/sruServices/sruClient.js
+// All the code below is copypasted from melinda-ui-artikkelit project file src/services/sruServices/sruClient.js
 
 export function createSruClient(sruApiUrl) {
 
