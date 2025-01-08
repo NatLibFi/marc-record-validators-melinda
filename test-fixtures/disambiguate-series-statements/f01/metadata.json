@@ -1,5 +1,5 @@
 {
   "description": "Fixer 01: remove printed 490",
-  "only": true,
+  "only": false,
   "fix": true
 }
