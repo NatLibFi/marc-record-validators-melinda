@@ -1,0 +1,19 @@
+{
+  "leader": "12345cam a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s7890    fi ||||             mul |"},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "tietokonekäyttöinen"},
+      {"code": "b", "value": "c"},
+      {"code": "2", "value": "rdamedia"}
+    ]},
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Studia Fennica,"},
+      {"code": "x", "value": "2669-9605"}
+    ]},
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Studia Fennica Linguistica,"},
+      {"code": "x", "value": "2669-9559"}
+    ]}
+  ]
+}

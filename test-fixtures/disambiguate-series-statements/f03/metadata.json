@@ -1,0 +1,5 @@
+{
+  "description": "Fixer 03: keep electric 490 even though record is printed as there are no printed 490 fields",
+  "only": false,
+  "fix": true
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Fixer 02: remove electronic 490 as record is printed",
+  "only": false,
+  "fix": true
+}
