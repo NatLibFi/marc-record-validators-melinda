@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/fix-country-codestest');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/fix-country-codes:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();

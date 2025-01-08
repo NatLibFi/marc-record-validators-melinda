@@ -3,13 +3,12 @@ import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
 
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortSubfields');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:translate-terms');
 const defaultTags = ['648', '650', '651', '655'];
 
 const swapLanguageCode = {'fin': 'swe', 'fi': 'sv', 'sv': 'fi', 'swe': 'fin'};
 const changeAbbrHash = {'fi': 'fin', 'fin': 'fi', 'sv': 'swe', 'swe': 'sv'};
 
-//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/translate-term');
 const termCache = {};
 
 // Author(s): Nicholas Volk

@@ -14,7 +14,7 @@ import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from '.
 import createDebugLogger from 'debug';
 import {normalizePartData, subfieldContainsPartData} from './normalizeSubfieldValueForComparison';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeFieldForComparison');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 

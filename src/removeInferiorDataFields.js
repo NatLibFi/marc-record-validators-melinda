@@ -12,7 +12,7 @@ import {fixComposition, precomposeFinnishLetters} from './normalize-utf8-diacrit
 // NB! This validator handles only full fields, and does not support subfield $8 removal.
 // Also, having multiple $8 subfields in same fields is not supported.
 // If this functionality is needed, see removeDuplicateDatafields.js for examples of subfield-only stuff.
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:removeSubsetDataFields');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:removeInferiortDataFields');
 
 export default function () {
   return {
