@@ -8,11 +8,8 @@
       {"code": "2", "value": "rdamedia"}
     ]},
     { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
-      {"code": "a", "value": "Studia Fennica,"},
-      {"code": "x", "value": "2669-9605"}
-    ]},
-    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [
-      {"code": "a", "value": "Studia Fennica Linguistica,"},
+      {"code": "a", "value": "Studia Fennica/Studia Fennica Linguistica,"},
+      {"code": "x", "value": "2669-9605"},
       {"code": "x", "value": "2669-9559"}
     ]}
   ]

@@ -1,5 +1,5 @@
 {
-  "description": "Validate 04: electronic record retains both electronic 490 fields. No changes -> pass validation",
+  "description": "Validate 04: electronic record retains both electronic 490$x fields. No changes -> pass validation",
   "comment": "2669-9605 maps to 016390586. 2669-9559 maps to 016390480",
   "only": false,
   "fix": false

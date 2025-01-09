@@ -8,11 +8,8 @@
       {"code": "2", "value": "rdamedia"}
     ]},
     { "tag": "490", "ind1": " ", "ind2": " ", "subfields": [
-      {"code": "a", "value": "Sisu (verkkoaineisto)"},
-      {"code": "x", "value": "1797-7746"}
-    ]},
-    { "tag": "490", "ind1": " ", "ind2": " ", "subfields": [
-      {"code": "a", "value": "Sisu (painettu)"},
+      {"code": "a", "value": "Sisu (verkkoaineisto ja painettu)"},
+      {"code": "x", "value": "1797-7746"},
       {"code": "x", "value": "1797-5905"}
     ]}
   ]

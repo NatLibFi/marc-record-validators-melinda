@@ -1,5 +1,5 @@
 {
-  "description": "Fixer 02: remove electronic 490 as record is printed",
+  "description": "Fixer 02: remove 490$x eletronic ISSN as record is printed",
   "only": false,
   "fix": true
 }
