@@ -1,7 +1,8 @@
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
+import {fieldToString, nvdebug, subfieldToString} from './utils';
 import {MARCXML} from '@natlibfi/marc-record-serializers';
 import {Error} from '@natlibfi/melinda-commons';
+import clone from 'clone';
 import {default as createNatlibfiSruClient} from '@natlibfi/sru-client';
 
 //const {default: createNatlibfiSruClient} = natlibfiSruClient;
@@ -18,92 +19,108 @@ export default function () {
   const sruClient = createSruClient(SRU_API_URL);
 
   return {
-    description: 'Disambiguate between printed and electonic series statements (field 490)',
+    description: 'Disambiguate between printed and electonic series statements (490 with multiple $xs)',
     validate, fix
   };
 
   async function fix(record) {
-    //console.log(`fix(record)`); // eslint-disable-line no-console
-    const deletableFields = await getDeletableFields(record);
+    const recordType = getRecordType(record);
 
-    const deletableFieldsAsStrings = deletableFields.map(f => fieldToString(f));
+    const relevantFields = getRelevantFields(record.fields);
+    const message = await fix490x(recordType, relevantFields, true);
 
-    deletableFields.forEach(nf => nvdebug(`TODO: remove field '${fieldToString(nf)}'`, debug));
-
-    deletableFields.forEach(f => record.removeField(f));
-
-    return {message: [], fix: deletableFieldsAsStrings, valid: true};
+    return {message, fix: [], valid: true};
   }
 
   async function validate(record) {
-    const deletableFields = await getDeletableFields(record);
-
-    if (deletableFields.length === 0) {
-      return {'message': [], 'valid': true};
-    }
-
-    const deletableFieldsAsStrings = deletableFields.map(f => `REMOVE '${fieldToString(f)}'`);
-
-    return {'message': deletableFieldsAsStrings, 'valid': false};
-  }
-
-  async function getDeletableFields(record) {
     const recordType = getRecordType(record);
-    //console.info(`getDeletableFields(record), type: ${recordType}`); // eslint-disable-line no-console
-    if (recordType === UNDEFINED) {
-      return [];
-    }
 
-    const seriesStatements = record.get('490').filter(f => fieldHasSubfield(f, 'x'));
+    const relevantFields = getRelevantFields(record.fields);
+    const message = await fix490x(recordType, relevantFields, false);
 
-    //console.info(`N STATEMENTS=${seriesStatements.length}`); // eslint-disable-line no-console
-    if (seriesStatements.length < 2) {
-      return [];
-    }
-
-    const deletableFields = await getDeletableSeriesStatementFields(recordType, seriesStatements);
-    // Delete something if and only if we keep something as well:
-    if (deletableFields.length < seriesStatements.length) {
-      return deletableFields;
-    }
-
-    return [];
+    return {message, valid: message.length === 0};
   }
 
-  async function getDeletableSeriesStatementFields(recordType, seriesStatementFields, deletableFields = []) {
-    //console.info(`getDeletableSeriesStatementFields(), N CANDS=${seriesStatementFields.length}`); // eslint-disable-line no-console
 
-    if (seriesStatementFields.length === 0) {
-      //console.info(` DONE`); // eslint-disable-line no-console
-      return deletableFields;
+  function getValidIssnSubfields(field) {
+    const subfields = field.subfields?.filter(sf => sf.code === 'x' && sf.value.match(/^[0-9]{4}-[0-9][0-9][0-9][0-9Xx]$/u));
+    return subfields;
+  }
+
+  function isRelevantField(field) {
+    if (field.tag !== '490') {
+      return false;
+    }
+    return getValidIssnSubfields(field).length > 1;
+  }
+
+  function getRelevantFields(fields) {
+    return fields.filter(f => isRelevantField(f));
+  }
+
+  async function fix490x(recordType, fields, reallyFix, message = []) {
+
+    if (recordType === UNDEFINED) {
+      return message;
+    }
+    const [currField, ...remainingFields] = fields;
+
+    if (!currField) {
+      return message;
     }
 
-    const [currStatementField, ...rest] = seriesStatementFields;
+    const validXs = getValidIssnSubfields(currField);
 
-    const removeMe = await isRemovableField(currStatementField);
-    //console.info(` ${removeMe ? 'REMOVE' : 'KEEP'}: ${fieldToString(currStatementField)}`); // eslint-disable-line no-console
+    const deletableXs = await getRemovableSubfields(validXs, recordType);
 
-    const deletableFields2 = removeMe ? [...deletableFields, currStatementField] : deletableFields;
-
-    const result = await getDeletableSeriesStatementFields(recordType, rest, deletableFields2);
-    return result;
-
-    async function isRemovableField(seriesStatementField) {
-      //console.info(` isRemovableField() in...`); // eslint-disable-line no-console
-      const issn = getIssn(seriesStatementField);
-      if (!issn) {
-        return false;
-      }
-      //console.info(` got ISSN ${issn}`); // eslint-disable-line no-console
-      const issnRecords = await issnToRecords(issn);
-      //console.info(` ISSN returned ${issnRecords.length} record(s)`); // eslint-disable-line no-console
-      // TEE: konvertoi tietueet objekteiksi!
-      if (issnRecords.some(r => !isMismatchingRecord(r))) {
-        return false;
-      }
-
-      return true;
+    if (deletableXs.length === 0 || deletableXs.length === validXs.length) {
+      return fix490x(recordType, remainingFields, reallyFix, message);
     }
+
+    const deletableStrings = deletableXs.map(sf => subfieldToString(sf));
+    nvdebug(`Field has removable ISSNS: '${deletableStrings.join(', ')}`, debug);
+
+    // fixer:
+    if (reallyFix) {
+      currField.subfields = currField.subfields.filter(sf => !deletableStrings.includes(subfieldToString(sf))); // eslint-disable-line functional/immutable-data
+      return fix490x(recordType, remainingFields, reallyFix, message);
+    }
+    // validators:
+    const clonedField = clone(currField);
+    const originalString = fieldToString(clonedField);
+    clonedField.subfields = clonedField.subfields.filter(sf => !deletableStrings.includes(subfieldToString(sf))); // eslint-disable-line functional/immutable-data
+
+    const newMessage = `Replace '${originalString}' with '${fieldToString(clonedField)}'`;
+
+    return fix490x(recordType, remainingFields, reallyFix, [...message, newMessage]);
+  }
+
+  async function getRemovableSubfields(validXs, recordType, removables = []) {
+    const [currSubfield, ...remainingXs] = validXs;
+
+    if (!currSubfield) {
+      return removables;
+    }
+
+    const isRemoveable = await isRemovableSubfield(currSubfield, recordType);
+    if (isRemoveable) {
+      return getRemovableSubfields(remainingXs, recordType, [...removables, currSubfield]);
+    }
+    return getRemovableSubfields(remainingXs, recordType, removables);
+  }
+
+  async function isRemovableSubfield(subfield, recordType) {
+    console.info(` isRemovableField() in...`); // eslint-disable-line no-console
+    const issn = subfield.value;
+
+    console.info(` got ISSN ${issn}`); // eslint-disable-line no-console
+    const issnRecords = await issnToRecords(issn);
+    console.info(` ISSN returned ${issnRecords.length} record(s)`); // eslint-disable-line no-console
+    // TEE: konvertoi tietueet objekteiksi!
+    if (issnRecords.some(r => !isMismatchingRecord(r))) {
+      return false;
+    }
+    return true;
 
     function isMismatchingRecord(r) {
       const issnRecordType = getRecordType(r);
@@ -119,16 +136,6 @@ export default function () {
     const records = await search(sruClient, `bath.issn=${issn}`);
     //console.log(`ISSN2RECORDS got ${records.length} record(s)!`); // eslint-disable-line no-console
     return records;
-  }
-
-  function getIssn(field) {
-    // Assume that this is a field 490.
-    // Return value in first $x subfield:
-    const x = field.subfields.find(sf => sf.code === 'x');
-    if (x) {
-      return x.value;
-    }
-    return undefined;
   }
 
   function getRecordType(record) {
