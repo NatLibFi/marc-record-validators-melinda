@@ -11,7 +11,7 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:disamb
 
 const ELECTRONIC = 1;
 const PRINTED = 2;
-const UNDEFINED = 0;
+const NEITHER_OR_UNKNOWN = 0;
 const SRU_API_URL = 'https://sru.api.melinda.kansalliskirjasto.fi/bib';
 
 // Author(s): Nicholas Volk
@@ -60,7 +60,7 @@ export default function () {
 
   async function fix490x(recordType, fields, reallyFix, message = []) {
 
-    if (recordType === UNDEFINED) {
+    if (recordType === NEITHER_OR_UNKNOWN) {
       return message;
     }
     const [currField, ...remainingFields] = fields;
@@ -110,13 +110,14 @@ export default function () {
   }
 
   async function isRemovableSubfield(subfield, recordType) {
-    console.info(` isRemovableField() in...`); // eslint-disable-line no-console
+    //console.info(` isRemovableField() in...`); // eslint-disable-line no-console
     const issn = subfield.value;
 
-    console.info(` got ISSN ${issn}`); // eslint-disable-line no-console
+    //console.info(` got ISSN ${issn}`); // eslint-disable-line no-console
     const issnRecords = await issnToRecords(issn);
-    console.info(` ISSN returned ${issnRecords.length} record(s)`); // eslint-disable-line no-console
-    // TEE: konvertoi tietueet objekteiksi!
+    //console.info(` ISSN returned ${issnRecords.length} record(s)`); // eslint-disable-line no-console
+
+    // !isMismatchingRecord !== isMatchingRecord as NEITHER_OR_UNKNOWN record type is neutral. Thus double negative "not mismatch". Sorry about that.
     if (issnRecords.some(r => !isMismatchingRecord(r))) {
       return false;
     }
@@ -124,7 +125,7 @@ export default function () {
 
     function isMismatchingRecord(r) {
       const issnRecordType = getRecordType(r);
-      if (issnRecordType === UNDEFINED) {
+      if (issnRecordType === NEITHER_OR_UNKNOWN) {
         return false;
       }
       return issnRecordType !== recordType;
@@ -141,12 +142,12 @@ export default function () {
   function getRecordType(record) {
     const f337 = record.get('337');
     if (f337.length !== 1) {
-      return UNDEFINED;
+      return NEITHER_OR_UNKNOWN;
     }
 
     const b = f337[0].subfields.filter(sf => sf.code === 'b');
     if (b.length !== 1) {
-      return UNDEFINED;
+      return NEITHER_OR_UNKNOWN;
     }
 
     if (b[0].value === 'c') {
@@ -157,7 +158,7 @@ export default function () {
       return PRINTED;
     }
 
-    return UNDEFINED;
+    return NEITHER_OR_UNKNOWN;
   }
 
 }
