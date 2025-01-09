@@ -297,8 +297,7 @@ function deriveIndividualDeletables(record) {
       return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp]);
     }
 
-
-    const ennakkotieto653 = currString.match(/^653./u) ? [`${currString} ‡g ENNAKKOTIETO`] : []; // MET-528
+    const ennakkotieto653 = currString.match(/^653./u) ? [`${currString} ‡g ENNAKKOTIETO`, `${currString} ‡g ennakkotieto`, `${currString} ‡g ENNAKKOTIETO.`, `${currString} ‡g ennakkotieto.`] : []; // MET-528 (extented by MET-575)
 
     const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...ennakkotieto653];
 
