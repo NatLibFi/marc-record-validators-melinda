@@ -5,6 +5,7 @@ import AddMissingField337 from './addMissingField337';
 import AddMissingField338 from './addMissingField338';
 import Cyrillux from './cyrillux';
 import CyrilluxUsemarconReplacement from './cyrillux-usemarcon-replacement';
+import DisambiguateSeriesStatements from './disambiguateSeriesStatements';
 import DoubleCommas from './double-commas';
 import DuplicatesInd1 from './duplicates-ind1';
 import EmptyFields from './empty-fields';
@@ -64,6 +65,7 @@ export {
   AddMissingField338,
   Cyrillux,
   CyrilluxUsemarconReplacement,
+  DisambiguateSeriesStatements,
   DoubleCommas,
   DuplicatesInd1,
   EmptyFields,
