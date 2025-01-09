@@ -24,7 +24,12 @@ export function encodingLevelIsBetterThanPrepublication(encodingLevel) {
 }
 
 
-function containsSubstringInSubfieldA(field, substring) {
+function containsSubstringInSubfieldA(field, substring, ignoreCase = false) {
+  if (ignoreCase) {
+    const lowercasedSubstring = substring.toLowerCase();
+    return field.subfields.some(sf => sf.code === 'a' && sf.value.toLowerCase().includes(lowercasedSubstring));
+
+  }
   return field.subfields.some(sf => sf.code === 'a' && sf.value.includes(substring));
 }
 
@@ -36,14 +41,14 @@ export function fieldRefersToKoneellisestiTuotettuTietue(field) {
 
 
 export function fieldRefersToTarkistettuEnnakkotieto(field) {
-  return containsSubstringInSubfieldA(field, 'TARKISTETTU ENNAKKOTIETO') || containsSubstringInSubfieldA(field, 'arkistettu ennakkotieto');
+  return containsSubstringInSubfieldA(field, 'TARKISTETTU ENNAKKOTIETO', true);
 }
 
 
 export function fieldRefersToEnnakkotieto(field) {
   // NB! This no longer matches 'TARKISTETTU ENNAKKOTIETO' case! Bug or Feature?
   if (!fieldRefersToTarkistettuEnnakkotieto(field)) {
-    if (containsSubstringInSubfieldA(field, 'ENNAKKOTIETO') || containsSubstringInSubfieldA(field, 'nnakkotieto')) {
+    if (containsSubstringInSubfieldA(field, 'ENNAKKOTIETO', true)) {
       return true;
     }
   }
