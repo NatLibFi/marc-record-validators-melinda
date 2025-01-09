@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {cloneAndNormalizeFieldForComparison} from '../normalizeFieldForComparison.js';
+import {cloneAndNormalizeFieldForComparison, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison.js';
 import {normalizeAs, normalizeControlSubfieldValue} from '../normalize-identifiers';
 import {fieldHasSubfield, fieldToString, isControlSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from '../utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
@@ -26,10 +26,10 @@ function catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTa
 }
 
 function ennakkotietoInSubfieldG(candSubfieldData) {
-  if (candSubfieldData.code === 'g' && ['ENNAKKOTIETO.', 'ENNAKKOTIETO'].includes(candSubfieldData.originalValue)) {
+  if (isEnnakkotietoSubfieldG({'code': candSubfieldData.code, 'value': candSubfieldData.originalValue})) {
     // Skip just ‡g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe even more from ennakkotieto.
-    debugDev('Skip ‡g ENNAKKOTIETO.');
+    debugDev(`Skip '‡g ${candSubfieldData.originalValue}'`);
     return true;
   }
   return false;

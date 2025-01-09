@@ -18,6 +18,13 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:no
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
+export function isEnnakkotietoSubfieldG(subfield) {
+  if (subfield.code !== 'g') {
+    return false;
+  }
+  return subfield.value.match(/^ENNAKKOTIETO\.?$/gu);
+}
+
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
   // We may drop certain subfields:
@@ -62,11 +69,9 @@ function containsCorporateName(tag = '???', subfieldCode = undefined) {
 
 function skipAllSubfieldNormalizations(value, subfieldCode, tag) {
 
-
-  if (subfieldCode === 'g' && value === 'ENNAKKOTIETO.') {
+  if (isEnnakkotietoSubfieldG({'code': subfieldCode, value})) {
     return true;
   }
-
 
   if (tag === '035' && ['a', 'z'].includes(subfieldCode)) { // A
     return true;
