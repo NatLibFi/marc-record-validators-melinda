@@ -4,6 +4,13 @@
     { "tag": "001", "value": "f13" },
     { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "taikasana"}
+    ]},
+    { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "toinen"}
+    ]},
+    { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "kolmas"},
+      { "code": "g", "value": "ENNAKKOTIETO"}
     ]}
   ],
   "leader": "01331cam a22003498i 4500"
