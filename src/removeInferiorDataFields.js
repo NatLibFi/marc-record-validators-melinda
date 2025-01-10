@@ -233,7 +233,25 @@ function deriveIndividualDeletables(record) {
 
   const deletableStringsArray = processTodoList(todoList);
 
-  return uniqArray(deletableStringsArray);
+  const inferiorTerms = getInferiorTerms(record);
+
+  return uniqArray([...deletableStringsArray, ...inferiorTerms]);
+
+  function getInferiorTerms(record) {
+    const inputFields = record.fields.filter(f => ['648', '650', '651'].includes(f.tag) && f.subfields);
+    const result = inputFields.flatMap(f => fieldToInferiorFields(f));
+
+    // console.log(result.join('\n')); // eslint-disable-line no-console
+    return result;
+  }
+
+  function fieldToInferiorFields(field) {
+    const aArray = field.subfields.filter(sf => sf.code === 'a');
+    if (field.tag === '650') {
+      return aArray.flatMap(sf => [`653 ## ‡a ${sf.value}`, `653 #0 ‡a ${sf.value}`]);
+    }
+    return aArray.map(sf => `653 ## ‡a ${sf.value}`);
+  }
 
   function processTodoList(thingsToDo, deletables = []) {
     const [currString, ...stillToDo] = thingsToDo;
@@ -297,9 +315,10 @@ function deriveIndividualDeletables(record) {
       return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp]);
     }
 
-    const ennakkotieto653 = currString.match(/^653./u) ? [`${currString} ‡g ENNAKKOTIETO`, `${currString} ‡g ennakkotieto`, `${currString} ‡g ENNAKKOTIETO.`, `${currString} ‡g ennakkotieto.`] : []; // MET-528 (extented by MET-575)
+    // MET-575 (merge: applies in postprocessing)
+    const inferiorTerms = getPrepublicationTerms(currString);
 
-    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...ennakkotieto653];
+    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...inferiorTerms];
 
     if (subsets.length) {
       return processTodoList([...stillToDo, ...moreToDo], newDeletables);
@@ -320,6 +339,15 @@ function deriveIndividualDeletables(record) {
       return [];
     }
     return [accentless];
+  }
+
+  function getPrepublicationTerms(fieldAsString) {
+    if (fieldAsString.match(/^653./u)) {
+      // MET-528 (extented by MET-575)
+      return [`${fieldAsString} ‡g ENNAKKOTIETO`, `${fieldAsString} ‡g ennakkotieto`, `${fieldAsString} ‡g ENNAKKOTIETO.`, `${fieldAsString} ‡g ennakkotieto.`];
+    }
+
+    return [];
   }
 
 }
