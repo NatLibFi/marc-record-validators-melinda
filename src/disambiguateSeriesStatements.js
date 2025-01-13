@@ -4,6 +4,7 @@ import {MARCXML} from '@natlibfi/marc-record-serializers';
 import {Error} from '@natlibfi/melinda-commons';
 import clone from 'clone';
 import {default as createNatlibfiSruClient} from '@natlibfi/sru-client';
+import {fieldFixPunctuation} from './punctuation2';
 
 //const {default: createNatlibfiSruClient} = natlibfiSruClient;
 
@@ -43,7 +44,7 @@ export default function () {
 
 
   function getValidIssnSubfields(field) {
-    const subfields = field.subfields?.filter(sf => sf.code === 'x' && sf.value.match(/^[0-9]{4}-[0-9][0-9][0-9][0-9Xx]$/u));
+    const subfields = field.subfields?.filter(sf => sf.code === 'x' && sf.value.match(/^[0-9]{4}-[0-9][0-9][0-9][0-9Xx][^0-9Xx]*$/u));
     return subfields;
   }
 
@@ -83,6 +84,7 @@ export default function () {
     // fixer:
     if (reallyFix) {
       currField.subfields = currField.subfields.filter(sf => !deletableStrings.includes(subfieldToString(sf))); // eslint-disable-line functional/immutable-data
+      fieldFixPunctuation(currField);
       return fix490x(recordType, remainingFields, reallyFix, message);
     }
     // validators:
@@ -111,7 +113,7 @@ export default function () {
 
   async function isRemovableSubfield(subfield, recordType) {
     //console.info(` isRemovableField() in...`); // eslint-disable-line no-console
-    const issn = subfield.value;
+    const issn = subfield.value.substring(0, 9); // Strip punctuation (ISSN consists of nine letter, eg. "1234-5678")
 
     //console.info(` got ISSN ${issn}`); // eslint-disable-line no-console
     const issnRecords = await issnToRecords(issn);
