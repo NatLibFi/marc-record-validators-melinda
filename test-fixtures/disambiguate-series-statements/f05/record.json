@@ -1,0 +1,17 @@
+{
+  "leader": "12345cam a22123454i 4500",
+  "fields": [
+    { "tag": "008", "value": "012345s7890    fi ||||             mul |"},
+    { "tag": "337", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "käytettävissä ilman laitetta"},
+      {"code": "b", "value": "n"},
+      {"code": "2", "value": "rdamedia"}
+    ]},
+    { "tag": "490", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Sisu,"},
+      {"code": "x", "value": "1797-5905,"},
+      {"code": "x", "value": "1797-7746 ;"},
+      {"code": "v", "value": "whatever 1"}
+    ]}
+  ]
+}
