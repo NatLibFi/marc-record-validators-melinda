@@ -23,37 +23,25 @@ export function encodingLevelIsBetterThanPrepublication(encodingLevel) {
   return index > -1 && index < prepublicationLevelIndex;
 }
 
-
-function containsSubstringInSubfieldA(field, substring, ignoreCase = false) {
-  if (ignoreCase) {
-    const lowercasedSubstring = substring.toLowerCase();
-    return field.subfields.some(sf => sf.code === 'a' && sf.value.toLowerCase().includes(lowercasedSubstring));
-
-  }
-  return field.subfields.some(sf => sf.code === 'a' && sf.value.includes(substring));
-}
-
-
 // These three functions below all refer to field 500:
 export function fieldRefersToKoneellisestiTuotettuTietue(field) {
-  return containsSubstringInSubfieldA(field, 'Koneellisesti tuotettu tietue');
+  return field.subfields?.some(sf => sf.code === 'a' && sf.value.match(/^Koneellisesti tuotettu tietue/u));
 }
 
 
 export function fieldRefersToTarkistettuEnnakkotieto(field) {
-  return containsSubstringInSubfieldA(field, 'TARKISTETTU ENNAKKOTIETO', true);
+  return field.subfields?.some(sf => sf.code === 'a' && sf.value.match(/^tarkistettu ennakkotieto/ui));
 }
 
 
 export function fieldRefersToEnnakkotieto(field) {
   // NB! This no longer matches 'TARKISTETTU ENNAKKOTIETO' case! Bug or Feature?
-  if (!fieldRefersToTarkistettuEnnakkotieto(field)) {
-    if (containsSubstringInSubfieldA(field, 'ENNAKKOTIETO', true)) {
-      return true;
-    }
+  if (field.subfields?.some(sf => sf.code === 'a' && sf.value.match(/^ennakkotieto(?:$|[. ])/ui))) {
+    return true;
   }
+
   // MRA-420: "EI VIELÄ ILMESTYNYT" is a Helmet note, that is semantically similar to ENNAKKOTIETO:
-  return containsSubstringInSubfieldA(field, 'EI VIELÄ ILMESTYNYT');
+  return field.subfields?.some(sf => sf.code === 'a' && sf.value.match(/^EI VIELÄ ILMESTYNYT/u));
 }
 
 
@@ -78,24 +66,6 @@ export function firstFieldHasBetterPrepubEncodingLevel(field1, field2) {
   }
   return false;
 }
-
-
-/*
-function hasEnnakkotietoSubfield(field) {
-  // NB! This has apparently changed to lower case 'ennakkotieto'...
-  return field.subfields.some(sf => ['g', '9'].includes(sf.code) && sf.value.includes('ENNAKKOTIETO'));
-}
-*/
-
-/*
-export function isPrepublicationField6XX(field) {
-  if (!field.tag.match(/^6(?:[0-4][0-9]|5[0-5])$/u)) { // Not within 600 ... 655 range
-    return false;
-  }
-  return field.subfields.some(sf => hasEnnakkotietoSubfield(sf));
-}
-*/
-
 
 export function getRelevant5XXFields(record, f500 = false, f594 = false) {
   const cands = actualGetFields();
