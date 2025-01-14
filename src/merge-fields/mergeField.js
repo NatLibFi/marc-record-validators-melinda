@@ -23,7 +23,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:me
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-// NB! Can be do this via config.json?
+// NB! Can we do this via config.json?
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => !isEnnakkotietoSubfieldG(subfield));
   // remove only iff some other subfield remains
