@@ -1,0 +1,5 @@
+{
+  "description": "Fixer 03: keep electric 490$x electric ISSN even though record is printed as there are no 490$x printed ISSN subfield",
+  "only": false,
+  "fix": true
+}

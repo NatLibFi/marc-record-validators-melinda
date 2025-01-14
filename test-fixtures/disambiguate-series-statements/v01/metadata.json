@@ -1,0 +1,5 @@
+{
+  "description": "Validate 01: remove printed 490$x as record is electronic. Changes -> fail validation.",
+  "only": false,
+  "fix": false
+}

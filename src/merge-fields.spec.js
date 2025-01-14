@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/merge-field:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/merge-fields:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
