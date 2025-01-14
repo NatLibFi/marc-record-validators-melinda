@@ -1,0 +1,5 @@
+{
+  "description": "Fixer 02: remove 490$x eletronic ISSN as record is printed",
+  "only": false,
+  "fix": true
+}

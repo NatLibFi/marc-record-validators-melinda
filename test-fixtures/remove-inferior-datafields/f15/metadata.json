@@ -1,0 +1,6 @@
+{
+  "description": "f14/MET-575: remove 653 fields",
+  "comment": "This will solve MET-575 during Merge postprocess stage",
+  "fix": true,
+  "only": false
+}

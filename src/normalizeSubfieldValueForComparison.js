@@ -3,7 +3,7 @@ import createDebugLogger from 'debug';
 
 // Normalizes at least 490$v and 773$g which contain information such as "Raita 5" vs "5", and "Osa 3" vs "Osa III".
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizePart');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfieldValueForComparison');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 

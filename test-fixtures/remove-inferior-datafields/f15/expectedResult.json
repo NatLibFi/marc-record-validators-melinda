@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f14" },
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi1"}, {"code": "2", "value": "yso/fin"}]},
+    { "tag": "650", "ind1": " ", "ind2": "2", "subfields": [ { "code": "a", "value": "termi2"}]},
+    { "tag": "651", "ind1": " ", "ind2": "2", "subfields": [ { "code": "a", "value": "Termia1"}, {"code": "2", "value": "yso/fin"}]},
+    { "tag": "653", "ind1": " ", "ind2": "0", "subfields": [ { "code": "a", "value": "Termia1"}]}
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}

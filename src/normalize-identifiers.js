@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
 import {fieldToString} from './utils';
-//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalizeIdentifiers');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalize-identifiers');
 
 /*
 function nvdebug(message, func) {

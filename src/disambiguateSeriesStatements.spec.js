@@ -1,13 +1,13 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './fix-country-codes';
+import validatorFactory from './disambiguateSeriesStatements';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'fix-country-codes'],
+  path: [__dirname, '..', 'test-fixtures', 'disambiguate-series-statements'],
   useMetadataFile: true,
   recurse: false,
   fixura: {
@@ -17,7 +17,7 @@ generateTests({
     before: () => testValidatorFactory()
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/fix-country-codes:test');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/disambiguateSeriesStatements:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();

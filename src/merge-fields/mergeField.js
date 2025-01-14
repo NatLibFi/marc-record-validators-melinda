@@ -1,8 +1,8 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, fieldsToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from '../utils';
+import {fieldToString, fieldsToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from '../utils';
 import {fieldGetOccurrenceNumberPairs} from '../subfield6Utils.js';
-import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '../normalizeFieldForComparison';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
@@ -25,7 +25,7 @@ const debugDev = debug.extend('dev');
 
 // NB! Can be do this via config.json?
 function removeEnnakkotieto(field) {
-  const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
+  const tmp = field.subfields.filter(subfield => !isEnnakkotietoSubfieldG(subfield));
   // remove only iff some other subfield remains
   if (tmp.length > 0) { // eslint-disable-line functional/no-conditional-statements
     field.subfields = tmp; // eslint-disable-line functional/immutable-data
@@ -60,7 +60,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
   // (If our prepub normalizations are ok, this should not be needed.
   //  However, it's simple and works well enough, so let's keep it here.)
-  if (fieldHasSubfield(baseField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) { // eslint-disable-line functional/no-conditional-statements
+  if (baseField.subfields?.find(sf => isEnnakkotietoSubfieldG(sf)) && !sourceField.subfields?.find(sf => isEnnakkotietoSubfieldG(sf))) { // eslint-disable-line functional/no-conditional-statements
     removeEnnakkotieto(baseField);
     baseField.merged = 1; // eslint-disable-line functional/immutable-data
   }

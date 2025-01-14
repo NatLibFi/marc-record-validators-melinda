@@ -86,7 +86,7 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
 
   const subfieldCode = tagToRelatorTermSubfieldCode(field.tag);
 
-  console.log(`Processing ${fieldToString(field)}`); // eslint-disable-line no-console
+  //console.log(`Processing ${fieldToString(field)}`); // eslint-disable-line no-console
 
   const swapPosition = field.subfields.findIndex((subfield, index) => isSwappable(subfield, index));
 
@@ -96,10 +96,10 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
     return;
   }
 
-  console.log(`END ${fieldToString(field)}`); // eslint-disable-line no-console
+  //console.log(`END ${fieldToString(field)}`); // eslint-disable-line no-console
 
   function swapRelatorTermPair(index) {
-    console.log(` SWAP`); // eslint-disable-line no-console
+    //console.log(` SWAP`); // eslint-disable-line no-console
 
     // Swap:
     const tmp = field.subfields[index - 1];
@@ -123,7 +123,7 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
       return false;
     }
     const prevScore = scoreRelatorTerm(prevSubfield.value, typeOfMaterial);
-    console.log(`PREV: ${prevSubfield.value}/${prevScore}, CURR: ${sf.value}/${currScore}`); // eslint-disable-line no-console
+    // console.log(`PREV: ${prevSubfield.value}/${prevScore}, CURR: ${sf.value}/${currScore}`); // eslint-disable-line no-console
     // If this subfield maps to a Work, then subfields can be swapped, even if we don't have a score for the prev subfield!
     if (prevScore === 0 && currScore < WORST_WORK) {
       return false;
