@@ -22,7 +22,7 @@ export function isEnnakkotietoSubfieldG(subfield) {
   if (subfield.code !== 'g') {
     return false;
   }
-  return subfield.value.match(/^ENNAKKOTIETO\.?$/gu);
+  return subfield.value.match(/^ENNAKKOTIETO\.?$/gui);
 }
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
