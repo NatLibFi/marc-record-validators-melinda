@@ -1,5 +1,5 @@
 {
   "description": "Fixer 05: (f02-ish with proper punctuation): remove 490$x eletronic ISSN as record is printed",
-  "only": true,
+  "only": false,
   "fix": true
 }
