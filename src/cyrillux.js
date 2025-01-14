@@ -166,7 +166,7 @@ export default function (config = {}) {
   function mapSubfieldToSfs4900(subfield, lang = 'rus') {
     const inputLang = lang === 'ukr' ? 'ukr' : 'rus'; // Support 'ukr' and 'rus', default to 'rus'
     const value = subfieldRequiresTransliteration(subfield) ? sfs4900.convertToLatin(subfield.value, inputLang).result : subfield.value;
-    console.log(`VAL: ${subfield.value} => ${value} using ${lang}`); // eslint-disable-line no-console
+    //console.log(`VAL: ${subfield.value} => ${value} using ${lang}`); // eslint-disable-line no-console
     return {code: subfield.code, value};
   }
 
