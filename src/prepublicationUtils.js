@@ -209,7 +209,7 @@ export function isEnnakkotietoSubfield(subfield) {
   // Length <= 13 allows punctuation, but does not require it:
   if (subfield.value.length <= 13) {
     const coreString = subfield.value.substr(0, 12);
-    if (coreString === 'ENNAKKOTIETO' || coreString === 'ennakkotieto') { // Lowercase term first seen in MET-575
+    if (coreString.toLowerCase() === 'ennakkotieto') { // Lowercase term first seen in MET-575
       return true;
     }
   }
