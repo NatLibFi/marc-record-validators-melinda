@@ -17,7 +17,7 @@ const keyX10 = 'abcdfghlnoprstuwx';
 const keyX11 = 'acdefghlnpqstuwx';
 const keyX30 = 'adfghklmnoprstvwxyz';
 
-const aToZ ='abcdefghijklmnopqrstuvwxyz';
+const aToZ = 'abcdefghijklmnopqrstuvwxyz';
 
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
