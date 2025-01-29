@@ -17,8 +17,6 @@ const keyX10 = 'abcdfghlnoprstuwx';
 const keyX11 = 'acdefghlnpqstuwx';
 const keyX30 = 'adfghklmnoprstvwxyz';
 
-const aToZ = 'abcdefghijklmnopqrstuvwxyz';
-
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
   {'tag': '013', 'required': 'a', 'key': 'a'}, // We have 2 instances in Melinda...
@@ -186,16 +184,17 @@ const mergeConstraints = [
   {'tag': '585', 'required': 'a', 'key': 'a'},
   {'tag': '586', 'required': 'a', 'key': 'a'},
   {'tag': '588', 'required': 'a', 'key': 'a'},
-  {'tag': '590', 'required': '', 'key': aToZ},
-  {'tag': '591', 'required': '', 'key': aToZ},
-  {'tag': '592', 'required': '', 'key': aToZ},
-  {'tag': '593', 'required': '', 'key': aToZ},
-  {'tag': '594', 'required': '', 'key': aToZ},
-  {'tag': '595', 'required': '', 'key': aToZ},
-  {'tag': '596', 'required': '', 'key': aToZ},
-  {'tag': '597', 'required': '', 'key': aToZ},
-  {'tag': '598', 'required': '', 'key': aToZ},
-  {'tag': '599', 'required': '', 'key': aToZ},
+  // NB! Currently we never merge 59X fields (see mergableTags.js). Doublish removals such as MELKEHITYS-3147 are handled by postprocessor.
+  {'tag': '590', 'required': ''},
+  {'tag': '591', 'required': ''},
+  {'tag': '592', 'required': ''},
+  {'tag': '593', 'required': ''},
+  {'tag': '594', 'required': ''},
+  {'tag': '595', 'required': ''},
+  {'tag': '596', 'required': ''},
+  {'tag': '597', 'required': ''},
+  {'tag': '598', 'required': ''},
+  {'tag': '599', 'required': ''},
   {'tag': '600', 'required': 'a', 'paired': 'tvxyz', 'key': keyX00},
   {'tag': '610', 'required': 'a', 'paired': 'btvxyz', 'key': keyX10},
   {'tag': '611', 'required': 'a', 'paired': 'tvxyz', 'key': keyX11},
