@@ -59,6 +59,7 @@ const relatorTermScore = { // Here bigger is better
   'sarjakuvantekijä': 100, 'soitonoppaan tekijä': 100,
   'kartantekijä': 99,
   'taiteilija': 98,
+  'designer': 90,
   'sanoittaja': 90,
   'käsikirjoittaja': 90,
 
@@ -80,6 +81,7 @@ const relatorTermScore = { // Here bigger is better
   'kääntäjä': 70,
   'lukija': 61, 'kertoja': 61,
   // Manifestation level: https://finto.fi/mts/fi/page/m491
+  'graafinen suunnittelija': 50,
   'kustantaja': 41
   // Item level: https://finto.fi/mts/fi/page/m1157
 };
@@ -89,20 +91,21 @@ const relatorTermScoreBk = {
   'libretisti': 100, 'sarjakuvantekijä': 100,
   'kirjoittaja': 99, 'author': 99, 'soitonoppaan tekijä': 99,
   'kuvaaja': 98, 'valokuvaaja': 98,
-  'kokoaja': 86,
+  'kokoaja': 86, 'designer': 86,
   'alkuperäisidean luoja': 85,
   'teoksella kunnioitettu': 84, 'gratulaation kohde': 84,
-  'julkaisija': 83,
-  'säveltäjä': 82, // if 300$e has CD etc
-  'sanoittaja': 81,
+  'säveltäjä': 83, // if 300$e has CD etc
+  'sanoittaja': 82,
+  'julkaisija': 81,
   // expression: https://finto.fi/mts/fi/page/m153
   'kuvittaja': 80,
   'esipuheen kirjoittaja': 79,
   'alkusanojen kirjoittaja': 78, 'loppusanojen kirjoittaja': 78,
   'kääntäjä': 70,
-
   'sovittaja': 50,
-  // kappale
+  // manifestaatio
+  'graafinen suunnittelija': 40,
+  // kappale/item
   'sitoja': 25,
   'gratulaation kirjoittaja': 24
 };
@@ -118,14 +121,22 @@ const relatorTermScoreMu = {
   'johtaja': 78,
   'esittäjä': 77,
   'lukija': 76,
-  'miksaaja': 75
+  'miksaaja': 75,
+  // manifestaatio
+  'esittäjä (manifestaatio)': 69,
+
+  'graafinen suunnittelija': 50,
+  'valmistaja': 41,
+  'jakaja': 40
+  // kappale/item
+
 };
 
 const relatorTermScoreVm = { // Visual Material
   // Work
   'ohjaaja': 100,
   'kirjoittaja': 99, 'author': 99, // Here we assume that film/whatever is based on author's book
-  'käsikirjoittaja': 98,
+  'käsikirjoittaja': 98, 'designer': 98,
   'kuvaaja': 89,
   'säveltäjä': 86, // Volatile. John Williams?
   'alkuperäisidean luoja': 85,
@@ -138,8 +149,12 @@ const relatorTermScoreVm = { // Visual Material
   'esittäjä': 77,
   'lukija': 76,
   'miksaaja': 75,
-  'kääntäjä': 70
+  'kääntäjä': 70,
   // Manifestation
+  'kaivertaja': 60,
+  'graafinen suunnittelija': 59,
+  'kustantaja': 42,
+  'elokuvan jakelija': 41, 'jakaja': 41
 
   // Item
 };
@@ -173,7 +188,7 @@ function scoreRelatorTermVm(normalizedValue) {
 }
 
 export function scoreRelatorTerm(value, typeOfMaterial = undefined) {
-  // NB! We are currently using type of material only for sorting relator terms, not 7XX fields!
+  // NB! We are currently using type of material only for sorting relator terms, not 7XX fields!!!
   const normalizedValue = normalizeValue(value);
   if (typeOfMaterial === 'BK') { // Books
     return scoreRelatorTermBk(normalizedValue);
@@ -311,16 +326,16 @@ function sortByRelatorTerm(fieldA, fieldB) {
 
   function fieldGetMaxRelatorTermScore(field) {
     if (!field.subfields) {
-      return -1;
+      return -2;
     }
     // If field has $t, it's a teos-nimeke-auktoriteetti, and thus meaningless. These should follow all $t-less fields...
     if (fieldHasSubfield(field, 't')) {
-      return -1;
+      return -2;
     }
     const relatorSubfieldCode = ['611', '711', '811'].includes(field.tag) ? 'j' : 'e';
     const e = field.subfields.filter(sf => sf.code === relatorSubfieldCode);
     if (e.length === 0) { // No $e is still better than having a $t
-      return 0;
+      return -1;
     }
     const scores = e.map(sf => scoreRelatorTerm(sf.value));
     //debugDev(`RELATOR SCORE FOR '${fieldToString(field)}': ${scores.join(', ')}`);
