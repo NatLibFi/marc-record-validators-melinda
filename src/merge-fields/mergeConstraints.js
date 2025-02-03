@@ -184,6 +184,7 @@ const mergeConstraints = [
   {'tag': '585', 'required': 'a', 'key': 'a'},
   {'tag': '586', 'required': 'a', 'key': 'a'},
   {'tag': '588', 'required': 'a', 'key': 'a'},
+  // NB! Currently we never merge 59X fields (see mergableTags.js). Doublish removals such as MELKEHITYS-3147 are handled by postprocessor.
   {'tag': '590', 'required': ''},
   {'tag': '591', 'required': ''},
   {'tag': '592', 'required': ''},

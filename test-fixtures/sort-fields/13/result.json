@@ -1,0 +1,22 @@
+{
+  "leader": "12345crm a22002417i 4500",
+  "fields":
+  [
+    {"tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Sukunimi, Etunimi4," },
+      {"code": "e", "value": "designer." }
+    ]},
+    {"tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Sukunimi, Etunimi3," },
+      {"code": "e", "value": "kuvittaja." }
+    ]},
+    {"tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Sukunimi, Etunimi2," },
+      {"code": "e", "value": "graafinen suunnittelija." }
+    ]},
+    {"tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Sukunimi, Etunimi1." }
+    ]}
+  ],
+  "_validationOptions": {}
+}

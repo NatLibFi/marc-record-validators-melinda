@@ -289,6 +289,13 @@ function deriveIndividualDeletables(record) {
       }
     }
 
+    if (currString.match(/^500 ## ‡a Ei vastaanotettu\.$/u)) { // MELKEHITYS-3147
+      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '500 ## ‡a EI VASTAANOTETTU.']);
+    }
+    if (currString.match(/^500 ## ‡a Ei ilmesty\.$/u)) { // MELKEHITYS-3147
+      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '500 ## ‡a EI ILMESTY.']);
+    }
+
     if (currString.match(/^505 .0.*-- ‡t/u)) { // MRA-413-ish
       const tmp = currString.replace(/ -- ‡t /gu, ' -- '). // remove non-initial $t subfields
         replace(/ ‡[rg] /gu, ' '). // remove $r and $g subfields
@@ -300,6 +307,13 @@ function deriveIndividualDeletables(record) {
       }
       //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
       //nvdebug(`505 DERIVATE: '${tmp}'`)
+    }
+
+    if (currString.match(/^594 ## ‡a Ei vastaanotettu ‡5 FENNI$/u)) { // MELKEHITYS-3147
+      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '594 ## ‡a EI VASTAANOTETTU ‡5 FENNI']);
+    }
+    if (currString.match(/^594 ## ‡a Ei ilmesty ‡5 FENNI$/u)) { // MELKEHITYS-3147
+      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '594 ## ‡a EI ILMESTY ‡5 FENNI']);
     }
 
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
