@@ -1509,7 +1509,7 @@ describe('ending-punctuation', () => {
     // "647-651 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ"
     // Finnish terms at $2:['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars']
     // Default TRUE, until more special cases are added
-    describe('#647-651 FALSE - If finnish, else TRUE', () => {
+    describe('#647-651 FALSE - If Finnish, else TRUE', () => {
       // Valid tests
       const recordValid647FastEndPunc = new MarcRecord({
         leader: '',
@@ -1517,7 +1517,7 @@ describe('ending-punctuation', () => {
           {
             tag: '647',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Hurricane Katrina'},
               {code: 'd', value: '(2005)'},
@@ -1533,7 +1533,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1900-luku'},
               {code: '2', value: 'yso/swe'}
@@ -1548,7 +1548,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1862'},
               {code: '2', value: 'fast'} // https://www.kansalliskirjasto.fi/extra/marc21/bib/6XX.htm#648
@@ -1563,7 +1563,7 @@ describe('ending-punctuation', () => {
           {
             tag: '650',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kirjastot'},
               {code: 'x', value: 'atk-järjestelmät'},
@@ -1594,7 +1594,7 @@ describe('ending-punctuation', () => {
           {
             tag: '650',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Career Exploration.'},
               {code: '2', value: 'ericd'}
@@ -1646,7 +1646,7 @@ describe('ending-punctuation', () => {
           {
             tag: '647',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Hurricane Katrina'},
               {code: 'd', value: '(2005).'},
@@ -1662,7 +1662,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1900-luku.'},
               {code: '2', value: 'yso/swe'}
@@ -1677,7 +1677,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1862.'},
               {code: '2', value: 'fast'}
@@ -1692,7 +1692,7 @@ describe('ending-punctuation', () => {
           {
             tag: '650',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kirjastot'},
               {code: 'x', value: 'atk-järjestelmät.'},
@@ -1723,7 +1723,7 @@ describe('ending-punctuation', () => {
           {
             tag: '650',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Career Exploration'},
               {code: '2', value: 'ericd'}
@@ -1865,7 +1865,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kausijulkaisut'},
               {code: '2', value: 'yso/eng'}
@@ -1880,7 +1880,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'vironkielinen kirjallisuus'},
               {code: '2', value: 'local'}
@@ -1895,7 +1895,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Bird\'s-eye views'},
               {code: 'y', value: '1874.'},
@@ -1923,7 +1923,7 @@ describe('ending-punctuation', () => {
           {
             tag: '656',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kuvaamataidonopettajat'},
               {code: '2', value: 'slm/eng'}
@@ -1938,7 +1938,7 @@ describe('ending-punctuation', () => {
           {
             tag: '657',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Personnel benefits management'},
               {code: 'x', value: 'Vital statistics'},
@@ -2035,7 +2035,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kausijulkaisut.'},
               {code: '2', value: 'yso/eng'}
@@ -2050,7 +2050,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'vironkielinen kirjallisuus.'},
               {code: '2', value: 'local'}
@@ -2065,7 +2065,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Bird\'s-eye views'},
               {code: 'y', value: '1874'},
@@ -2093,7 +2093,7 @@ describe('ending-punctuation', () => {
           {
             tag: '656',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kuvaamataidonopettajat.'},
               {code: '2', value: 'slm/eng'}
@@ -2108,7 +2108,7 @@ describe('ending-punctuation', () => {
           {
             tag: '657',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Personnel benefits management'},
               {code: 'x', value: 'Vital statistics'},
