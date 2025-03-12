@@ -1560,16 +1560,15 @@ describe('ending-punctuation', () => {
       const recordValid650FinNo = new MarcRecord({
         leader: '',
         fields: [
-          {
-            tag: '650',
-            ind1: ' ',
-            ind2: '7',
-            subfields: [
-              {code: 'a', value: 'kirjastot'},
-              {code: 'x', value: 'atk-järjestelmät'},
-              {code: '2', value: 'kauno/fin'}
-            ]
-          }
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'kirjastot'},
+            {code: 'x', value: 'atk-järjestelmät'},
+            {code: '2', value: 'kauno/fin'}
+          ]},
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'ajovalot'},
+            {code: '2', value: 'juho'}
+          ]}
         ]
       });
 
@@ -1689,16 +1688,15 @@ describe('ending-punctuation', () => {
       const recordInvalid650FinYes = new MarcRecord({
         leader: '',
         fields: [
-          {
-            tag: '650',
-            ind1: ' ',
-            ind2: '7',
-            subfields: [
-              {code: 'a', value: 'kirjastot'},
-              {code: 'x', value: 'atk-järjestelmät.'},
-              {code: '2', value: 'kauno/fin'}
-            ]
-          }
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'kirjastot'},
+            {code: 'x', value: 'atk-järjestelmät.'},
+            {code: '2', value: 'kauno/fin'}
+          ]},
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'ajovalot.'},
+            {code: '2', value: 'juho'}
+          ]}
         ]
       });
 
@@ -1759,11 +1757,12 @@ describe('ending-punctuation', () => {
         });
       });
 
+      const invalidField650Message = 'Field 650 has invalid ending punctuation';
       it('Finds record invalid - 650 Finnish, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650FinYes);
         expect(result).to.eql({
-          message: ['Field 650 has invalid ending punctuation'],
+          message: [invalidField650Message, invalidField650Message],
           valid: false
         });
       });
@@ -1772,7 +1771,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650EngNoControl);
         expect(result).to.eql({
-          message: ['Field 650 has invalid ending punctuation'],
+          message: [invalidField650Message],
           valid: false
         });
       });
@@ -1825,8 +1824,8 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid650FinYes);
         expect(recordInvalid650FinYes.equalsTo(recordValid650FinNo)).to.eql(true);
         expect(result).to.eql({
-          message: ['Field 650 has invalid ending punctuation'],
-          fix: ['Field 650 - Removed punctuation from $x'],
+          message: [invalidField650Message, invalidField650Message],
+          fix: ['Field 650 - Removed punctuation from $x', 'Field 650 - Removed punctuation from $a'],
           valid: false
         });
       });
