@@ -1,24 +1,7 @@
 // Const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars', 'kaunokki'];
 const finnishTerms = [
-  /^ysa$/u,
-  /^yso$/u,
-  /^kassu$/u,
-  /^seko$/u,
-  /^valo$/u,
-  /^kulo$/u,
-  /^puho$/u,
-  /^oiko$/u,
-  /^mero$/u,
-  /^liito$/u,
-  /^fast$/u,
-  /^allars$/u,
-  /^kaunokki$/u,
-  /^bella$/u,
-  /^musa$/u,
-  /^local$/u,
-  /^slm\//u,
-  /^yso\//u,
-  /^kauno\//u
+  /^(?:allars|bella|fast|juho|jupo|kassu|kauno|kaunokki|keko|koko|kulo|liiko|liito|local|mero|mts|musa|oiko|puho|seko|woto|valo|ysa|yso)$/u,
+  /^(?:kauno|slm|yso)\//u
 ];
 
 const validPuncMarks = '?"-!,)]';

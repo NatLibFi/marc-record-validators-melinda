@@ -1509,7 +1509,7 @@ describe('ending-punctuation', () => {
     // "647-651 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ"
     // Finnish terms at $2:['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars']
     // Default TRUE, until more special cases are added
-    describe('#647-651 FALSE - If finnish, else TRUE', () => {
+    describe('#647-651 FALSE - If Finnish, else TRUE', () => {
       // Valid tests
       const recordValid647FastEndPunc = new MarcRecord({
         leader: '',
@@ -1517,7 +1517,7 @@ describe('ending-punctuation', () => {
           {
             tag: '647',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Hurricane Katrina'},
               {code: 'd', value: '(2005)'},
@@ -1533,7 +1533,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1900-luku'},
               {code: '2', value: 'yso/swe'}
@@ -1548,7 +1548,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1862'},
               {code: '2', value: 'fast'} // https://www.kansalliskirjasto.fi/extra/marc21/bib/6XX.htm#648
@@ -1560,16 +1560,15 @@ describe('ending-punctuation', () => {
       const recordValid650FinNo = new MarcRecord({
         leader: '',
         fields: [
-          {
-            tag: '650',
-            ind1: ' ',
-            ind2: ' ',
-            subfields: [
-              {code: 'a', value: 'kirjastot'},
-              {code: 'x', value: 'atk-järjestelmät'},
-              {code: '2', value: 'kauno/fin'}
-            ]
-          }
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'kirjastot'},
+            {code: 'x', value: 'atk-järjestelmät'},
+            {code: '2', value: 'kauno/fin'}
+          ]},
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'ajovalot'},
+            {code: '2', value: 'juho'}
+          ]}
         ]
       });
 
@@ -1594,7 +1593,7 @@ describe('ending-punctuation', () => {
           {
             tag: '650',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Career Exploration.'},
               {code: '2', value: 'ericd'}
@@ -1646,7 +1645,7 @@ describe('ending-punctuation', () => {
           {
             tag: '647',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Hurricane Katrina'},
               {code: 'd', value: '(2005).'},
@@ -1662,7 +1661,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1900-luku.'},
               {code: '2', value: 'yso/swe'}
@@ -1677,7 +1676,7 @@ describe('ending-punctuation', () => {
           {
             tag: '648',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: '1862.'},
               {code: '2', value: 'fast'}
@@ -1689,16 +1688,15 @@ describe('ending-punctuation', () => {
       const recordInvalid650FinYes = new MarcRecord({
         leader: '',
         fields: [
-          {
-            tag: '650',
-            ind1: ' ',
-            ind2: ' ',
-            subfields: [
-              {code: 'a', value: 'kirjastot'},
-              {code: 'x', value: 'atk-järjestelmät.'},
-              {code: '2', value: 'kauno/fin'}
-            ]
-          }
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'kirjastot'},
+            {code: 'x', value: 'atk-järjestelmät.'},
+            {code: '2', value: 'kauno/fin'}
+          ]},
+          {tag: '650', ind1: ' ', ind2: '7', subfields: [
+            {code: 'a', value: 'ajovalot.'},
+            {code: '2', value: 'juho'}
+          ]}
         ]
       });
 
@@ -1723,7 +1721,7 @@ describe('ending-punctuation', () => {
           {
             tag: '650',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Career Exploration'},
               {code: '2', value: 'ericd'}
@@ -1759,11 +1757,12 @@ describe('ending-punctuation', () => {
         });
       });
 
+      const invalidField650Message = 'Field 650 has invalid ending punctuation';
       it('Finds record invalid - 650 Finnish, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650FinYes);
         expect(result).to.eql({
-          message: ['Field 650 has invalid ending punctuation'],
+          message: [invalidField650Message, invalidField650Message],
           valid: false
         });
       });
@@ -1772,7 +1771,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650EngNoControl);
         expect(result).to.eql({
-          message: ['Field 650 has invalid ending punctuation'],
+          message: [invalidField650Message],
           valid: false
         });
       });
@@ -1825,8 +1824,8 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid650FinYes);
         expect(recordInvalid650FinYes.equalsTo(recordValid650FinNo)).to.eql(true);
         expect(result).to.eql({
-          message: ['Field 650 has invalid ending punctuation'],
-          fix: ['Field 650 - Removed punctuation from $x'],
+          message: [invalidField650Message, invalidField650Message],
+          fix: ['Field 650 - Removed punctuation from $x', 'Field 650 - Removed punctuation from $a'],
           valid: false
         });
       });
@@ -1865,7 +1864,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kausijulkaisut'},
               {code: '2', value: 'yso/eng'}
@@ -1880,7 +1879,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'vironkielinen kirjallisuus'},
               {code: '2', value: 'local'}
@@ -1895,7 +1894,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Bird\'s-eye views'},
               {code: 'y', value: '1874.'},
@@ -1923,7 +1922,7 @@ describe('ending-punctuation', () => {
           {
             tag: '656',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kuvaamataidonopettajat'},
               {code: '2', value: 'slm/eng'}
@@ -1938,7 +1937,7 @@ describe('ending-punctuation', () => {
           {
             tag: '657',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Personnel benefits management'},
               {code: 'x', value: 'Vital statistics'},
@@ -2035,7 +2034,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kausijulkaisut.'},
               {code: '2', value: 'yso/eng'}
@@ -2050,7 +2049,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'vironkielinen kirjallisuus.'},
               {code: '2', value: 'local'}
@@ -2065,7 +2064,7 @@ describe('ending-punctuation', () => {
           {
             tag: '655',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Bird\'s-eye views'},
               {code: 'y', value: '1874'},
@@ -2093,7 +2092,7 @@ describe('ending-punctuation', () => {
           {
             tag: '656',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'kuvaamataidonopettajat.'},
               {code: '2', value: 'slm/eng'}
@@ -2108,7 +2107,7 @@ describe('ending-punctuation', () => {
           {
             tag: '657',
             ind1: ' ',
-            ind2: ' ',
+            ind2: '7',
             subfields: [
               {code: 'a', value: 'Personnel benefits management'},
               {code: 'x', value: 'Vital statistics'},
