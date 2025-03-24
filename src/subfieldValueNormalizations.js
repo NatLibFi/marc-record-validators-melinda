@@ -104,7 +104,7 @@ function getNormalizedValue(subfield, field, catLang) {
       }
 
       if (value.match(/\bfikt\.?(?:$|[,)])/u) && !value.match(/fikt.*fikt/ui)) {
-        console.log(`FIKT2SUTHING? ${value}`); // eslint-disable-line no-console
+        // NB! Dot '.' in 'fikt.' might also be punctuation as well. Run punctuation2 fixer after this fixer!
         if (catLang === 'fin') {
           return value.replace(/\bfikt\./u, 'fiktiivinen hahmo');
         }
