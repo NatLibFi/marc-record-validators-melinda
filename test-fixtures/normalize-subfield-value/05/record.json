@@ -1,0 +1,25 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "b", "value": "swe" }
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "What, Ever," },
+      { "code": "c", "value": "fikt." }
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "What, Never" },
+      { "code": "c", "value": "(fikt.)" }
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "What, Fever" },
+      { "code": "c", "value": "fiktiivinen hahmo." }
+    ]},
+    { "tag": "600", "ind1": "3", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Whatever" },
+      { "code": "c", "value": "(fikt.)" }
+    ]}
+
+  ]
+}

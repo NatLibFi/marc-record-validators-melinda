@@ -1,9 +1,10 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldHasSubfield, fieldToString} from './utils';
+import {fieldHasSubfield, fieldToString, getCatalogingLanguage} from './utils';
 import {fieldFixPunctuation} from './punctuation2';
 import {fieldGetUnambiguousTag} from './subfield6Utils';
 
+// NB! You should probably run punctuation fixes after this validator!
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -14,10 +15,11 @@ export default function () {
   };
 
   function fix(record) {
+    const catLang = getCatalogingLanguage(record, 'fin');
     const res = {message: [], fix: [], valid: true};
 
     record.fields.forEach(field => {
-      normalizeSubfieldValues(field);
+      normalizeSubfieldValues(field, catLang);
     });
 
     // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
@@ -25,23 +27,24 @@ export default function () {
   }
 
   function validate(record) {
+    const catLang = getCatalogingLanguage(record, 'fin');
     const res = {message: []};
 
     record.fields.forEach(field => {
-      validateField(field, res);
+      validateField(field, res, catLang);
     });
 
     res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
     return res;
   }
 
-  function validateField(field, res) {
+  function validateField(field, res, catLang) {
     if (!field.subfields) {
       return;
     }
     const orig = fieldToString(field);
 
-    const normalizedField = normalizeSubfieldValues(clone(field));
+    const normalizedField = normalizeSubfieldValues(clone(field), catLang);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`'${orig}' requires subfield internal mods/normalization`); // eslint-disable-line functional/immutable-data
@@ -73,9 +76,46 @@ function handleInitials(value, subfieldCode, field) {
   }
 }
 
-function getNormalizedValue(subfield, field) {
-  return uppercaseLanguage(handleMovies(handleInitials(subfield.value, subfield.code, field)));
+function getNormalizedValue(subfield, field, catLang) {
+  return handleFikt(uppercaseLanguage(handleMovies(handleInitials(subfield.value, subfield.code, field))));
 
+  function handleFikt(value) {
+    if (subfield.code !== 'c' || field.tag !== '600') {
+      return value;
+    }
+
+    return wrapFiktiivinenHahmo(expandFikt(value));
+
+    function wrapFiktiivinenHahmo(value) {
+      if (value.includes('(')) { // Some kind of parentheses already found -> nothing to do here
+        return value;
+      }
+      if (value.match(/^(?:fiktiivinen hahmo|fiktiv gestalt|fiktiivinen yhteisö)[,.]?$/u)) {
+        // Hope that some other module handles punctuation, if needed:
+        return `(${value.replace(/[.,]$/u, '')})`;
+      }
+      return value;
+    }
+
+    // wrap text around parentheses
+    function expandFikt(value) {
+      if (field.ind1 === '3') { // Not handling "fiktiivinen yhteisö" at the moment
+        return value;
+      }
+
+      if (value.match(/\bfikt\.?(?:$|[,)])/u) && !value.match(/fikt.*fikt/ui)) {
+        console.log(`FIKT2SUTHING? ${value}`); // eslint-disable-line no-console
+        if (catLang === 'fin') {
+          return value.replace(/\bfikt\./u, 'fiktiivinen hahmo');
+        }
+        if (catLang === 'swe') {
+          return value.replace(/\bfikt\./u, 'fiktiv gestalt');
+        }
+      }
+      return value;
+    }
+
+  }
 
   function handleMovies(value) {
     if (subfield.code === 'a' && ['130', '630', '730'].includes(field.tag)) {
@@ -84,6 +124,7 @@ function getNormalizedValue(subfield, field) {
     }
     return value;
   }
+
 
   function uppercaseLanguage(value) { // Part of MET-549
     const relevantTags = ['130', '240', '243', '600', '610', '611', '630', '700', '710', '711', '730', '800', '810', '811', '830'];
@@ -108,12 +149,12 @@ function getNormalizedValue(subfield, field) {
   }
 }
 
-function normalizeSubfieldValues(field) {
+function normalizeSubfieldValues(field, catLang) {
   if (!field.subfields) {
     return field;
   }
   field.subfields.forEach((subfield, index) => {
-    field.subfields[index].value = getNormalizedValue(subfield, field); // eslint-disable-line functional/immutable-data
+    field.subfields[index].value = getNormalizedValue(subfield, field, catLang); // eslint-disable-line functional/immutable-data
   });
   return field;
 }
