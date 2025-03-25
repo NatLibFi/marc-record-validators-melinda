@@ -1,6 +1,5 @@
 {
-  "description": "Apply subfield internal normalization",
-  "comment": "Related issues: MRA-273, MRA-614...",
+  "description": "Apply 600$c fikt. normalization",
   "fix": true,
   "only": false
 }
