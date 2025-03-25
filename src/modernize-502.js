@@ -2,21 +2,13 @@
 import clone from 'clone';
 import {fieldToString} from './utils';
 
-// Note that https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js contains
-// similar functionalities. It's less generic and lacks diacritic removal but has it advantages as well.
-
-//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/normalize-utf-diacritics');
-
-// See also https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js .
-// It uses a list of convertable characters whilst this uses a generic stuff as well.
-// It handles various '.' and '©' type normalizations as well.
-// NB! This version has minor bug/feature issue regarding fixComposition()
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/modernize-502');
 
 // Author(s): Nicholas Volk
 export default function () {
 
   return {
-    description: 'Generic normalization of latin UTF-8 diacritics. Precompose Finnish å, ä and ö. Decompose others.',
+    description: 'Normalizes Finnish national convention 502$a$c$d fields to a 502$a (which is better supported by LoC).',
     validate, fix
   };
 
@@ -77,7 +69,7 @@ export function normalizeField502(field) {
 
   console.log(JSON.stringify(d)); // eslint-disable-line no-console
 
-  if (!hasValidA() || !hasValidD) {
+  if (!hasValidA() || !hasValidD()) {
     return field;
   }
 
@@ -95,7 +87,8 @@ export function normalizeField502(field) {
       return '';
     }
     if (c) {
-      return `${c.value.replace(/,$/u, '')},${d ? ' ' : ''}`;
+      // Here we assume that there was correct punctuation between $c and $d...
+      return `${c.value}${d ? ' ' : ''}`;
     }
     return c.value;
   }
@@ -119,7 +112,7 @@ export function normalizeField502(field) {
       return true;
     }
     // Content makes sense:
-    return d.value(/^\[?(?:[0-9]{4}|[0-9]{4}-[0-9]{4}|1[89]uu|Vuosien [0-9]{4} ja [0-9]{4} välillä)[\].]{0,2}$/u);
+    return d.value.match(/^\[?(?:[0-9]{4}|[0-9]{4}-[0-9]{4}|1[89]uu|Vuosien [0-9]{4} ja [0-9]{4} välillä)[\].]{0,2}$/u);
   }
 
 }
