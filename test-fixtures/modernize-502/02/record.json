@@ -18,6 +18,14 @@
       { "code": "a", "value": "Pro gradu -avledning :" },
       { "code": "c", "value": "Helsingfors universitet," },
       { "code": "d", "value": "19uu." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Opinnäyte :" },
+      { "code": "c", "value": "Unicafe Rotunda." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Opinnäyte," },
+      { "code": "d", "value": "2099." }
     ]}
   ]
 }
