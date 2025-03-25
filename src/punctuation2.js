@@ -107,6 +107,7 @@ const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': dotIsPr
 const cleanCorruption = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / \.$/u};
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj#', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
+const cleanX11jDot = {'code': 'e', 'followedBy': 'egj#', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
 const removeCommaBeforeLanguageSubfieldL = {'followedBy': 'l', 'remove': /,$/u};
 const removeCommaBeforeTitleSubfieldT = {'followedBy': 't', 'remove': /,$/u};
 
@@ -146,7 +147,7 @@ const removeCrapFromAllEntryFields = [removeCommaBeforeLanguageSubfieldL, remove
 
 const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
 const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
-const removeX11Whatever = [removeX00Comma, ...removeCrapFromAllEntryFields];
+const removeX11Whatever = [removeX00Comma, cleanX11jDot, ...removeCrapFromAllEntryFields];
 const removeX30Whatever = removeCrapFromAllEntryFields;
 
 const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remove': /(?: *;| *=|,)$/u}];
