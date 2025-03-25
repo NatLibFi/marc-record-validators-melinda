@@ -1,20 +1,30 @@
 {
   "fields": [
     { "tag": "005", "value": "20220202020202.0" },
-    { "tag": "100", "ind1": "1", "ind2": "2", "subfields": [
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "880-06" },
       { "code": "a", "value": "Jang, Gangmyeong" },
       { "code": "d", "value": "1975-," },
       { "code": "t", "value": "Albasaeng jareugi" },
       { "code": "l", "value": "englanti."}
     ]},
-    { "tag": "880", "ind1": "1", "ind2": "2", "subfields": [
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-07" },
+      { "code": "a", "value": "Бианки, Виталий" },
+      { "code": "e", "value": "kirjoittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "100-06/$1" },
       { "code": "a", "value": "장강명" },
       { "code": "d", "value": "1975-." },
       { "code": "t", "value": "알바생 자르기" },
       { "code": "l", "value": "englanti."
       }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-07" },
+      { "code": "a", "value": "Bianki, Vitalij" },
+      { "code": "e", "value": "kirjoittaja." }
     ]}
   ]
 }
