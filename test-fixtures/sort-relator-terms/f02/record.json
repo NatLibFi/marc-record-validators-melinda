@@ -17,6 +17,13 @@
       {"code": "e", "value": "säveltäjä."},
       {"code": "0", "value": "(isni)1234567890123457"}
     ]},
+    { "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "Nimi3,"},
+      {"code": "d", "value": "1900-2000,"},
+      {"code": "e", "value": "whatever,"},
+      {"code": "e", "value": "sovittaja,"},
+      {"code": "e", "value": "säveltäjä."}
+    ]},
     { "tag": "711", "ind1": "2", "ind2": " ", "subfields": [
       {"code": "a", "value": "Relator term po. $j:ssä #1"},
       {"code": "e", "value": "whatever,"},
