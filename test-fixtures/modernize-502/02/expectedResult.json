@@ -1,0 +1,29 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Väitöskirja--Helsingin yliopisto, 1980." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Väitöskirja--Helsingin yliopisto, 1980." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Uimamaisterin päättökoe :" },
+      { "code": "c", "value": "Helsingin Uimastadion," },
+      { "code": "d", "value": "1980." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Pro gradu -avledning :" },
+      { "code": "c", "value": "Helsingfors universitet," },
+      { "code": "d", "value": "19uu." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Opinnäyte--Unicafe Rotunda." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Opinnäyte--2099." }
+    ]}
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Apply 600$c fikt. normalization",
+  "fix": true,
+  "only": false
+}

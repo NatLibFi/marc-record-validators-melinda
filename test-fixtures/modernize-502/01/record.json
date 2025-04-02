@@ -1,0 +1,15 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Väitöskirja :" },
+        { "code": "c", "value": "Helsingin yliopisto," },
+        { "code": "d", "value": "1980." }
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Uimamaisterin päättökoe :" },
+      { "code": "c", "value": "Helsingin Uimastadion," },
+      { "code": "d", "value": "1980." }
+  ]}
+  ]
+}

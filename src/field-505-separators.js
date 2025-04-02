@@ -61,6 +61,9 @@ function field505FixSubfieldTRG(field) {
   subfieldsThatWillBeModified.forEach(sf => fixSubfieldThatPrecedesT(sf));
 
   function fixSubfieldThatPrecedesT(sf) {
+    if (!sf.value) {
+      return;
+    }
     sf.value = sf.value.replace(/ ;$/u, ' --'); // eslint-disable-line functional/immutable-data
   }
 }

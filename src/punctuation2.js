@@ -100,13 +100,14 @@ const puncIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö) ?[.,:;]$/u;
 
 // Will unfortunately trigger "Sukunimi, Th." type:
 const removeColons = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / *[;:]$/u};
-const removeX00Comma = {'code': 'abcdenqt', 'followedBy': 'abcdenqtv#', 'context': /.,$/u, 'remove': /,$/u};
+const removeX00Comma = {'code': 'abcdejnqt', 'followedBy': 'abcdenqtv#', 'context': /.,$/u, 'remove': /,$/u};
 const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
 const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#', 'context': /[0-9]-[,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': dotIsProbablyPunc, 'remove': /\.$/u};
 const cleanCorruption = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / \.$/u};
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj#', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
+const cleanX11jDot = {'code': 'e', 'followedBy': 'egj#', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
 const removeCommaBeforeLanguageSubfieldL = {'followedBy': 'l', 'remove': /,$/u};
 const removeCommaBeforeTitleSubfieldT = {'followedBy': 't', 'remove': /,$/u};
 
@@ -117,7 +118,8 @@ const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context':
 const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
-const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': '#fklptu', 'context': needsPuncAfterAlphanumeric};
+const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'context': needsPuncAfterAlphanumeric};
+const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuvwxyz', 'followedBy': '#', 'context': /[^.)]$/u};
 
 
 const addX10iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2};
@@ -145,7 +147,7 @@ const removeCrapFromAllEntryFields = [removeCommaBeforeLanguageSubfieldL, remove
 
 const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
 const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage, ...removeCrapFromAllEntryFields];
-const removeX11Whatever = [...removeCrapFromAllEntryFields];
+const removeX11Whatever = [removeX00Comma, cleanX11jDot, ...removeCrapFromAllEntryFields];
 const removeX30Whatever = removeCrapFromAllEntryFields;
 
 const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remove': /(?: *;| *=|,)$/u}];
@@ -299,7 +301,7 @@ const cleanValidPunctuationRules = {
 
 
 // Overgeneralizes a bit: eg. addColonToRelationshipInformation only applies to 700/710 but as others don't have $i, it's fine.
-const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
+const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation, addEntryFieldFinalDot];
 
 
 const addX00 = [addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
