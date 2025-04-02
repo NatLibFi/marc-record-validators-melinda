@@ -1,0 +1,5 @@
+{
+  "description": "Validate 502$a$c$d => 502$a mod",
+  "fix": false,
+  "only": false
+}

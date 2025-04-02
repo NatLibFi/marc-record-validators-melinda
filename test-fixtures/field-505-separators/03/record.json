@@ -1,0 +1,21 @@
+{
+  "fields": [
+    {
+      "tag": "005",
+      "value": "20220202020202.0"
+    },
+    {
+      "tag": "505", "ind1": "0", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "1. Johdanto -- 2. Käsitteelliset lähtökohdat -- 3. Teoksen lähestymistapa, aineistot ja tutkimusmenetelmät -- 4. Nousu eliittiin -- 5. Huippujohtajiin kohdistuvat odotukset -- 6. Vallan verkostot -- 7. Eliittien asenteellinen yhtenäisyys -- 8. Horisontaalinen uraliikkuvuus -- 9. Eliitit muutoksessa." }
+      ]
+    },
+    {
+      "tag": "505", "ind1": "0", "ind2": " ",
+      "subfields": [
+        { "code": "g" },
+        { "code": "t"}
+      ]
+    }
+  ]
+}

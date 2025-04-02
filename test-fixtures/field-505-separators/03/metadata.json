@@ -1,0 +1,6 @@
+{
+  "description": "505 -- survive corruption",
+  "comment": "As seen on 2025-03-31 (iffy Helmet data)",
+  "fix": true,
+  "only": false
+}

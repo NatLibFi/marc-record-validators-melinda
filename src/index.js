@@ -29,6 +29,7 @@ import ItemLanguage from './item-language';
 import MergeField500Lisapainokset from './mergeField500Lisapainokset';
 import MergeFields from './merge-fields/';
 import MergeRelatorTermFields from './mergeRelatorTermFields';
+import Modernize502 from './modernize-502';
 import MultipleSubfield0s from './multiple-subfield-0';
 import NonBreakingSpace from './non-breaking-space';
 import NormalizeDashes from './normalize-dashes';
@@ -88,6 +89,7 @@ export {
   ItemLanguage,
   MergeField500Lisapainokset,
   MergeRelatorTermFields,
+  Modernize502, //
   MultipleSubfield0s,
   NonBreakingSpace,
   NormalizeDashes,
