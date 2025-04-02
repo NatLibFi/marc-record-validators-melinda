@@ -67,7 +67,7 @@ export function normalizeField502(field) {
   const c = acd[1].code === 'c' ? acd[1] : null;
   const d = acd[acd.length - 1].code === 'd' ? acd[acd.length - 1] : null;
 
-  console.log(JSON.stringify(d)); // eslint-disable-line no-console
+  //console.log(JSON.stringify(d)); // eslint-disable-line no-console
 
   if (!hasValidA() || !hasValidD()) {
     return field;
