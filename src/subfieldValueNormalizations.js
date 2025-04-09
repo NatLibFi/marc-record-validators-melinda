@@ -154,6 +154,9 @@ function normalizeSubfieldValues(field, catLang) {
     return field;
   }
   field.subfields.forEach((subfield, index) => {
+    if (!field.subfields[index].value) {
+      return;
+    }
     field.subfields[index].value = getNormalizedValue(subfield, field, catLang); // eslint-disable-line functional/immutable-data
   });
   return field;
