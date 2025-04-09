@@ -24,8 +24,14 @@
     },
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "Kaikki, O. N. Oikein." }
-      ]
-    },
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a" },
+      { "code": "e", "value": "bugi"}
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a" }
+    ]},
     { "tag": "730", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "Movie (elokuva, 2020)" }
       ]
