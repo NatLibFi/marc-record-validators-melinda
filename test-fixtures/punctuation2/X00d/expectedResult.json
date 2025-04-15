@@ -1,0 +1,21 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Eka," },
+      { "code": "d", "value": "1999-" }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Toka," },
+      { "code": "d", "value": "1999-" },
+      { "code": "0", "value": "(FI-ASTERI-N)001234567" }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Kolmas," },
+      { "code": "d", "value": "1999-" },
+      { "code": "e", "value": "kirjoittaja." }
+    ]}
+  ],
+  "leader": "",
+  "_validationOptions": {}
+}
