@@ -119,7 +119,7 @@ const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'conte
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'context': needsPuncAfterAlphanumeric};
-const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuvwxyz', 'followedBy': '#', 'context': /[^.)]$/u};
+const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuvwxyz', 'followedBy': '#', 'context': /[^.)!?-]$/u};
 
 
 const addX10iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2};
@@ -523,7 +523,7 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) {
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
-      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}'`);
+      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}' USING RULE ${rule.name}`);
       return false;
     }
 
