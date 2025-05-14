@@ -56,7 +56,7 @@
     "xregexp": "^5.1.2"
   },
   "peerDependencies": {
-    "@natlibfi/marc-record-validate": "^8.0.12"
+    "@natlibfi/marc-record-validate": "^8.0.14"
   },
   "devDependencies": {
     "@babel/cli": "^7.27.0",
