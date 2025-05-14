@@ -5,7 +5,7 @@ import clone from 'clone';
 import {fieldHasSubfield, fieldToString} from './utils';
 import {sortByTag, sortAlphabetically, fieldOrderComparator as globalFieldOrderComparator} from '@natlibfi/marc-record/dist/marcFieldSort';
 import {isValidSubfield8} from './subfield8Utils';
-import {fieldGetOccurrenceNumbers} from './subfield6Utils';
+import {fieldGetUnambiguousOccurrenceNumber, fieldGetUnambiguousTag} from './subfield6Utils';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortFields');
 //const debugData = debug.extend('data');
@@ -396,42 +396,52 @@ function sortBySubfield6(fieldA, fieldB) { // Sort by subfield $6, ex-sortByOccu
     return 0;
   }
 
-  /*
-  function fieldGetOccurrenceNumber(field) { // should this function be exported? (based on validator sortRelatorFields.js)
-    if (!field.subfields) {
+  function compareLinkingTags() {
+    const tagStringA = fieldGetUnambiguousTag(fieldA);
+    const tagStringB = fieldGetUnambiguousTag(fieldB);
+    if (tagStringA === tagStringB || !tagStringA || !tagStringB) {
       return 0;
     }
-    const subfield6 = field.subfields.find(sf => isValidSubfield6(sf));
-    if (subfield6 === undefined) {
-      return 0;
+    if (tagStringA > tagStringB) {
+      return 1;
     }
-    return parseInt(subfield6GetOccurrenceNumber(subfield6), 10);
-  }
-  */
-
-  const [stringA] = fieldGetOccurrenceNumbers(fieldA); //   fieldGetOccurrenceNumber(fieldA);
-  const [stringB] = fieldGetOccurrenceNumbers(fieldB);
-
-  //debugDev(`A: '${fieldToString(fieldA)}: ${scoreA}`);
-  //debugDev(`B: '${fieldToString(fieldB)}: ${scoreB}`);
-
-  if (stringA === stringB) {
-    return 0;
-  }
-  if (!stringB) {
     return -1;
   }
-  if (!stringA) {
-    return 1;
+
+  function compareOccurrenceNumbers() {
+    const stringA = fieldGetUnambiguousOccurrenceNumber(fieldA);
+    const stringB = fieldGetUnambiguousOccurrenceNumber(fieldB);
+    if (stringA === stringB) { // No action required here
+      return 0;
+    }
+
+    // Handle expections: no occurrence number, occurrence number '00':
+    if (!stringB || stringB === '00') {
+      if (!stringA || stringA === '00') {
+        return 0;
+      }
+      return -1;
+    }
+    if (!stringA || stringA === '00') {
+      return 1;
+    }
+
+    // NB! We need compare ints as occurrence number can exceed 99 and be a three-digit value!
+    const scoreA = parseInt(stringA, 10);
+    const scoreB = parseInt(stringB, 10);
+
+    if (scoreA > scoreB) { // smaller is better, thus '00' is the best
+      return 1;
+    }
+    return -1;
   }
 
-  const scoreA = parseInt(stringA, 10);
-  const scoreB = parseInt(stringB, 10);
-
-  if (scoreA > scoreB) { // smaller is better
-    return 1;
+  const linkingTagComparisonResult = compareLinkingTags();
+  if (linkingTagComparisonResult !== 0) {
+    return linkingTagComparisonResult;
   }
-  return -1;
+
+  return compareOccurrenceNumbers();
 }
 
 
