@@ -1,0 +1,48 @@
+{
+  "leader": "12345crm a22002417i 4500",
+  "fields":
+  [
+    {"tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "880-02" },
+      {"code": "a", "value": "Toimittaja, Tiina," },
+      {"code": "e", "value": "toimittaja." }
+    ]},
+    {"tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "880-04" },
+      {"code": "a", "value": "Kirjoittaja, Kiira" },
+      {"code": "e", "value": "kirjoittaja." }
+    ]},
+    {"tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "880-03" },
+      {"code": "a", "value": "Toimittaja, Tarmo," },
+      {"code": "e", "value": "toimittaja." }
+    ]},
+    {"tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "880-01" },
+      {"code": "a", "value": "Kuvittaja, Kukka" },
+      {"code": "e", "value": "kuvittaja." }
+    ]},
+
+    {"tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "700-03" },
+      {"code": "a", "value": "Xoimittaja, Tarmo," },
+      {"code": "e", "value": "toimittaja." }
+    ]},
+    {"tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "100-04" },
+      {"code": "a", "value": "Xirjoittaja, Kiira" },
+      {"code": "e", "value": "kirjoittaja." }
+    ]},
+    {"tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "700-01" },
+      {"code": "a", "value": "Xuvittaja, Kukka" },
+      {"code": "e", "value": "kuvittaja." }
+    ]},
+    {"tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "700-02" },
+      {"code": "a", "value": "Xoimittaja, Tiina," },
+      {"code": "e", "value": "toimittaja." }
+    ]}
+
+  ]
+}

@@ -5,7 +5,7 @@ import clone from 'clone';
 import {fieldHasSubfield, fieldToString} from './utils';
 import {sortByTag, sortAlphabetically, fieldOrderComparator as globalFieldOrderComparator} from '@natlibfi/marc-record/dist/marcFieldSort';
 import {isValidSubfield8} from './subfield8Utils';
-import {isValidSubfield6, subfield6GetOccurrenceNumber} from './subfield6Utils';
+import {fieldGetUnambiguousOccurrenceNumber, fieldGetUnambiguousTag} from './subfield6Utils';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortFields');
 //const debugData = debug.extend('data');
@@ -71,10 +71,11 @@ const relatorTermScore = { // Here bigger is better
   'tuottaja': 81,
   // expression: https://finto.fi/mts/fi/page/m153
   'sovittaja': 79, 'arranger': 79,
-  'kuvittaja': 78,
-  'esipuheen kirjoittaja': 77,
-  'alkusanojen kirjoittaja': 76, 'loppusanojen kirjoittaja': 76,
-  'toimittaja': 75, 'editor': 75,
+  'toimittaja': 78, 'editor': 78,
+  'kuvittaja': 77,
+  'esipuheen kirjoittaja': 76,
+  'alkusanojen kirjoittaja': 75, 'loppusanojen kirjoittaja': 75,
+
   'esittäjä': 74,
   'johtaja': 73, // orkesterinjohtaja
   'editointi': 71, // for music, editor/toimittaja is another thing
@@ -98,9 +99,10 @@ const relatorTermScoreBk = {
   'sanoittaja': 82,
   'julkaisija': 81,
   // expression: https://finto.fi/mts/fi/page/m153
-  'kuvittaja': 80,
-  'esipuheen kirjoittaja': 79,
-  'alkusanojen kirjoittaja': 78, 'loppusanojen kirjoittaja': 78,
+  'toimittaja': 78,
+  'kuvittaja': 77,
+  'esipuheen kirjoittaja': 76,
+  'alkusanojen kirjoittaja': 75, 'loppusanojen kirjoittaja': 75,
   'kääntäjä': 70,
   'sovittaja': 50,
   // manifestaatio
@@ -209,7 +211,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
 
   //const sorterFunctions = [sortByTag, sortByIndexTerms, sortAlphabetically, sortByRelatorTerm, sortByOccurrenceNumber, preferFenniKeep, sortByFieldLinkAndSequenceNumber];
 
-  const sorterFunctions = [sortByTag, sortByIndexTerms, sortAlphabetically, sortByRelatorTerm, sortByOccurrenceNumber, preferFenniKeep, sortByFieldLinkAndSequenceNumber];
+  const sorterFunctions = [sortByTag, sortByIndexTerms, sortAlphabetically, sortByRelatorTerm, sortBySubfield6, preferFenniKeep, sortByFieldLinkAndSequenceNumber];
   //const sorterFunctions = [sortByIndexTerms, sortByRelatorTerm, sortByOccurrenceNumber, preferFenniKeep, sortByFieldLinkAndSequenceNumber];
 
   return globalFieldOrderComparator(fieldA, fieldB, sorterFunctions);
@@ -389,41 +391,57 @@ function sortByFieldLinkAndSequenceNumber(fieldA, fieldB) { // Sort by subfield 
 }
 
 
-function sortByOccurrenceNumber(fieldA, fieldB) { // Sort by subfield $6
-
-  function fieldGetOccurrenceNumber(field) { // should this function be exported? (based on validator sortRelatorFields.js)
-    if (!field.subfields) {
-      return 0;
-    }
-    const subfield6 = field.subfields.find(sf => isValidSubfield6(sf));
-    if (subfield6 === undefined) {
-      return 0;
-    }
-    return parseInt(subfield6GetOccurrenceNumber(subfield6), 10);
-  }
-
-  if (fieldA.tag !== '880') {
+function sortBySubfield6(fieldA, fieldB) { // Sort by subfield $6, ex-sortByOccurrenceNumber...
+  if (fieldA.tag !== '880' || fieldB.tag !== '880') {
     return 0;
   }
-  const scoreA = fieldGetOccurrenceNumber(fieldA);
-  const scoreB = fieldGetOccurrenceNumber(fieldB);
 
-  //debugDev(`A: '${fieldToString(fieldA)}: ${scoreA}`);
-  //debugDev(`B: '${fieldToString(fieldB)}: ${scoreB}`);
-
-  if (scoreA === scoreB) {
-    return 0;
-  }
-  if (scoreB === 0) {
+  function compareLinkingTags() {
+    const tagStringA = fieldGetUnambiguousTag(fieldA);
+    const tagStringB = fieldGetUnambiguousTag(fieldB);
+    if (tagStringA === tagStringB || !tagStringA || !tagStringB) {
+      return 0;
+    }
+    if (tagStringA > tagStringB) {
+      return 1;
+    }
     return -1;
   }
-  if (scoreA === 0) {
-    return 1;
+
+  function compareOccurrenceNumbers() {
+    const stringA = fieldGetUnambiguousOccurrenceNumber(fieldA);
+    const stringB = fieldGetUnambiguousOccurrenceNumber(fieldB);
+    if (stringA === stringB) { // No action required here
+      return 0;
+    }
+
+    // Handle expections: no occurrence number, occurrence number '00':
+    if (!stringB || stringB === '00') {
+      if (!stringA || stringA === '00') {
+        return 0;
+      }
+      return -1;
+    }
+    if (!stringA || stringA === '00') {
+      return 1;
+    }
+
+    // NB! We need compare ints as occurrence number can exceed 99 and be a three-digit value!
+    const scoreA = parseInt(stringA, 10);
+    const scoreB = parseInt(stringB, 10);
+
+    if (scoreA > scoreB) { // smaller is better, thus '00' is the best
+      return 1;
+    }
+    return -1;
   }
-  if (scoreA > scoreB) { // smaller is better
-    return 1;
+
+  const linkingTagComparisonResult = compareLinkingTags();
+  if (linkingTagComparisonResult !== 0) {
+    return linkingTagComparisonResult;
   }
-  return -1;
+
+  return compareOccurrenceNumbers();
 }
 
 
