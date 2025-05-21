@@ -15,7 +15,7 @@ const defaultSortOrderFinns = defaultSortOrderStringFinns.split('');
 const defaultSortOrderOthers = defaultSortOrderStringOthers.split('');
 
 
-export default function (tagPattern) {
+export default function (defaultTagPattern) {
 
   return {
     description: 'Swap adjacent subfields',
@@ -32,7 +32,7 @@ export default function (tagPattern) {
     return datafields.filter(f => regexp.test(f.tag));
   }
 
-  function fix(record, tagPattern) {
+  function fix(record, tagPattern = defaultTagPattern) {
     const res = {message: [], fix: [], valid: true};
 
     const relevantFields = getRelevantFields(record, tagPattern);
@@ -44,7 +44,7 @@ export default function (tagPattern) {
     return res;
   }
 
-  function validate(record) {
+  function validate(record, tagPattern = defaultTagPattern) {
     const res = {message: []};
 
     const relevantFields = getRelevantFields(record, tagPattern);
