@@ -15,7 +15,7 @@ const defaultSortOrderFinns = defaultSortOrderStringFinns.split('');
 const defaultSortOrderOthers = defaultSortOrderStringOthers.split('');
 
 
-export default function (tagPattern) {
+export default function (defaultTagPattern) {
 
   return {
     description: 'Swap adjacent subfields',
@@ -32,7 +32,7 @@ export default function (tagPattern) {
     return datafields.filter(f => regexp.test(f.tag));
   }
 
-  function fix(record, tagPattern) {
+  function fix(record, tagPattern = defaultTagPattern) {
     const res = {message: [], fix: [], valid: true};
 
     const relevantFields = getRelevantFields(record, tagPattern);
@@ -44,7 +44,7 @@ export default function (tagPattern) {
     return res;
   }
 
-  function validate(record) {
+  function validate(record, tagPattern = defaultTagPattern) {
     const res = {message: []};
 
     const relevantFields = getRelevantFields(record, tagPattern);
@@ -94,6 +94,7 @@ const subfieldSortOrder = [
   {'tag': '490', 'sortOrder': ['a', 'x', 'y', 'v', 'l']},
   {'tag': '505', 'sortOrder': ['a']},
   {'tag': '526', 'sortOrder': ['i', 'a', 'b', 'x', 'z']},
+  {'tag': '534', 'sortOrder': ['6', '3', 'p', 'a', 't', 'l', 'c', 'f', 'b', 'e', 'o', 'x', 'z']},
   {'tag': '540', 'sortOrder': ['a', 'b', 'c', 'd', 'f', '2', 'u']},
   {'tag': '600', 'sortOrder': sortOrderForX00},
   {'tag': '610', 'sortOrder': sortOrderForX10},
