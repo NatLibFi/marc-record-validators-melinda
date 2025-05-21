@@ -1,5 +1,5 @@
 {
-  "description": "sort subfields: $6 is always the first sufield",
+  "description": "sort subfields: $6 is always the first subfield",
   "fix": true,
   "only": false
 }
