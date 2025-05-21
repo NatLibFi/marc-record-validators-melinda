@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f03" },
+    { "tag": "028", "ind1": " ", "ind2": " ", "subfields": [
+       { "code": "6", "value": "880-01"},
+      { "code": "b", "value": "Bar Records"},
+      { "code": "a", "value": "BARCD-1"}
+    ]}
+  ],
+  "leader": ""
+}
