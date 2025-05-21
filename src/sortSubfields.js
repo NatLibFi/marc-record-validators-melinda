@@ -67,10 +67,10 @@ export default function (defaultTagPattern) {
 
 // X00, X10, X11 and X130 could also for their own sets...
 // (ouch! sometimes $c comes after $d...): LoC: 100 0# ‡a Black Foot, ‡c Chief, ‡d d. 1877 ‡c (Spirit)
-const sortOrderForX00 = ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '5', '9']; // skip $g. Can't remember why, though...
-const sortOrderForX10 = ['6', 'i', 'a', 'b', 't', 'n', 'c', 'e', 'v', 'w', 'x', 'y', 'z', '0', '5', '9']; // somewhat iffy
-const sortOrderForX11 = ['6', 'a', 'n', 'd', 'c', 'e', 'g', 'j', '0', '5', '9'];
-const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
+const sortOrderForX00 = ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '5', '9']; // skip $g. Can't remember why, though...
+const sortOrderForX10 = ['i', 'a', 'b', 't', 'n', 'c', 'e', 'v', 'w', 'x', 'y', 'z', '0', '5', '9']; // somewhat iffy
+const sortOrderForX11 = ['a', 'n', 'd', 'c', 'e', 'g', 'j', '0', '5', '9'];
+const sortOrderFor7XX = ['8', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
 const sortOrderFor246 = ['i', 'a', 'b', 'n', 'p', 'f', '5', '9']; // Used by field 946 as well
 
 // List *only* exceptional order here. Otherwise default order is used.
@@ -78,15 +78,15 @@ const subfieldSortOrder = [
   {'tag': '017', 'sortOrder': ['i', 'a', 'b', 'd']},
   {'tag': '028', 'sortOrder': ['b', 'a', 'q']}, // National convention
   //{'tag': '031', 'sortOrder': ['a', 'b', 'c', 'm', 'e', 'd']}, // utter guesswork
-  {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'e', 'c', 'd', 'x']},
-  {'tag': '041', 'sortOrder': ['8', '6', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
-  {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
+  {'tag': '040', 'sortOrder': ['8', 'a', 'b', 'e', 'c', 'd', 'x']},
+  {'tag': '041', 'sortOrder': ['8', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
+  {'tag': '048', 'sortOrder': ['8', 'b', 'a']},
   {'tag': '100', 'sortOrder': sortOrderForX00},
   {'tag': '110', 'sortOrder': sortOrderForX10},
   {'tag': '111', 'sortOrder': sortOrderForX11},
   {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
-  {'tag': '245', 'sortOrder': ['6', 'a', 'b', 'n', 'p', 'k', 'f', 'c']},
+  {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'k', 'f', 'c']},
   {'tag': '246', 'sortOrder': sortOrderFor246},
   {'tag': '382', 'sortOrder': ['a']},
   {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a', '2', '0']},
@@ -94,7 +94,7 @@ const subfieldSortOrder = [
   {'tag': '490', 'sortOrder': ['a', 'x', 'y', 'v', 'l']},
   {'tag': '505', 'sortOrder': ['a']},
   {'tag': '526', 'sortOrder': ['i', 'a', 'b', 'x', 'z']},
-  {'tag': '534', 'sortOrder': ['6', '3', 'p', 'a', 't', 'l', 'c', 'f', 'b', 'e', 'o', 'x', 'z']},
+  {'tag': '534', 'sortOrder': ['3', 'p', 'a', 't', 'l', 'c', 'f', 'b', 'e', 'o', 'x', 'z']},
   {'tag': '540', 'sortOrder': ['a', 'b', 'c', 'd', 'f', '2', 'u']},
   {'tag': '600', 'sortOrder': sortOrderForX00},
   {'tag': '610', 'sortOrder': sortOrderForX10},
@@ -124,7 +124,7 @@ const subfieldSortOrder = [
   {'tag': '811', 'sortOrder': sortOrderForX11},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '856', 'sortOrder': ['3', 'u', 'q', 'x', 'y', 'z', '5']}, // incomplete, LoC examples are inconclusive
-  {'tag': '880', 'sortOrder': ['6', 'a']},
+  {'tag': '880', 'sortOrder': ['a']},
   {'tag': '946', 'sortOrder': sortOrderFor246},
   {'tag': 'LOW', 'sortOrder': ['a', 'b', 'c', 'l', 'h']},
   {'tag': 'SID', 'sortOrder': ['c', 'b']} // Hack, so that default order is not used
@@ -191,10 +191,20 @@ function twoBeforeZero(field) {
   return true;
 }
 
+function moveSubfield6ToTheFront(field) {
+  // https://www.loc.gov/marc/bibliographic/ecbdcntf.html says "Subfield $6 is always the first subfield in the field."
+  const sf6s = field.subfields.filter(sf => sf.code === '6');
+  const others = field.subfields.filter(sf => sf.code !== '6');
+  field.subfields = [...sf6s, ...others]; // eslint-disable-line functional/immutable-data
+}
+
 export function sortAdjacentSubfields(field, externalSortOrder = []) {
   if (!field.subfields) {
     return field;
   }
+
+  moveSubfield6ToTheFront(field); // specs: "Subfield $6 is always the first subfield in the field."
+
   // Features:
   // - Swap only sort adjacent pairs.
   // - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of 700$t...
@@ -206,8 +216,9 @@ export function sortAdjacentSubfields(field, externalSortOrder = []) {
   // Try to handle control subfield order. This is not 100% fool proof. Control subfields are pretty stable, though.
   // However, there are exceptions (eg. $9 ^^ comes first and $2 $0 is a Finnish convention...)
 
+
   const finnishWay = twoBeforeZero(field);
-  const controlSubfieldOrder = finnishWay ? ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9'] : ['8', '6', '7', '3', 'a', '4', '0', '2', '1', '5', '9'];
+  const controlSubfieldOrder = finnishWay ? ['8', '7', '3', 'a', '4', '2', '0', '1', '5', '9'] : ['8', '7', '3', 'a', '4', '0', '2', '1', '5', '9'];
   swapSubfields(field, controlSubfieldOrder);
 
   const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);
