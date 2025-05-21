@@ -36,17 +36,17 @@ async function callback({getFixture, enabled = true, fix = false, tagPattern = f
     return;
   }
 
-  const validator = await validatorFactory();
+  const validator = await validatorFactory(tagPattern);
   const record = new MarcRecord(getFixture('record.json'));
   const expectedResult = getFixture('expectedResult.json');
   // console.log(expectedResult); // eslint-disable-line
 
   if (!fix) {
-    const result = await validator.validate(record, tagPattern);
+    const result = await validator.validate(record);
     expect(result).to.eql(expectedResult);
     return;
   }
 
-  await validator.fix(record, tagPattern);
+  await validator.fix(record);
   expect(record).to.eql(expectedResult);
 }
