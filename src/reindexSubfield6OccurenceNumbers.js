@@ -91,7 +91,7 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
     return;
   }
   nvdebug(`Disambiguate occurrence numbers (N=${sharedOccurrenceNumberFields.length}) in...`, debug);
-  sharedOccurrenceNumberFields.forEach(field => disambiguateOccurrenceNumber(field));
+  sharedOccurrenceNumberFields.forEach(field => disambiguateOccurrenceNumber(field)); // eslint-disable-line array-callback-return
 
   function disambiguateable(field) {
     if (field.tag === '880') { // Not needed, already filtered...
@@ -131,7 +131,7 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
     nvdebug(` Reindex '${fieldToString(field)}' occurrence number and it's ${pairedFields.length} pair(s) using '${newOccurrenceNumber}'`, debug);
 
     fieldResetOccurrenceNumber(field, newOccurrenceNumber, occurrenceNumber);
-    pairedFields.forEach(pairedField => fieldResetOccurrenceNumber(pairedField, newOccurrenceNumber, occurrenceNumber));
+    pairedFields.forEach(pairedField => fieldResetOccurrenceNumber(pairedField, newOccurrenceNumber, occurrenceNumber)); // eslint-disable-line array-callback-return
 
   }
 

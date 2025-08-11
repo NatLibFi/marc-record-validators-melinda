@@ -23,9 +23,9 @@ export default function () {
   async function fix(record) {
     const newFields = await getFields(record, defaultTags, []);
 
-    newFields.forEach(nf => nvdebug(`Add new field '${fieldToString(nf)}'`, debug));
+    newFields.forEach(nf => nvdebug(`Add new field '${fieldToString(nf)}'`, debug)); // eslint-disable-line array-callback-return
 
-    newFields.forEach(nf => record.insertField(nf));
+    newFields.forEach(nf => record.insertField(nf)); // eslint-disable-line array-callback-return
 
     const newFieldsAsStrings = newFields.map(f => fieldToString(f));
 
@@ -78,13 +78,11 @@ export default function () {
   async function deriveMissingFields(record, tag) {
     const pairlessFields = getPairlessFinnishAndSwedishFields(record, tag);
 
-    /* eslint-disable */
     // Dunno how to handle loop+promise combo in our normal coding style. Spent half a day trying... (I reckon it takes like 2 minuts to do this properly...)
     let prefLabels = [];
     for (let i=0; i < pairlessFields.length; i += 1) {
       prefLabels[i] = await getPrefLabel(pairlessFields[i]);
     }
-    /* eslint-enable */
 
     const missingFields = pairlessFields.map((f, i) => pairField(f, prefLabels[i]));
     return missingFields.filter(f => f);
@@ -176,7 +174,7 @@ export default function () {
       return termCache[uri];
     }
     const tmp = await getTermDataFromFinto(uri);
-    termCache[uri] = tmp; // eslint-disable-line require-atomic-updates
+    termCache[uri] = tmp;
     return tmp;
   }
 

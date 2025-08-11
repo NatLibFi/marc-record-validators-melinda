@@ -14,7 +14,7 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fixField(f, record));
+    record.fields.forEach(f => fixField(f, record)); // eslint-disable-line array-callback-return
     return res;
   }
 

@@ -51,7 +51,7 @@ describe('fields-present', () => {
       expect(result).to.eql({valid: true, messages: []});
     });
     it('Finds the record valid', async () => {
-      const tagPatterns = [/^(020|022|024)$/u]; // eslint-disable-line
+      const tagPatterns = [/^(020|022|024)$/u];
       const validator = await validatorFactory(tagPatterns);
       const record = new MarcRecord({
         fields: [

@@ -157,7 +157,7 @@ function fieldHandleRelatorTermAbbreviations(field, language) {
   }
 
   const originalValue = fieldToString(field);
-  field.subfields.forEach(sf => subfieldHandleRelatorTermAbbreviation(sf, language));
+  field.subfields.forEach(sf => subfieldHandleRelatorTermAbbreviation(sf, language)); // eslint-disable-line array-callback-return
   const modifiedValue = fieldToString(field);
   if (modifiedValue === originalValue) {
     return;
@@ -222,7 +222,7 @@ export function fieldFixRelatorTerms(field, fromLanguage, toLanguage) {
   }
   fieldHandleRelatorTermAbbreviations(field, fromLanguage);
 
-  field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage));
+  field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage)); // eslint-disable-line array-callback-return
 }
 
 
@@ -230,7 +230,7 @@ export function recordFixRelatorTerms(record, defaultToLanguage = null, defaultF
   const fromLanguage = defaultFromLanguage ? defaultFromLanguage : getCatalogingLanguage(record);
   const toLanguage = defaultToLanguage ? defaultToLanguage : getCatalogingLanguage(record);
 
-  record.fields.forEach(field => translateField(field, fromLanguage, toLanguage));
+  record.fields.forEach(field => translateField(field, fromLanguage, toLanguage)); // eslint-disable-line array-callback-return
 
   function translateField(field, from, to) {
     fieldFixRelatorTerms(field, from, to);

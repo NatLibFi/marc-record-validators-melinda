@@ -45,12 +45,12 @@ export function recordFixSubfield6OccurrenceNumbers(record) {
   const fieldsContainingSubfield6 = record.fields.filter(field => fieldHasSubfield(field, '6'));
   const orphanedFields = getOrphanedFields(fieldsContainingSubfield6);
 
-  orphanedFields.forEach(field => fieldFixOrphanedSubfields(field));
+  orphanedFields.forEach(field => fieldFixOrphanedSubfields(field)); // eslint-disable-line array-callback-return
 
   function fieldFixOrphanedSubfields(field) {
     // Field 880: orphaned $6 subfields: occurrence number is changed to '00':
     if (field.tag === '880') {
-      field.subfields.forEach(sf => field880FixOrphanedSubfield(sf));
+      field.subfields.forEach(sf => field880FixOrphanedSubfield(sf)); // eslint-disable-line array-callback-return
       return;
     }
     // Non-880 fields get their orphaned $6s removed:
@@ -78,7 +78,7 @@ function findPairForSubfield6OccurrenceNumber(subfield6, myTag, candPairFields) 
     return undefined;
   }
   nvdebug(`LOOKING FOR PAIR: ${myTag} ${subfieldToString(subfield6)}`);
-  candPairFields.forEach(field => fieldToString(field));
+  candPairFields.forEach(field => fieldToString(field)); // eslint-disable-line array-callback-return
 
   // Only valid $6 value that fails to map to another field is iffy...
   const referredTag = subfield6.value.substring(0, 3);

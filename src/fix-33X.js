@@ -376,7 +376,7 @@ export default function () {
     nvdebug(`FIX ${description}...`);
     const catLang = getCatalogingLanguage(record) || 'fin';
     const fields = getRelevantFields(record);
-    fields.forEach(f => fixField(f, catLang));
+    fields.forEach(f => fixField(f, catLang)); // eslint-disable-line array-callback-return
     nvdebug(` GOT ${fields.length}...`);
     // FFS: we actually need newFields array here! Videogame, for example, might be
     // 336 ## ‡a kaksiulotteinen liikkuva kuva ‡b tdi ‡2 rdacontent
@@ -395,7 +395,7 @@ export default function () {
     }
     const originalStrings = fields.map(f => fieldToString(f));
     const clonedFields = fields.map(f => clone(f));
-    clonedFields.forEach(f => fixField(f, catLang));
+    clonedFields.forEach(f => fixField(f, catLang)); // eslint-disable-line array-callback-return
     const modifiedStrings = clonedFields.map(f => fieldToString(f));
 
     const changes = originalStrings.map((str, i) => `'${str}' => '${modifiedStrings[i]}'`);

@@ -63,7 +63,7 @@ export function normalizeField502(field) {
   }
 
   // "a = acd[0]"" is way more readable than "[a] = acd"...
-  const a = acd[0]; // eslint-disable-line prefer-destructuring
+  const a = acd[0];
   const c = acd[1].code === 'c' ? acd[1] : null;
   const d = acd[acd.length - 1].code === 'd' ? acd[acd.length - 1] : null;
 

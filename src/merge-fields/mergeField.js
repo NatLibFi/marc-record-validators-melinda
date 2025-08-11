@@ -48,7 +48,6 @@ function copyrightYearHack(baseRecord, baseField, sourceField) {
   });
 }
 
-// eslint-disable-next-line max-params
 function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs880 = []) {
   //// Identical fields
   // No need to check every subfield separately.

@@ -20,7 +20,7 @@ export default function (tagPattern) {
     iterateFields(record)
       .filter(item => item.validation === false)
       .map(({validation, ...item}) => item) // eslint-disable-line no-unused-vars
-      .forEach(({obj}) => record.removeField(obj));
+      .forEach(({obj}) => record.removeField(obj)); // eslint-disable-line array-callback-return
   }
 
   function iterateFields(record) {

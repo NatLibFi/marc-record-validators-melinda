@@ -21,7 +21,7 @@ export default function () {
     // 336 ## ‡a tietokoneohjelma ‡b cop ‡2 rdacontent
     const res = {message: [], fix: [], valid: true};
     if (newFields.length) {
-      newFields.forEach(f => record.insertField(f));
+      newFields.forEach(f => record.insertField(f)); // eslint-disable-line array-callback-return
       return res;
     }
     return res;

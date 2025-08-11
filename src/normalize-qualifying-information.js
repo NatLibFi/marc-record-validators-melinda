@@ -51,7 +51,7 @@ function normalizeQualifyingInformationField(field) {
     return;
   }
 
-  field.subfields.forEach(sf => fixSubfield(sf));
+  field.subfields.forEach(sf => fixSubfield(sf)); // eslint-disable-line array-callback-return
   return;
 
   function fixSubfield(sf) {

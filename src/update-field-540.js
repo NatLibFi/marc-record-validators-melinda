@@ -86,7 +86,7 @@ function fieldHasOldCcLicense(field, fix) {
   //nvdebug(` Found valid license`);
   if (fix) {
     const subfieldsC = field.subfields.filter(sf => validLicenseInSubfieldC(sf, validLicense));
-    subfieldsC.forEach(c => fixC(field, c));
+    subfieldsC.forEach(c => fixC(field, c)); // eslint-disable-line array-callback-return
   }
 
   return true;

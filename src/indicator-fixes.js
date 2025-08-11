@@ -35,7 +35,7 @@ export default function () {
     const clonedFields = JSON.parse(JSON.stringify(record.fields));
     recordNormalizeIndicators(record);
 
-    record.fields.forEach((field, index) => compareFields(field, index));
+    record.fields.forEach((field, index) => compareFields(field, index)); // eslint-disable-line array-callback-return
 
     function compareFields(field, index) {
       const origFieldAsString = fieldToString(clonedFields[index]);
@@ -235,7 +235,7 @@ export function recordNormalizeIndicators(record) {
   // Language is used to handle non-filing indicators
   const languages = getLanguages(record);
 
-  record.fields.forEach(field => fieldNormalizeIndicators(field, record, languages));
+  record.fields.forEach(field => fieldNormalizeIndicators(field, record, languages)); // eslint-disable-line array-callback-return
 
 }
 

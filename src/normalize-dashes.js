@@ -54,7 +54,7 @@ function fixDashes(field) {
 
   nvdebug(`Dashing ${fieldToString(field)}`);
 
-  field.subfields.forEach(sf => subfieldFixDashes(sf));
+  field.subfields.forEach(sf => subfieldFixDashes(sf)); // eslint-disable-line array-callback-return
 
   return field;
 

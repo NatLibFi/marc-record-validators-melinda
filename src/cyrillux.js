@@ -92,7 +92,7 @@ export default function (config = {}) {
     const orig = fieldToString(field);
 
     const normalizedFields = processField(clone(field), record);
-    const mod = fieldsToString(normalizedFields).replace(/\t__SEPARATOR__\t/ug, ', ').replace(/ (‡6 [0-9][0-9][0-9])-[0-9][0-9]+/gu, ' $1-NN'); // eslint-disable-line prefer-named-capture-group
+    const mod = fieldsToString(normalizedFields).replace(/\t__SEPARATOR__\t/ug, ', ').replace(/ (‡6 [0-9][0-9][0-9])-[0-9][0-9]+/gu, ' $1-NN');
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`CHANGE: ${orig} => ${mod}`);
       return;
@@ -101,7 +101,7 @@ export default function (config = {}) {
   }
 
   function isCyrillicCharacter(char) {
-    return XRegExp('[\\p{Cyrillic}]').test(char); // eslint-disable-line new-cap
+    return XRegExp('[\\p{Cyrillic}]').test(char);
   }
 
   function containsCyrillicCharacters(str) { // from melinda-ui-cyrillux

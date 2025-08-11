@@ -26,9 +26,6 @@
 *
 */
 
-/* eslint-disable complexity, max-params */
-
-
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
 import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf';
 import createDebugLogger from 'debug';

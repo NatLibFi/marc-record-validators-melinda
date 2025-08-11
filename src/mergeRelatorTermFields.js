@@ -74,7 +74,7 @@ function copyRelatorSubfields(fromField, toField) {
   const relatorTermSubfieldCode = tagToRelatorTermSubfieldCode(fromField.tag);
   const newRelatorTerms = extractAddableRelatorTerms(fromField, toField);
 
-  newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term}));
+  newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term})); // eslint-disable-line array-callback-return
 
 }
 

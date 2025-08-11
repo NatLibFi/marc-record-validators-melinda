@@ -16,14 +16,14 @@ export default function () {
   function fix(record) {
     function fixField(field) {
       const removableSubfields = fieldGetDeletableSubfields(field);
-      removableSubfields.forEach(sf => record.removeSubfield(sf, field));
+      removableSubfields.forEach(sf => record.removeSubfield(sf, field)); // eslint-disable-line array-callback-return
     }
 
     const res = {message: [], fix: [], valid: true};
 
     const relevantFields = getRelevantFields(record);
 
-    relevantFields.forEach(field => fixField(field));
+    relevantFields.forEach(field => fixField(field)); // eslint-disable-line array-callback-return
 
     // message.valid = !(message.message.length >= 1);
     return res;

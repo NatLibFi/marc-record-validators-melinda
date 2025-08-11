@@ -15,7 +15,7 @@ export default function () {
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
     const relevantFields = getRelevantFields(record);
-    relevantFields.forEach(f => fieldSanitizeVocabularySourceCode(f));
+    relevantFields.forEach(f => fieldSanitizeVocabularySourceCode(f)); // eslint-disable-line array-callback-return
     return res;
   }
 
@@ -23,7 +23,7 @@ export default function () {
     const res = {message: []};
     const relevantFields = getRelevantFields(record);
 
-    relevantFields.forEach(field => validateField(field, res));
+    relevantFields.forEach(field => validateField(field, res)); // eslint-disable-line array-callback-return
 
     res.valid = !(res.message.length >= 1);
     return res;
@@ -52,7 +52,7 @@ export default function () {
 
 
   function fieldSanitizeVocabularySourceCode(field) {
-    field.subfields.forEach(sf => subfieldSanitizeVocabularySourceCode(sf));
+    field.subfields.forEach(sf => subfieldSanitizeVocabularySourceCode(sf)); // eslint-disable-line array-callback-return
     return field;
   }
 
@@ -72,7 +72,7 @@ function stringFixVocabularySourceCode(value) {
   // Try to remove spaces, change '//' to '/' and remove final '.' and '/':
   const tmp = value.replace(/ /ug, '')
     .replace(/\/+/ug, '/')
-    .replace(/(.)[./]$/gu, '$1') // eslint-disable-line prefer-named-capture-group
+    .replace(/(.)[./]$/gu, '$1')
     .replace(/^yso-(?:aika|paikat)\//u, 'yso/'); // IMP-HELMET crap. Also, they still have a '.' at the end of $a...
 
   // NB! Use the modified value ONLY if the result (tmp variable) is a legal subfield code...

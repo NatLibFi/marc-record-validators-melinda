@@ -59,7 +59,7 @@ function fixSubfieldA(a) {
 function fixSubfieldAInternalPunctuation(field) {
   const a = field.subfields.filter(sf => sf.code === 'a');
 
-  a.forEach(sf => fixSubfieldA(sf));
+  a.forEach(sf => fixSubfieldA(sf)); // eslint-disable-line array-callback-return
 }
 
 function getIndicator1(field) {

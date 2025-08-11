@@ -69,7 +69,7 @@ function processCharacterGroup(field, group) {
   //console.info(`008/${group.start}-${group.end}: '${originalContent}'`); // eslint-disable-line no-console
   const charArray = content.split('');
 
-  charArray.sort(function(a, b) { // eslint-disable-line prefer-arrow-callback
+  charArray.sort(function(a, b) {
     return scoreChar(a) - scoreChar(b);
   });
 
@@ -120,7 +120,7 @@ export function justifyAndSortField008CharacterGroups(field, typeOfMaterial) {
 
   const relevantCharacterGroups = characterGroups.filter(gr => gr.type === typeOfMaterial);
 
-  relevantCharacterGroups.forEach(group => processCharacterGroup(field, group));
+  relevantCharacterGroups.forEach(group => processCharacterGroup(field, group)); // eslint-disable-line array-callback-return
 
   //justifyField008CharacterGroups(field, typeOfMaterial); // Oops: also sorts...
 

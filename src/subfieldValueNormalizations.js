@@ -57,7 +57,6 @@ export default function () {
 
 function handleInitials(value, subfieldCode, field) {
   // MRA-267/273
-  /* eslint-disable */
   if (field.ind1 === '1' && subfieldCode === 'a' && ['100', '600', '700', '800'].includes(field.tag) && !fieldHasSubfield(field, '0')) {
     // Fix MRA-267/273 (partial): Handle the most common case(s). (And extend them rules later on if the need arises):
     // No longest initial sequence I've seen is six (in a Sri Lankan name).
@@ -69,7 +68,6 @@ function handleInitials(value, subfieldCode, field) {
 
   return value;
 
-  /* eslint-enable */
   function initialsInRow(str) {
     // initial space confirms us that it's an initial
     return str.match(/ (?:[A-Z]|Å|Ä|Ö)\.(?:[A-Z]|Å|Ä|Ö)/u);
@@ -120,7 +118,7 @@ function getNormalizedValue(subfield, field, catLang) {
   function handleMovies(value) {
     if (subfield.code === 'a' && ['130', '630', '730'].includes(field.tag)) {
       // MRA-614: "(elokuva, 2000)" => "(elokuva : 2000)""
-      return value.replace(/\((elokuva), (19[0-9][0-9]|20[0-2][0-9])\)/u, '($1 : $2)'); // eslint-disable-line prefer-named-capture-group
+      return value.replace(/\((elokuva), (19[0-9][0-9]|20[0-2][0-9])\)/u, '($1 : $2)');
     }
     return value;
   }

@@ -69,7 +69,9 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
       });
 
       return true;
-    } else if (isLegalDeposit) {
+    }
+
+    if (isLegalDeposit) {
 
       // We add here legal deposit information to all URN-f856s - we probably should not do this
       // We should add extra f856 URN / URNs for legal deposits that already have a open (non-legal-deposit) URN

@@ -217,7 +217,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
   return globalFieldOrderComparator(fieldA, fieldB, sorterFunctions);
 }
 
-function sortByIndexTerms(fieldA, fieldB) { // eslint-disable-line complexity, max-statements
+function sortByIndexTerms(fieldA, fieldB) {
 
   const indexTermFields = ['600', '610', '611', '630', '648', '650', '651', '652', '653', '654', '655', '656', '657', '658', '659', '662'];
 

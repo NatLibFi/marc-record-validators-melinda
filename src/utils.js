@@ -99,7 +99,7 @@ export function fieldsToString(fields) {
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
-  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
+  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func)); // eslint-disable-line array-callback-return
 }
 
 export function isControlSubfieldCode(subfieldCode) {
@@ -146,7 +146,7 @@ export function fieldHasNSubfields(field, subfieldCode/*, subfieldValue = null*/
 }
 
 export function removeCopyright(value) {
-  return value.replace(/^(?:c|p|©|℗|Cop\. ?) ?((?:1[0-9][0-9][0-9]|20[012][0-9])\.?)$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
+  return value.replace(/^(?:c|p|©|℗|Cop\. ?) ?((?:1[0-9][0-9][0-9]|20[012][0-9])\.?)$/ui, '$1');
 }
 
 function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
@@ -217,7 +217,7 @@ export function marc21GetTagsLegalInd2Value(tag) {
 }
 
 export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
-  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
+  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func)); // eslint-disable-line array-callback-return
 }
 
 export function subfieldsAreIdentical(subfieldA, subfieldB) {

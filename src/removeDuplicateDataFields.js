@@ -56,7 +56,7 @@ function numberOfLinkageSubfields(field) {
 */
 
 function removeLinkNotes(record) {
-  record.fields.forEach(f => delete f.linkNote);
+  record.fields.forEach(f => delete f.linkNote); // eslint-disable-line array-callback-return
 }
 
 
@@ -109,7 +109,7 @@ function recordRemoveFieldOrSubfield8(record, field, currLinkingNumber) {
     return;
   }
   const subfields = field.subfields.filter(sf => getSubfield8LinkingNumber(sf) === currLinkingNumber);
-  subfields.forEach(sf => record.removeSubfield(sf, field));
+  subfields.forEach(sf => record.removeSubfield(sf, field)); // eslint-disable-line array-callback-return
 }
 
 function newRecordRemoveFieldOrSubfield8(record, field, currLinkingNumber, fix) {
@@ -232,7 +232,7 @@ function markIdenticalSubfield6Chains(chain, record) {
   const chainAsString = fieldsToNormalizedString(chain, 0, normalizeOccurrenceNumber, normalizeTag);
 
   nvdebug(`markIdenticalSubfield6Chains: ${chainAsString}`);
-  record.fields.forEach(f => compareWithChain(f));
+  record.fields.forEach(f => compareWithChain(f)); // eslint-disable-line array-callback-return
 
 
   function compareWithChain(f) {
@@ -324,11 +324,9 @@ function acceptFieldsWithSubfield8(fieldsWithSubfield8, requireSingleTag = false
 
 
 export function sameField(field1, field2) {
-  /* eslint-disable */
-    field1.tmpMyId = 666;
-    const result = field2.tmpMyId === 666 ? true : false;
-    delete field1.tmpMyId;
-    /* eslint-enable */
+  field1.tmpMyId = 666;
+  const result = field2.tmpMyId === 666 ? true : false;
+  delete field1.tmpMyId;
   return result;
 }
 
@@ -423,24 +421,24 @@ export function removeDuplicateDatafields(record, fix = true) {
 
   const dataFields = record.fields.filter(f => f.subfields !== undefined);
 
-  dataFields.forEach(f => fieldHandleDuplicateDatafields(f, record));
+  dataFields.forEach(f => fieldHandleDuplicateDatafields(f, record)); // eslint-disable-line array-callback-return
 
   const deletableFields = dataFields.filter(f => f.deleted);
   const modifiedFields = dataFields.filter(f => f.modified && !f.deleted);
 
   const result = deletableFields.map(f => `DEL: ${fieldToString(f)}`);
   if (modifiedFields.length) {
-    modifiedFields.forEach(f => delete f.modified);
+    modifiedFields.forEach(f => delete f.modified); // eslint-disable-line array-callback-return
     result.push(modifiedFields.map(f => `MOD: ${fieldToString(f)}`));
   }
 
   if (fix) {
-    deletableFields.forEach(f => record.removeField(f));
+    deletableFields.forEach(f => record.removeField(f)); // eslint-disable-line array-callback-return
     return result;
   }
 
-  deletableFields.forEach(f => delete f.deleted);
-  deletableFields.forEach(f => delete f.modified);
+  deletableFields.forEach(f => delete f.deleted); // eslint-disable-line array-callback-return
+  deletableFields.forEach(f => delete f.modified); // eslint-disable-line array-callback-return
 
 
   return result;

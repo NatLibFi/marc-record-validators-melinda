@@ -121,7 +121,7 @@ export default function () {
 
     // Field 028: use $b$a, not $a$b:
     const f028 = record.fields.filter(f => f.tag === '028');
-    f028.forEach(f => sortAdjacentSubfields(f));
+    f028.forEach(f => sortAdjacentSubfields(f)); // eslint-disable-line array-callback-return
 
     add041().fix(record);
 
@@ -187,7 +187,7 @@ function fixField040(record) {
     return;
   }
 
-  f040.forEach(f => fixField040Subfields(f));
+  f040.forEach(f => fixField040Subfields(f)); // eslint-disable-line array-callback-return
 
   function fixField040Subfields(field) {
     field.subfields = field.subfields.filter(sf => !['b', 'e'].includes(sf.code));
@@ -203,7 +203,7 @@ export function removeFromOldCatalog(field) {
     return;
   }
   // See https://catalog.loc.gov/vwebv/ui/en_US/htdocs/help/faqs.html for motivation
-  field.subfields?.forEach(sf => removeFromOldCatalogFromSubfield(sf));
+  field.subfields?.forEach(sf => removeFromOldCatalogFromSubfield(sf)); // eslint-disable-line array-callback-return
 
   function removeFromOldCatalogFromSubfield(subfield) {
     if (!subfield.value.includes('[from old catalog]')) {
@@ -303,7 +303,7 @@ function field260To264s(field, record) { // might be generic... if so, move to u
     return false;
   }
 
-  field.subfields?.forEach(sf => field260To264Normalization(sf));
+  field.subfields?.forEach(sf => field260To264Normalization(sf)); // eslint-disable-line array-callback-return
 
   function field260To264Normalization(subfield) {
     subfield.value = field260To264Normalization2(subfield);
@@ -380,7 +380,7 @@ function translateFieldToFinnish(field) {
   if (!['020', '300'].includes(field.tag)) {
     return;
   }
-  field.subfields?.forEach(sf => translateSubfieldToFinnish(sf));
+  field.subfields?.forEach(sf => translateSubfieldToFinnish(sf));  // eslint-disable-line array-callback-return
 
   function translateSubfieldToFinnish(subfield) {
     if (field.tag === '020' && ['a', 'q', 'z'].includes(subfield.code)) {
@@ -424,7 +424,7 @@ function expandFinnishAbbreviations(value) {
     replace(/\bnid\./gu, 'nidottu').replace(/\bnid\b/gui, 'nidottu').
     replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gui, 'sidottu').
     replace(/\bverkkojulk\.\b/gu, 'verkkojulkaisu').replace(/\bverkkojulk\b/gu, 'verkkojulkaisu').
-    replace(/^\(([^)]+)\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+    replace(/^\(([^)]+)\)$/u, '$1');
   // <- removal of brackets above could use a better location
 }
 
@@ -443,9 +443,9 @@ function finnishTranslationsAndMappings(value) {
     replace(/\bbilaga\b/gui, 'liite').
     replace(/\bbilagor\b/gui, 'liitettä').
     // https://github.com/NatLibFi/USEMARCON-BOOKWHERE-RDA/blob/master/bw_rda_kyril.rul#L365
-    replace(/(\b1\]?) с\./gui, '$1 sivu'). // eslint-disable-line prefer-named-capture-group
-    replace(/(\d\]?) с\./gui, '$1 sivua'). // eslint-disable-line prefer-named-capture-group
-    replace(/(\d) см/gui, '$1 cm'). // eslint-disable-line prefer-named-capture-group
+    replace(/(\b1\]?) с\./gui, '$1 sivu').
+    replace(/(\d\]?) с\./gui, '$1 sivua').
+    replace(/(\d) см/gui, '$1 cm').
 
     replace(/\bcharts\b/gui, 'kaavioita').
     replace('chiefly color illustrations', 'pääosin värikuvitettu').

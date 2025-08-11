@@ -240,7 +240,7 @@ export default function () {
     const exceptionFuncs = [];
 
     exceptionRules.forEach(exceptionRule => {
-      const match = (/- (.*) if preceded by (.*)/u).exec(exceptionRule); // eslint-disable-line prefer-named-capture-group
+      const match = (/- (.*) if preceded by (.*)/u).exec(exceptionRule);
       if (match) {
         const [, type, preceededCode] = match;
         const normalizedType = type.trim().toUpperCase().trim();

@@ -185,7 +185,7 @@ export default function (config) {
         }
       });
 
-      excluded.forEach(field => record.removeField(field));
+      excluded.forEach(field => record.removeField(field)); // eslint-disable-line array-callback-return
     });
 
     // Fix does not send response

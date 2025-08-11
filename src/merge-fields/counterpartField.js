@@ -49,8 +49,8 @@ function differentPublisherSubfields(field1, field2) {
 
 export function splitToNameAndQualifier(value) {
   if (value.match(/^.* \([^()]+\)$/u)) {
-    const name = value.replace(/^(.*) \([^()]+\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-    const qualifier = value.replace(/^.* (\([^()]+\))$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+    const name = value.replace(/^(.*) \([^()]+\)$/u, '$1');
+    const qualifier = value.replace(/^.* (\([^()]+\))$/u, '$1');
     return [name, qualifier];
   }
   return [value, undefined];
@@ -189,7 +189,7 @@ function pairableValue(tag, subfieldCode, value1, value2) {
 
 
 function counterpartExtraNormalize(tag, subfieldCode, value) {
-  /* eslint-disable prefer-named-capture-group, no-param-reassign */
+
   // Remove trailing punctuation:
   value = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;| =| \/)$/u, '$1');
   // Remove brackets:

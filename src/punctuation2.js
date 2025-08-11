@@ -27,7 +27,7 @@ export default function () {
   function fix(record) {
     nvdebug(`${descriptionString}: fixer`);
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fieldFixPunctuation(f));
+    record.fields.forEach(f => fieldFixPunctuation(f)); // eslint-disable-line array-callback-return
     return res;
   }
 

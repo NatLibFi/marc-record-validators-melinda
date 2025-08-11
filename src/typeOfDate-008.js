@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/typeOfDate-008');  // eslint-disable-line
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/typeOfDate-008');
 
 export default function () {
   return {

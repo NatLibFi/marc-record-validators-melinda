@@ -25,7 +25,7 @@ export default function () {
     fixLanguageField008(field008);
 
     const f041 = record.get('041');
-    f041.forEach(f => fixField041(f));
+    f041.forEach(f => fixField041(f)); // eslint-disable-line array-callback-return
 
     return res;
   }
@@ -37,7 +37,8 @@ export default function () {
     validateField008(record, res);
 
     const f041 = record.get('041');
-    f041.forEach(f => validateField041(f, res));
+
+    f041.forEach(f => validateField041(f, res)); // eslint-disable-line array-callback-return
 
     res.valid = !(res.message.length >= 1);
     return res;
@@ -97,7 +98,7 @@ export default function () {
       return;
     }
 
-    field.subfields.forEach(sf => fixField041Subfield(sf));
+    field.subfields.forEach(sf => fixField041Subfield(sf)); // eslint-disable-line array-callback-return
 
     function fixField041Subfield(subfield) {
       if (!isRelevantField041SubfieldCode(subfield)) {
