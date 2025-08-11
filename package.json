@@ -64,7 +64,6 @@
     "@babel/preset-env": "^7.28.0",
     "@babel/register": "^7.27.1",
     "@babel/runtime": "^7.28.2",
-    "@natlibfi/eslint-config-melinda-backend": "^3.0.6",
     "@natlibfi/fixugen": "^2.0.15",
     "@natlibfi/fixura": "^3.0.14",
     "babel-plugin-istanbul": "^7.0.0",
@@ -72,7 +71,7 @@
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
     "cross-env": "^7.0.3",
-    "eslint": "^8.57.1",
+    "eslint": "^9.33.0",
     "fetch-mock": "^11.1.5",
     "mocha": "^11.7.1",
     "nyc": "^17.1.0"
