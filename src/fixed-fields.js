@@ -11,11 +11,11 @@ export default function (configuration) {
 
   function validate(record) {
     const messages = configuration.reduce((messages, item) => {
-      let results; // eslint-disable-line functional/no-let
+      let results;
 
-      if (item.leader) { // eslint-disable-line functional/no-conditional-statements
+      if (item.leader) {
         results = validateField(record.leader, item);
-      } else { // eslint-disable-line functional/no-conditional-statements
+      } else {
         results = record.get(item.tag)
           .map(f => validateField(f.value, item, f.tag));
       }

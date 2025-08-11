@@ -28,10 +28,10 @@ export function isEnnakkotietoSubfieldG(subfield) {
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
   // We may drop certain subfields:
-  if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statements
+  if (oldField.subfields.length === newField.subfields.length) {
     oldField.subfields.forEach((subfield, index) => {
       const newValue = newField.subfields[index].value;
-      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statements
+      if (subfield.value !== newValue) {
         nvdebug(`NORMALIZE SUBFIELD: '${subfield.value}' => '${newValue}'`, debugDev);
       }
     });
@@ -116,7 +116,7 @@ function subfieldValueLowercase(value, subfieldCode, tag) {
 }
 
 function subfieldLowercase(sf, tag) {
-  sf.value = subfieldValueLowercase(sf.value, sf.code, tag); // eslint-disable-line functional/immutable-data
+  sf.value = subfieldValueLowercase(sf.value, sf.code, tag);
 }
 
 function fieldLowercase(field) {
@@ -153,7 +153,7 @@ function hack490SubfieldA(field) {
     }
     const tmp = subfield.value.replace(/ ?-(?:[a-z]|ä|ö)*sarja$/u, '');
     if (tmp.length > 0) {
-      subfield.value = tmp; // eslint-disable-line functional/immutable-data
+      subfield.value = tmp;
       return;
     }
   }
@@ -189,8 +189,8 @@ function normalizeISBN(field) {
 
   function normalizeIsbnSubfield(sf) {
     //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);
-    sf.value = sf.value.replace(/-/ug, ''); // eslint-disable-line functional/immutable-data
-    sf.value = sf.value.replace(/x/u, 'X'); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/-/ug, '');
+    sf.value = sf.value.replace(/x/u, 'X');
   }
 
 }
@@ -202,9 +202,9 @@ function fieldSpecificHacks(field) {
 
 export function fieldTrimSubfieldValues(field) {
   field.subfields?.forEach((sf) => {
-    sf.value = sf.value.replace(/^[ \t\n]+/u, ''); // eslint-disable-line functional/immutable-data
-    sf.value = sf.value.replace(/[ \t\n]+$/u, ''); // eslint-disable-line functional/immutable-data
-    sf.value = sf.value.replace(/[ \t\n]+/gu, ' '); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/^[ \t\n]+/u, '');
+    sf.value = sf.value.replace(/[ \t\n]+$/u, '');
+    sf.value = sf.value.replace(/[ \t\n]+/gu, ' ');
   });
 }
 
@@ -212,7 +212,7 @@ function fieldRemoveDecomposedDiacritics(field) {
   // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
   // allows us to compare authors and avoid duplicate fields.
   field.subfields.forEach((sf) => {
-    sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+    sf.value = removeDecomposedDiacritics(sf.value);
   });
 }
 
@@ -282,7 +282,7 @@ function removeCharsThatDontCarryMeaning(value, tag, subfieldCode) {
 }
 
 function normalizeField(field) {
-  //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+  //sf.value = removeDecomposedDiacritics(sf.value);
   fieldStripPunctuation(field);
   fieldLowercase(field);
   fieldNormalizeControlNumbers(field); // FIN11 vs FI-MELINDA etc.
@@ -297,11 +297,11 @@ export function cloneAndNormalizeFieldForComparison(field) {
     return clonedField;
   }
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
-    sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
-    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);// eslint-disable-line functional/immutable-data
+    sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag);
+    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);
   });
 
-  normalizeField(clonedField); // eslint-disable-line functional/immutable-data
+  normalizeField(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
   fieldSpecificHacks(clonedField);
   fieldTrimSubfieldValues(clonedField);

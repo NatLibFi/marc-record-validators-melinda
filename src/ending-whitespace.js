@@ -18,7 +18,6 @@ export default function () {
     return valid ? {valid, messages: []} : {valid, messages};
   }
 
-  /* eslint-disable functional/immutable-data,functional/no-conditional-statements */
   function fix(record) {
     record.fields.forEach(({subfields}) => {
       if (subfields === undefined) {
@@ -32,7 +31,6 @@ export default function () {
       });
     });
   }
-  /* eslint-enable functional/immutable-data,functional/no-conditional-statements */
 
   function valueEndsWithWhitespace({value}) {
     return (/\s$/u).test(value);

@@ -25,7 +25,7 @@ export default function () {
 
     relevantFields.forEach(field => validateField(field, res));
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -39,12 +39,12 @@ export default function () {
     const normalizedField = fieldSanitizeVocabularySourceCode(clone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`FIXABLE: '${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`FIXABLE: '${orig}' => '${mod}'`);
       return;
     }
     // Handle illegal values here
     if (fieldHasUnfixableVocabularySourceCode(field)) {
-      res.message.push(`CAN'T BE FIXED AUTOMATICALLY: '${orig}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`CAN'T BE FIXED AUTOMATICALLY: '${orig}'`);
       return;
     }
     return;
@@ -60,7 +60,7 @@ export default function () {
     if (subfield.code !== '2') {
       return;
     }
-    subfield.value = stringFixVocabularySourceCode(subfield.value); // eslint-disable-line functional/immutable-data
+    subfield.value = stringFixVocabularySourceCode(subfield.value);
   }
 
 }

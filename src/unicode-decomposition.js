@@ -122,7 +122,7 @@ export default function () {
       field.subfields
         .filter(subfield => PATTERN.test(subfield.value))
         .forEach(subfield => {
-          subfield.value = convert(subfield.value); // eslint-disable-line functional/immutable-data
+          subfield.value = convert(subfield.value);
         });
     });
   }

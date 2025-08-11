@@ -36,7 +36,7 @@ export default function () {
 
     const res = {message: duplicates};
 
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }
@@ -65,8 +65,8 @@ function deriveInferiorChains(fields, record) {
     const arr = deriveChainDeletables([chainAsString]);
     //nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`);
     arr.forEach(val => {
-      if (!(val in hash)) { // eslint-disable-line functional/no-conditional-statements
-        hash[val] = field; // eslint-disable-line functional/immutable-data
+      if (!(val in hash)) {
+        hash[val] = field;
       }
     });
   }
@@ -150,13 +150,13 @@ export function removeInferiorChains(record, fix = true) {
     const triggeringChain = fieldToChain(triggeringField, record);
 
     // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
-    if (chainContains1XX(chain)) { // eslint-disable-line functional/no-conditional-statements
+    if (chainContains1XX(chain)) {
       triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
     }
     //nvdebug(`iRIS6C: ${chainAsString}`);
     const deletedString = fieldsToString(chain);
     const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
-    if (fix) { // eslint-disable-line functional/no-conditional-statements
+    if (fix) {
       //nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
       chain.forEach(field => record.removeField(field));
     }
@@ -174,7 +174,7 @@ export function removeInferiorChains(record, fix = true) {
     }
     // Retag field 7XX as 1XX and fix corresponding occurrence numbers as well:
     const pairs = fieldGetOccurrenceNumberPairs(field, chain);
-    field.tag = `1${field.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
+    field.tag = `1${field.tag.substring(1)}`;
     // There should always be one pair, but I'm not sanity-checking this
     pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField));
   }
@@ -219,7 +219,7 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
   const arr = [sixless, withoutFinalVOrX, xless, xvless, modifiedInd2].filter(val => val !== fieldAsString);
 
   /*
-  if (arr.length) { // eslint-disable-line functional/no-conditional-statements
+  if (arr.length) {
     nvdebug(`${arr.length} derivation(s) for ${fieldAsString}`);
     nvdebug(arr.join('\n'));
   }
@@ -411,7 +411,7 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 
   const deletedFieldsAsStrings = hits.map(f => fieldToString(f));
 
-  if (fix) { // eslint-disable-line functional/no-conditional-statements
+  if (fix) {
     hits.forEach(field => {
       //nvdebug(`Remove inferior field: ${fieldToString(field)}`, debug);
       record.removeField(field);

@@ -30,7 +30,7 @@ export default function () {
       validateField(field, res, typeOfMaterial);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -43,7 +43,7 @@ export default function () {
     const normalizedField = justifyAndSortField008CharacterGroups(clone(field), typeOfMaterial);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`TODO: '${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`TODO: '${orig}' => '${mod}'`);
       return;
     }
     return;
@@ -69,7 +69,7 @@ function processCharacterGroup(field, group) {
   //console.info(`008/${group.start}-${group.end}: '${originalContent}'`); // eslint-disable-line no-console
   const charArray = content.split('');
 
-  charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
+  charArray.sort(function(a, b) { // eslint-disable-line prefer-arrow-callback
     return scoreChar(a) - scoreChar(b);
   });
 
@@ -80,7 +80,7 @@ function processCharacterGroup(field, group) {
 
   //console.info(`'${fieldToString(field)}' =>`); // eslint-disable-line no-console
 
-  field.value = `${field.value.substring(0, group.start)}${newContent}${field.value.substring(group.end + 1)}`; // eslint-disable-line functional/immutable-data
+  field.value = `${field.value.substring(0, group.start)}${newContent}${field.value.substring(group.end + 1)}`;
   //console.info(`'${fieldToString(field)}'`); // eslint-disable-line no-console
 
   function fixBlanks(str) {

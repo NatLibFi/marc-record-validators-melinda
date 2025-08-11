@@ -23,7 +23,7 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
-    //message.fix = []; // eslint-disable-line functional/immutable-data
+    //message.fix = [];
 
     // Actual parsing of all fields
     /*
@@ -37,7 +37,7 @@ export default function () {
       //validateField(field, true, message);
     });
 
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -55,7 +55,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -68,7 +68,7 @@ export default function () {
     const normalizedField = fieldFixComposition(clone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`'${orig}' requires normalization`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'${orig}' requires normalization`);
       return;
     }
     return;
@@ -113,10 +113,10 @@ export function fieldFixComposition(field) {
   //const originalValue = fieldToString(field);
   //nvdebug(`fFC: '${originalValue}'`, debug);
   field.subfields.forEach((subfield, index) => {
-    field.subfields[index].value = fixComposition(subfield.value); // eslint-disable-line functional/immutable-data
+    field.subfields[index].value = fixComposition(subfield.value);
   });
   //const newValue = fieldToString(field);
-  //if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statements
+  //if (originalValue !== newValue) {
   //  debug(`FIXCOMP: '${originalValue}' => '${newValue}'`);
   //}
   return field;
@@ -127,7 +127,7 @@ export function fieldRemoveDecomposedDiacritics(field) {
   // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
   // allows us to compare authors and avoid duplicate fields.
   field.subfields.forEach((sf) => {
-    sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+    sf.value = removeDecomposedDiacritics(sf.value);
   });
 
   function removeDecomposedDiacritics(value = '') {

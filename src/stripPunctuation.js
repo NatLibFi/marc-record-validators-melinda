@@ -36,7 +36,7 @@ export default function () {
 
     const res = {message: messages};
 
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }

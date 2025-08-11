@@ -15,7 +15,7 @@ export default function (tagPatterns) {
       return result ? undefined : pattern;
     });
     const isEmpty = missingFields.every(index => index === undefined);
-    let errorMessage = ['The following tag patterns are not present in the record tag field: ']; // eslint-disable-line functional/no-let
+    let errorMessage = ['The following tag patterns are not present in the record tag field: '];
     errorMessage = errorMessage.concat(missingFields).join(' ');
 
     return isEmpty ? {valid: true, messages: []} : {valid: false, messages: [errorMessage]};

@@ -176,7 +176,7 @@ export default function () {
       return termCache[uri];
     }
     const tmp = await getTermDataFromFinto(uri);
-    termCache[uri] = tmp; // eslint-disable-line functional/immutable-data, require-atomic-updates
+    termCache[uri] = tmp; // eslint-disable-line require-atomic-updates
     return tmp;
   }
 

@@ -37,11 +37,11 @@ export default function () {
     const res = {message: duplicates};
 
     /*
-    if (orphanedFields.length > 0) { // eslint-disable-line functional/no-conditional-statements
-      res.message = [`${orphanedFields.length} orphaned occurrence number field(s) detected`]; // eslint-disable-line functional/immutable-data
+    if (orphanedFields.length > 0) {
+      res.message = [`${orphanedFields.length} orphaned occurrence number field(s) detected`];
     }
     */
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }
@@ -56,7 +56,7 @@ function numberOfLinkageSubfields(field) {
 */
 
 function removeLinkNotes(record) {
-  record.fields.forEach(f => delete f.linkNote); // eslint-disable-line functional/immutable-data
+  record.fields.forEach(f => delete f.linkNote);
 }
 
 
@@ -115,13 +115,13 @@ function recordRemoveFieldOrSubfield8(record, field, currLinkingNumber) {
 function newRecordRemoveFieldOrSubfield8(record, field, currLinkingNumber, fix) {
   const eights = field.subfields.filter(sf => sf.code === '8');
   if (eights.length < 2) {
-    field.deleted = 1; // eslint-disable-line functional/immutable-data
+    field.deleted = 1;
     return;
   }
   const subfields = field.subfields.filter(sf => getSubfield8LinkingNumber(sf) === currLinkingNumber);
   subfields.forEach(sf => {
-    field.modified = 1; // eslint-disable-line functional/immutable-data
-    if (fix) { // eslint-disable-line functional/no-conditional-statements
+    field.modified = 1;
+    if (fix) {
       record.removeSubfield(sf, field);
     }
   });
@@ -248,7 +248,7 @@ function markIdenticalSubfield6Chains(chain, record) {
     if (chainAsString === otherChainAsString) {
       otherChain.forEach(f => {
         nvdebug(` mark ${fieldToString(f)} as deleted ($6-chain)...`);
-        f.deleted = 1; // eslint-disable-line functional/immutable-data
+        f.deleted = 1;
       });
       return;
     }
@@ -269,7 +269,7 @@ function markIdenticalLoneFieldsAsDeletable(field, record) {
   // Mark fields as deleted:
   identicalLoneFields.forEach(f => {
     nvdebug(` mark ${fieldToString(f)} as deleted (lone field)...`);
-    f.deleted = 1; // eslint-disable-line functional/immutable-data
+    f.deleted = 1;
   });
 
 }
@@ -429,9 +429,9 @@ export function removeDuplicateDatafields(record, fix = true) {
   const modifiedFields = dataFields.filter(f => f.modified && !f.deleted);
 
   const result = deletableFields.map(f => `DEL: ${fieldToString(f)}`);
-  if (modifiedFields.length) { // eslint-disable-line functional/no-conditional-statements
-    modifiedFields.forEach(f => delete f.modified); // eslint-disable-line functional/immutable-data
-    result.push(modifiedFields.map(f => `MOD: ${fieldToString(f)}`)); // eslint-disable-line functional/immutable-data
+  if (modifiedFields.length) {
+    modifiedFields.forEach(f => delete f.modified);
+    result.push(modifiedFields.map(f => `MOD: ${fieldToString(f)}`));
   }
 
   if (fix) {
@@ -439,8 +439,8 @@ export function removeDuplicateDatafields(record, fix = true) {
     return result;
   }
 
-  deletableFields.forEach(f => delete f.deleted); // eslint-disable-line functional/immutable-data
-  deletableFields.forEach(f => delete f.modified); // eslint-disable-line functional/immutable-data
+  deletableFields.forEach(f => delete f.deleted);
+  deletableFields.forEach(f => delete f.modified);
 
 
   return result;

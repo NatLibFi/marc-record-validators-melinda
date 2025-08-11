@@ -7,7 +7,7 @@ export default function () {
         .some(f => f.subfields.every(sf => sf.code === 'e' && (/,,/u).test(sf.value)))
     }),
     fix: record => record.get(/^700$/u).forEach(f => f.subfields.filter(sf => sf.code === 'e').forEach(sf => {
-      sf.value = sf.value.replace(/,,/u, ','); // eslint-disable-line functional/immutable-data
+      sf.value = sf.value.replace(/,,/u, ',');
     }))
   };
 }

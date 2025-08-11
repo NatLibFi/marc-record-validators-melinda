@@ -24,10 +24,10 @@ export default function (config = {}) {
   };
 
   function preprocessConfig() {
-    config.retainCyrillic = typeof config.retainCyrillic === 'undefined' ? true : config.retainCyrillic; // eslint-disable-line functional/immutable-data
-    config.doISO9Transliteration = typeof config.doISO9Transliteration === 'undefined' ? true : config.doISO9Transliteration; // eslint-disable-line functional/immutable-data
-    config.doSFS4900Transliteration = typeof config.doSFS4900Transliteration === 'undefined' ? true : config.doSFS4900Transliteration; // eslint-disable-line functional/immutable-data
-    config.preferSFS4900 = setPreference(); // eslint-disable-line functional/immutable-data
+    config.retainCyrillic = typeof config.retainCyrillic === 'undefined' ? true : config.retainCyrillic;
+    config.doISO9Transliteration = typeof config.doISO9Transliteration === 'undefined' ? true : config.doISO9Transliteration;
+    config.doSFS4900Transliteration = typeof config.doSFS4900Transliteration === 'undefined' ? true : config.doSFS4900Transliteration;
+    config.preferSFS4900 = setPreference();
 
     function setPreference() {
       if (!config.doSFS4900Transliteration) {
@@ -52,9 +52,9 @@ export default function (config = {}) {
 
     const nBefore = record.fields.length;
 
-    record.fields = processFields(record.fields); // eslint-disable-line functional/immutable-data
+    record.fields = processFields(record.fields);
 
-    if (nBefore < record.fields.length) { // eslint-disable-line functional/no-conditional-statements
+    if (nBefore < record.fields.length) {
       reindexSubfield6OccurenceNumbers().fix(record);
       sortFields().fix(record);
     }
@@ -84,7 +84,7 @@ export default function (config = {}) {
       validateField(field, res, record);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -94,7 +94,7 @@ export default function (config = {}) {
     const normalizedFields = processField(clone(field), record);
     const mod = fieldsToString(normalizedFields).replace(/\t__SEPARATOR__\t/ug, ', ').replace(/ (‡6 [0-9][0-9][0-9])-[0-9][0-9]+/gu, ' $1-NN'); // eslint-disable-line prefer-named-capture-group
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`CHANGE: ${orig} => ${mod}`); // eslint-disable-line functional/immutable-data
+      res.message.push(`CHANGE: ${orig} => ${mod}`);
       return;
     }
     return;
@@ -192,7 +192,7 @@ export default function (config = {}) {
     // Translitetation goes to field 880:
 
     //const subfield6 = newField.subfields.find(sf => sf.code === '6');
-    newField.tag = '880'; // eslint-disable-line functional/immutable-data
+    newField.tag = '880';
     resetSubfield6Tag(subfield6, field.tag);
     return newField;
 
@@ -326,8 +326,8 @@ export default function (config = {}) {
 
   function createFieldForSfs4900Comparison(field, tag) {
     const clonedField = clone(field);
-    clonedField.tag = tag; // eslint-disable-line functional/immutable-data
-    clonedField.subfields = clonedField.subfields.filter(sf => sf.code !== '9' || sf.value !== sfs4900Trans); // eslint-disable-line functional/immutable-data
+    clonedField.tag = tag;
+    clonedField.subfields = clonedField.subfields.filter(sf => sf.code !== '9' || sf.value !== sfs4900Trans);
     return fieldStripPunctuation(clonedField);
   }
 
@@ -348,7 +348,7 @@ export default function (config = {}) {
     const newSFS4900Field = config.doSFS4900Transliteration ? mapFieldToSfs4900(field, occurrenceNumberAsString, languageCode) : undefined; // SFS-4900
 
     // Trigger the drop of original counterpart $6 :
-    pairedField.cyrilluxSkip = 1; // eslint-disable-line functional/immutable-data
+    pairedField.cyrilluxSkip = 1;
 
     return [newMainField, newCyrillicField, newSFS4900Field].filter(f => f);
   }

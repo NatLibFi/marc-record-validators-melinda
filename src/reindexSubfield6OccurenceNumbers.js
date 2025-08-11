@@ -22,14 +22,14 @@ export default function () {
   function fix(record) {
     nvdebug('Fix SF6 occurrence numbers', debug);
     const res = {message: [], fix: [], valid: true};
-    //message.fix = []; // eslint-disable-line functional/immutable-data
+    //message.fix = [];
 
     // This can not really fail...
 
     recordDisambiguateSharedSubfield6OccurrenceNumbers(record);
     recordResetSubfield6OccurrenceNumbers(record);
 
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -37,8 +37,8 @@ export default function () {
     const res = {message: []};
 
     nvdebug('Validate SF6 occurrence number multiuses', debug);
-    if (recordGetSharedOccurrenceNumbers(record).length) { // eslint-disable-line functional/no-conditional-statements
-      res.message.push(`Multi-use of occurrence number(s) detected`); // eslint-disable-line functional/immutable-data
+    if (recordGetSharedOccurrenceNumbers(record).length) {
+      res.message.push(`Multi-use of occurrence number(s) detected`);
     }
 
     // Check max, and check number of different indexes
@@ -47,10 +47,10 @@ export default function () {
     const size = recordGetNumberOfUniqueSubfield6OccurrenceNumbers(record);
 
 
-    if (max !== size) { // eslint-disable-line functional/no-conditional-statements
-      res.message.push(`Gaps detected in occurrence numbers: found ${size}, seen max ${max}`); // eslint-disable-line functional/immutable-data
+    if (max !== size) {
+      res.message.push(`Gaps detected in occurrence numbers: found ${size}, seen max ${max}`);
     }
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }

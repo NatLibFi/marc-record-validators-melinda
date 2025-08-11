@@ -25,7 +25,7 @@ export default function () {
       validateField(field, res, record);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -38,13 +38,13 @@ export default function () {
     const normalizedField = fixField(clone(field), record);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`FIXABLE: '${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`FIXABLE: '${orig}' => '${mod}'`);
       return;
     }
 
     /*
     if (fieldHasUnfixableStuff(field)) {
-      res.message.push(`CAN'T BE FIXED AUTOMATICALLY: '${orig}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`CAN'T BE FIXED AUTOMATICALLY: '${orig}'`);
       return;
     }
     */
@@ -91,17 +91,17 @@ export default function () {
     if (!fieldIsBluray007(field)) {
       return;
     }
-    //field.value = field.value.substring(0, 4) + 's' + field.value.substring(5); // eslint-disable-line functional/immutable-data
+    //field.value = field.value.substring(0, 4) + 's' + field.value.substring(5);
     //field.value = field.value.replace(/^(?:v...)s/u, `${1}v`); // eslint-disable-line functional/immutable-data, no-template-curly-in-string
-    field.value = `${field.value.substring(0, 4)}v${field.value.substring(5)}`; // eslint-disable-line functional/immutable-data
+    field.value = `${field.value.substring(0, 4)}v${field.value.substring(5)}`;
   }
 
   function convert007DvdToBluray(field) {
     if (!fieldIsDvd007(field)) {
       return;
     }
-    //field.value = field.value.replace(/^(?:v...)v/u, `${1}s`); // eslint-disable-line functional/immutable-data
-    field.value = `${field.value.substring(0, 4)}s${field.value.substring(5)}`; // eslint-disable-line functional/immutable-data
+    //field.value = field.value.replace(/^(?:v...)v/u, `${1}s`);
+    field.value = `${field.value.substring(0, 4)}s${field.value.substring(5)}`;
   }
 
   function fixField(field, record) {

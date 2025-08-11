@@ -467,9 +467,9 @@ export default function () {
       return;
     }
 
-    subfieldA.value = newTerm; // eslint-disable-line functional/immutable-data
-    field.subfields.push({'code': 'b', 'value': code}); // eslint-disable-line functional/immutable-data
-    field.subfields.push(tagToSubfield2(field.tag)); // eslint-disable-line functional/immutable-data
+    subfieldA.value = newTerm;
+    field.subfields.push({'code': 'b', 'value': code});
+    field.subfields.push(tagToSubfield2(field.tag));
 
     function codeToTerm(code) {
       if (field.tag === '336') {

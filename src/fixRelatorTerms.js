@@ -42,12 +42,12 @@ export default function () {
       fieldFixRelatorTerms(field, language, language);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);
-      if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
-        res.message.push(`${fieldAsString} => ${clonedFieldAsString}`); // eslint-disable-line functional/immutable-data
+      if (fieldAsString !== clonedFieldAsString) {
+        res.message.push(`${fieldAsString} => ${clonedFieldAsString}`);
       }
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 }
@@ -139,7 +139,7 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
       const hit = `${finnishAbbreviations[lcValue]}${punc}`;
       nvdebug(`Relator hit: ${hit}`, debugDev);
       // NB! 'esitt.' => 'esittäjä'
-      subfield.value = hit; // eslint-disable-line functional/immutable-data
+      subfield.value = hit;
       return;
     }
   }
@@ -212,7 +212,7 @@ function subfieldTranslateRelatorTerm(subfield, fromLanguage, toLanguage) {
   if (subfield.code !== 'e') {
     return;
   }
-  subfield.value = translateRelatorTerm(subfield.value, fromLanguage, toLanguage); // eslint-disable-line functional/immutable-data
+  subfield.value = translateRelatorTerm(subfield.value, fromLanguage, toLanguage);
 }
 
 export function fieldFixRelatorTerms(field, fromLanguage, toLanguage) {

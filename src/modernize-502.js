@@ -19,7 +19,7 @@ export default function () {
       normalizeField502(field);
     });
 
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -30,7 +30,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -43,7 +43,7 @@ export default function () {
     const normalizedField = normalizeField502(clone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`Fix '${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`Fix '${orig}' => '${mod}'`);
       return;
     }
     return;
@@ -74,8 +74,8 @@ export function normalizeField502(field) {
   }
 
   const newValue = `${extractA()}--${extractC()}${extractD()}`;
-  a.value = newValue; // eslint-disable-line functional/immutable-data
-  field.subfields = field.subfields.filter(sf => !['c', 'd'].includes(sf.code)); // eslint-disable-line functional/immutable-data
+  a.value = newValue;
+  field.subfields = field.subfields.filter(sf => !['c', 'd'].includes(sf.code));
   return field;
 
   function extractA() {

@@ -116,9 +116,9 @@ function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
 function addSubfield(targetField, candSubfield) {
   nvdebug(` Added subfield '${subfieldToString(candSubfield)}' to field`, debugDev);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
-  targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
+  targetField.subfields.push(candSubfield);
 
-  targetField.merged = 1; // eslint-disable-line functional/immutable-data
+  targetField.merged = 1;
 
   setPunctuationFlag(targetField, candSubfield);
   sortAdjacentSubfields(targetField);
@@ -129,7 +129,7 @@ function setPunctuationFlag(field, addedSubfield) {
   if (isControlSubfieldCode(addedSubfield.code)) { // These are never punctuation related
     return;
   }
-  field.useExternalEndPunctuation = 1; // eslint-disable-line functional/immutable-data
+  field.useExternalEndPunctuation = 1;
 }
 
 
@@ -184,7 +184,7 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
       return;
     }
     nvdebug(`    A: Yes. Add repeatable subfield '${subfieldToString(candSubfield)}'`, debugDev);
-    targetField.merged = 1; // eslint-disable-line functional/immutable-data
+    targetField.merged = 1;
     setPunctuationFlag(targetField, candSubfield);
     addSubfield(targetField, candSubfield);
     return;
@@ -196,7 +196,7 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
   function mergeSubfieldPostprocessor() {
     if (original !== fieldToString(targetField)) {
       nvdebug(`    A: Merge. Subfield '${candSubfieldAsString}' replaces the original subfield.`, debugDev);
-      targetField.merged = 1; // eslint-disable-line functional/immutable-data
+      targetField.merged = 1;
       setPunctuationFlag(targetField, candSubfield);
       return;
     }
@@ -207,7 +207,7 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
   function addSubfieldWithPreviouslyUnseenSubfieldCode() {
     if (!fieldHasSubfield(targetField, candSubfield.code)) {
       nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(candSubfield)}'`, debugDev);
-      targetField.merged = 1; // eslint-disable-line functional/immutable-data
+      targetField.merged = 1;
       setPunctuationFlag(targetField, candSubfield);
       candFieldPairs880.forEach(pair => resetPaired880(pair, targetField, candSubfield));
       addSubfield(targetField, candSubfield);

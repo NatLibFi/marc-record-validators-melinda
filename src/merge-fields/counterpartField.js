@@ -540,7 +540,7 @@ function fieldToNamePart(field) {
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
 
   /*
-  if (index > -1) { // eslint-disable-line functional/no-conditional-statements
+  if (index > -1) {
     debugDev(`Name subset: ${fieldToString(subsetField)}`);
   }
   */
@@ -624,7 +624,7 @@ function mergablePairWithAltName(normCandField, normalizedField, altName, config
   if (!a) {
     return false;
   }
-  a.value = altName; // eslint-disable-line functional/immutable-data
+  a.value = altName;
 
   return mergablePair(normCandField, normalizedField, config);
 }
@@ -683,9 +683,9 @@ function getCounterpartCandidates(field, record) {
 }
 
 export function baseIsSource(base, source) {
-  base.localTest = true; // eslint-disable-line functional/immutable-data
+  base.localTest = true;
   const result = source.localTest;
-  delete base.localTest; // eslint-disable-line functional/immutable-data
+  delete base.localTest;
   return result;
 }
 

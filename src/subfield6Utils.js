@@ -51,9 +51,9 @@ export function subfield6ResetOccurrenceNumber(subfield, occurrenceNumber) {
   }
   const occurrenceNumberAsString = typeof occurrenceNumber === 'number' ? intToOccurrenceNumberString(occurrenceNumber) : occurrenceNumber;
 
-  const newValue = subfield.value.substring(0, 4) + occurrenceNumberAsString + subfield6GetTail(subfield); // eslint-disable-line functional/immutable-data
+  const newValue = subfield.value.substring(0, 4) + occurrenceNumberAsString + subfield6GetTail(subfield);
   //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
-  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+  subfield.value = newValue;
 }
 
 
@@ -203,7 +203,7 @@ function subfieldSevenToOneOccurrenceNumber(subfield) {
   if (subfield.code !== '6' || subfield.value.substring(0, 1) !== '7') {
     return;
   }
-  subfield.value = `1${subfield.value.substring(1)}`; // eslint-disable-line functional/immutable-data
+  subfield.value = `1${subfield.value.substring(1)}`;
 }
 
 export function fieldSevenToOneOccurrenceNumber(field) {
@@ -363,7 +363,7 @@ export function fieldsToNormalizedString(fields, defaultTargetLinkingNumber = 0,
 
   nvdebug(`fieldsToNormalizedString: OCC: ${normalizeOccurrenceNumber}`);
   const strings = fields.map(field => fieldToNormalizedString(field, targetLinkingNumber, normalizeOccurrenceNumber, normalizeEntryTag));
-  strings.sort(); // eslint-disable-line functional/immutable-data
+  strings.sort();
   return strings.join('\t__SEPARATOR__\t');
 }
 
@@ -493,5 +493,5 @@ export function resetSubfield6Tag(subfield, tag) {
   // NB! mainly for 1XX<->7XX transfers
   const newValue = `${tag}-${subfield.value.substring(4)}`;
   nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
-  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+  subfield.value = newValue;
 }

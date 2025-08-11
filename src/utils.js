@@ -18,7 +18,7 @@ export function isElectronicMaterial(record) {
 }
 
 export function nvdebug(message, func = undefined) {
-  if (func) { // eslint-disable-line functional/no-conditional-statements
+  if (func) {
     func(message);
   }
   //console.info(message); // eslint-disable-line no-console
@@ -55,11 +55,11 @@ export function recordToString(record) {
 }
 
 export function removeSubfield(record, tag, subfieldCode) {
-  record.fields = record.fields.map(field => { // eslint-disable-line functional/immutable-data
+  record.fields = record.fields.map(field => {
     if (field.tag !== tag || !field.subfields) { // Don't procss irrelevant fields
       return field;
     }
-    field.subfields = field.subfields.filter(sf => sf.code !== subfieldCode); // eslint-disable-line functional/immutable-data
+    field.subfields = field.subfields.filter(sf => sf.code !== subfieldCode);
     if (field.subfields.length === 0) {
       return false;
     }
@@ -68,12 +68,12 @@ export function removeSubfield(record, tag, subfieldCode) {
 }
 
 export function recordRemoveValuelessSubfields(record) {
-  record.fields = record.fields.map(field => { // eslint-disable-line functional/immutable-data
+  record.fields = record.fields.map(field => {
     if (!field.subfields) { // Keep control fields
       return field;
     }
     // Remove empty subfields from datafields:
-    field.subfields = field.subfields.filter(sf => sf.value); // eslint-disable-line functional/immutable-data
+    field.subfields = field.subfields.filter(sf => sf.value);
 
     if (field.subfields && field.subfields.length === 0) {
       return false; // Return false instead of a field if field has no subfields left. These will soon be filtered out.

@@ -22,7 +22,7 @@ export default function () {
       normalizeSubfieldValues(field, catLang);
     });
 
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -34,7 +34,7 @@ export default function () {
       validateField(field, res, catLang);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -47,7 +47,7 @@ export default function () {
     const normalizedField = normalizeSubfieldValues(clone(field), catLang);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`'${orig}' requires subfield internal mods/normalization`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'${orig}' requires subfield internal mods/normalization`);
       return;
     }
     return;
@@ -157,7 +157,7 @@ function normalizeSubfieldValues(field, catLang) {
     if (!field.subfields[index].value) {
       return;
     }
-    field.subfields[index].value = getNormalizedValue(subfield, field, catLang); // eslint-disable-line functional/immutable-data
+    field.subfields[index].value = getNormalizedValue(subfield, field, catLang);
   });
   return field;
 }

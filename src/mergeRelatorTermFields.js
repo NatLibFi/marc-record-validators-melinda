@@ -34,7 +34,7 @@ export default function () {
     const msg = mergeRelatorTermFields(record, false);
     const res = {message: msg};
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 }
@@ -49,7 +49,7 @@ function createNormalizedClone(field) {
 function createNormalizedCloneWithoutRelatorTerms(field) {
   const clonedField = createNormalizedClone(field);
   // Remove relator terms $e subfi:
-  clonedField.subfields = clonedField.subfields.filter(sf => sf.code !== 'e'); // eslint-disable-line functional/immutable-data
+  clonedField.subfields = clonedField.subfields.filter(sf => sf.code !== 'e');
   return clonedField;
 }
 
@@ -74,7 +74,7 @@ function copyRelatorSubfields(fromField, toField) {
   const relatorTermSubfieldCode = tagToRelatorTermSubfieldCode(fromField.tag);
   const newRelatorTerms = extractAddableRelatorTerms(fromField, toField);
 
-  newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term})); // eslint-disable-line functional/immutable-data
+  newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term}));
 
 }
 

@@ -303,7 +303,7 @@ export function getMergeConstraintsForTag(tag, constraintName) {
     return null;
   }
   // NB! should we support multiple contains for a field? Eg. 505$a vs 505($tg)+
-  if (tagsConstraintsArray.length > 1) { // eslint-disable-line functional/no-conditional-statements
+  if (tagsConstraintsArray.length > 1) {
     debugDev(`WARNING\tMultiple values for '${constraintName}' (N=${tagsConstraintsArray.length}) found in ${tag}. Using first values.`);
   }
   return constraintToValue(tagsConstraintsArray[0], constraintName);

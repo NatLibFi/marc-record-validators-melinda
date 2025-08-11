@@ -83,14 +83,14 @@ export default function () {
 
     // fixer:
     if (reallyFix) {
-      currField.subfields = currField.subfields.filter(sf => !deletableStrings.includes(subfieldToString(sf))); // eslint-disable-line functional/immutable-data
+      currField.subfields = currField.subfields.filter(sf => !deletableStrings.includes(subfieldToString(sf)));
       fieldFixPunctuation(currField);
       return fix490x(recordType, remainingFields, reallyFix, message);
     }
     // validators:
     const clonedField = clone(currField);
     const originalString = fieldToString(clonedField);
-    clonedField.subfields = clonedField.subfields.filter(sf => !deletableStrings.includes(subfieldToString(sf))); // eslint-disable-line functional/immutable-data
+    clonedField.subfields = clonedField.subfields.filter(sf => !deletableStrings.includes(subfieldToString(sf)));
 
     const newMessage = `Replace '${originalString}' with '${fieldToString(clonedField)}'`;
 
@@ -198,7 +198,7 @@ export function search(sruClient, query, one = false) {
 
     sruClient.searchRetrieve(query)
       .on('record', xmlString => {
-        promises.push(MARCXML.from(xmlString, noValidation)); // eslint-disable-line functional/immutable-data
+        promises.push(MARCXML.from(xmlString, noValidation));
       })
       .on('end', async () => {
         try {

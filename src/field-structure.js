@@ -104,8 +104,8 @@ export default function (config) {
         configMatchesSpec(val, key, confSpec);
 
         // Concat all excluded elements to array
-        if (confSpec[key].excl) { // eslint-disable-line functional/no-conditional-statements
-          excluded.push(...confSpec[key].excl); // eslint-disable-line functional/immutable-data
+        if (confSpec[key].excl) {
+          excluded.push(...confSpec[key].excl);
         }
       });
 
@@ -132,9 +132,9 @@ export default function (config) {
     }
 
     // Check subfields/dependencies recursively
-    if (key === 'subfields' || key === 'dependencies') { // eslint-disable-line functional/no-conditional-statements
+    if (key === 'subfields' || key === 'dependencies') {
       forEach(data, ([, subObj]) => {
-        if (typeof subObj === 'object') { // eslint-disable-line functional/no-conditional-statements
+        if (typeof subObj === 'object') {
           forEach(subObj, ([subKey, subVal]) => {
             configMatchesSpec(subVal, subKey, key === 'subfields' ? subSpec : depSpec);
           });
@@ -198,7 +198,7 @@ export default function (config) {
       // Check that subfield stuff
       if (confField === 'subfields') {
         const strict = confObj.strict || false; // Defaults to false
-        let elementsTotal = 0; // eslint-disable-line functional/no-let
+        let elementsTotal = 0;
         const valid = !Object.entries(confObj.subfields).some(([key, val]) => {
           const matching = recordSubObj.subfields.filter(({code}) => code === key);
           elementsTotal += matching.length; // Calculate amount of record objects matching all confObj objects

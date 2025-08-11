@@ -25,7 +25,7 @@ export default function () {
 
     relevantFields.forEach(field => fixField(field));
 
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -40,7 +40,7 @@ export default function () {
     const relevantFields = getRelevantFields(record);
     const messages = relevantFields.map(field => validateField(field));
     const res = {message: messages};
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 

@@ -45,7 +45,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
     // We add the URN even if we're not getting the legalDeposit - where does this URN resolve?
     // We probably should not do these additions
 
-    if (f856sUrn.length === 0) { // eslint-disable-line functional/no-conditional-statements
+    if (f856sUrn.length === 0) {
       const {code, value, generated} = await createURNSubfield(record);
 
       if (generated && useMelindaTemp) {
@@ -69,7 +69,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
       });
 
       return true;
-    } else if (isLegalDeposit) { // eslint-disable-line functional/no-conditional-statements
+    } else if (isLegalDeposit) {
 
       // We add here legal deposit information to all URN-f856s - we probably should not do this
       // We should add extra f856 URN / URNs for legal deposits that already have a open (non-legal-deposit) URN
@@ -78,16 +78,16 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
 
       f856sUrn.forEach(f => {
         // Change phrase from old to new if field with old phrase is found
-        if (f.subfields.some(sf => hasOld856LdPhrase(sf))) { // eslint-disable-line functional/no-conditional-statements
-          f.subfields // eslint-disable-line functional/immutable-data
+        if (f.subfields.some(sf => hasOld856LdPhrase(sf))) {
+          f.subfields
             .find(sf => hasOld856LdPhrase(sf))
             .value = 'Käytettävissä vapaakappaletyöasemilla';
         }
 
         // Create subfields if necessary
         ldSubfields.forEach(ldsf => {
-          if (!f.subfields.some(sf => sf.code === ldsf.code && sf.value === ldsf.value && !hasOld856LdPhrase(sf))) { // eslint-disable-line functional/no-conditional-statements
-            f.subfields.push(ldsf); // eslint-disable-line functional/immutable-data
+          if (!f.subfields.some(sf => sf.code === ldsf.code && sf.value === ldsf.value && !hasOld856LdPhrase(sf))) {
+            f.subfields.push(ldsf);
           }
         });
       });

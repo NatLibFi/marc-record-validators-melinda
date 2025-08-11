@@ -26,7 +26,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -36,7 +36,7 @@ export default function () {
     const normalizedField = fix505(clone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`'TODO: ${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'TODO: ${orig}' => '${mod}'`);
       return;
     }
     return;
@@ -50,7 +50,7 @@ function field505FixSubfieldA(field) {
   a.forEach(sf => fixSubfieldA(sf));
 
   function fixSubfieldA(a) {
-    a.value = a.value.replace(/ ; /ug, ' -- '); // eslint-disable-line functional/immutable-data
+    a.value = a.value.replace(/ ; /ug, ' -- ');
   }
 }
 
@@ -64,7 +64,7 @@ function field505FixSubfieldTRG(field) {
     if (!sf.value) {
       return;
     }
-    sf.value = sf.value.replace(/ ;$/u, ' --'); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/ ;$/u, ' --');
   }
 }
 

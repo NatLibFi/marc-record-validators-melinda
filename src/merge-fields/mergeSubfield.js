@@ -45,12 +45,12 @@ function anyYear(str) {
 function replaceEntrysBirthAndDeathYear(targetField, candSubfield, relevantSubfields) {
   if (birthYearAndDeathYear.test(candSubfield.value)) {
     if (onlyBirthYear.test(relevantSubfields[0].value) && parseInt(relevantSubfields[0].value, 10) === parseInt(candSubfield.value, 10)) {
-      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+      relevantSubfields[0].value = candSubfield.value;
       return true;
     }
 
     if (onlyDeathYear.test(relevantSubfields[0].value) && getDeathYear(relevantSubfields[0].value) === getDeathYear(candSubfield.value)) {
-      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+      relevantSubfields[0].value = candSubfield.value;
       return true;
     }
   }
@@ -65,7 +65,7 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
   }
 
   if (!anyYear(relevantSubfields[0].value) && anyYear(candSubfield.value)) {
-    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    relevantSubfields[0].value = candSubfield.value;
     return true;
   }
 
@@ -174,7 +174,7 @@ function preferHyphenatedISBN(field, candSubfield, relevantSubfields) {
   if (!pair) {
     return false;
   }
-  pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  pair.value = candSubfield.value;
   return true;
 }
 
@@ -189,7 +189,7 @@ function preferHttpsOverHttp(candSubfield, relevantSubfields) {
   if (!pair) {
     return false;
   }
-  pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  pair.value = candSubfield.value;
   return true;
 }
 
@@ -209,7 +209,7 @@ function preferQualifierVersion(field, candSubfield, relevantSubfields) {
     return true; // True, but don't prefer the source value
   }
 
-  pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  pair.value = candSubfield.value;
   return true;
 
   function subfieldQualifierCheck(subfield, name, qualifier) {
@@ -232,7 +232,7 @@ function preferSourceCorporateName(field, candSubfield, pair) {
   nvdebug(`CORP base '${pair.value}' vs '${candSubfield.value}'`, debugDev);
   const prefer = actualPrefenceCheck();
   if (prefer) {
-    pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    pair.value = candSubfield.value;
     return true;
   }
   return false;
@@ -290,7 +290,7 @@ export function mergeSubfield(targetField, candSubfield) {
   // 260 $a value "[S.l]" is the main type for this.
   const meaninglessSubfields = relevantSubfields.filter(sf => !valueCarriesMeaning(targetField.tag, sf.code, sf.value));
   if (meaninglessSubfields.length > 0) {
-    meaninglessSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    meaninglessSubfields[0].value = candSubfield.value;
     return true;
   }
 

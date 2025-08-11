@@ -88,11 +88,11 @@ export function add8s(fields, record) {
 
   function collectLinkingNumberFields(linkingNumber) {
     // Remove existing hits (to avoid field repetition):
-    fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber)); // eslint-disable-line functional/immutable-data, no-param-reassign
+    fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber)); // eslint-disable-line no-param-reassign
     // Add them and their "sisters" back:
     const addableFields = record.fields.filter(f => fieldHasLinkingNumber(f, linkingNumber));
     addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));
-    fields = fields.concat(addableFields); // eslint-disable-line functional/immutable-data, no-param-reassign
+    fields = fields.concat(addableFields); // eslint-disable-line no-param-reassign
 
   }
 }

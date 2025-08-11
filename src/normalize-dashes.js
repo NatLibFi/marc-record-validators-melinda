@@ -28,7 +28,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -41,7 +41,7 @@ export default function () {
     if (orig === mod) { // Fail as the input is "broken"/"crap"/sumthing
       return;
     }
-    res.message.push(`'TODO: ${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+    res.message.push(`'TODO: ${orig}' => '${mod}'`);
     return;
   }
 }
@@ -63,7 +63,7 @@ function fixDashes(field) {
       return;
     }
     // Normalize dashes U+2010 ... U+2015 to '-':
-    subfield.value = subfield.value.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015]/ug, '-'); // eslint-disable-line functional/immutable-data
+    subfield.value = subfield.value.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015]/ug, '-');
   }
 
 }

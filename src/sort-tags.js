@@ -27,8 +27,8 @@ function sortPatternFields(record, tagPattern) {
   const matchingTags = record.fields.map(field => tagPattern.some(pattern => pattern.test(field.tag)) ? field : null).filter(tag => tag);
   const sortedArray = sortFields(record.fields);
   const fixedArray = sortedArray.filter(field => !tagPattern.some(pattern => pattern.test(field.tag)));
-  fixedArray.splice(index(sortedArray, tagPattern), 0, ...matchingTags); // eslint-disable-line functional/immutable-data
-  record.fields = fixedArray; // eslint-disable-line functional/immutable-data
+  fixedArray.splice(index(sortedArray, tagPattern), 0, ...matchingTags);
+  record.fields = fixedArray;
 }
 
 function sortFields(fields) {

@@ -44,9 +44,9 @@ export default function () {
       return res;
     }
 
-    res.message.push(`Modify 008/15-17: '${originalCountryCode}' => '${modifiedCountryCode}'`); // eslint-disable-line functional/immutable-data
+    res.message.push(`Modify 008/15-17: '${originalCountryCode}' => '${modifiedCountryCode}'`);
 
-    res.valid = false; // eslint-disable-line functional/immutable-data
+    res.valid = false;
     return res;
   }
 
@@ -54,7 +54,7 @@ export default function () {
     const originalCountryCode = getCountryCodeFromField008(field008);
     const modifiedCountryCode = deprecatedCountryCodeToCurrentCountryCode(originalCountryCode);
     if (originalCountryCode !== modifiedCountryCode && modifiedCountryCode.length === 3) {
-      field008.value = `${field008.value.substring(0, 15)}${modifiedCountryCode}${field008.value.substring(18)}`; // eslint-disable-line functional/immutable-data
+      field008.value = `${field008.value.substring(0, 15)}${modifiedCountryCode}${field008.value.substring(18)}`;
       return;
     }
   }

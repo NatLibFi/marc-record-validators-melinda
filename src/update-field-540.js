@@ -44,9 +44,9 @@ const licences = [
 ];
 
 function findSubfieldIndex(field, subfield) {
-  subfield.nvtmp = 1; // eslint-disable-line functional/immutable-data
+  subfield.nvtmp = 1;
   const index = field.subfields.findIndex(sf => sf.nvtmp === 1);
-  delete subfield.nvtmp; // eslint-disable-line functional/immutable-data
+  delete subfield.nvtmp;
   return index;
 }
 
@@ -69,9 +69,9 @@ function validUrlInSubfieldU(subfieldU, license) {
 
 function fixC(field, subfieldC) {
   // MELINDA-2431_
-  subfieldC.code = 'f'; // eslint-disable-line functional/immutable-data
+  subfieldC.code = 'f';
   const index = findSubfieldIndex(field, subfieldC);
-  field.subfields.splice(index + 1, 0, {'code': '2', 'value': 'cc'}); // eslint-disable-line functional/immutable-data
+  field.subfields.splice(index + 1, 0, {'code': '2', 'value': 'cc'});
 }
 
 function fieldHasOldCcLicense(field, fix) {
@@ -84,7 +84,7 @@ function fieldHasOldCcLicense(field, fix) {
     return false;
   }
   //nvdebug(` Found valid license`);
-  if (fix) { // eslint-disable-line functional/no-conditional-statements
+  if (fix) {
     const subfieldsC = field.subfields.filter(sf => validLicenseInSubfieldC(sf, validLicense));
     subfieldsC.forEach(c => fixC(field, c));
   }
