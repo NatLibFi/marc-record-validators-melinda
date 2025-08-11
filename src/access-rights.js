@@ -9,7 +9,7 @@ export default function (isViolaRecord = false) {
     // If printed do nothing
 
     // If material is electronic add theis if missing
-    if (!hasTag(record, '506', sf506) && !hasTag(record, '506', sf506old)) { // eslint-disable-line functional/no-conditional-statements
+    if (!hasTag(record, '506', sf506) && !hasTag(record, '506', sf506old)) {
       const subfield9 = isViolaRecord ? [{code: '9', value: 'VIOLA<KEEP>'}] : [{code: '9', value: 'FENNI<KEEP>'}];
       const staticSubfields = [
         {
@@ -35,14 +35,14 @@ export default function (isViolaRecord = false) {
     }
 
     // Change phrase from old to new if field with old phrase is found
-    if (!hasTag(record, '506', sf506) && hasTag(record, '506', sf506old)) { // eslint-disable-line functional/no-conditional-statements
-      record.fields // eslint-disable-line functional/immutable-data
+    if (!hasTag(record, '506', sf506) && hasTag(record, '506', sf506old)) {
+      record.fields
         .find(f => f.tag === '506' && sf506old.every(({code, value}) => f.subfields.some(sf => sf.code === code && value.test(sf.value))))
         .subfields.find(sf => sf506old.every(({code, value}) => sf.code === code && value.test(sf.value)))
         .value = 'Aineisto on käytettävissä vapaakappaletyöasemilla.';
     }
 
-    if (!hasTag(record, '540', sf540) && !isViolaRecord) { // eslint-disable-line functional/no-conditional-statements
+    if (!hasTag(record, '540', sf540) && !isViolaRecord) {
       record.insertField({
         tag: '540',
         subfields: [

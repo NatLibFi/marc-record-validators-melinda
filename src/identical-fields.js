@@ -23,13 +23,13 @@ export default function () {
   function fix(record) {
     record.fields
       .filter(tag => !uniqWith(record.fields).includes(tag))
-      .forEach(tag => record.removeField(tag));
+      .forEach(tag => record.removeField(tag)); // eslint-disable-line array-callback-return
   }
 
   function uniqWith(fields) {
     return fields.reduce((uniq, field) => {
-      if (!uniq.some(f => MarcRecord.isEqual(f, field))) { // eslint-disable-line functional/no-conditional-statements
-        uniq.push(field); // eslint-disable-line functional/immutable-data
+      if (!uniq.some(f => MarcRecord.isEqual(f, field))) {
+        uniq.push(field);
       }
 
       return uniq;

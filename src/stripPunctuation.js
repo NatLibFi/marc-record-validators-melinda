@@ -20,7 +20,7 @@ export default function () {
   function fix(record) {
     nvdebug('Strip punctuation to data fields: fixer');
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fieldStripPunctuation(f));
+    record.fields.forEach(f => fieldStripPunctuation(f)); // eslint-disable-line array-callback-return
     return res;
   }
 
@@ -36,7 +36,7 @@ export default function () {
 
     const res = {message: messages};
 
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }

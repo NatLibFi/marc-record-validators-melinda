@@ -16,16 +16,16 @@ export default function () {
   function fix(record) {
     function fixField(field) {
       const removableSubfields = fieldGetDeletableSubfields(field);
-      removableSubfields.forEach(sf => record.removeSubfield(sf, field));
+      removableSubfields.forEach(sf => record.removeSubfield(sf, field)); // eslint-disable-line array-callback-return
     }
 
     const res = {message: [], fix: [], valid: true};
 
     const relevantFields = getRelevantFields(record);
 
-    relevantFields.forEach(field => fixField(field));
+    relevantFields.forEach(field => fixField(field)); // eslint-disable-line array-callback-return
 
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -40,7 +40,7 @@ export default function () {
     const relevantFields = getRelevantFields(record);
     const messages = relevantFields.map(field => validateField(field));
     const res = {message: messages};
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 

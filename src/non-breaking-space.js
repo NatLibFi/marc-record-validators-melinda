@@ -26,7 +26,6 @@ export default function () {
     }
   }
 
-  /* eslint-disable functional/immutable-data,functional/no-conditional-statements */
   function fix(record) {
     record.fields.forEach((field) => {
       if (field.value) {
@@ -41,7 +40,6 @@ export default function () {
       });
     });
   }
-  /* eslint-enable functional/immutable-data,functional/no-conditional-statements */
 
   function valueContainsNonBreakingSpace({value}) {
     return (/\u00A0/u).test(value);

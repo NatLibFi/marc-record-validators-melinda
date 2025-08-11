@@ -25,7 +25,7 @@ export default function () {
 
     validateRecord(record, res);
 
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 
@@ -35,22 +35,22 @@ export default function () {
     const clonedFields = JSON.parse(JSON.stringify(record.fields));
     recordNormalizeIndicators(record);
 
-    record.fields.forEach((field, index) => compareFields(field, index));
+    record.fields.forEach((field, index) => compareFields(field, index)); // eslint-disable-line array-callback-return
 
     function compareFields(field, index) {
       const origFieldAsString = fieldToString(clonedFields[index]);
       //const clonedFieldAsString = fieldToString(field);
-      if (clonedFields[index].ind1 !== field.ind1) { // eslint-disable-line functional/no-conditional-statements
+      if (clonedFields[index].ind1 !== field.ind1) {
         //nvdebug(`FIX IND1: '${clonedFields[index].ind1}' => '${field.ind1}': ${clonedFieldAsString}`);
-        res.message.push(`Expected IND1 for '${origFieldAsString}' is '${field.ind1}'`); // eslint-disable-line functional/immutable-data
+        res.message.push(`Expected IND1 for '${origFieldAsString}' is '${field.ind1}'`);
       }
-      if (clonedFields[index].ind2 !== field.ind2) { // eslint-disable-line functional/no-conditional-statements
+      if (clonedFields[index].ind2 !== field.ind2) {
         //nvdebug(`FIX IND2: '${clonedFields[index].ind2}' => '${field.ind2}': ${clonedFieldAsString}`);
-        res.message.push(`Expected IND2 for '${origFieldAsString}' is '${field.ind2}'`); // eslint-disable-line functional/immutable-data
+        res.message.push(`Expected IND2 for '${origFieldAsString}' is '${field.ind2}'`);
       }
     }
     // Validator should not change the original record:
-    record.fields = clonedFields; // eslint-disable-line functional/immutable-data
+    record.fields = clonedFields;
     return;
   }
 }
@@ -133,7 +133,7 @@ function normalizeNonFilingIndicator1(field, languages = []) {
     return;
   }
 
-  field.ind1 = determineNonFilingIndicatorValue(field, languages); // eslint-disable-line functional/immutable-data
+  field.ind1 = determineNonFilingIndicatorValue(field, languages);
 }
 
 function normalizeNonFilingIndicator2(field, languages = []) {
@@ -141,7 +141,7 @@ function normalizeNonFilingIndicator2(field, languages = []) {
     return;
   }
 
-  field.ind2 = determineNonFilingIndicatorValue(field, languages); // eslint-disable-line functional/immutable-data
+  field.ind2 = determineNonFilingIndicatorValue(field, languages);
 }
 
 const fiktiivisenAineistonLisaluokatFI = ['Eläimet', 'Erotiikka', 'Erä', 'Fantasia', 'Historia', 'Huumori', 'Jännitys', 'Kauhu', 'Novellit', 'Romantiikka', 'Scifi', 'Sota', 'Urheilu', 'Uskonto'];
@@ -158,7 +158,7 @@ function normalize084Indicator1(field) {
 
   // https://marc21.kansalliskirjasto.fi/bib/05X-08X.htm#084 and https://finto.fi/ykl/fi/page/fiktioluokka
   if (field.ind1 !== '9' && containsFiktiivisenAineistonLisaluokka(field) && field.subfields.some(sf => sf.code === '2' && sf.value === 'ykl')) {
-    field.ind1 = '9'; // eslint-disable-line functional/immutable-data
+    field.ind1 = '9';
     return;
   }
 }
@@ -168,7 +168,7 @@ function normalize245Indicator1(field, record) {
     return;
   }
   const field1XX = record.get('^1..$');
-  field.ind1 = field1XX.length === 0 ? '0' : '1'; // eslint-disable-line functional/immutable-data
+  field.ind1 = field1XX.length === 0 ? '0' : '1';
 }
 
 function normalize776Indicator2(field) {
@@ -177,7 +177,7 @@ function normalize776Indicator2(field) {
   }
   // If subfield $i exists, ind2 must me '8'
   if (field.subfields.some(sf => sf.code === 'i')) {
-    field.ind2 = '8'; // eslint-disable-line functional/immutable-data
+    field.ind2 = '8';
     return;
   }
 }
@@ -193,13 +193,13 @@ function recordNormalize490(record) {
   if (fields490.length <= fields8XX.length) {
     // Trace found for each field 490:
     fields490.forEach(f => {
-      f.ind1 = '1'; // eslint-disable-line functional/immutable-data
+      f.ind1 = '1';
     });
     return;
   }
   if (fields8XX.length === 0) { // Fields 490 are always untraced (no traces found)
     fields490.forEach(f => {
-      f.ind1 = '0'; // eslint-disable-line functional/immutable-data
+      f.ind1 = '0';
     });
     return;
   }
@@ -235,7 +235,7 @@ export function recordNormalizeIndicators(record) {
   // Language is used to handle non-filing indicators
   const languages = getLanguages(record);
 
-  record.fields.forEach(field => fieldNormalizeIndicators(field, record, languages));
+  record.fields.forEach(field => fieldNormalizeIndicators(field, record, languages)); // eslint-disable-line array-callback-return
 
 }
 

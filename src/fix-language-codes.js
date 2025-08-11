@@ -25,7 +25,7 @@ export default function () {
     fixLanguageField008(field008);
 
     const f041 = record.get('041');
-    f041.forEach(f => fixField041(f));
+    f041.forEach(f => fixField041(f)); // eslint-disable-line array-callback-return
 
     return res;
   }
@@ -37,9 +37,10 @@ export default function () {
     validateField008(record, res);
 
     const f041 = record.get('041');
-    f041.forEach(f => validateField041(f, res));
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    f041.forEach(f => validateField041(f, res)); // eslint-disable-line array-callback-return
+
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -56,8 +57,8 @@ export default function () {
       return;
     }
 
-    res.message.push(`Modify 008/35-37: '${originalLanguage}' => '${modifiedLanguage}'`); // eslint-disable-line functional/immutable-data
-    res.valid = false; // eslint-disable-line functional/immutable-data
+    res.message.push(`Modify 008/35-37: '${originalLanguage}' => '${modifiedLanguage}'`);
+    res.valid = false;
   }
 
 
@@ -78,7 +79,7 @@ export default function () {
       return;
     }
     const msg = `${originalString} => ${modifiedString}`;
-    res.message.push(msg); // eslint-disable-line functional/immutable-data
+    res.message.push(msg);
 
   }
 
@@ -87,7 +88,7 @@ export default function () {
     const originalLanguage = getLanguageFromField008(field008);
     const modifiedLanguage = deprecatedLanguageToCurrentLanguage(originalLanguage);
     if (originalLanguage !== modifiedLanguage && modifiedLanguage.length === 3) {
-      field008.value = `${field008.value.substring(0, 35)}${modifiedLanguage}${field008.value.substring(38)}`; // eslint-disable-line functional/immutable-data
+      field008.value = `${field008.value.substring(0, 35)}${modifiedLanguage}${field008.value.substring(38)}`;
       return;
     }
   }
@@ -97,13 +98,13 @@ export default function () {
       return;
     }
 
-    field.subfields.forEach(sf => fixField041Subfield(sf));
+    field.subfields.forEach(sf => fixField041Subfield(sf)); // eslint-disable-line array-callback-return
 
     function fixField041Subfield(subfield) {
       if (!isRelevantField041SubfieldCode(subfield)) {
         return;
       }
-      subfield.value = deprecatedLanguageToCurrentLanguage(subfield.value); // eslint-disable-line functional/immutable-data
+      subfield.value = deprecatedLanguageToCurrentLanguage(subfield.value);
     }
   }
 

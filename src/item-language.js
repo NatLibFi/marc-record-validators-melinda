@@ -49,24 +49,24 @@ export default async function (tagPattern, treshold = 0.9) {
     }
 
     if (results.detected && results.detected !== results.currentCode) {
-      const f008 = record.get(/^008$/u).shift(); // eslint-disable-line functional/immutable-data
+      const f008 = record.get(/^008$/u).shift();
 
-      if (f008) { // eslint-disable-line functional/no-conditional-statements
+      if (f008) {
         const start = f008.value.slice(0, 35);
         const end = f008.value.slice(38);
-        f008.value = `${start}${results.detected}${end}`; // eslint-disable-line functional/immutable-data
+        f008.value = `${start}${results.detected}${end}`;
       }
 
-      const f041 = record.get(/^041$/u).shift(); // eslint-disable-line functional/immutable-data
+      const f041 = record.get(/^041$/u).shift();
 
       if (f041) {
         const subfield = f041.subfields.find(sf => sf.code === 'a');
 
-        if (subfield) { // eslint-disable-line functional/no-conditional-statements
-          subfield.value = results.detected; // eslint-disable-line functional/immutable-data
-        } else { // eslint-disable-line functional/no-conditional-statements
-          f041.subfields.push({code: 'a', value: results.detected}); // eslint-disable-line functional/immutable-data
-          f041.subfields.sort((a, b) => { // eslint-disable-line functional/immutable-data
+        if (subfield) {
+          subfield.value = results.detected;
+        } else {
+          f041.subfields.push({code: 'a', value: results.detected});
+          f041.subfields.sort((a, b) => {
             if (a.code < b.code) {
               return -1;
             }
@@ -78,7 +78,7 @@ export default async function (tagPattern, treshold = 0.9) {
             return 0;
           });
         }
-      } else { // eslint-disable-line functional/no-conditional-statements
+      } else {
         record.insertField({tag: '041', ind1: ' ', ind2: ' ', subfields: [
           {
             code: 'a',

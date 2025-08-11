@@ -6,7 +6,7 @@ import {fieldToString} from './utils';
 
 /*
 function nvdebug(message, func) {
-  if (func) { // eslint-disable-line functional/no-conditional-statements
+  if (func) {
     func(message);
   }
   console.info(message); // eslint-disable-line no-console
@@ -23,7 +23,7 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
-    //message.fix = []; // eslint-disable-line functional/immutable-data
+    //message.fix = [];
 
     // Actual parsing of all fields
     /*
@@ -40,7 +40,7 @@ export default function () {
       //validateField(field, true, message);
     });
 
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -59,7 +59,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -74,7 +74,7 @@ export default function () {
     const orig = fieldToString(field);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`'${orig}' could do with control number identifier normalization`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'${orig}' could do with control number identifier normalization`);
       return;
     }
 
@@ -190,7 +190,7 @@ export function fieldNormalizeControlNumbers(field) {
     const targetFormat = normalizeAs(field.tag, sf.code);
     if (targetFormat !== undefined) {
       //nvdebug(`NORMALIZE SUBFIELD $${sf.code} IN FIELD: '${fieldToString(field)}' TO ${targetFormat}`);
-      sf.value = normalizeControlSubfieldValue(sf.value, targetFormat); // eslint-disable-line functional/immutable-data
+      sf.value = normalizeControlSubfieldValue(sf.value, targetFormat);
       return;
     }
   });

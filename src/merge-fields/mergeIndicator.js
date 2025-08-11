@@ -109,7 +109,7 @@ export function mergeIndicators(toField, fromField, config) {
 
     // MRA-300: If source contains the (un)holy $9 FENNI<KEEP>, we prefer that value regardless of whatever...
     if (!fieldIsFenniKept(toField) && fieldIsFenniKept(fromField)) {
-      toField.ind1 = fromField.ind1; // eslint-disable-line functional/immutable-data
+      toField.ind1 = fromField.ind1;
       return;
     }
 
@@ -122,7 +122,7 @@ export function mergeIndicators(toField, fromField, config) {
       const preferredValue = getPreferredValue(preferredValues, fromField.ind1, toField.ind1);
       if (typeof preferredValue !== 'undefined') {
         //nvdebug(`${preferredValue} WINS!`, debugDev);
-        toField.ind1 = preferredValue; // eslint-disable-line functional/immutable-data
+        toField.ind1 = preferredValue;
         return;
       }
       //nvdebug(`No winner found indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`, debugDev);
@@ -151,8 +151,8 @@ export function mergeIndicators(toField, fromField, config) {
     nvdebug(`Apply base 260->264 tag swap hack`, debugDev);
     nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`, debugDev);
 
-    toField.tag = '264'; // eslint-disable-line functional/immutable-data
-    toField.ind2 = fromField.ind2; // eslint-disable-line functional/immutable-data
+    toField.tag = '264';
+    toField.ind2 = fromField.ind2;
   }
 
   function mergeIndicator2(toField, fromField, config) {
@@ -175,7 +175,7 @@ export function mergeIndicators(toField, fromField, config) {
       //nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`, debugDev);
       const preferredValue = getPreferredValue(preferredValues, fromField.ind2, toField.ind2);
       if (typeof preferredValue !== 'undefined') {
-        toField.ind2 = preferredValue; // eslint-disable-line functional/immutable-data
+        toField.ind2 = preferredValue;
         return;
       }
     }

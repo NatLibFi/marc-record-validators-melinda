@@ -3,7 +3,7 @@
 
 import {fieldToString, nvdebug} from './utils';
 
-const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
+const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u;
 
 export function isValidSubfield8(subfield) {
   if (subfield.code !== '8') {
@@ -48,7 +48,6 @@ export function recordGetFieldsWithSubfield8LinkingNumber(record, linkingNumber)
 
 
 export function fieldsGetAllSubfield8LinkingNumbers(fields) {
-  /* eslint-disable */
   let subfield8LinkingNumbers = [];
   fields.forEach(field => {
     if (!field.subfields) {
@@ -64,8 +63,6 @@ export function fieldsGetAllSubfield8LinkingNumbers(fields) {
   });
 
   return subfield8LinkingNumbers;
-  /* eslint-enable */
-
 }
 
 export function recordGetAllSubfield8LinkingNumbers(record) {
@@ -80,19 +77,19 @@ export function add8s(fields, record) {
   }
 
   nvdebug(`Linking number(s): ${linkingNumbers.join(', ')}`);
-  linkingNumbers.forEach(number => collectLinkingNumberFields(number));
+  linkingNumbers.forEach(number => collectLinkingNumberFields(number)); // eslint-disable-line array-callback-return
 
-  fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`));
+  fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`)); // eslint-disable-line array-callback-return
 
   return fields;
 
   function collectLinkingNumberFields(linkingNumber) {
     // Remove existing hits (to avoid field repetition):
-    fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber)); // eslint-disable-line functional/immutable-data, no-param-reassign
+    fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber));
     // Add them and their "sisters" back:
     const addableFields = record.fields.filter(f => fieldHasLinkingNumber(f, linkingNumber));
-    addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));
-    fields = fields.concat(addableFields); // eslint-disable-line functional/immutable-data, no-param-reassign
+    addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));  // eslint-disable-line array-callback-return
+    fields = fields.concat(addableFields);
 
   }
 }

@@ -26,7 +26,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -36,7 +36,7 @@ export default function () {
     const normalizedField = fix505(clone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`'TODO: ${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'TODO: ${orig}' => '${mod}'`);
       return;
     }
     return;
@@ -47,10 +47,10 @@ export default function () {
 function field505FixSubfieldA(field) {
   const a = field.subfields.filter(sf => sf.code === 'a');
 
-  a.forEach(sf => fixSubfieldA(sf));
+  a.forEach(sf => fixSubfieldA(sf)); // eslint-disable-line array-callback-return
 
   function fixSubfieldA(a) {
-    a.value = a.value.replace(/ ; /ug, ' -- '); // eslint-disable-line functional/immutable-data
+    a.value = a.value.replace(/ ; /ug, ' -- ');
   }
 }
 
@@ -58,13 +58,13 @@ function field505FixSubfieldTRG(field) {
   // Modify subfield if next subfield is $t:
   const subfieldsThatWillBeModified = field.subfields.filter((sf, i) => i + 1 < field.subfields.length && field.subfields[i + 1].code === 't');
 
-  subfieldsThatWillBeModified.forEach(sf => fixSubfieldThatPrecedesT(sf));
+  subfieldsThatWillBeModified.forEach(sf => fixSubfieldThatPrecedesT(sf)); // eslint-disable-line array-callback-return
 
   function fixSubfieldThatPrecedesT(sf) {
     if (!sf.value) {
       return;
     }
-    sf.value = sf.value.replace(/ ;$/u, ' --'); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/ ;$/u, ' --');
   }
 }
 

@@ -33,7 +33,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -43,7 +43,7 @@ export default function () {
     const normalizedField = fix521(clone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`'TODO: ${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'TODO: ${orig}' => '${mod}'`);
       return;
     }
     return;
@@ -51,15 +51,15 @@ export default function () {
 }
 
 function fixSubfieldA(a) {
-  a.value = a.value. // eslint-disable-line functional/immutable-data
+  a.value = a.value.
     // MET-332:
-    replace(/^(Ikäsuositus) ([0-9])/u, '$1: $2'); // eslint-disable-line prefer-named-capture-group, functional/immutable-data
+    replace(/^(Ikäsuositus) ([0-9])/u, '$1: $2');
 }
 
 function fixSubfieldAInternalPunctuation(field) {
   const a = field.subfields.filter(sf => sf.code === 'a');
 
-  a.forEach(sf => fixSubfieldA(sf));
+  a.forEach(sf => fixSubfieldA(sf)); // eslint-disable-line array-callback-return
 }
 
 function getIndicator1(field) {
@@ -75,7 +75,7 @@ function getIndicator1(field) {
 function fixIndicator1(field) {
   const value = getIndicator1(field);
   if (value) {
-    field.ind1 = value; // eslint-disable-line functional/immutable-data
+    field.ind1 = value;
     return;
   }
 

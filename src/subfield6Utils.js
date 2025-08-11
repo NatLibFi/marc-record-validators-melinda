@@ -51,9 +51,9 @@ export function subfield6ResetOccurrenceNumber(subfield, occurrenceNumber) {
   }
   const occurrenceNumberAsString = typeof occurrenceNumber === 'number' ? intToOccurrenceNumberString(occurrenceNumber) : occurrenceNumber;
 
-  const newValue = subfield.value.substring(0, 4) + occurrenceNumberAsString + subfield6GetTail(subfield); // eslint-disable-line functional/immutable-data
+  const newValue = subfield.value.substring(0, 4) + occurrenceNumberAsString + subfield6GetTail(subfield);
   //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
-  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+  subfield.value = newValue;
 }
 
 
@@ -70,7 +70,7 @@ export function subfield6HasWantedTagAndOccurrenceNumber(subfield, tagAndOccurre
     return false;
   }
   // We could also use generic code and go getTag()+'-'+getIndex() instead of regexp...
-  const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1');
   nvdebug(` Compare '${key}' vs '${tagAndOccurrenceNumber}'`);
   return key === tagAndOccurrenceNumber;
 }
@@ -99,7 +99,7 @@ export function fieldHasOccurrenceNumber(field, occurrenceNumber) {
 }
 
 export function fieldResetOccurrenceNumber(field, newOccurrenceNumber, oldOccurrenceNumber = undefined) {
-  field.subfields.forEach(subfield => innerReset(subfield));
+  field.subfields.forEach(subfield => innerReset(subfield)); // eslint-disable-line array-callback-return
 
   function innerReset(subfield) {
     // (Optional) Check that this is really the occurrence number we wan't to reseot
@@ -203,14 +203,14 @@ function subfieldSevenToOneOccurrenceNumber(subfield) {
   if (subfield.code !== '6' || subfield.value.substring(0, 1) !== '7') {
     return;
   }
-  subfield.value = `1${subfield.value.substring(1)}`; // eslint-disable-line functional/immutable-data
+  subfield.value = `1${subfield.value.substring(1)}`;
 }
 
 export function fieldSevenToOneOccurrenceNumber(field) {
   if (field.tag !== '880') {
     return;
   }
-  field.subfields.forEach(sf => subfieldSevenToOneOccurrenceNumber(sf));
+  field.subfields.forEach(sf => subfieldSevenToOneOccurrenceNumber(sf)); // eslint-disable-line array-callback-return
 }
 
 
@@ -223,7 +223,7 @@ export function fieldGetOccurrenceNumberPairs(field, candFields) {
     return pairs;
   }
   nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`);
-  pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`));
+  pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`)); // eslint-disable-line array-callback-return
   return pairs;
 }
 
@@ -355,7 +355,7 @@ function guessTargetLinkingNumber(fields, defaultTargetLinkingNumber) {
     return defaultTargetLinkingNumber;
   }
   const linkingNumbers = fieldsGetAllSubfield8LinkingNumbers(fields);
-  return linkingNumbers.length === 1 ? linkingNumbers[0] : 0; // eslint-disable-line no-param-reassign
+  return linkingNumbers.length === 1 ? linkingNumbers[0] : 0;
 }
 
 export function fieldsToNormalizedString(fields, defaultTargetLinkingNumber = 0, normalizeOccurrenceNumber = false, normalizeEntryTag = false) {
@@ -363,7 +363,7 @@ export function fieldsToNormalizedString(fields, defaultTargetLinkingNumber = 0,
 
   nvdebug(`fieldsToNormalizedString: OCC: ${normalizeOccurrenceNumber}`);
   const strings = fields.map(field => fieldToNormalizedString(field, targetLinkingNumber, normalizeOccurrenceNumber, normalizeEntryTag));
-  strings.sort(); // eslint-disable-line functional/immutable-data
+  strings.sort();
   return strings.join('\t__SEPARATOR__\t');
 }
 
@@ -482,7 +482,7 @@ export function get6s(field, candidateFields) { // NB! Convert field to fields!!
 
   const relevantFields = candidateFields.filter(f => occurrenceNumbers.some(o => fieldHasOccurrenceNumber(f, o)));
   nvdebug(`${fieldToString(field)}: $6-RELFIELDS FOUND: ${relevantFields.length}...`);
-  relevantFields.forEach(f => nvdebug(fieldToString(f)));
+  relevantFields.forEach(f => nvdebug(fieldToString(f))); // eslint-disable-line array-callback-return
   return relevantFields;
 }
 
@@ -493,5 +493,5 @@ export function resetSubfield6Tag(subfield, tag) {
   // NB! mainly for 1XX<->7XX transfers
   const newValue = `${tag}-${subfield.value.substring(4)}`;
   nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
-  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+  subfield.value = newValue;
 }

@@ -27,7 +27,7 @@ export default function () {
       validateField(field, res);
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 
@@ -38,7 +38,7 @@ export default function () {
     normalizeQualifyingInformationField(normalizedField);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      res.message.push(`'TODO: ${orig}' => '${mod}'`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'TODO: ${orig}' => '${mod}'`);
       return;
     }
     return;
@@ -51,14 +51,14 @@ function normalizeQualifyingInformationField(field) {
     return;
   }
 
-  field.subfields.forEach(sf => fixSubfield(sf));
+  field.subfields.forEach(sf => fixSubfield(sf)); // eslint-disable-line array-callback-return
   return;
 
   function fixSubfield(sf) {
     if (sf.code !== 'q') {
       return;
     }
-    sf.value = normalizeValue(sf.value); // eslint-disable-line functional/immutable-data
+    sf.value = normalizeValue(sf.value);
   }
 
   function normalizeValue(val) {

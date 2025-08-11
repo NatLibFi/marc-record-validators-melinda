@@ -21,7 +21,7 @@ export function subfieldContainsPartData(tag, subfieldCode) {
 function splitPartData(originalValue) {
   // This a very hacky function, but cand really help it, as the the data is very iffy as well...
   // Remove punctuation and brackets:
-  const value = originalValue.replace(/[-.,:; ]+$/ui, '').replace(/^\[([0-9]+)\]$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
+  const value = originalValue.replace(/[-.,:; ]+$/ui, '').replace(/^\[([0-9]+)\]$/ui, '$1');
 
   const [year, rest] = extractYear(value);
 

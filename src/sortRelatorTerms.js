@@ -41,12 +41,12 @@ export default function () {
       sortAdjacentRelatorTerms(clonedField, typeOfMaterial);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);
-      if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
-        res.message.push(`${fieldAsString} => ${clonedFieldAsString}`); // eslint-disable-line functional/immutable-data
+      if (fieldAsString !== clonedFieldAsString) {
+        res.message.push(`${fieldAsString} => ${clonedFieldAsString}`);
       }
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 }
@@ -103,8 +103,8 @@ function swapRelatorTermSubfields(field, typeOfMaterial = undefined) {
 
     // Swap:
     const tmp = field.subfields[index - 1];
-    field.subfields[index - 1] = field.subfields[index]; // eslint-disable-line functional/immutable-data
-    field.subfields[index] = tmp; // eslint-disable-line functional/immutable-data
+    field.subfields[index - 1] = field.subfields[index];
+    field.subfields[index] = tmp;
     fieldFixPunctuation(field);
     return true;
   }

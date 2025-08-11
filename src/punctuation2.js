@@ -27,7 +27,7 @@ export default function () {
   function fix(record) {
     nvdebug(`${descriptionString}: fixer`);
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fieldFixPunctuation(f));
+    record.fields.forEach(f => fieldFixPunctuation(f)); // eslint-disable-line array-callback-return
     return res;
   }
 
@@ -44,7 +44,7 @@ export default function () {
 
     const res = {message: messages};
 
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }
@@ -390,13 +390,13 @@ function debugRule(rule) {
   //nvdebug('');
   nvdebug(`NAME ${rule.name ? rule.name : '<unnamed>'}`);
   nvdebug(`SUBFIELD CODE '${rule.code}' FOLLOWED BY SUBFIELD CODE '${rule.followedBy}'`);
-  if ('add' in rule) { // eslint-disable-line functional/no-conditional-statements
+  if ('add' in rule) {
     nvdebug(`ADD '${rule.add}'`);
   }
-  if ('remove' in rule) { // eslint-disable-line functional/no-conditional-statements
+  if ('remove' in rule) {
     nvdebug(`REMOVE '${rule.remove}'`);
   }
-  if ('context' in rule) { // eslint-disable-line functional/no-conditional-statements
+  if ('context' in rule) {
     nvdebug(`CONTEXT '${rule.context.toString()}'`);
   }
   //nvdebug('');
@@ -517,19 +517,19 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
     //const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) {
       //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
-      subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
+      subfield1.value = subfield1.value.replace(rule.remove, '');
       //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`);
       return false;
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) {
-      subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
+      subfield1.value += rule.add;
       //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}' USING RULE ${rule.name}`);
       return false;
     }
 
     /*
-    if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statements
-      nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
+    if (subfield1.value !== originalValue) {
+      nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug);
     }
     */
 
@@ -579,7 +579,7 @@ export function fieldFixPunctuation(field) {
   });
 
   // Use shared code for final punctuation (sadly this does not fix intermediate punc):
-  if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statements
+  if (field.useExternalEndPunctuation) {
     // addFinalPunctuation(field); // local version. use shared code instead.
     validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
   }

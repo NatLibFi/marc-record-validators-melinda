@@ -173,14 +173,14 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
   function fix(record) {
     getRelevantFields(record).forEach(field => {
       if (field.tag === '020') {
-        field.subfields.forEach(subfield => fixField020Subfield(field, subfield));
+        field.subfields.forEach(subfield => fixField020Subfield(field, subfield)); // eslint-disable-line array-callback-return
         return;
       }
       // 022 ISSN:
       const subfield = field.subfields.find(sf => sf.code === 'a' || sf.code === 'l');
-      if (subfield && handleInvalid) { // eslint-disable-line functional/no-conditional-statements
+      if (subfield && handleInvalid) {
         // $a/$l => $y (bit overkill to add $z and remove $a/$l instead of just renaming)
-        field.subfields.push({code: 'y', value: subfield.value}); // eslint-disable-line functional/immutable-data
+        field.subfields.push({code: 'y', value: subfield.value});
         record.removeSubfield(subfield, field);
       }
     });
@@ -198,8 +198,8 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         }
         // ISBN is valid but is missing hyphens
         const normalizedValue = normalizeIsbnValue(subfield.value);
-        if (normalizedValue !== undefined) { // eslint-disable-line functional/no-conditional-statements
-          subfield.value = normalizedValue; // eslint-disable-line functional/immutable-data
+        if (normalizedValue !== undefined) {
+          subfield.value = normalizedValue;
         }
       }
 
@@ -212,7 +212,7 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
           return;
         }
         // $a => $z (bit overkill to add $z and remove $a instead of just renaming, but too lazy to fix/test thorougly)
-        field.subfields.push({code: 'z', value: subfield.value}); // eslint-disable-line functional/immutable-data
+        field.subfields.push({code: 'z', value: subfield.value});
         record.removeSubfield(subfield, field);
       }
 
@@ -231,8 +231,8 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
           return;
         }
         const tail = value.substring(position + 1);
-        subfield.value = head; // eslint-disable-line functional/immutable-data
-        field.subfields.push({code: 'q', value: tail}); // eslint-disable-line functional/immutable-data
+        subfield.value = head;
+        field.subfields.push({code: 'q', value: tail});
       }
 
       function normalizeIsbnValue(value) {
@@ -244,10 +244,10 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
         }
         const numbersOnly = trimmedValue.replace(/[^0-9Xx]+/ug, '');
         const parsedIsbn = ISBN.parse(trimmedValue);
-        if (hyphenateISBN) { // eslint-disable-line functional/no-conditional-statements
-          return numbersOnly.length === 10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h; // eslint-disable-line functional/immutable-data
+        if (hyphenateISBN) {
+          return numbersOnly.length === 10 ? parsedIsbn.isbn10h : parsedIsbn.isbn13h;
         }
-        return numbersOnly.length === 10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13; // eslint-disable-line functional/immutable-data
+        return numbersOnly.length === 10 ? parsedIsbn.isbn10 : parsedIsbn.isbn13;
       }
     }
   }
