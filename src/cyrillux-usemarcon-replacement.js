@@ -50,15 +50,15 @@ export default function () {
     }
 
     // Update LDR/17 to '4'
-    record.leader = `${record.leader.substring(0, 17)}4${record.leader.substring(18, 24)}`; // eslint-disable-line functional/immutable-data
+    record.leader = `${record.leader.substring(0, 17)}4${record.leader.substring(18, 24)}`;
 
     // Remove unwanted fields:
-    record.fields = record.fields.filter(f => !dropTags.includes(f.tag)); // eslint-disable-line functional/immutable-data
+    record.fields = record.fields.filter(f => !dropTags.includes(f.tag));
 
     removeSubfield(record, '020', 'c');
 
     // Remove 084 fields that don't have $2 ykl (based on USEMARCON-RDA/bw_rda_kyril.rul code by LL 2019)
-    record.fields = record.fields.filter(f => f.tag !== '084' || f.subfields.some(sf => sf.code === '2' && sf.value === 'ykl')); // eslint-disable-line functional/immutable-data
+    record.fields = record.fields.filter(f => f.tag !== '084' || f.subfields.some(sf => sf.code === '2' && sf.value === 'ykl'));
 
     fieldSpecificStuff(record.fields);
 
@@ -93,7 +93,7 @@ export default function () {
 
       function field100eKirjoittaja(f) { // LL 2019 USEMARCON-RDA rule
         if (f.tag === '100' && !fieldHasSubfield(f, 'e') && record.isBK()) {
-          f.subfields = [{code: 'e', value: 'kirjoittaja.'}, ...f.subfields]; // eslint-disable-line functional/immutable-data
+          f.subfields = [{code: 'e', value: 'kirjoittaja.'}, ...f.subfields];
           sortAdjacentSubfields(f);
           // Punctuation will be done later on...
           return;
@@ -121,7 +121,7 @@ export default function () {
 
     // Field 028: use $b$a, not $a$b:
     const f028 = record.fields.filter(f => f.tag === '028');
-    f028.forEach(f => sortAdjacentSubfields(f));
+    f028.forEach(f => sortAdjacentSubfields(f)); // eslint-disable-line array-callback-return
 
     add041().fix(record);
 
@@ -187,12 +187,12 @@ function fixField040(record) {
     return;
   }
 
-  f040.forEach(f => fixField040Subfields(f));
+  f040.forEach(f => fixField040Subfields(f)); // eslint-disable-line array-callback-return
 
   function fixField040Subfields(field) {
-    field.subfields = field.subfields.filter(sf => !['b', 'e'].includes(sf.code)); // eslint-disable-line functional/immutable-data
-    field.subfields.push(subfieldsBE[0]); // eslint-disable-line functional/immutable-data
-    field.subfields.push(subfieldsBE[1]); // eslint-disable-line functional/immutable-data
+    field.subfields = field.subfields.filter(sf => !['b', 'e'].includes(sf.code));
+    field.subfields.push(subfieldsBE[0]);
+    field.subfields.push(subfieldsBE[1]);
     sortAdjacentSubfields(field); // put $b and $e to their proper places
   }
 
@@ -203,13 +203,13 @@ export function removeFromOldCatalog(field) {
     return;
   }
   // See https://catalog.loc.gov/vwebv/ui/en_US/htdocs/help/faqs.html for motivation
-  field.subfields?.forEach(sf => removeFromOldCatalogFromSubfield(sf));
+  field.subfields?.forEach(sf => removeFromOldCatalogFromSubfield(sf)); // eslint-disable-line array-callback-return
 
   function removeFromOldCatalogFromSubfield(subfield) {
     if (!subfield.value.includes('[from old catalog]')) {
       return;
     }
-    subfield.value = subfield.value.replace(/ *\[from old catalog\]/gui, ''); // eslint-disable-line functional/immutable-data
+    subfield.value = subfield.value.replace(/ *\[from old catalog\]/gui, '');
   }
 }
 
@@ -220,7 +220,7 @@ function removeSubfieldH(field) {
 
   const filteredFields = field.subfields.filter(sf => sf.code !== 'h');
   if (filteredFields.length > 0) {
-    field.subfields = filteredFields; // eslint-disable-line functional/immutable-data
+    field.subfields = filteredFields;
     return;
   }
 
@@ -234,11 +234,11 @@ export function removeOwnershipSubfield5(field) {
   if (remainingSubfields.length === 0) { // sanity check/robustness
     return;
   }
-  field.subfields = remainingSubfields; // eslint-disable-line functional/immutable-data
+  field.subfields = remainingSubfields;
 }
 
 export function fixLeader(record) {
-  record.leader = `${record.leader.substring(0, 9)}a22${record.leader.substring(12, 18)}i${record.leader.substring(19, 20)}4500`; // eslint-disable-line functional/immutable-data
+  record.leader = `${record.leader.substring(0, 9)}a22${record.leader.substring(12, 18)}i${record.leader.substring(19, 20)}4500`;
 }
 
 function field410To490And810(field, record) { // might be generic... if so, move to utils...
@@ -248,15 +248,15 @@ function field410To490And810(field, record) { // might be generic... if so, move
 
   const field810 = clone(field);
 
-  field.tag = '490'; // eslint-disable-line functional/immutable-data
-  field.ind1 = '1'; // eslint-disable-line functional/immutable-data
-  field.ind2 = ' '; // eslint-disable-line functional/immutable-data
+  field.tag = '490';
+  field.ind1 = '1';
+  field.ind2 = ' ';
   sortAdjacentSubfields(field);
   // 490: Fix punctuation elsewhere. (Note that the current support is lagging...)
 
 
-  field810.tag = '810'; // eslint-disable-line functional/immutable-data
-  field810.ind2 = ' '; // eslint-disable-line functional/immutable-data
+  field810.tag = '810';
+  field810.ind2 = ' ';
   // 810: Fix punctuation elsewhere. (Note that the current support is lagging...)
   record.insertField(field810);
 }
@@ -268,11 +268,11 @@ function field440To490And830(field, record) { // might be generic... if so, move
 
   const field830 = clone(field);
 
-  field.tag = '490'; // eslint-disable-line functional/immutable-data
-  field.ind1 = '1'; // eslint-disable-line functional/immutable-data
-  field.ind2 = ' '; // eslint-disable-line functional/immutable-data
+  field.tag = '490';
+  field.ind1 = '1';
+  field.ind2 = ' ';
   // 490: Fix punctuation elsewhere. (Note that the current support is lagging...)
-  field830.tag = '830'; // eslint-disable-line functional/immutable-data
+  field830.tag = '830';
   // 830: Fix punctuation elsewhere. (Note that the current support is lagging...)
   record.insertField(field830);
 }
@@ -290,9 +290,9 @@ function field260To264s(field, record) { // might be generic... if so, move to u
 
   createCopyright264Field(field);
 
-  field.tag = '264'; // eslint-disable-line functional/immutable-data
-  field.ind1 = ' '; // eslint-disable-line functional/immutable-data
-  field.ind2 = '1'; // eslint-disable-line functional/immutable-data
+  field.tag = '264';
+  field.ind1 = ' ';
+  field.ind2 = '1';
 
   // NB! Usemarcon does not handle 260$e$f$g => 264$a$b$c, so I'm not botherin with it either... (However, we could check our merge reducer code...)
 
@@ -303,10 +303,10 @@ function field260To264s(field, record) { // might be generic... if so, move to u
     return false;
   }
 
-  field.subfields?.forEach(sf => field260To264Normalization(sf));
+  field.subfields?.forEach(sf => field260To264Normalization(sf)); // eslint-disable-line array-callback-return
 
   function field260To264Normalization(subfield) {
-    subfield.value = field260To264Normalization2(subfield); // eslint-disable-line functional/immutable-data
+    subfield.value = field260To264Normalization2(subfield);
   }
 
   function createCopyright264Value(field) {
@@ -322,7 +322,7 @@ function field260To264s(field, record) { // might be generic... if so, move to u
     const copType = c.value.match(/(?:^\[?p|℗)/u) ? '℗' : '©';
     const returnValue = c.value.includes('[') ? `[${copType}${copyrightYear}]` : `${copType}${copyrightYear}`;
     // Moidy the original value:
-    c.value = `[${copyrightYear}]`; // eslint-disable-line functional/immutable-data
+    c.value = `[${copyrightYear}]`;
     return returnValue;
   }
 
@@ -365,12 +365,12 @@ function handle505(field) {
     return;
   }
   // Don't know how/why usemarcon-cyrillux is so sure about ind1...
-  field.ind1 = '0'; // eslint-disable-line functional/immutable-data
+  field.ind1 = '0';
   // usemarcon-cyrillux drops irrelevant subfields, so we do the same. However, we have included some control subfields in the kept side:
   const keptSubfields = field.subfields.filter(sf => ['a', 'g', 'r', 't', 'u', '6', '8', '9'].includes(sf.code));
 
   if (keptSubfields.some(sf => ['a', 'g', 'r', 't', 'u'].includes(sf.code))) {
-    field.subfields = keptSubfields; // eslint-disable-line functional/immutable-data
+    field.subfields = keptSubfields;
     return;
   }
 }
@@ -380,15 +380,15 @@ function translateFieldToFinnish(field) {
   if (!['020', '300'].includes(field.tag)) {
     return;
   }
-  field.subfields?.forEach(sf => translateSubfieldToFinnish(sf));
+  field.subfields?.forEach(sf => translateSubfieldToFinnish(sf));  // eslint-disable-line array-callback-return
 
   function translateSubfieldToFinnish(subfield) {
     if (field.tag === '020' && ['a', 'q', 'z'].includes(subfield.code)) {
-      subfield.value = finnishTranslationsAndMappings(expandFinnishAbbreviations(expandSwedishAbbreviations(expandEnglishAbbreviations(subfield.value)))); // eslint-disable-line functional/immutable-data
+      subfield.value = finnishTranslationsAndMappings(expandFinnishAbbreviations(expandSwedishAbbreviations(expandEnglishAbbreviations(subfield.value))));
       return;
     }
     if (field.tag === '300') {
-      subfield.value = finnishTranslationsAndMappings(expandFinnishAbbreviations(expandSwedishAbbreviations(expandEnglishAbbreviations(subfield.value)))); // eslint-disable-line functional/immutable-data
+      subfield.value = finnishTranslationsAndMappings(expandFinnishAbbreviations(expandSwedishAbbreviations(expandEnglishAbbreviations(subfield.value))));
       return;
     }
   }
@@ -424,7 +424,7 @@ function expandFinnishAbbreviations(value) {
     replace(/\bnid\./gu, 'nidottu').replace(/\bnid\b/gui, 'nidottu').
     replace(/\bsid\./gu, 'sidottu').replace(/\bsid\b/gui, 'sidottu').
     replace(/\bverkkojulk\.\b/gu, 'verkkojulkaisu').replace(/\bverkkojulk\b/gu, 'verkkojulkaisu').
-    replace(/^\(([^)]+)\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+    replace(/^\(([^)]+)\)$/u, '$1');
   // <- removal of brackets above could use a better location
 }
 
@@ -443,9 +443,9 @@ function finnishTranslationsAndMappings(value) {
     replace(/\bbilaga\b/gui, 'liite').
     replace(/\bbilagor\b/gui, 'liitettä').
     // https://github.com/NatLibFi/USEMARCON-BOOKWHERE-RDA/blob/master/bw_rda_kyril.rul#L365
-    replace(/(\b1\]?) с\./gui, '$1 sivu'). // eslint-disable-line prefer-named-capture-group
-    replace(/(\d\]?) с\./gui, '$1 sivua'). // eslint-disable-line prefer-named-capture-group
-    replace(/(\d) см/gui, '$1 cm'). // eslint-disable-line prefer-named-capture-group
+    replace(/(\b1\]?) с\./gui, '$1 sivu').
+    replace(/(\d\]?) с\./gui, '$1 sivua').
+    replace(/(\d) см/gui, '$1 cm').
 
     replace(/\bcharts\b/gui, 'kaavioita').
     replace('chiefly color illustrations', 'pääosin värikuvitettu').

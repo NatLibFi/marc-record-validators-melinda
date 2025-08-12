@@ -22,7 +22,7 @@ export function fieldRemoveDuplicateSubfields(field) {
   }
 
   const strippedField = cloneAndRemovePunctuation(field); // make punctuation-less version
-  /* eslint-disable */
+
   let seen = {};
 
   field.subfields = field.subfields.filter((sf, i) => notSeenBefore(sf, i));
@@ -45,6 +45,5 @@ export function fieldRemoveDuplicateSubfields(field) {
     seen[subfieldAsString] = subfieldAsString;
     return true;
   }
-  /* eslint-enable */
 
 }

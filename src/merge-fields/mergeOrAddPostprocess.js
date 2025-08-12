@@ -12,7 +12,7 @@ function postprocessBaseRecord(base) {
     // NB! Relator terms are now expanded and translated already at preprocess stage!
 
     // remove merge-specific information:
-    if (field.merged) { // eslint-disable-line functional/no-conditional-statements
+    if (field.merged) {
       // Field level ideas about things that could be done here:
       // - Fix indicators?
       // Record level fixes should be implemented as validators/fixers
@@ -23,20 +23,20 @@ function postprocessBaseRecord(base) {
       sortAdjacentRelatorTerms(field); // Sort $e subfields with each other
       fieldFixPunctuation(field);
 
-      delete field.merged; // eslint-disable-line functional/immutable-data
+      delete field.merged;
     }
 
-    if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statements
-      delete field.useExternalEndPunctuation; // eslint-disable-line functional/immutable-data
+    if (field.useExternalEndPunctuation) {
+      delete field.useExternalEndPunctuation;
     }
 
-    if (field.added) { // eslint-disable-line functional/no-conditional-statements
-      delete field.added; // eslint-disable-line functional/immutable-data
+    if (field.added) {
+      delete field.added;
     }
 
     /*
-    if (field.deleted) { // eslint-disable-line functional/no-conditional-statements
-      delete field.deleted; // eslint-disable-line functional/immutable-data
+    if (field.deleted) {
+      delete field.deleted;
     }
 */
 
@@ -46,7 +46,7 @@ function postprocessBaseRecord(base) {
 
 function removeDeletedFields(record) {
   // remove fields that are marked as deleted:
-  record.fields = record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
+  record.fields = record.fields.filter(f => !f.deleted);
 }
 
 

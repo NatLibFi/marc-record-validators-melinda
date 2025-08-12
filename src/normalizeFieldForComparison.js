@@ -28,10 +28,10 @@ export function isEnnakkotietoSubfieldG(subfield) {
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
   // We may drop certain subfields:
-  if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statements
+  if (oldField.subfields.length === newField.subfields.length) {
     oldField.subfields.forEach((subfield, index) => {
       const newValue = newField.subfields[index].value;
-      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statements
+      if (subfield.value !== newValue) {
         nvdebug(`NORMALIZE SUBFIELD: '${subfield.value}' => '${newValue}'`, debugDev);
       }
     });
@@ -116,7 +116,7 @@ function subfieldValueLowercase(value, subfieldCode, tag) {
 }
 
 function subfieldLowercase(sf, tag) {
-  sf.value = subfieldValueLowercase(sf.value, sf.code, tag); // eslint-disable-line functional/immutable-data
+  sf.value = subfieldValueLowercase(sf.value, sf.code, tag);
 }
 
 function fieldLowercase(field) {
@@ -124,7 +124,7 @@ function fieldLowercase(field) {
     return;
   }
 
-  field.subfields.forEach(sf => subfieldLowercase(sf, field.tag));
+  field.subfields.forEach(sf => subfieldLowercase(sf, field.tag)); // eslint-disable-line array-callback-return
 
   function skipFieldLowercase(field) {
     if (skipAllFieldNormalizations(field.tag)) {
@@ -144,7 +144,7 @@ function hack490SubfieldA(field) {
   if (field.tag !== '490') {
     return;
   }
-  field.subfields.forEach(sf => removeSarja(sf));
+  field.subfields.forEach(sf => removeSarja(sf)); // eslint-disable-line array-callback-return
 
   // NB! This won't work, if the punctuation has not been stripped beforehand!
   function removeSarja(subfield) {
@@ -153,7 +153,7 @@ function hack490SubfieldA(field) {
     }
     const tmp = subfield.value.replace(/ ?-(?:[a-z]|ä|ö)*sarja$/u, '');
     if (tmp.length > 0) {
-      subfield.value = tmp; // eslint-disable-line functional/immutable-data
+      subfield.value = tmp;
       return;
     }
   }
@@ -185,12 +185,12 @@ function normalizeISBN(field) {
 
   //nvdebug(`ISBN-field? ${fieldToString(field)}`);
   const relevantSubfields = field.subfields.filter(sf => tagAndSubfieldCodeReferToIsbn(field.tag, sf.code) && looksLikeIsbn(sf.value));
-  relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf));
+  relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf)); // eslint-disable-line array-callback-return
 
   function normalizeIsbnSubfield(sf) {
     //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);
-    sf.value = sf.value.replace(/-/ug, ''); // eslint-disable-line functional/immutable-data
-    sf.value = sf.value.replace(/x/u, 'X'); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/-/ug, '');
+    sf.value = sf.value.replace(/x/u, 'X');
   }
 
 }
@@ -202,9 +202,9 @@ function fieldSpecificHacks(field) {
 
 export function fieldTrimSubfieldValues(field) {
   field.subfields?.forEach((sf) => {
-    sf.value = sf.value.replace(/^[ \t\n]+/u, ''); // eslint-disable-line functional/immutable-data
-    sf.value = sf.value.replace(/[ \t\n]+$/u, ''); // eslint-disable-line functional/immutable-data
-    sf.value = sf.value.replace(/[ \t\n]+/gu, ' '); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/^[ \t\n]+/u, '');
+    sf.value = sf.value.replace(/[ \t\n]+$/u, '');
+    sf.value = sf.value.replace(/[ \t\n]+/gu, ' ');
   });
 }
 
@@ -212,7 +212,7 @@ function fieldRemoveDecomposedDiacritics(field) {
   // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
   // allows us to compare authors and avoid duplicate fields.
   field.subfields.forEach((sf) => {
-    sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+    sf.value = removeDecomposedDiacritics(sf.value);
   });
 }
 
@@ -230,7 +230,7 @@ function normalizeSubfieldValue(value, subfieldCode, tag) {
 
   // Normalize: s. = sivut = pp.
   value = normalizePartData(value, subfieldCode, tag);
-  value = value.replace(/^\[([^[\]]+)\]/gu, '$1'); // eslint-disable-line functional/immutable-data, prefer-named-capture-group
+  value = value.replace(/^\[([^[\]]+)\]/gu, '$1'); // eslint-disable-line functional/immutable-data
 
   if (['130', '730'].includes(tag) && subfieldCode === 'a') {
     value = value.replace(' : ', ', '); // "Halloween ends (elokuva, 2022)" vs "Halloween ends (elokuva : 2023)"
@@ -268,7 +268,7 @@ function removeCharsThatDontCarryMeaning(value, tag, subfieldCode) {
   if (tag === '080') {
     return value;
   }
-  /* eslint-disable */
+
   // 3" refers to inches, but as this is for comparison only we don't mind...
   value = value.replace(/['‘’"„“”«»]/gu, ''); // MET-570 et al. Subset of https://hexdocs.pm/ex_unicode/Unicode.Category.QuoteMarks.html
   // MRA-273: Handle X00$a name initials.
@@ -277,12 +277,12 @@ function removeCharsThatDontCarryMeaning(value, tag, subfieldCode) {
   if (subfieldCode === 'a' && ['100', '400', '600', '700', '800'].includes(tag)) { // 400 is used in auth records. It's not a bib field at all.
     value = value.replace(/([A-Z]|Å|Ä|Ö)\. +/ugi, '$1.');
   }
-  /* eslint-enable */
+
   return value;
 }
 
 function normalizeField(field) {
-  //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+  //sf.value = removeDecomposedDiacritics(sf.value);
   fieldStripPunctuation(field);
   fieldLowercase(field);
   fieldNormalizeControlNumbers(field); // FIN11 vs FI-MELINDA etc.
@@ -297,11 +297,11 @@ export function cloneAndNormalizeFieldForComparison(field) {
     return clonedField;
   }
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
-    sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
-    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);// eslint-disable-line functional/immutable-data
+    sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag);
+    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);
   });
 
-  normalizeField(clonedField); // eslint-disable-line functional/immutable-data
+  normalizeField(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
   fieldSpecificHacks(clonedField);
   fieldTrimSubfieldValues(clonedField);

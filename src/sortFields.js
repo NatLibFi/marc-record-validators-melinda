@@ -22,7 +22,7 @@ export default function () {
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
 
-    record.fields.sort(fieldOrderComparator); // eslint-disable-line functional/immutable-data
+    record.fields.sort(fieldOrderComparator);
 
     return res;
   }
@@ -31,16 +31,16 @@ export default function () {
     const res = {message: []};
 
     const fields = record.fields.map(f => clone(f));
-    fields.sort(fieldOrderComparator); // eslint-disable-line functional/immutable-data
+    fields.sort(fieldOrderComparator);
 
 
     const relocatedFields = fields.filter((f, i) => fieldToString(f) !== fieldToString(record.fields[i]));
 
-    if (relocatedFields.length > 0) { // eslint-disable-line functional/no-conditional-statements
-      res.message.push(`${relocatedFields.length} field(s) in new places`); // eslint-disable-line functional/immutable-data
+    if (relocatedFields.length > 0) {
+      res.message.push(`${relocatedFields.length} field(s) in new places`);
     }
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 }
@@ -217,7 +217,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
   return globalFieldOrderComparator(fieldA, fieldB, sorterFunctions);
 }
 
-function sortByIndexTerms(fieldA, fieldB) { // eslint-disable-line complexity, max-statements
+function sortByIndexTerms(fieldA, fieldB) {
 
   const indexTermFields = ['600', '610', '611', '630', '648', '650', '651', '652', '653', '654', '655', '656', '657', '658', '659', '662'];
 

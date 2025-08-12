@@ -15,12 +15,12 @@ export default function () {
   function fix(record) {
     nvdebug('Fix SF6 orphaned occurrence numbers');
     const res = {message: [], fix: [], valid: true};
-    //message.fix = []; // eslint-disable-line functional/immutable-data
+    //message.fix = [];
 
     // This can not really fail...
     recordFixSubfield6OccurrenceNumbers(record);
 
-    //message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    //message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -33,10 +33,10 @@ export default function () {
 
     const res = {message: []};
 
-    if (orphanedFields.length > 0) { // eslint-disable-line functional/no-conditional-statements
-      res.message = [`${orphanedFields.length} orphaned occurrence number field(s) detected`]; // eslint-disable-line functional/immutable-data
+    if (orphanedFields.length > 0) {
+      res.message = [`${orphanedFields.length} orphaned occurrence number field(s) detected`];
     }
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }
@@ -45,12 +45,12 @@ export function recordFixSubfield6OccurrenceNumbers(record) {
   const fieldsContainingSubfield6 = record.fields.filter(field => fieldHasSubfield(field, '6'));
   const orphanedFields = getOrphanedFields(fieldsContainingSubfield6);
 
-  orphanedFields.forEach(field => fieldFixOrphanedSubfields(field));
+  orphanedFields.forEach(field => fieldFixOrphanedSubfields(field)); // eslint-disable-line array-callback-return
 
   function fieldFixOrphanedSubfields(field) {
     // Field 880: orphaned $6 subfields: occurrence number is changed to '00':
     if (field.tag === '880') {
-      field.subfields.forEach(sf => field880FixOrphanedSubfield(sf));
+      field.subfields.forEach(sf => field880FixOrphanedSubfield(sf)); // eslint-disable-line array-callback-return
       return;
     }
     // Non-880 fields get their orphaned $6s removed:
@@ -59,7 +59,7 @@ export function recordFixSubfield6OccurrenceNumbers(record) {
       record.removeField(field);
       return;
     }
-    field.subfields = remainingSubfields; // eslint-disable-line functional/immutable-data
+    field.subfields = remainingSubfields;
   }
 
   function field880FixOrphanedSubfield(subfield) {
@@ -78,7 +78,7 @@ function findPairForSubfield6OccurrenceNumber(subfield6, myTag, candPairFields) 
     return undefined;
   }
   nvdebug(`LOOKING FOR PAIR: ${myTag} ${subfieldToString(subfield6)}`);
-  candPairFields.forEach(field => fieldToString(field));
+  candPairFields.forEach(field => fieldToString(field)); // eslint-disable-line array-callback-return
 
   // Only valid $6 value that fails to map to another field is iffy...
   const referredTag = subfield6.value.substring(0, 3);

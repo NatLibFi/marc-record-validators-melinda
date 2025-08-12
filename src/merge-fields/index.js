@@ -29,7 +29,7 @@ export default function () {
     //const candFields = record.fields.toReversed(); // Node 20+ only! Filter via config?
     const fields = config && config.tagPattern ? record.get(config.tagPattern) : record.get(/^[1678](?:00|10|11|30)$/u);
 
-    fields.reverse(); // eslint-disable-line functional/immutable-data
+    fields.reverse();
     const mergedField = fields.find(f => mergeField(record, record, f, config));
     if (!mergedField) {
       return;
@@ -41,9 +41,9 @@ export default function () {
 
   function fix(record, config = undefined) {
     const config2 = config || defaultConfig;
-    record.internalMerge = true; // eslint-disable-line functional/immutable-data
+    record.internalMerge = true;
     mergeFieldsWithinRecord(record, config2);
-    delete record.internalMerge; // eslint-disable-line functional/immutable-data
+    delete record.internalMerge;
     // Remove deleted fields and field.merged marks:
     postprocessRecords(record, record);
 

@@ -36,7 +36,7 @@ export default function () {
 
     const res = {message: duplicates};
 
-    res.valid = res.message.length < 1; // eslint-disable-line functional/immutable-data
+    res.valid = res.message.length < 1;
     return res;
   }
 }
@@ -46,7 +46,7 @@ function deriveInferiorChains(fields, record) {
   //nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`);
   const hash = {};
 
-  fields.forEach(f => fieldToChainToDeletables(f));
+  fields.forEach(f => fieldToChainToDeletables(f)); // eslint-disable-line array-callback-return
 
   return hash;
 
@@ -65,8 +65,8 @@ function deriveInferiorChains(fields, record) {
     const arr = deriveChainDeletables([chainAsString]);
     //nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`);
     arr.forEach(val => {
-      if (!(val in hash)) { // eslint-disable-line functional/no-conditional-statements
-        hash[val] = field; // eslint-disable-line functional/immutable-data
+      if (!(val in hash)) {
+        hash[val] = field;
       }
     });
   }
@@ -78,7 +78,7 @@ function deriveInferiorChains(fields, record) {
     }
 
     // Fix MRA-476 (part 1): one $6 value can be worse than the other
-    const withoutScriptIdentificationCode = chainAsString.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
+    const withoutScriptIdentificationCode = chainAsString.replace(/( ‡6 [0-9X][0-9][0-9]-(?:XX|[0-9]+))\/[^ ]+/u, '$1');
 
     // Remove keepless versions:
     const keepless = chainAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
@@ -150,15 +150,15 @@ export function removeInferiorChains(record, fix = true) {
     const triggeringChain = fieldToChain(triggeringField, record);
 
     // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
-    if (chainContains1XX(chain)) { // eslint-disable-line functional/no-conditional-statements
-      triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
+    if (chainContains1XX(chain)) {
+      triggeringChain.forEach(f => sevenToOne(f, triggeringChain)); // eslint-disable-line array-callback-return
     }
     //nvdebug(`iRIS6C: ${chainAsString}`);
     const deletedString = fieldsToString(chain);
     const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
-    if (fix) { // eslint-disable-line functional/no-conditional-statements
+    if (fix) {
       //nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
-      chain.forEach(field => record.removeField(field));
+      chain.forEach(field => record.removeField(field)); // eslint-disable-line array-callback-return
     }
     return innerRemoveInferiorChains(remainingFields, [...deletedStringsArray, message]);
   }
@@ -174,9 +174,9 @@ export function removeInferiorChains(record, fix = true) {
     }
     // Retag field 7XX as 1XX and fix corresponding occurrence numbers as well:
     const pairs = fieldGetOccurrenceNumberPairs(field, chain);
-    field.tag = `1${field.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
+    field.tag = `1${field.tag.substring(1)}`;
     // There should always be one pair, but I'm not sanity-checking this
-    pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField));
+    pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField)); // eslint-disable-line array-callback-return
   }
 
 }
@@ -186,7 +186,7 @@ function getIdentifierlessAndKeeplessSubsets(fieldAsString) {
   // The rules below are not perfect (in complex cases they don't catch all permutations), but good enough:
   // Remove identifier(s) (MELKEHITYS-2383-ish):
 
-  const identifierlessString = fieldAsString.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const identifierlessString = fieldAsString.replace(/ ‡[01] [^‡]+($| ‡)/u, '$1');
   const keeplessString = fieldAsString.replace(/ ‡9 [A-Z]+<KEEP>/u, '');
 
   return [identifierlessString, keeplessString].filter(val => val !== fieldAsString);
@@ -208,7 +208,7 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
   // Without final $v or $x:
   const withoutFinalVOrX = fieldAsString.replace(/ *[;,] ‡[vx] [^‡]+$/u, '');
   // Add intermediate $x-less version
-  const xless = fieldAsString.replace(/, ‡x [^‡]+(, ‡x| ; ‡v)/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const xless = fieldAsString.replace(/, ‡x [^‡]+(, ‡x| ; ‡v)/u, '$1');
 
   // Add $xv-less version (handled by recursion?)
   const xvless = fieldAsString.replace(/, ‡x [^‡]+ ‡v [^‡]+$/u, '');
@@ -219,7 +219,7 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
   const arr = [sixless, withoutFinalVOrX, xless, xvless, modifiedInd2].filter(val => val !== fieldAsString);
 
   /*
-  if (arr.length) { // eslint-disable-line functional/no-conditional-statements
+  if (arr.length) {
     nvdebug(`${arr.length} derivation(s) for ${fieldAsString}`);
     nvdebug(arr.join('\n'));
   }
@@ -262,7 +262,7 @@ function deriveIndividualDeletables(record) {
 
     const accentless = getAccentlessVersion(currString);
     const d490 = deriveIndividualDeletables490([currString]);
-    const subsets = getIdentifierlessAndKeeplessSubsets(currString); // eslint-disable-line no-param-reassign
+    const subsets = getIdentifierlessAndKeeplessSubsets(currString);
     const moreToDo = [...accentless, ...d490, ...subsets];
 
 
@@ -301,7 +301,7 @@ function deriveIndividualDeletables(record) {
         replace(/ ‡[rg] /gu, ' '). // remove $r and $g subfields
         replace(/ ‡t /u, ' ‡a '). // change first $t to $a
         // ind2: '1' => '#':
-        replace(/^505 (.)0/u, '505 $1#'); // eslint-disable-line prefer-named-capture-group
+        replace(/^505 (.)0/u, '505 $1#');
       if (tmp !== currString) {
         return processTodoList([tmp, ...stillToDo, ...moreToDo], [...deletables, tmp]);
       }
@@ -318,11 +318,11 @@ function deriveIndividualDeletables(record) {
 
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
     if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
-      const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00'); // eslint-disable-line prefer-named-capture-group
+      const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00');
       //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
       //deletableStringsArray.push(tmp);
       if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
-        const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1'); // eslint-disable-line prefer-named-capture-group
+        const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1');
         //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
         return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp, tmp2]);
       }
@@ -411,7 +411,7 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 
   const deletedFieldsAsStrings = hits.map(f => fieldToString(f));
 
-  if (fix) { // eslint-disable-line functional/no-conditional-statements
+  if (fix) {
     hits.forEach(field => {
       //nvdebug(`Remove inferior field: ${fieldToString(field)}`, debug);
       record.removeField(field);

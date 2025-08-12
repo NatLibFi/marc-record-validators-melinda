@@ -54,12 +54,12 @@ export default function (defaultTagPattern) {
       sortAdjacentSubfields(clonedField);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);
-      if (fieldAsString !== clonedFieldAsString) { // eslint-disable-line functional/no-conditional-statements
-        res.message.push(clonedFieldAsString); // eslint-disable-line functional/immutable-data
+      if (fieldAsString !== clonedFieldAsString) {
+        res.message.push(clonedFieldAsString);
       }
     });
 
-    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    res.valid = !(res.message.length >= 1);
     return res;
   }
 }
@@ -157,8 +157,8 @@ function swapSubfields(field, sortOrder) {
     }
     // Swap:
     const tmp = field.subfields[index - 1];
-    field.subfields[index - 1] = sf; // eslint-disable-line functional/immutable-data
-    field.subfields[index] = tmp; // eslint-disable-line functional/immutable-data
+    field.subfields[index - 1] = sf;
+    field.subfields[index] = tmp;
     return true;
   });
 
@@ -195,7 +195,7 @@ function moveSubfield6ToTheFront(field) {
   // https://www.loc.gov/marc/bibliographic/ecbdcntf.html says "Subfield $6 is always the first subfield in the field."
   const sf6s = field.subfields.filter(sf => sf.code === '6');
   const others = field.subfields.filter(sf => sf.code !== '6');
-  field.subfields = [...sf6s, ...others]; // eslint-disable-line functional/immutable-data
+  field.subfields = [...sf6s, ...others];
 }
 
 export function sortAdjacentSubfields(field, externalSortOrder = []) {

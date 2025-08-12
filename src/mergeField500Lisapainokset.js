@@ -133,7 +133,6 @@ export function mergeLisapainokset(record) {
     return;
   }
 
-  /* eslint-disable */
   const collapsedArray = extractAllPrintData(relevantFields);
   if (collapsedArray.length === 0) {
     return;
@@ -149,5 +148,4 @@ export function mergeLisapainokset(record) {
       return;
     }
   });
-  /* eslint-enable */
 }

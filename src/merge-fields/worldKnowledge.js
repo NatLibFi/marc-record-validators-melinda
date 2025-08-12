@@ -48,7 +48,7 @@ export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
 
 function normalizePersonalName(originalValue) {
   // Use more readable "Forename Surname" format in comparisons:
-  return originalValue.replace(/^([^,]+), ([^,]+)$/u, '$2 $1'); // eslint-disable-line prefer-named-capture-group
+  return originalValue.replace(/^([^,]+), ([^,]+)$/u, '$2 $1');
 }
 
 const sallittu506a = ['sallittu kaikenikäisille', 'sallittu', 's']; // downcased, without punctuation

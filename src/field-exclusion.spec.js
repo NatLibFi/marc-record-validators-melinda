@@ -318,7 +318,7 @@ describe('field-exclusion', () => {
   describe('#validate: Simple multi tag configuration (spec)', () => {
     const config = [
       {
-        tag: /^(648|650|651|655)$/u // eslint-disable-line prefer-named-capture-group
+        tag: /^(648|650|651|655)$/u
       }
     ];
 
@@ -427,7 +427,7 @@ describe('field-exclusion', () => {
 
   // Simple multi tag configuration
   describe('#validate: Simple multi tag configuration - No object (spec)', () => {
-    const config = [/^(648|650|651|655)$/u]; // eslint-disable-line prefer-named-capture-group
+    const config = [/^(648|650|651|655)$/u];
 
     const recordValid = new MarcRecord({
       leader: 'foo',
@@ -617,8 +617,8 @@ describe('field-exclusion', () => {
   describe('#validate: Complex multi tag configuration (spec)', () => {
     const config = [
       {
-        tag: /^(648|650|651|655)$/u, // eslint-disable-line prefer-named-capture-group
-        subfields: [{code: /^2$/u, value: /^(ysa|musa|allars|cilla)$/u}] // eslint-disable-line prefer-named-capture-group
+        tag: /^(648|650|651|655)$/u,
+        subfields: [{code: /^2$/u, value: /^(ysa|musa|allars|cilla)$/u}]
       }
     ];
 

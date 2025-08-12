@@ -22,8 +22,8 @@ export default function ({endpoint, prefixPattern, fields}) {
     // Filter matching field keys from record.fields
     const subfields = record.fields.reduce((prev, current) => {
       Object.keys(fields).forEach(key => {
-        if (key === current.tag) { // eslint-disable-line functional/no-conditional-statements
-          prev.push(current); // eslint-disable-line functional/immutable-data
+        if (key === current.tag) {
+          prev.push(current);
         }
       });
       return prev;
@@ -32,10 +32,10 @@ export default function ({endpoint, prefixPattern, fields}) {
     // Filter matching objects from subfields
     const matchingTags = [...subfields].reduce((prev, current) => {
       Object.keys(fields).forEach(key => {
-        if (key === current.tag) { // eslint-disable-line functional/no-conditional-statements
+        if (key === current.tag) {
           current.subfields.filter(item => {
-            if (Object.values(fields[key]).filter(value => value === item.code)[0]) { // eslint-disable-line functional/no-conditional-statements
-              prev.push({tag: current.tag, code: item.code, value: item.value}); // eslint-disable-line functional/immutable-data
+            if (Object.values(fields[key]).filter(value => value === item.code)[0]) {
+              prev.push({tag: current.tag, code: item.code, value: item.value});
             }
 
             return prev;
@@ -47,9 +47,9 @@ export default function ({endpoint, prefixPattern, fields}) {
 
     // Matching prefixPattern is removed from object value field.
     matchingTags.forEach(obj => {
-      if (prefixPattern.test(obj.value)) { // eslint-disable-line functional/no-conditional-statements
-        obj.value = obj.value.replace(prefixPattern, ''); // eslint-disable-line functional/immutable-data
-        removedPrefixes.push(obj); // eslint-disable-line functional/immutable-data
+      if (prefixPattern.test(obj.value)) {
+        obj.value = obj.value.replace(prefixPattern, '');
+        removedPrefixes.push(obj);
       }
     });
     return resolveValidation(removedPrefixes);
