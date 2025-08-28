@@ -59,11 +59,11 @@
     "@natlibfi/marc-record-validate": "^8.0.14"
   },
   "devDependencies": {
-    "@babel/cli": "^7.28.0",
-    "@babel/core": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
-    "@babel/register": "^7.27.1",
-    "@babel/runtime": "^7.28.2",
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.3",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/register": "^7.28.3",
+    "@babel/runtime": "^7.28.3",
     "@natlibfi/fixugen": "^2.0.15",
     "@natlibfi/fixura": "^3.0.14",
     "babel-plugin-istanbul": "^7.0.0",
