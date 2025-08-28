@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './ending-whitespace';
 import {READERS} from '@natlibfi/fixura';
