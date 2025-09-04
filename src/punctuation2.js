@@ -9,10 +9,10 @@
 * NOTE #3: As of 2023-06-05 control subfields ($0...$9) are obsolete. Don't use them in rules.
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
-import {validateSingleField} from './ending-punctuation';
-import {fieldGetUnambiguousTag} from './subfield6Utils';
+import {validateSingleField} from './ending-punctuation.js';
+import {fieldGetUnambiguousTag} from './subfield6Utils.js';
 //import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
+import {fieldToString, nvdebug} from './utils.js';
 import clone from 'clone';
 
 //const debug = createDebugLogger('debug/punctuation2');
@@ -27,7 +27,7 @@ export default function () {
   function fix(record) {
     nvdebug(`${descriptionString}: fixer`);
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fieldFixPunctuation(f)); // eslint-disable-line array-callback-return
+    record.fields.forEach(f => fieldFixPunctuation(f));
     return res;
   }
 

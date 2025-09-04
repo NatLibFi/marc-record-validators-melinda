@@ -1,7 +1,7 @@
 import assert from 'node:assert';
-//import chaiAsPromised from 'chai-as-promised';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/subfield-exclusion';
+import validatorFactory from '../src/subfield-exclusion.js';
+import {describe, it} from 'node:test';
 
 //chai.use(chaiAsPromised);
 
@@ -17,12 +17,9 @@ describe('subfield-exclusion', () => {
       ];
 
       const validator = await validatorFactory(config);
-      expect(validator)
-        .to.be.an('object')
-        .that.has.any.keys('description', 'validate');
-
-      expect(validator.description).to.be.a('string');
-      expect(validator.validate).to.be.a('function');
+      assert.equal(typeof validator, 'object');
+      assert.equal(typeof validator.description, 'string');
+      assert.equal(typeof validator.validate, 'function');
     });
 
     it('Creates a validator from complex config', async () => {
@@ -40,12 +37,9 @@ describe('subfield-exclusion', () => {
       ];
 
       const validator = await validatorFactory(config);
-      expect(validator)
-        .to.be.an('object')
-        .that.has.any.keys('description', 'validate');
-
-      expect(validator.description).to.be.a('string');
-      expect(validator.validate).to.be.a('function');
+      assert.equal(typeof validator, 'object');
+      assert.equal(typeof validator.description, 'string');
+      assert.equal(typeof validator.validate, 'function');
     });
 
     it('Fails to create a validator from invalid config - subfields missing', () => {
@@ -58,7 +52,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: subfields');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: subfields');
       }
     });
 
@@ -73,7 +67,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
       }
     });
 
@@ -86,7 +80,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration array not provided');
+        assert(error).to.be.an('error').with.property('message', 'Configuration array not provided');
       }
     });
 
@@ -101,7 +95,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: code');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: code');
       }
     });
 
@@ -116,7 +110,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: value');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: value');
       }
     });
 
@@ -132,7 +126,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: tag');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: tag');
       }
     });
 
@@ -150,7 +144,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/,/^(?!FENNI<KEEP>).*$/ not object');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/,/^(?!FENNI<KEEP>).*$/ not object');
       }
     });
 
@@ -169,7 +163,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/ not object');
+        console.log(typeof error);
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/ not object');
       }
     });
 
@@ -187,7 +182,7 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: code');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: code');
       }
     });
 
@@ -206,7 +201,12 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: unidentified');
+        console.log("ERROR FLYNN");
+        console.log(typeof error);
+        console.log(JSON.stringify(error));
+        assert.equal(typeof error, 'error');
+        assert.partialDeepStrictEqual(error, {message: 'Configuration not valid - unidentified value: unidentified666'});
+        //assert(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: unidentified');
       }
     });
   });
@@ -277,19 +277,20 @@ describe('subfield-exclusion', () => {
     it('Finds the record valid (spec)', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
-      expect(result).to.eql({valid: true, message: []});
+      assert.deepEqual(result, {valid: true, message: []});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalid);
-      expect(result).to.eql({valid: false, message: ['Subfield $100$$4should be excluded']});
+      assert.deepEqual(result, {valid: false, message: ['Subfield $100$$4should be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
-      expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      //assert(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalid.equalsTo(recordInvalidFixed), true);
     });
   });
 
@@ -334,13 +335,14 @@ describe('subfield-exclusion', () => {
     it('Finds the record with 041$a zxx invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordOriginal);
-      expect(result).to.eql({valid: false, message: ['Subfield $041$$ashould be excluded']});
+      assert.deepEqual(result, {valid: false, message: ['Subfield $041$$ashould be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordOriginal);
-      expect(recordOriginal.equalsTo(recordModified)).to.eql(true);
+      //assert(recordOriginal.equalsTo(recordModified)).to.eql(true);
+      assert.equal(recordOriginal.equalsTo(recordModified), true);
     });
   });
 
@@ -411,19 +413,20 @@ describe('subfield-exclusion', () => {
     it('Finds the record valid (spec)', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
-      expect(result).to.eql({valid: true, message: []});
+      assert.deepEqual(result, {valid: true, message: []});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalid);
-      expect(result).to.eql({valid: false, message: ['Subfield $210$$2should be excluded']});
+      assert.deepEqual(result, {valid: false, message: ['Subfield $210$$2should be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
-      expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      // assert(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert.equal(recordInvalid.equalsTo(recordInvalidFixed), true);
     });
   });
 
@@ -496,19 +499,20 @@ describe('subfield-exclusion', () => {
     it('Finds the record valid - Ind1&Ind2', async () => {
       const validator = await validatorFactory(configInd);
       const result = await validator.validate(recordValid);
-      expect(result).to.eql({valid: true, message: []});
+      assert.deepEqual(result, {valid: true, message: []});
     });
 
     it('Finds the record invalid - Ind', async () => {
       const validator = await validatorFactory(configInd);
       const result = await validator.validate(recordIndInvalid);
-      expect(result).to.eql({valid: false, message: ['Subfield $500$$2should be excluded']});
+      assert.deepEqual(result, {valid: false, message: ['Subfield $500$$2should be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(configInd);
       await validator.fix(recordIndInvalid);
-      expect(recordIndInvalid.equalsTo(recordIndInvalidFixed)).to.eql(true);
+      // assert(recordIndInvalid.equalsTo(recordIndInvalidFixed)).to.eql(true);
+      assert.equal(recordIndInvalid.equalsTo(recordIndInvalidFixed), true);
     });
   });
 });

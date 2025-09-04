@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils';
-import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from './subfield6Utils';
+import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils.js';
+import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from './subfield6Utils.js';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -45,12 +45,12 @@ export function recordFixSubfield6OccurrenceNumbers(record) {
   const fieldsContainingSubfield6 = record.fields.filter(field => fieldHasSubfield(field, '6'));
   const orphanedFields = getOrphanedFields(fieldsContainingSubfield6);
 
-  orphanedFields.forEach(field => fieldFixOrphanedSubfields(field)); // eslint-disable-line array-callback-return
+  orphanedFields.forEach(field => fieldFixOrphanedSubfields(field));
 
   function fieldFixOrphanedSubfields(field) {
     // Field 880: orphaned $6 subfields: occurrence number is changed to '00':
     if (field.tag === '880') {
-      field.subfields.forEach(sf => field880FixOrphanedSubfield(sf)); // eslint-disable-line array-callback-return
+      field.subfields.forEach(sf => field880FixOrphanedSubfield(sf));
       return;
     }
     // Non-880 fields get their orphaned $6s removed:
@@ -78,7 +78,7 @@ function findPairForSubfield6OccurrenceNumber(subfield6, myTag, candPairFields) 
     return undefined;
   }
   nvdebug(`LOOKING FOR PAIR: ${myTag} ${subfieldToString(subfield6)}`);
-  candPairFields.forEach(field => fieldToString(field)); // eslint-disable-line array-callback-return
+  candPairFields.forEach(field => fieldToString(field));
 
   // Only valid $6 value that fails to map to another field is iffy...
   const referredTag = subfield6.value.substring(0, 3);

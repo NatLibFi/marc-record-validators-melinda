@@ -1,21 +1,15 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/unicode-decomposition';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
+import validatorFactory from '../src/unicode-decomposition.js';
+import {describe, it} from 'node:test';
 
 describe('unicode-decomposition', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    expect(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   describe('#validate', () => {
@@ -35,7 +29,7 @@ describe('unicode-decomposition', () => {
         ]
       });
       const result = await validator.validate(record);
-      expect(result).to.eql({valid: true, messages: []});
+      assert.deepEqual(result, {valid: true, messages: []});
     });
 
     it('Finds the record invalid', async () => {
@@ -57,7 +51,7 @@ describe('unicode-decomposition', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['The following subfields are not properly decomposed: a']});
+      assert.deepEqual(result, {valid: false, messages: ['The following subfields are not properly decomposed: a']});
     });
 
     describe('#fix', () => {
@@ -100,8 +94,8 @@ describe('unicode-decomposition', () => {
         };
         await validator.fix(record);
 
-        expect(recordOriginal).to.not.eql(record);
-        expect(record.fields).to.eql([fieldModified]);
+        assert.notDeepEqual(recordOriginal, record);
+        assert.deepEqual(record.fields, [fieldModified]);
       });
     });
   });

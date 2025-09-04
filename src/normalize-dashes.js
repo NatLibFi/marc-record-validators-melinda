@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString, isControlSubfieldCode, nvdebug} from './utils';
+import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -54,7 +54,7 @@ function fixDashes(field) {
 
   nvdebug(`Dashing ${fieldToString(field)}`);
 
-  field.subfields.forEach(sf => subfieldFixDashes(sf)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => subfieldFixDashes(sf));
 
   return field;
 

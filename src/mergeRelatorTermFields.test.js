@@ -1,20 +1,22 @@
-import assert from 'node:assert';
+//import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './mergeRelatorTermFields';
+import validatorFactory from './mergeRelatorTermFields.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'mergeRelatorTermFields'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'mergeRelatorTermFields'],
   useMetadataFile: true,
   recurse: true,
   fixura: {
     reader: READERS.JSON
   },
-  mocha: {
-    before: () => testValidatorFactory()
+  hooks: {
+    before: async () => {
+      testValidatorFactory();
+    }
   }
 });
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/mergeRelatorTermFields:test');
@@ -22,12 +24,12 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/mergeR
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  expect(validator)
+  assert(validator)
     .to.be.an('object')
     .that.has.any.keys('description', 'validate');
 
-  expect(validator.description).to.be.a('string');
-  expect(validator.validate).to.be.a('function');
+  assert(validator.description).to.be.a('string');
+  assert(validator.validate).to.be.a('function');
 }
 
 async function callback({getFixture, enabled = true, fix = false}) {
@@ -43,10 +45,10 @@ async function callback({getFixture, enabled = true, fix = false}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    expect(result).to.eql(expectedResult);
+    assert(result).to.eql(expectedResult);
     return;
   }
 
   await validator.fix(record);
-  expect(record).to.eql(expectedResult);
+  assert(record).to.eql(expectedResult);
 }

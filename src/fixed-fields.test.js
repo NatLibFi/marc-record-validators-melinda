@@ -1,28 +1,23 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/fixed-fields';
+import validatorFactory from '../src/fixed-fields.js';
+import {describe, it} from 'node:test';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 describe('fixed-fields: language', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory([]);
 
-    expect(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   it('Throws an error when configuration is not provided', () => {
     try {
       validatorFactory();
     } catch (error) {
-      expect(error).to.be.an('error').with.property('message', 'No configuration provided');
+      assert(error).to.be.an('error').with.property('message', 'No configuration provided');
     }
   });
 
@@ -52,7 +47,7 @@ describe('fixed-fields: language', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.be.an('object').and.to.include({valid: true});
+      assert(result).to.be.an('object').and.to.include({valid: true});
     });
 
     it('Finds the record invalid', async () => {
@@ -86,7 +81,7 @@ describe('fixed-fields: language', () => {
 
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: [
+      assert.deepEqual(result, {valid: false, messages: [
         'Leader has invalid values at positions: 3 (Rule index 0)',
         'Field FOO has invalid values at positions: 0 (Rule index 0)',
         'Field BAR has invalid values at positions: 1 (Rule index 1)',

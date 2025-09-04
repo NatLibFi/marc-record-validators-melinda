@@ -1,28 +1,27 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import {describe, it} from 'node:test';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/fields-present';
+import validatorFactory from '../src/fields-present.js';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+
 
 describe('fields-present', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory([/^500$/u, /^400$/u]);
 
-    expect(validator)
+    assert(validator)
       .to.be.an('object')
       .that.has.any.keys('description', 'validate');
 
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert(validator.description).to.be.a('string');
+    assert(validator.validate).to.be.a('function');
   });
 
   it('Throws an error when tagPatterns not provided', () => {
     try {
       validatorFactory();
     } catch (error) {
-      expect(error).to.be.an('error').with.property('message', 'No tag pattern array provided');
+      assert(error).to.be.an('error').with.property('message', 'No tag pattern array provided');
     }
   });
 
@@ -48,7 +47,7 @@ describe('fields-present', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: []});
+      assert(result).to.eql({valid: true, messages: []});
     });
     it('Finds the record valid', async () => {
       const tagPatterns = [/^(020|022|024)$/u];
@@ -71,7 +70,7 @@ describe('fields-present', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: []});
+      assert(result).to.eql({valid: true, messages: []});
     });
     it('Finds the record invalid', async () => {
       const tagPatterns = [/^5..$/u, /^FOO$/u];
@@ -100,7 +99,7 @@ describe('fields-present', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['The following tag patterns are not present in the record tag field:   /^FOO$/u']});
+      assert(result).to.eql({valid: false, messages: ['The following tag patterns are not present in the record tag field:   /^FOO$/u']});
     });
   });
 });

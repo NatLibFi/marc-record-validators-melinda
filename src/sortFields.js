@@ -2,10 +2,10 @@
 
 import clone from 'clone';
 //import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString} from './utils';
-import {sortByTag, sortAlphabetically, fieldOrderComparator as globalFieldOrderComparator} from '@natlibfi/marc-record/dist/marcFieldSort';
-import {isValidSubfield8} from './subfield8Utils';
-import {fieldGetUnambiguousOccurrenceNumber, fieldGetUnambiguousTag} from './subfield6Utils';
+import {fieldHasSubfield, fieldToString} from './utils.js';
+import {sortByTag, sortAlphabetically, fieldOrderComparator as globalFieldOrderComparator} from '@natlibfi/marc-record/dist/marcFieldSort.js';
+import {isValidSubfield8} from './subfield8Utils.js';
+import {fieldGetUnambiguousOccurrenceNumber, fieldGetUnambiguousTag} from './subfield6Utils.js';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortFields');
 //const debugData = debug.extend('data');

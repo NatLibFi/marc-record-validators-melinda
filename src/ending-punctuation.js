@@ -27,7 +27,7 @@
 */
 
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
-import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf';
+import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');

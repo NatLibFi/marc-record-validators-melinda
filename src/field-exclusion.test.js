@@ -1,10 +1,11 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+//import chai from 'chai';
+//import chaiAsPromised from 'chai-as-promised';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/field-exclusion';
+import validatorFactory from '../src/field-exclusion.js';
+import {describe, it} from 'node:test';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+//const {expect} = chai;
+//chai.use(chaiAsPromised);
 
 // Factory validation
 describe('field-exclusion', () => {
@@ -13,12 +14,12 @@ describe('field-exclusion', () => {
       const config = [/^500$/u];
 
       const validator = await validatorFactory(config);
-      expect(validator)
+      assert(validator)
         .to.be.an('object')
         .that.has.any.keys('description', 'validate');
 
-      expect(validator.description).to.be.a('string');
-      expect(validator.validate).to.be.a('function');
+      assert(validator.description).to.be.a('string');
+      assert(validator.validate).to.be.a('function');
     });
 
     it('Creates a validator from complex config', async () => {
@@ -30,12 +31,12 @@ describe('field-exclusion', () => {
       ];
 
       const validator = await validatorFactory(config);
-      expect(validator)
+      assert(validator)
         .to.be.an('object')
         .that.has.any.keys('description', 'validate');
 
-      expect(validator.description).to.be.a('string');
-      expect(validator.validate).to.be.a('function');
+      assert(validator.description).to.be.a('string');
+      assert(validator.validate).to.be.a('function');
     });
 
     it('Fails to create a validator from invalid config - tag', async () => {
@@ -49,7 +50,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
       }
     });
 
@@ -62,7 +63,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration array not provided');
+        assert(error).to.be.an('error').with.property('message', 'Configuration array not provided');
       }
     });
 
@@ -77,7 +78,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: code');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: code');
       }
     });
 
@@ -92,7 +93,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: value');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: value');
       }
     });
 
@@ -109,7 +110,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - excluded element');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - excluded element');
       }
     });
 
@@ -124,7 +125,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: tag');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: tag');
       }
     });
 
@@ -142,7 +143,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/,/^(?!FENNI<KEEP>).*$/ not object');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/,/^(?!FENNI<KEEP>).*$/ not object');
       }
     });
 
@@ -161,7 +162,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/ not object');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/ not object');
       }
     });
 
@@ -179,7 +180,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: code');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: code');
       }
     });
 
@@ -198,7 +199,7 @@ describe('field-exclusion', () => {
       try {
         await validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: unidentified');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: unidentified');
       }
     });
   });
@@ -286,31 +287,31 @@ describe('field-exclusion', () => {
     it('Finds the record valid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordValid);
-      expect({valid, message}).to.eql({valid: true, message: []});
+      assert({valid, message}).to.eql({valid: true, message: []});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalid);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
     });
 
     it('Finds the record invalid - double', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalidDouble);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded', 'Field $500 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded', 'Field $500 should be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
-      expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
     });
 
     it('Repairs invalid record - double', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalidDouble);
-      expect(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
     });
   });
 
@@ -397,31 +398,31 @@ describe('field-exclusion', () => {
     it('Finds the record valid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordValid);
-      expect({valid, message}).to.eql({valid: true, message: []});
+      assert({valid, message}).to.eql({valid: true, message: []});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalid);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded']});
     });
 
     it('Finds the record invalid - double', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalidDouble);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded', 'Field $650 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded', 'Field $650 should be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
-      expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
     });
 
     it('Repairs invalid record - double', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalidDouble);
-      expect(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
     });
   });
 
@@ -504,31 +505,31 @@ describe('field-exclusion', () => {
     it('Finds the record valid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordValid);
-      expect({valid, message}).to.eql({valid: true, message: []});
+      assert({valid, message}).to.eql({valid: true, message: []});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalid);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded']});
     });
 
     it('Finds the record invalid - double', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalidDouble);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded', 'Field $650 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $648 should be excluded', 'Field $650 should be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
-      expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
     });
 
     it('Repairs invalid record - double', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalidDouble);
-      expect(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalidDouble.equalsTo(recordInvalidFixed)).to.eql(true);
     });
   });
 
@@ -597,19 +598,19 @@ describe('field-exclusion', () => {
     it('Finds the record valid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordValid);
-      expect({valid, message}).to.eql({valid: true, message: []});
+      assert({valid, message}).to.eql({valid: true, message: []});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalid);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
-      expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
     });
   });
 
@@ -714,19 +715,19 @@ describe('field-exclusion', () => {
     it('Finds the record valid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordValid);
-      expect({valid, message}).to.eql({valid: true, message: []});
+      assert({valid, message}).to.eql({valid: true, message: []});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalid);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $650 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $650 should be excluded']});
     });
 
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalidMulti);
-      expect({valid, message}).to.eql({valid: false, message: [
+      assert({valid, message}).to.eql({valid: false, message: [
         'Field $648 should be excluded',
         'Field $650 should be excluded',
         'Field $650 should be excluded',
@@ -738,13 +739,13 @@ describe('field-exclusion', () => {
     it('Repairs invalid multi record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalidMulti);
-      expect(recordInvalidMulti.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalidMulti.equalsTo(recordInvalidFixed)).to.eql(true);
     });
 
     it('Repairs invalid record', async () => {
       const validator = await validatorFactory(config);
       await validator.fix(recordInvalid);
-      expect(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
     });
   });
 
@@ -830,37 +831,37 @@ describe('field-exclusion', () => {
     it('Finds the record valid - Ind1&Ind2', async () => {
       const validator = await validatorFactory(configInd);
       const {valid, message} = await validator.validate(recordValid);
-      expect({valid, message}).to.eql({valid: true, message: []});
+      assert({valid, message}).to.eql({valid: true, message: []});
     });
 
     it('Finds the record valid - Value', async () => {
       const validator = await validatorFactory(configValue);
       const {valid, message} = await validator.validate(recordValid);
-      expect({valid, message}).to.eql({valid: true, message: []});
+      assert({valid, message}).to.eql({valid: true, message: []});
     });
 
     it('Finds the record invalid - Ind', async () => {
       const validator = await validatorFactory(configInd);
       const {valid, message} = await validator.validate(recordIndInvalid);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
     });
 
     it('Finds the record invalid - Value', async () => {
       const validator = await validatorFactory(configValue);
       const {valid, message} = await validator.validate(recordValueInvalid);
-      expect({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $500 should be excluded']});
     });
 
     it('Repairs invalid record - Ind', async () => {
       const validator = await validatorFactory(configInd);
       await validator.fix(recordIndInvalid);
-      expect(recordIndInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordIndInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
     });
 
     it('Repairs invalid record - Value', async () => {
       const validator = await validatorFactory(configValue);
       await validator.fix(recordValueInvalid);
-      expect(recordValueInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
+      assert(recordValueInvalid.equalsTo(recordInvalidFixed)).to.eql(true);
     });
   });
 
@@ -888,7 +889,7 @@ describe('field-exclusion', () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(record);
 
-      expect({valid, message}).to.eql({valid: false, message: ['Field $041 should be excluded']});
+      assert({valid, message}).to.eql({valid: false, message: ['Field $041 should be excluded']});
     });
   });
 });

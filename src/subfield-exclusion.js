@@ -146,7 +146,7 @@ export default function (config) {
               }
             });
 
-            excluded.forEach(sf => record.removeSubfield(sf, element)); // eslint-disable-line array-callback-return
+            excluded.forEach(sf => record.removeSubfield(sf, element));
             // If no subfields remains, the whole field will be removed as well:
             if (element.subfields && element.subfields.length === 0) {
               record.removeField(element);

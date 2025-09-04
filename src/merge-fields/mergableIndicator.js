@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from '../utils';
+import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from '../utils.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 

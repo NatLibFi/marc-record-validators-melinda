@@ -1,17 +1,15 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/isbn-issn';
+import validatorFactory from '../src/isbn-issn.js';
+import {describe, it} from 'node:test';
 
 describe('isbn-issn', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    expect(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   describe('#validate', () => {
@@ -42,7 +40,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true});
+      assert.deepEqual(result, {valid: true});
     });
 
     it('Finds the record invalid', async () => {
@@ -71,7 +69,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({
+      assert.deepEqual(result, {
         valid: false, messages: [
           'ISBN (foo) is not valid',
           'ISSN (bar) is not valid'
@@ -93,7 +91,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({
+      assert.deepEqual(result, {
         valid: true
       });
     });
@@ -112,7 +110,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({
+      assert.deepEqual(result, {
         valid: false, messages: ['ISSN (undefined) is not valid']
       });
     });
@@ -131,7 +129,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['ISBN (978-600-377-017-1 (nid.)) is not valid']});
+      assert.deepEqual(result, {valid: false, messages: ['ISBN (978-600-377-017-1 (nid.)) is not valid']});
     });
 
     it('Finds the record invalid (ISSN in \'l\'-subfield)', async () => {
@@ -154,7 +152,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({
+      assert.deepEqual(result, {
         valid: false, messages: [
           'ISBN (foo) is not valid',
           'ISSN (bar) is not valid'
@@ -188,7 +186,7 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: [
+      assert.deepEqual(result, {valid: false, messages: [
         'ISBN (9789519155470) is not valid',
         'ISBN (9068-31-372-X) is not valid',
         'ISBN (386006004X) is not valid'
@@ -220,7 +218,7 @@ describe('isbn-issn', () => {
 
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'foo'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: 'crappy val'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'z', value: '97895234216609'}]},
@@ -241,7 +239,7 @@ describe('isbn-issn', () => {
 
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '022', ind1: ' ', ind2: ' ', subfields: [{code: 'y', value: 'foo'}]
         }
@@ -261,7 +259,7 @@ describe('isbn-issn', () => {
 
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '022', ind1: ' ', ind2: ' ', subfields: [{code: 'y', value: 'foo'}]
         }
@@ -288,7 +286,7 @@ describe('isbn-issn', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         // NB! Initial space does not need to be removed. It's crap, but not this fixer's crap.
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: ' 9786003770171'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '9786003770171'}, {code: 'q', value: '(nidottu)'}]}
@@ -313,7 +311,7 @@ describe('isbn-issn', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '020',
           ind1: ' ',
@@ -353,7 +351,7 @@ describe('isbn-issn', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {tag: '005', value: 'whatever'},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'q', value: 'sidottu'}]},
         {tag: '024', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: ' 9786003770171'}]}
@@ -392,7 +390,7 @@ describe('isbn-issn', () => {
 
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert(record.fields).to.eql([
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-9916-605-32-5'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '91-7153-086-X'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '90-6831-372-X'}]}, // corrected hyphens

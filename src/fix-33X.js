@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './field33XUtils';
+import {fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
+import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './field33XUtils.js';
 
 const description = 'Fix non-RDA 33X field(s)';
 
@@ -376,7 +376,7 @@ export default function () {
     nvdebug(`FIX ${description}...`);
     const catLang = getCatalogingLanguage(record) || 'fin';
     const fields = getRelevantFields(record);
-    fields.forEach(f => fixField(f, catLang)); // eslint-disable-line array-callback-return
+    fields.forEach(f => fixField(f, catLang));
     nvdebug(` GOT ${fields.length}...`);
     // FFS: we actually need newFields array here! Videogame, for example, might be
     // 336 ## ‡a kaksiulotteinen liikkuva kuva ‡b tdi ‡2 rdacontent
@@ -395,7 +395,7 @@ export default function () {
     }
     const originalStrings = fields.map(f => fieldToString(f));
     const clonedFields = fields.map(f => clone(f));
-    clonedFields.forEach(f => fixField(f, catLang)); // eslint-disable-line array-callback-return
+    clonedFields.forEach(f => fixField(f, catLang));
     const modifiedStrings = clonedFields.map(f => fieldToString(f));
 
     const changes = originalStrings.map((str, i) => `'${str}' => '${modifiedStrings[i]}'`);

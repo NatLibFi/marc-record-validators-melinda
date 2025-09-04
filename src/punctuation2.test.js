@@ -1,20 +1,22 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './punctuation2';
+import validatorFactory from '../src/punctuation2.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'punctuation2'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'punctuation2'],
   useMetadataFile: true,
   recurse: false,
   fixura: {
     reader: READERS.JSON
   },
-  mocha: {
-    before: () => testValidatorFactory()
+  hooks: {
+    before: async () => {
+      testValidatorFactory();
+    }
   }
 });
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2:test');
@@ -22,12 +24,9 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctu
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  expect(validator)
-    .to.be.an('object')
-    .that.has.any.keys('description', 'validate');
-
-  expect(validator.description).to.be.a('string');
-  expect(validator.validate).to.be.a('function');
+  assert.equal(typeof validator, 'object');
+  assert.equal(typeof validator.description, 'string');
+  assert.equal(typeof validator.validate, 'function');
 }
 
 async function callback({getFixture, enabled = true, fix = false}) {
@@ -43,10 +42,10 @@ async function callback({getFixture, enabled = true, fix = false}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    expect(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  expect(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

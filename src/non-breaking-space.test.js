@@ -1,31 +1,30 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './non-breaking-space';
+import validatorFactory from './non-breaking-space.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'non-breaking-space'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'non-breaking-space'],
   useMetadataFile: true,
   recurse: false,
   fixura: {
     reader: READERS.JSON
   },
-  mocha: {
-    before: () => testValidatorFactory()
+  hooks: {
+    before: async () => {
+      testValidatorFactory();
+    }
   }
 });
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  expect(validator)
-    .to.be.an('object')
-    .that.has.any.keys('description', 'validate');
-
-  expect(validator.description).to.be.a('string');
-  expect(validator.validate).to.be.a('function');
+  assert.equal(validator, 'object');
+  assert.equal(validator.description, 'string');
+  assert.equal(validator.validate, 'function');
 }
 
 async function callback({getFixture, fix = false}) {
@@ -35,10 +34,10 @@ async function callback({getFixture, fix = false}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    expect(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  expect(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

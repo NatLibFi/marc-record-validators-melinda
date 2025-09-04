@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/empty-fields';
+import validatorFactory from '../src/empty-fields.js';
+import {describe, it} from 'node:test';
 
 before(() => {
   MarcRecord.setValidationOptions({subfields: false, subfieldValues: false});
@@ -14,12 +15,9 @@ describe('empty-fields', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    expect(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   describe('#validate', () => {
@@ -38,7 +36,7 @@ describe('empty-fields', () => {
         ]
       });
       const result = await validator.validate(record);
-      expect(result).to.to.have.property('valid', true);
+      assert.equal(result.valid, true);
     });
 
     it('Finds a missing subfield value', async () => {
@@ -57,7 +55,7 @@ describe('empty-fields', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['Field 245 has missing subfield values: a']});
+      assert.deepEqual(result, {valid: false, messages: ['Field 245 has missing subfield values: a']});
     });
 
     it('Finds an empty subfield array', async () => {
@@ -72,7 +70,7 @@ describe('empty-fields', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['Field 500 has no subfields']});
+      assert.deepEqual(result, {valid: false, messages: ['Field 500 has no subfields']});
     });
   });
 
@@ -97,7 +95,7 @@ describe('empty-fields', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.equal(record, [
         {
           tag: '245',
           ind1: ' ',
@@ -128,7 +126,7 @@ describe('empty-fields', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.equal(record.fields, [
         {
           tag: '001',
           value: '1234567'

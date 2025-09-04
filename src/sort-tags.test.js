@@ -1,17 +1,18 @@
-import assert from 'node:assert';
+//import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/sort-tags';
+import {describe, it} from 'node:test';
 
 describe('sort-tags', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    expect(validator)
+    assert(validator)
       .to.be.an('object')
       .that.has.any.keys('description', 'validate');
 
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert(validator.description).to.be.a('string');
+    assert(validator.validate).to.be.a('function');
   });
 
   describe('#validate', () => {
@@ -53,7 +54,7 @@ describe('sort-tags', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: []});
+      assert(result).to.eql({valid: true, messages: []});
     });
     it('Finds the record invalid', async () => {
       const validator = await validatorFactory();
@@ -92,7 +93,7 @@ describe('sort-tags', () => {
         ]
       });
       const result = await validator.validate(record);
-      expect(result).to.eql({valid: false, messages: ['Fields are in incorrect order']});
+      assert(result).to.eql({valid: false, messages: ['Fields are in incorrect order']});
     });
   });
 
@@ -182,7 +183,7 @@ describe('sort-tags', () => {
         ]
       });
       await validator.fix(record);
-      expect(record.fields).to.eql([
+      assert(record.fields).to.eql([
         {
           tag: '001',
           value: '100'

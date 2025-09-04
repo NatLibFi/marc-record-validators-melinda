@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import {isElectronicMaterial} from './utils';
+import {isElectronicMaterial} from './utils.js';
 import createDebugLogger from 'debug';
 
 const URN_GENERATOR_URL = 'https://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';

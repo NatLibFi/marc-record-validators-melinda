@@ -1,6 +1,6 @@
 import clone from 'clone';
-import {fieldFixPunctuation} from './punctuation2';
-import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils';
+import {fieldFixPunctuation} from './punctuation2.js';
+import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
 import createDebugLogger from 'debug';
 
 // Currently mainly translates X00$e values, so that we don't have "$a Name, $e kirjoittaja, $e författare.".
@@ -157,7 +157,7 @@ function fieldHandleRelatorTermAbbreviations(field, language) {
   }
 
   const originalValue = fieldToString(field);
-  field.subfields.forEach(sf => subfieldHandleRelatorTermAbbreviation(sf, language)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => subfieldHandleRelatorTermAbbreviation(sf, language));
   const modifiedValue = fieldToString(field);
   if (modifiedValue === originalValue) {
     return;
@@ -222,7 +222,7 @@ export function fieldFixRelatorTerms(field, fromLanguage, toLanguage) {
   }
   fieldHandleRelatorTermAbbreviations(field, fromLanguage);
 
-  field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage));
 }
 
 
@@ -230,7 +230,7 @@ export function recordFixRelatorTerms(record, defaultToLanguage = null, defaultF
   const fromLanguage = defaultFromLanguage ? defaultFromLanguage : getCatalogingLanguage(record);
   const toLanguage = defaultToLanguage ? defaultToLanguage : getCatalogingLanguage(record);
 
-  record.fields.forEach(field => translateField(field, fromLanguage, toLanguage)); // eslint-disable-line array-callback-return
+  record.fields.forEach(field => translateField(field, fromLanguage, toLanguage));
 
   function translateField(field, from, to) {
     fieldFixRelatorTerms(field, from, to);

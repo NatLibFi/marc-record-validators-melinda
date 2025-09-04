@@ -173,7 +173,7 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
   function fix(record) {
     getRelevantFields(record).forEach(field => {
       if (field.tag === '020') {
-        field.subfields.forEach(subfield => fixField020Subfield(field, subfield)); // eslint-disable-line array-callback-return
+        field.subfields.forEach(subfield => fixField020Subfield(field, subfield));
         return;
       }
       // 022 ISSN:

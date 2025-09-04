@@ -8,7 +8,7 @@
 //import createDebugLogger from 'debug';
 //import fs from 'fs';
 //import path from 'path';
-import {mergeField} from './mergeField';
+import {mergeField} from './mergeField.js';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
 

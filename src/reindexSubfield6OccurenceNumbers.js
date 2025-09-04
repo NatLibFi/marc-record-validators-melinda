@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
+import {fieldHasSubfield, fieldToString, nvdebug} from './utils.js';
 import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, fieldResetOccurrenceNumber, intToOccurrenceNumberString, isValidSubfield6,
   recordGetMaxSubfield6OccurrenceNumberAsInteger,
-  subfield6GetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger, subfield6ResetOccurrenceNumber} from './subfield6Utils';
+  subfield6GetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger, subfield6ResetOccurrenceNumber} from './subfield6Utils.js';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -91,7 +91,7 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
     return;
   }
   nvdebug(`Disambiguate occurrence numbers (N=${sharedOccurrenceNumberFields.length}) in...`, debug);
-  sharedOccurrenceNumberFields.forEach(field => disambiguateOccurrenceNumber(field)); // eslint-disable-line array-callback-return
+  sharedOccurrenceNumberFields.forEach(field => disambiguateOccurrenceNumber(field));
 
   function disambiguateable(field) {
     if (field.tag === '880') { // Not needed, already filtered...
@@ -131,7 +131,7 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
     nvdebug(` Reindex '${fieldToString(field)}' occurrence number and it's ${pairedFields.length} pair(s) using '${newOccurrenceNumber}'`, debug);
 
     fieldResetOccurrenceNumber(field, newOccurrenceNumber, occurrenceNumber);
-    pairedFields.forEach(pairedField => fieldResetOccurrenceNumber(pairedField, newOccurrenceNumber, occurrenceNumber)); // eslint-disable-line array-callback-return
+    pairedFields.forEach(pairedField => fieldResetOccurrenceNumber(pairedField, newOccurrenceNumber, occurrenceNumber));
 
   }
 
@@ -139,7 +139,6 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
 }
 function recordGetNumberOfUniqueSubfield6OccurrenceNumbers(record) {
   // Calculates the number of used different occurrence numbers
-  /* eslint-disable */
   let indexArray = [];
   record.fields.forEach(field => gatherFieldData(field));
 
@@ -161,8 +160,7 @@ function recordGetNumberOfUniqueSubfield6OccurrenceNumbers(record) {
     indexArray[i] = 1;
   }
   let n = 0;
-  indexArray.forEach(elem => n+= elem); 
-  /* eslint-enable */
+  indexArray.forEach(elem => n+= elem);
   return n;
 }
 

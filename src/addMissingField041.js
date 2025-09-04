@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
+import {fieldToString, nvdebug} from './utils.js';
 
 const description = 'Add missing 041 field based on 008/35-37';
 

@@ -1,32 +1,31 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './cyrillux';
+import validatorFactory from '../src/cyrillux.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'cyrillux'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'cyrillux'],
   useMetadataFile: true,
   recurse: false,
   fixura: {
     reader: READERS.JSON
   },
-  mocha: {
-    before: () => testValidatorFactory()
+  hooks: {
+    before: async () => {
+      testValidatorFactory();
+    }
   }
 });
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  expect(validator)
-    .to.be.an('object')
-    .that.has.any.keys('description', 'validate');
-
-  expect(validator.description).to.be.a('string');
-  expect(validator.validate).to.be.a('function');
-  expect(validator.fix).to.be.a('function');
+  assert.equal(typeof validator, 'object');
+  assert.equal(typeof validator.description, 'string');
+  assert.equal(typeof validator.validate, 'function');
+  assert.equal(typeof validator.fix, 'function');
 }
 
 async function callback({getFixture, fix = false, config = {}}) {
@@ -37,10 +36,10 @@ async function callback({getFixture, fix = false, config = {}}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    expect(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  expect(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

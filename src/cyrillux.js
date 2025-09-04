@@ -1,15 +1,14 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldHasSubfield, fieldToString, fieldsToString, isControlSubfieldCode, nvdebug} from './utils';
-import * as iso9 from 'iso9_1995';
-import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils';
-
 import XRegExp from 'xregexp';
+import * as iso9 from '@natlibfi/iso9-1995';
 import * as sfs4900 from '@natlibfi/sfs-4900';
-import {default as sortFields} from './sortFields';
-import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers';
-import {fieldStripPunctuation} from './punctuation2';
-import {getLanguageCode} from './addMissingField041';
+import {fieldHasSubfield, fieldToString, fieldsToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils.js';
+import {default as sortFields} from './sortFields.js';
+import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers.js';
+import {fieldStripPunctuation} from './punctuation2.js';
+import {getLanguageCode} from './addMissingField041.js';
 
 const iso9Trans = 'ISO9 <TRANS>';
 const cyrillicTrans = 'CYRILLIC <TRANS>';

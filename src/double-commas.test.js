@@ -1,17 +1,15 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/double-commas';
+import validatorFactory from '../src/double-commas.js';
+import {describe, it} from 'node:test';
 
 describe('double-commas', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    expect(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   describe('#validate', () => {
@@ -22,7 +20,7 @@ describe('double-commas', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true});
+      assert.deepEqual(result, {valid: true});
     });
     it('Finds the record invalid', async () => {
       const validator = await validatorFactory();
@@ -31,7 +29,7 @@ describe('double-commas', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
   });
 
@@ -43,7 +41,7 @@ describe('double-commas', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '700',
           ind1: ' ',

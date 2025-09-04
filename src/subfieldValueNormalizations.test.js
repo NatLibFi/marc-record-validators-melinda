@@ -1,33 +1,33 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './subfieldValueNormalizations';
+import validatorFactory from './subfieldValueNormalizations.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'normalize-subfield-value'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'normalize-subfield-value'],
   useMetadataFile: true,
   recurse: false,
   fixura: {
     reader: READERS.JSON
   },
-  mocha: {
-    before: () => testValidatorFactory()
+  hooks: {
+    before: async () => {
+      testValidatorFactory();
+    }
   }
 });
+
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/subfieldValueNormalizations:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  expect(validator)
-    .to.be.an('object')
-    .that.has.any.keys('description', 'validate');
-
-  expect(validator.description).to.be.a('string');
-  expect(validator.validate).to.be.a('function');
+  assert.equal(typeof validator, 'object');
+  assert.equal(typeof validator, 'string');
+  assert.equal(typeof validator, 'function');
 }
 
 async function callback({getFixture, enabled = true, fix = false}) {
@@ -37,16 +37,29 @@ async function callback({getFixture, enabled = true, fix = false}) {
   }
 
   const validator = await validatorFactory();
-  const record = new MarcRecord(getFixture('record.json'));
+
+  const recordFixture = getFixture('record.json');
+  console.log("=====================1");
+  console.log(recordFixture);
+  console.log(typeof recordFixture._validationOptions);
+  const options0 = recordFixture._validationOptions || {};
+  console.log(options0);
+  const options1 = JSON.stringify(options0);
+  console.log(options1);
+  const options2 = JSON.parse(options1);
+  console.log(options2);
+
+  const record = recordFixture._validationOptions ? new MarcRecord(recordFixture, recordFixture._validationOptions) : new MarcRecord(recordFixture);
+  //const record = new MarcRecord(recordFixture, {"subfields": false}); // works
   const expectedResult = getFixture('expectedResult.json');
   // console.log(expectedResult); // eslint-disable-line
 
   if (!fix) {
     const result = await validator.validate(record);
-    expect(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  expect(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

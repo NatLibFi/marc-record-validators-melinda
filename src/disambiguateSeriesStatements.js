@@ -1,10 +1,10 @@
 import createDebugLogger from 'debug';
-import {fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldToString, nvdebug, subfieldToString} from './utils.js';
 import {MARCXML} from '@natlibfi/marc-record-serializers';
 import {Error} from '@natlibfi/melinda-commons';
 import clone from 'clone';
 import {default as createNatlibfiSruClient} from '@natlibfi/sru-client';
-import {fieldFixPunctuation} from './punctuation2';
+import {fieldFixPunctuation} from './punctuation2.js';
 
 //const {default: createNatlibfiSruClient} = natlibfiSruClient;
 

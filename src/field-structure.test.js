@@ -1,10 +1,7 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/field-structure';
+import validatorFactory from '../src/field-structure.js';
+import {describe, it} from 'node:test';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 // Factory validation
 describe('field-structure', () => {
@@ -24,12 +21,12 @@ describe('field-structure', () => {
 
     const validator = await validatorFactory(config);
 
-    expect(validator)
+    assert(validator)
       .to.be.an('object')
       .that.has.any.keys('description', 'validate');
 
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert(validator.description).to.be.a('string');
+    assert(validator.validate).to.be.a('function');
   });
 
   describe('#configuration', () => {
@@ -37,7 +34,7 @@ describe('field-structure', () => {
       try {
         validatorFactory();
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration array not provided');
+        assert(error).to.be.an('error').with.property('message', 'Configuration array not provided');
       }
     });
 
@@ -52,7 +49,7 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: tags');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: tags');
       }
     });
 
@@ -67,7 +64,7 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
       }
     });
 
@@ -82,7 +79,7 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - excluded element');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - excluded element');
       }
     });
 
@@ -101,7 +98,7 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        expect(error).to.be.an('error').with.property('message', 'Configuration not valid - subfields not object');
+        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfields not object');
       }
     });
   });
@@ -127,7 +124,7 @@ describe('field-structure', () => {
     const validator = await validatorFactory(config);
     const result = await validator.validate(record);
 
-    expect(result).to.eql({valid: true});
+    assert(result).to.eql({valid: true});
   });
 
   // Indicators and subfields validation
@@ -218,14 +215,14 @@ describe('field-structure', () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
 
-      expect(result).to.eql({valid: true});
+      assert(result).to.eql({valid: true});
     });
 
     it('Finds the record invalid: Too many subfields', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidMany);
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
   });
 
@@ -447,41 +444,41 @@ describe('field-structure', () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
 
-      expect(result).to.eql({valid: true});
+      assert(result).to.eql({valid: true});
     });
 
     it('Finds the record invalid: Extra field in strict', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidExtra);
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
 
     it('Finds the record invalid: Too many occurances', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidTooMany);
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
 
     it('Finds the record invalid: Invalid RegExp', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidRegExp);
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
 
     it('Finds the record invalid: Missing field', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidMissing);
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
     it('Finds the record invalid: Missing subfield', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidMissingSubfield);
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
   });
 
@@ -569,14 +566,14 @@ describe('field-structure', () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
 
-      expect(result).to.eql({valid: true});
+      assert(result).to.eql({valid: true});
     });
 
     it('Finds the record invalid', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalid);
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
 
     it('Find the record valid (Dependency on leader)', async () => {
@@ -589,7 +586,7 @@ describe('field-structure', () => {
         ]
       }));
 
-      expect(result).to.eql({valid: true});
+      assert(result).to.eql({valid: true});
     });
 
     it('Find the record invalid (Dependency on leader)', async () => {
@@ -602,7 +599,7 @@ describe('field-structure', () => {
         ]
       }));
 
-      expect(result).to.eql({valid: false});
+      assert(result).to.eql({valid: false});
     });
   });
 });

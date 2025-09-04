@@ -7,7 +7,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:ut
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-import {melindaCustomMergeFields as melindaFields} from './melindaCustomMergeFields';
+import {melindaCustomMergeFields as melindaFields} from './melindaCustomMergeFields.js';
 
 //JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'melindaCustomMergeFields.json'), 'utf8'));
 
@@ -99,7 +99,7 @@ export function fieldsToString(fields) {
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
-  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func)); // eslint-disable-line array-callback-return
+  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
 }
 
 export function isControlSubfieldCode(subfieldCode) {
@@ -217,7 +217,7 @@ export function marc21GetTagsLegalInd2Value(tag) {
 }
 
 export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
-  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func)); // eslint-disable-line array-callback-return
+  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
 }
 
 export function subfieldsAreIdentical(subfieldA, subfieldB) {

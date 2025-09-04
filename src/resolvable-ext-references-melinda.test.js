@@ -1,12 +1,13 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+//import chai from 'chai';
+//import chaiAsPromised from 'chai-as-promised';
 import {MarcRecord} from '@natlibfi/marc-record';
 import fetchMock from 'fetch-mock';
-import * as testContext from '../src/resolvable-ext-references-melinda';
-import {fixture5000, fixture9550, fixture1000} from '../test-fixtures/resolvable-ext-references-melinda';
+import * as testContext from '../src/resolvable-ext-references-melinda.js';
+import {fixture5000, fixture9550, fixture1000} from '../test-fixtures/resolvable-ext-references-melinda.js';
+import {describe, it} from 'node:test';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+//const {expect} = chai;
+//chai.use(chaiAsPromised);
 
 const endpoint = 'http://melinda.kansalliskirjasto.fi:210/fin01';
 const queryParam = '?operation=searchRetrieve&maximumRecords=2&version=1&query=rec.id=';
@@ -24,18 +25,18 @@ describe('resolvable-ext-references-melinda', () => {
   it('Creates a validator', async () => {
     const validator = await testContext.default({endpoint, prefixPattern, fields});
 
-    expect(validator)
+    assert(validator)
       .to.be.an('object')
       .that.has.any.keys('description', 'validate');
 
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert(validator.description).to.be.a('string');
+    assert(validator.validate).to.be.a('function');
   });
 
   it('Throws an error when prefixPattern not provided', async () => {
     const validator = await testContext.default({endpoint, prefixPattern, fields});
     // Cannot read property 'fields' of undefined or Cannot read properties of undefined (reading 'fields')'
-    await expect(validator.validate()).to.be.rejectedWith(Error, /^Cannot read propert/u);
+    await assert(validator.validate()).to.be.rejectedWith(Error, /^Cannot read propert/u);
   });
 
   describe('#validate', () => {
@@ -88,7 +89,7 @@ describe('resolvable-ext-references-melinda', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: []});
+      assert(result).to.eql({valid: true, messages: []});
     });
 
     it('Finds no matching prefixPattern on record', async () => {
@@ -140,7 +141,7 @@ describe('resolvable-ext-references-melinda', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: []});
+      assert(result).to.eql({valid: true, messages: []});
     });
 
     it('Finds prefixPattern on record but values not resolvable', async () => {
@@ -178,7 +179,7 @@ describe('resolvable-ext-references-melinda', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['Field 773$w with value 1000 is not resolvable']});
+      assert(result).to.eql({valid: false, messages: ['Field 773$w with value 1000 is not resolvable']});
     });
   });
 });

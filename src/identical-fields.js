@@ -23,7 +23,7 @@ export default function () {
   function fix(record) {
     record.fields
       .filter(tag => !uniqWith(record.fields).includes(tag))
-      .forEach(tag => record.removeField(tag)); // eslint-disable-line array-callback-return
+      .forEach(tag => record.removeField(tag));
   }
 
   function uniqWith(fields) {

@@ -1,6 +1,8 @@
 import assert from 'node:assert';
+import {describe, it} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/access-rights';
+import validatorFactory from '../src/access-rights.js';
+
 
 describe('access-rights', async () => {
   // Fields
@@ -88,12 +90,9 @@ describe('access-rights', async () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    expect(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   // Tests
@@ -102,13 +101,13 @@ describe('access-rights', async () => {
     return {
       validate: async (valid, ...recfields) => {
         const result = await validator.validate(new MarcRecord({fields: recfields}));
-        expect(result).to.eql({valid});
+        assert.deepEqual(result, {valid});
       },
 
       fix: async (recfields, resfields) => {
         const record = new MarcRecord({fields: recfields});
         await validator.fix(record);
-        expect(record.fields).to.eql(resfields);
+        assert.deepEqual(record.fields, resfields);
       }
     };
   })();

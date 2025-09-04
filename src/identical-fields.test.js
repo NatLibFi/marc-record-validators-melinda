@@ -1,17 +1,15 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/identical-fields';
+import validatorFactory from '../src/identical-fields.js';
+import {describe, it} from 'node:test';
 
 describe('identical-fields', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    expect(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   describe('#validate', () => {
@@ -32,7 +30,7 @@ describe('identical-fields', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: []});
+      assert.deepEqual(result, {valid: true, messages: []});
     });
     it('Finds the record invalid', async () => {
       const validator = await validatorFactory();
@@ -80,7 +78,7 @@ describe('identical-fields', () => {
 
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['Field 800 has duplicates', 'Field 700 has duplicates']});
+      assert.deepEqual(result, {valid: false, messages: ['Field 800 has duplicates', 'Field 700 has duplicates']});
     });
   });
 
@@ -111,7 +109,7 @@ describe('identical-fields', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '700',
           ind1: ' ',

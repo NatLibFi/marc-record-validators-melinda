@@ -1,33 +1,36 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './update-field-540';
+import validatorFactory from '../src/update-field-540.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'update-field-540'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'update-field-540'],
   useMetadataFile: true,
   recurse: false,
   fixura: {
     reader: READERS.JSON
   },
-  mocha: {
-    before: () => testValidatorFactory()
+  hooks: {
+    before: async () => {
+      testValidatorFactory();
+    }
   }
 });
+
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/update-field-540:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  expect(validator)
+  assert(validator)
     .to.be.an('object')
     .that.has.any.keys('description', 'validate');
 
-  expect(validator.description).to.be.a('string');
-  expect(validator.validate).to.be.a('function');
+  assert(validator.description).to.be.a('string');
+  assert(validator.validate).to.be.a('function');
 }
 
 async function callback({getFixture, enabled = true, fix = false}) {
@@ -43,10 +46,10 @@ async function callback({getFixture, enabled = true, fix = false}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    expect(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  expect(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

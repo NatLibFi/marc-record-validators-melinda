@@ -1,10 +1,9 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/ending-punctuation';
+import validatorFactory from '../src/ending-punctuation.js';
+import {describe, it} from 'node:test';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+
 
 // Factory validation
 describe('ending-punctuation', () => {
@@ -102,13 +101,13 @@ describe('ending-punctuation', () => {
     it('Finds the record valid', async () => {
       const validator = await validatorFactory();
       const result = await validator.validate(recordValid);
-      expect(result.valid).to.eql(true);
+      assert.equal(result.valid, true);
     });
 
     it('Finds the record invalid', async () => {
       const validator = await validatorFactory();
       const result = await validator.validate(recordInvalid);
-      expect(result).to.eql({
+      assert.deepEqual(result, {
         message: ['Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation'],
         valid: false
       });
@@ -117,8 +116,8 @@ describe('ending-punctuation', () => {
     it('Repairs the invalid record', async () => {
       const validator = await validatorFactory();
       const result = await validator.fix(recordBroken);
-      expect(recordBroken.equalsTo(recordValid)).to.eql(true);
-      expect(result).to.eql({
+      assert.equal(recordBroken.equalsTo(recordValid), true);
+      assert.deepEqual(result, {
         message: ['Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation'],
         fix: ['Field 245 - Added punctuation to $c', 'Field 500 - Removed double punctuation from $a'],
         valid: false
@@ -161,13 +160,13 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $b', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Only $a without punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidOnlyA);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -201,7 +200,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $b', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 036 has invalid ending punctuation'],
           valid: false
         });
@@ -210,7 +209,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - Only $a with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyA);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 036 has invalid ending punctuation'],
           valid: false
         });
@@ -220,8 +219,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $b', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid);
-        expect(recordInvalid.equalsTo(recordValid)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid.equalsTo(recordValid), true);
+        assert.deepEqual(result, {
           message: ['Field 036 has invalid ending punctuation'],
           fix: ['Field 036 - Added punctuation to $b'],
           valid: false
@@ -231,8 +230,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Removes punc $a (register)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidOnlyA);
-        expect(recordInvalidOnlyA.equalsTo(recordValidOnlyA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidOnlyA.equalsTo(recordValidOnlyA), true);
+        assert.deepEqual(result, {
           message: ['Field 036 has invalid ending punctuation'],
           fix: ['Field 036 - Removed punctuation from $a'],
           valid: false
@@ -291,19 +290,19 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidOnlyA);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $p', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidMultiple);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $a without $y', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidWithoutY);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -385,7 +384,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc at $a (only before $y)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyAMissingA);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           valid: false
         });
@@ -394,7 +393,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - Punc at $y (Language field)', async () => { // $y is also checked as rule is explicit
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyAPuncY);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           valid: false
         });
@@ -403,7 +402,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc at $a & punc $y', async () => { // $y is also checked as rule is explicit
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyAMissingAPuncY);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation'],
           valid: false
         });
@@ -412,7 +411,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $p (last before $y)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidMultipleMissingP);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           valid: false
         });
@@ -421,7 +420,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidWithoutYMissingA);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           valid: false
         });
@@ -431,8 +430,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidOnlyAMissingA);
-        expect(recordInvalidOnlyAMissingA.equalsTo(recordValidOnlyA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidOnlyAMissingA.equalsTo(recordValidOnlyA), true);
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           fix: ['Field 242 - Added punctuation to $a'],
           valid: false
@@ -442,8 +441,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Remove punc $y (Language field)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidOnlyAPuncY);
-        expect(recordInvalidOnlyAPuncY.equalsTo(recordValidOnlyA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidOnlyAPuncY.equalsTo(recordValidOnlyA), true);
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           fix: ['Field 242 - Removed punctuation from $y'],
           valid: false
@@ -453,8 +452,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a & remove punc $y (Language field)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidOnlyAMissingAPuncY);
-        expect(recordInvalidOnlyAMissingAPuncY.equalsTo(recordValidOnlyA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidOnlyAMissingAPuncY.equalsTo(recordValidOnlyA), true);
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation'],
           fix: ['Field 242 - Removed punctuation from $y', 'Field 242 - Added punctuation to $a'],
           valid: false
@@ -464,8 +463,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $p', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordValidMultipleMissingP);
-        expect(recordValidMultipleMissingP.equalsTo(recordValidMultiple)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordValidMultipleMissingP.equalsTo(recordValidMultiple), true);
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           fix: ['Field 242 - Added punctuation to $p'],
           valid: false
@@ -475,8 +474,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordValidWithoutYMissingA);
-        expect(recordValidWithoutYMissingA.equalsTo(recordValidWithoutY)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordValidWithoutYMissingA.equalsTo(recordValidWithoutY), true);
+        assert.deepEqual(result, {
           message: ['Field 242 has invalid ending punctuation'],
           fix: ['Field 242 - Added punctuation to $a'],
           valid: false
@@ -540,19 +539,19 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidEndC);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc char $g (after $c)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidEndG);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - No punc $b', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidEndB);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -592,7 +591,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidEndC);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 260 has invalid ending punctuation'],
           valid: false
         });
@@ -601,7 +600,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidEndGDouble);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 260 has invalid ending punctuation'],
           valid: false
         });
@@ -611,8 +610,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidEndC);
-        expect(recordInvalidEndC.equalsTo(recordValidEndC)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidEndC.equalsTo(recordValidEndC), true);
+        assert.deepEqual(result, {
           message: ['Field 260 has invalid ending punctuation'],
           fix: ['Field 260 - Added punctuation to $c'],
           valid: false
@@ -622,8 +621,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Remove double punc $g', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidEndGDouble);
-        expect(recordInvalidEndGDouble.equalsTo(recordValidEndG)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidEndGDouble.equalsTo(recordValidEndG), true);
+        assert.deepEqual(result, {
           message: ['Field 260 has invalid ending punctuation'],
           fix: ['Field 260 - Removed double punctuation from $g'],
           valid: false
@@ -711,25 +710,25 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Ind2 = 1, $c 1995-2006.', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidInd2v1);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Ind2 = 1, $c 1995-', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidInd2v1Short);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Ind2 = 2, no $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidInd2v2WithoutC);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Ind2 = 4, copyright', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidCopyright);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       const recordInvalidInd2v1 = new MarcRecord({
@@ -767,7 +766,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidInd2v1);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 264 has invalid ending punctuation'],
           valid: false
         });
@@ -776,7 +775,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - Ind2 = 4, copyright, extra punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidCopyrightCExtra);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 264 has invalid ending punctuation'],
           valid: false
         });
@@ -786,8 +785,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidInd2v1);
-        expect(recordInvalidInd2v1.equalsTo(recordValidInd2v1)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidInd2v1.equalsTo(recordValidInd2v1), true);
+        assert.deepEqual(result, {
           message: ['Field 264 has invalid ending punctuation'],
           fix: ['Field 264 - Added punctuation to $c'],
           valid: false
@@ -797,8 +796,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Remove punc $c ($c has ©, should not have punc)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidCopyrightCExtra);
-        expect(recordInvalidCopyrightCExtra.equalsTo(recordValidCopyright)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidCopyrightCExtra.equalsTo(recordValidCopyright), true);
+        assert.deepEqual(result, {
           message: ['Field 264 has invalid ending punctuation'],
           fix: ['Field 264 - Removed punctuation from $c'],
           valid: false
@@ -891,31 +890,31 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidA);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $a (last) & punc $b (mandatory)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidAB);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $d (last of two)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidDD);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $d (last of two) followed by $g', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidComplex);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - No punc (not $b, nor from list)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidJ2);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -998,7 +997,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidA);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           valid: false
         });
@@ -1007,7 +1006,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (last)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidAMissingB);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           valid: false
         });
@@ -1016,7 +1015,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $b (mandatory)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidABMissing);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           valid: false
         });
@@ -1025,7 +1024,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $d (last of two)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidDDMissing);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           valid: false
         });
@@ -1034,7 +1033,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $d (last of two) followed by $g', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidComplexDMissing);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           valid: false
         });
@@ -1044,8 +1043,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidA);
-        expect(recordInvalidA.equalsTo(recordInvalidA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidA.equalsTo(recordInvalidA), true);
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           fix: ['Field 340 - Added punctuation to $a'],
           valid: false
@@ -1055,8 +1054,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a (last)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidAMissingB);
-        expect(recordInvalidAMissingB.equalsTo(recordValidAB)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidAMissingB.equalsTo(recordValidAB), true);
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           fix: ['Field 340 - Added punctuation to $a'],
           valid: false
@@ -1066,8 +1065,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $b (mandatory)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidABMissing);
-        expect(recordInvalidABMissing.equalsTo(recordValidAB)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidABMissing.equalsTo(recordValidAB), true);
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           fix: ['Field 340 - Added punctuation to $b'],
           valid: false
@@ -1077,8 +1076,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $d (last of two)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidDDMissing);
-        expect(recordInvalidDDMissing.equalsTo(recordValidDD)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidDDMissing.equalsTo(recordValidDD), true);
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           fix: ['Field 340 - Added punctuation to $d'],
           valid: false
@@ -1088,8 +1087,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $d (last of list)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidComplexDMissing);
-        expect(recordInvalidComplexDMissing.equalsTo(recordInvalidComplexDMissing)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidComplexDMissing.equalsTo(recordInvalidComplexDMissing), true);
+        assert.deepEqual(result, {
           message: ['Field 340 has invalid ending punctuation'],
           fix: ['Field 340 - Added punctuation to $d'],
           valid: false
@@ -1145,19 +1144,19 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $a (without $u)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $a (with $u) ', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidWithU);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $a & $u (punc at $u should be ignored) ', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidU);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -1191,7 +1190,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (without $u)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 520 has invalid ending punctuation'],
           valid: false
         });
@@ -1200,7 +1199,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (with $u)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidWithU);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 520 has invalid ending punctuation'],
           valid: false
         });
@@ -1210,8 +1209,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid);
-        expect(recordInvalid.equalsTo(recordValid)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid.equalsTo(recordValid), true);
+        assert.deepEqual(result, {
           message: ['Field 520 has invalid ending punctuation'],
           fix: ['Field 520 - Added punctuation to $a'],
           valid: false
@@ -1221,8 +1220,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a (last before $u)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidWithU);
-        expect(recordInvalidWithU.equalsTo(recordValidWithU)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidWithU.equalsTo(recordValidWithU), true);
+        assert.deepEqual(result, {
           message: ['Field 520 has invalid ending punctuation'],
           fix: ['Field 520 - Added punctuation to $a'],
           valid: false
@@ -1282,19 +1281,19 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $i (last before $u)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $i & punc $u ($u is URL, should pass)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidPuncU);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidOnlyA);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -1345,7 +1344,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $i (last before $u)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidMissingI);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 538 has invalid ending punctuation'],
           valid: false
         });
@@ -1354,7 +1353,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - Invalid punc $i (":" not valid punc mark, but this is according example...)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidI);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 538 has invalid ending punctuation'],
           valid: false
         });
@@ -1363,7 +1362,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyA);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 538 has invalid ending punctuation'],
           valid: false
         });
@@ -1373,8 +1372,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $i (last)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidMissingI);
-        expect(recordInvalidMissingI.equalsTo(recordValid)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidMissingI.equalsTo(recordValid), true);
+        assert.deepEqual(result, {
           message: ['Field 538 has invalid ending punctuation'],
           fix: ['Field 538 - Added punctuation to $i'],
           valid: false
@@ -1384,8 +1383,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidOnlyA);
-        expect(recordInvalidOnlyA.equalsTo(recordValidOnlyA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidOnlyA.equalsTo(recordValidOnlyA), true);
+        assert.deepEqual(result, {
           message: ['Field 538 has invalid ending punctuation'],
           fix: ['Field 538 - Added punctuation to $a'],
           valid: false
@@ -1427,13 +1426,13 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - No punc $b (only data field)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidWithoutA);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -1467,7 +1466,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 567 has invalid ending punctuation'],
           valid: false
         });
@@ -1476,7 +1475,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - Punc $b (only data field)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidWithoutA);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 567 has invalid ending punctuation'],
           valid: false
         });
@@ -1486,8 +1485,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid);
-        expect(recordInvalid.equalsTo(recordValid)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid.equalsTo(recordValid), true);
+        assert.deepEqual(result, {
           message: ['Field 567 has invalid ending punctuation'],
           fix: ['Field 567 - Added punctuation to $a'],
           valid: false
@@ -1497,8 +1496,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Remove punc $b (only data field)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidWithoutA);
-        expect(recordInvalidWithoutA.equalsTo(recordValidWithoutA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidWithoutA.equalsTo(recordValidWithoutA), true);
+        assert.deepEqual(result, {
           message: ['Field 567 has invalid ending punctuation'],
           fix: ['Field 567 - Removed punctuation from $b'],
           valid: false
@@ -1605,37 +1604,37 @@ describe('ending-punctuation', () => {
       it('Finds record valid - 647 Fast, punc char at end', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid647FastEndPunc);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 648 Finnish, without punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordVali648dFinNo);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 648 Fast, without punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid648FastNo);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 650 Finnish, without punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid650FinNo);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 650 English, punc (no control)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid650EngNoControl);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 650 English, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid650EngControl);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -1733,7 +1732,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 647 Fast, dot at end', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid647FastEndPunc);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 647 has invalid ending punctuation'],
           valid: false
         });
@@ -1742,7 +1741,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 648 Finnish, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvali648dFinYes);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 648 has invalid ending punctuation'],
           valid: false
         });
@@ -1751,7 +1750,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 648 Fast, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid648FastYes);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 648 has invalid ending punctuation'],
           valid: false
         });
@@ -1761,7 +1760,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 650 Finnish, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650FinYes);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: [invalidField650Message, invalidField650Message],
           valid: false
         });
@@ -1770,7 +1769,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 650 !Finnish, without punc (no control)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650EngNoControl);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: [invalidField650Message],
           valid: false
         });
@@ -1779,7 +1778,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 650 !Finnish, without punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650EngControl);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 650 has invalid ending punctuation'],
           valid: false
         });
@@ -1789,8 +1788,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 647 Fast, removes double punc $d', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid647FastEndPunc);
-        expect(recordInvalid647FastEndPunc.equalsTo(recordValid647FastEndPunc)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid647FastEndPunc.equalsTo(recordValid647FastEndPunc), true);
+        assert.deepEqual(result, {
           message: ['Field 647 has invalid ending punctuation'],
           fix: ['Field 647 - Removed double punctuation from $d'],
           valid: false
@@ -1800,8 +1799,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 648 Finnish, removes punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvali648dFinYes);
-        expect(recordInvali648dFinYes.equalsTo(recordVali648dFinNo)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvali648dFinYes.equalsTo(recordVali648dFinNo), true);
+        assert.deepEqual(result, {
           message: ['Field 648 has invalid ending punctuation'],
           fix: ['Field 648 - Removed punctuation from $a'],
           valid: false
@@ -1811,8 +1810,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 648 Fast, removes punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid648FastYes);
-        expect(recordInvalid648FastYes.equalsTo(recordValid648FastNo)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid648FastYes.equalsTo(recordValid648FastNo), true);
+        assert.deepEqual(result, {
           message: ['Field 648 has invalid ending punctuation'],
           fix: ['Field 648 - Removed punctuation from $a'],
           valid: false
@@ -1822,8 +1821,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 650 Finnish, removes punc $x', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid650FinYes);
-        expect(recordInvalid650FinYes.equalsTo(recordValid650FinNo)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid650FinYes.equalsTo(recordValid650FinNo), true);
+        assert.deepEqual(result, {
           message: [invalidField650Message, invalidField650Message],
           fix: ['Field 650 - Removed punctuation from $x', 'Field 650 - Removed punctuation from $a'],
           valid: false
@@ -1833,8 +1832,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 650 !Finnish, add punc $v (no control)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid650EngNoControl);
-        expect(recordInvalid650EngNoControl.equalsTo(recordValid650EngNoControl)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid650EngNoControl.equalsTo(recordValid650EngNoControl), true);
+        assert.deepEqual(result, {
           message: ['Field 650 has invalid ending punctuation'],
           fix: ['Field 650 - Added punctuation to $v'],
           valid: false
@@ -1844,8 +1843,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 650 !Finnish, add punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid650EngControl);
-        expect(recordInvalid650EngControl.equalsTo(recordValid650EngControl)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid650EngControl.equalsTo(recordValid650EngControl), true);
+        assert.deepEqual(result, {
           message: ['Field 650 has invalid ending punctuation'],
           fix: ['Field 650 - Added punctuation to $a'],
           valid: false
@@ -1982,49 +1981,49 @@ describe('ending-punctuation', () => {
       it('Finds record valid - 655 Finnish, no punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid655FinNo);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 655 Finnish, without punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid655FinNo2);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 655 English, with punc $y', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid655EngYes);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 655 English, with punc $a (no control)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid655EngYesNoControl);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 656 Finnish, without punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid656FinNo);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 657 English, with punc $z', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid657EngYes);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 658 English, with punc $d', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid658EngYes);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - 662 English, with punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid662EngYes);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -2152,7 +2151,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 655 Finnish, punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655FinYes);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           valid: false
         });
@@ -2161,7 +2160,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 655 Finnish, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655FinYes2);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           valid: false
         });
@@ -2170,7 +2169,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 655 !Finnish, without punc $y', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655EngNo);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           valid: false
         });
@@ -2179,7 +2178,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 655 !Finnish, without punc $a (no control)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655EngNoNoControl);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           valid: false
         });
@@ -2188,7 +2187,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 656 Finnish, with punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid656FinYes);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 656 has invalid ending punctuation'],
           valid: false
         });
@@ -2197,7 +2196,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 657 !Finnish, without punc $z', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid657EngNo);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 657 has invalid ending punctuation'],
           valid: false
         });
@@ -2206,7 +2205,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 658 !Finnish, without punc $d', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid658EngNo);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 658 has invalid ending punctuation'],
           valid: false
         });
@@ -2215,7 +2214,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - 662 !Finnish, without punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid662EngNo);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 662 has invalid ending punctuation'],
           valid: false
         });
@@ -2225,8 +2224,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 655 Finnish, remove punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid655FinYes);
-        expect(recordInvalid655FinYes.equalsTo(recordValid655FinNo)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid655FinYes.equalsTo(recordValid655FinNo), true);
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           fix: ['Field 655 - Removed punctuation from $a'],
           valid: false
@@ -2236,8 +2235,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 655 Finnish, removes punc $a 2', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid655FinYes2);
-        expect(recordInvalid655FinYes2.equalsTo(recordValid655FinNo2)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid655FinYes2.equalsTo(recordValid655FinNo2), true);
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           fix: ['Field 655 - Removed punctuation from $a'],
           valid: false
@@ -2247,8 +2246,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 655 !Finnish, add punc $y', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid655EngNo);
-        expect(recordInvalid655EngNo.equalsTo(recordValid655EngYes)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid655EngNo.equalsTo(recordValid655EngYes), true);
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           fix: ['Field 655 - Added punctuation to $y'],
           valid: false
@@ -2258,8 +2257,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 655 !Finnish, add punc $a (no control)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid655EngNoNoControl);
-        expect(recordInvalid655EngNoNoControl.equalsTo(recordValid655EngYesNoControl)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid655EngNoNoControl.equalsTo(recordValid655EngYesNoControl), true);
+        assert.deepEqual(result, {
           message: ['Field 655 has invalid ending punctuation'],
           fix: ['Field 655 - Added punctuation to $a'],
           valid: false
@@ -2269,8 +2268,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 656 Finnish, remove punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid656FinYes);
-        expect(recordInvalid656FinYes.equalsTo(recordValid656FinNo)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid656FinYes.equalsTo(recordValid656FinNo), true);
+        assert.deepEqual(result, {
           message: ['Field 656 has invalid ending punctuation'],
           fix: ['Field 656 - Removed punctuation from $a'],
           valid: false
@@ -2280,8 +2279,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 657 !Finnish, add punc $z', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid657EngNo);
-        expect(recordInvalid657EngNo.equalsTo(recordValid657EngYes)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid657EngNo.equalsTo(recordValid657EngYes), true);
+        assert.deepEqual(result, {
           message: ['Field 657 has invalid ending punctuation'],
           fix: ['Field 657 - Added punctuation to $z'],
           valid: false
@@ -2291,8 +2290,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 658 !Finnish, add punc $d', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid658EngNo);
-        expect(recordInvalid658EngNo.equalsTo(recordValid658EngYes)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid658EngNo.equalsTo(recordValid658EngYes), true);
+        assert.deepEqual(result, {
           message: ['Field 658 has invalid ending punctuation'],
           fix: ['Field 658 - Added punctuation to $d'],
           valid: false
@@ -2302,8 +2301,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - 662 !Finnish, add pun $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid662EngNo);
-        expect(recordInvalid662EngNo.equalsTo(recordValid662EngYes)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid662EngNo.equalsTo(recordValid662EngYes), true);
+        assert.deepEqual(result, {
           message: ['Field 662 has invalid ending punctuation'],
           fix: ['Field 662 - Added punctuation to $a'],
           valid: false
@@ -2346,13 +2345,13 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $a, but following fields, $e no punc (last)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValid);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidOnlyA);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -2387,7 +2386,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - Punc $e (language field, strict)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 760 has invalid ending punctuation'],
           valid: false
         });
@@ -2396,7 +2395,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyA);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 760 has invalid ending punctuation'],
           valid: false
         });
@@ -2406,8 +2405,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Remove punc $e (language field, strict)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid);
-        expect(recordInvalid.equalsTo(recordValid)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalid.equalsTo(recordValid), true);
+        assert.deepEqual(result, {
           message: ['Field 760 has invalid ending punctuation'],
           fix: ['Field 760 - Removed punctuation from $e'],
           valid: false
@@ -2417,8 +2416,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $a (only)', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidOnlyA);
-        expect(recordInvalidOnlyA.equalsTo(recordValidOnlyA)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidOnlyA.equalsTo(recordValidOnlyA), true);
+        assert.deepEqual(result, {
           message: ['Field 760 has invalid ending punctuation'],
           fix: ['Field 760 - Added punctuation to $a'],
           valid: false
@@ -2467,13 +2466,13 @@ describe('ending-punctuation', () => {
       it('Finds record valid - Punc $b', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidSimple);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       it('Finds record valid - Punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidComplex);
-        expect(result.valid).to.eql(true);
+        assert.equal(result.valid, true);
       });
 
       // Invalid tests
@@ -2513,7 +2512,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $b', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidSimple);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 880 has invalid ending punctuation'],
           valid: false
         });
@@ -2522,7 +2521,7 @@ describe('ending-punctuation', () => {
       it('Finds record invalid - No punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidComplex);
-        expect(result).to.eql({
+        assert.deepEqual(result, {
           message: ['Field 880 has invalid ending punctuation'],
           valid: false
         });
@@ -2532,8 +2531,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $b', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidSimple);
-        expect(recordInvalidSimple.equalsTo(recordValidSimple)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidSimple.equalsTo(recordValidSimple), true);
+        assert.deepEqual(result, {
           message: ['Field 880 has invalid ending punctuation'],
           fix: ['Field 880 - Added punctuation to $b'],
           valid: false
@@ -2543,8 +2542,8 @@ describe('ending-punctuation', () => {
       it('Repairs the invalid record - Add punc $c', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalidComplex);
-        expect(recordInvalidComplex.equalsTo(recordValidComplex)).to.eql(true);
-        expect(result).to.eql({
+        assert.equal(recordInvalidComplex.equalsTo(recordValidComplex), true);
+        assert.deepEqual(result, {
           message: ['Field 880 has invalid ending punctuation'],
           fix: ['Field 880 - Added punctuation to $c'],
           valid: false

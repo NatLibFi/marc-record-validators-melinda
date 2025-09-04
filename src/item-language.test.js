@@ -1,25 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/item-language';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
+import validatorFactory from '../src/item-language.js';
+import {describe, it} from 'node:test';
 
 describe('item-language', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory(/^520$/u);
 
-    expect(validator)
+    assert(validator)
       .to.be.an('object')
       .that.has.any.keys('description', 'validate');
 
-    expect(validator.description).to.be.a('string');
-    expect(validator.validate).to.be.a('function');
+    assert(validator.description).to.be.a('string');
+    assert(validator.validate).to.be.a('function');
   });
 
   it('Throws an error when tagPattern is not provided', async () => {
-    await expect(validatorFactory()).to.be.rejectedWith(Error, 'No tagPattern provided');
+    await assert(validatorFactory()).to.be.rejectedWith(Error, 'No tagPattern provided');
   });
 
   describe('#validate', () => {
@@ -48,7 +45,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true});
+      assert(result).to.eql({valid: true});
     });
 
     it('Finds the record invalid (Language code is missing and detection failed', async () => {
@@ -70,7 +67,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['Language detection failed']});
+      assert(result).to.eql({valid: false, messages: ['Language detection failed']});
     });
 
     it('Finds the record invalid (Detected language differs)', async () => {
@@ -102,7 +99,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: false, messages: ['Item language code is invalid. Correct language code: eng']});
+      assert(result).to.eql({valid: false, messages: ['Item language code is invalid. Correct language code: eng']});
     });
 
     it('Finds the record invalid (Probability doesn\'t meet treshold)', async () => {
@@ -134,7 +131,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: ['Item language code is invalid. Current code: fin, suggestions: eng']});
+      assert(result).to.eql({valid: true, messages: ['Item language code is invalid. Current code: fin, suggestions: eng']});
     });
 
     it('Finds the record invalid (No detectable text)', async () => {
@@ -155,7 +152,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      expect(result).to.eql({valid: true, messages: ['Language detection failed']});
+      assert(result).to.eql({valid: true, messages: ['Language detection failed']});
     });
   });
 
@@ -189,7 +186,7 @@ describe('item-language', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert(record.fields).to.eql([
         {
           tag: '008',
           value: '151118t20162016fi^a|||^^^^^^^|0|^0|eng|^'
@@ -237,7 +234,7 @@ describe('item-language', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert(record.fields).to.eql([
         {
           tag: '008',
           value: '151118t20162016fi^a|||^^^^^^^|0|^0|eng|^'
@@ -291,7 +288,7 @@ describe('item-language', () => {
       });
       await validator.fix(record);
 
-      expect(record.fields).to.eql([
+      assert(record.fields).to.eql([
         {
           tag: '008',
           value: '151118t20162016fi^a|||^^^^^^^|0|^0|eng|^'
@@ -337,7 +334,7 @@ describe('item-language', () => {
       try {
         await validator.fix(record);
       } catch (err) {
-        expect(err.message).to.equal('Language code is missing and detection failed');
+        assert(err.message).to.equal('Language code is missing and detection failed');
       }
     });
   });
