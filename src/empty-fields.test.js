@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/empty-fields.js';
-import {describe, it} from 'node:test';
+import {after, before, describe, it} from 'node:test';
 
 before(() => {
   MarcRecord.setValidationOptions({subfields: false, subfieldValues: false});
