@@ -1,6 +1,7 @@
+import assert from 'node:assert';
+import {describe, it} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/field-structure.js';
-import {describe, it} from 'node:test';
 
 
 // Factory validation
@@ -21,12 +22,9 @@ describe('field-structure', () => {
 
     const validator = await validatorFactory(config);
 
-    assert(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    assert(validator.description).to.be.a('string');
-    assert(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   describe('#configuration', () => {
@@ -34,7 +32,8 @@ describe('field-structure', () => {
       try {
         validatorFactory();
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration array not provided');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration array not provided');
       }
     });
 
@@ -49,7 +48,8 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: tags');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - unidentified value: tags');
       }
     });
 
@@ -64,7 +64,8 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - invalid data type for: tag');
       }
     });
 
@@ -79,7 +80,8 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - excluded element');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - excluded element');
       }
     });
 
@@ -98,7 +100,8 @@ describe('field-structure', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfields not object');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - subfields not object');
       }
     });
   });
@@ -124,7 +127,7 @@ describe('field-structure', () => {
     const validator = await validatorFactory(config);
     const result = await validator.validate(record);
 
-    assert(result).to.eql({valid: true});
+    assert.deepEqual(result, {valid: true});
   });
 
   // Indicators and subfields validation
@@ -215,14 +218,14 @@ describe('field-structure', () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
 
-      assert(result).to.eql({valid: true});
+      assert.deepEqual(result, {valid: true});
     });
 
     it('Finds the record invalid: Too many subfields', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidMany);
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
   });
 
@@ -444,41 +447,41 @@ describe('field-structure', () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
 
-      assert(result).to.eql({valid: true});
+      assert.deepEqual(result, {valid: true});
     });
 
     it('Finds the record invalid: Extra field in strict', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidExtra);
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
 
     it('Finds the record invalid: Too many occurances', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidTooMany);
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
 
     it('Finds the record invalid: Invalid RegExp', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidRegExp);
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
 
     it('Finds the record invalid: Missing field', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidMissing);
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
     it('Finds the record invalid: Missing subfield', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalidMissingSubfield);
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
   });
 
@@ -566,14 +569,14 @@ describe('field-structure', () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordValid);
 
-      assert(result).to.eql({valid: true});
+      assert.deepEqual(result, {valid: true});
     });
 
     it('Finds the record invalid', async () => {
       const validator = await validatorFactory(config);
       const result = await validator.validate(recordInvalid);
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
 
     it('Find the record valid (Dependency on leader)', async () => {
@@ -586,7 +589,7 @@ describe('field-structure', () => {
         ]
       }));
 
-      assert(result).to.eql({valid: true});
+      assert.deepEqual(result, {valid: true});
     });
 
     it('Find the record invalid (Dependency on leader)', async () => {
@@ -599,7 +602,7 @@ describe('field-structure', () => {
         ]
       }));
 
-      assert(result).to.eql({valid: false});
+      assert.deepEqual(result, {valid: false});
     });
   });
 });

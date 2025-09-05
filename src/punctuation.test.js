@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from './punctuation/';
+import validatorFactory from './punctuation/index.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';

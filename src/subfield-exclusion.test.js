@@ -52,7 +52,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: subfields');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - missing mandatory element: subfields');
       }
     });
 
@@ -67,7 +68,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: tag');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - invalid data type for: tag');
       }
     });
 
@@ -80,7 +82,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration array not provided');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration array not provided');
       }
     });
 
@@ -95,7 +98,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: code');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - invalid data type for: code');
       }
     });
 
@@ -110,7 +114,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - invalid data type for: value');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - invalid data type for: value');
       }
     });
 
@@ -126,7 +131,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: tag');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - missing mandatory element: tag');
       }
     });
 
@@ -144,7 +150,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/,/^(?!FENNI<KEEP>).*$/ not object');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - subfield: /9/,/^(?!FENNI<KEEP>).*$/ not object');
       }
     });
 
@@ -163,8 +170,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        console.log(typeof error);
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - subfield: /9/ not object');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - subfield: /9/ not object');
       }
     });
 
@@ -182,7 +189,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        assert(error).to.be.an('error').with.property('message', 'Configuration not valid - missing mandatory element: code');
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - missing mandatory element: code');
       }
     });
 
@@ -201,11 +209,8 @@ describe('subfield-exclusion', () => {
       try {
         validatorFactory(config);
       } catch (error) {
-        console.log("ERROR FLYNN");
-        console.log(typeof error);
-        console.log(JSON.stringify(error));
-        assert.equal(typeof error, 'error');
-        assert.partialDeepStrictEqual(error, {message: 'Configuration not valid - unidentified value: unidentified666'});
+        assert.equal(error instanceof Error, true);
+        assert.equal(error.message, 'Configuration not valid - unidentified value: unidentified');
         //assert(error).to.be.an('error').with.property('message', 'Configuration not valid - unidentified value: unidentified');
       }
     });

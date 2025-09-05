@@ -42,10 +42,10 @@ async function callback({getFixture, enabled = true, fix = false}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    assert(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  assert(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

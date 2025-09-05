@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+//import fetch from 'node-fetch';
 import {isElectronicMaterial} from './utils.js';
 import createDebugLogger from 'debug';
 

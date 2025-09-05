@@ -9,19 +9,17 @@ describe('fields-present', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory([/^500$/u, /^400$/u]);
 
-    assert(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    assert(validator.description).to.be.a('string');
-    assert(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   it('Throws an error when tagPatterns not provided', () => {
     try {
       validatorFactory();
     } catch (error) {
-      assert(error).to.be.an('error').with.property('message', 'No tag pattern array provided');
+      assert.equal(error instanceof Error, true);
+      assert.equal(error.message, 'No tag pattern array provided');
     }
   });
 
@@ -47,7 +45,7 @@ describe('fields-present', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true, messages: []});
+      assert.deepEqual(result, {valid: true, messages: []});
     });
     it('Finds the record valid', async () => {
       const tagPatterns = [/^(020|022|024)$/u];
@@ -70,7 +68,7 @@ describe('fields-present', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true, messages: []});
+      assert.deepEqual(result, {valid: true, messages: []});
     });
     it('Finds the record invalid', async () => {
       const tagPatterns = [/^5..$/u, /^FOO$/u];
@@ -99,7 +97,7 @@ describe('fields-present', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: false, messages: ['The following tag patterns are not present in the record tag field:   /^FOO$/u']});
+      assert.deepEqual(result, {valid: false, messages: ['The following tag patterns are not present in the record tag field:   /^FOO$/u']});
     });
   });
 });

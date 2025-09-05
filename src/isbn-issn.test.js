@@ -390,7 +390,7 @@ describe('isbn-issn', () => {
 
       await validator.fix(record);
 
-      assert(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '978-9916-605-32-5'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '91-7153-086-X'}]},
         {tag: '020', ind1: ' ', ind2: ' ', subfields: [{code: 'a', value: '90-6831-372-X'}]}, // corrected hyphens

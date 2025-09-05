@@ -1,18 +1,15 @@
-//import assert from 'node:assert';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/sort-tags';
+import validatorFactory from '../src/sort-tags.js';
 import {describe, it} from 'node:test';
 
 describe('sort-tags', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory();
 
-    assert(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    assert(validator.description).to.be.a('string');
-    assert(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   describe('#validate', () => {

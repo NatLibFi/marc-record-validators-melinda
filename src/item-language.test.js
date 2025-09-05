@@ -7,12 +7,9 @@ describe('item-language', () => {
   it('Creates a validator', async () => {
     const validator = await validatorFactory(/^520$/u);
 
-    assert(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    assert(validator.description).to.be.a('string');
-    assert(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   it('Throws an error when tagPattern is not provided', async () => {
@@ -45,7 +42,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true});
+      assert.deepEqual(result, {valid: true});
     });
 
     it('Finds the record invalid (Language code is missing and detection failed', async () => {
@@ -67,7 +64,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: false, messages: ['Language detection failed']});
+      assert.deepEqual(result, {valid: false, messages: ['Language detection failed']});
     });
 
     it('Finds the record invalid (Detected language differs)', async () => {
@@ -99,7 +96,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: false, messages: ['Item language code is invalid. Correct language code: eng']});
+      assert.deepEqual(result, {valid: false, messages: ['Item language code is invalid. Correct language code: eng']});
     });
 
     it('Finds the record invalid (Probability doesn\'t meet treshold)', async () => {
@@ -131,7 +128,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true, messages: ['Item language code is invalid. Current code: fin, suggestions: eng']});
+      assert.deepEqual(result, {valid: true, messages: ['Item language code is invalid. Current code: fin, suggestions: eng']});
     });
 
     it('Finds the record invalid (No detectable text)', async () => {
@@ -152,7 +149,7 @@ describe('item-language', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true, messages: ['Language detection failed']});
+      assert.deepEqual(result, {valid: true, messages: ['Language detection failed']});
     });
   });
 
@@ -186,7 +183,7 @@ describe('item-language', () => {
       });
       await validator.fix(record);
 
-      assert(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '008',
           value: '151118t20162016fi^a|||^^^^^^^|0|^0|eng|^'
@@ -234,7 +231,7 @@ describe('item-language', () => {
       });
       await validator.fix(record);
 
-      assert(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '008',
           value: '151118t20162016fi^a|||^^^^^^^|0|^0|eng|^'
@@ -288,7 +285,7 @@ describe('item-language', () => {
       });
       await validator.fix(record);
 
-      assert(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '008',
           value: '151118t20162016fi^a|||^^^^^^^|0|^0|eng|^'
@@ -334,7 +331,7 @@ describe('item-language', () => {
       try {
         await validator.fix(record);
       } catch (err) {
-        assert(err.message).to.equal('Language code is missing and detection failed');
+        assert.equal(err.message, 'Language code is missing and detection failed');
       }
     });
   });

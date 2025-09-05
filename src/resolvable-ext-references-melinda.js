@@ -1,5 +1,5 @@
 import {parseString} from 'xml2js';
-import fetch from 'node-fetch';
+//import fetch from 'node-fetch';
 
 export default function ({endpoint, prefixPattern, fields}) {
   if (typeof endpoint === 'string' && prefixPattern instanceof RegExp && typeof fields === 'object') {

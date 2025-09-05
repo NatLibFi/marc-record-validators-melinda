@@ -1,10 +1,11 @@
+import assert from 'node:assert';
 //import chai from 'chai';
 //import chaiAsPromised from 'chai-as-promised';
 import {MarcRecord} from '@natlibfi/marc-record';
 import fetchMock from 'fetch-mock';
 import * as testContext from '../src/resolvable-ext-references-melinda.js';
 import {fixture5000, fixture9550, fixture1000} from '../test-fixtures/resolvable-ext-references-melinda.js';
-import {describe, it} from 'node:test';
+import {afterEach, describe, it} from 'node:test';
 
 //const {expect} = chai;
 //chai.use(chaiAsPromised);
@@ -25,12 +26,9 @@ describe('resolvable-ext-references-melinda', () => {
   it('Creates a validator', async () => {
     const validator = await testContext.default({endpoint, prefixPattern, fields});
 
-    assert(validator)
-      .to.be.an('object')
-      .that.has.any.keys('description', 'validate');
-
-    assert(validator.description).to.be.a('string');
-    assert(validator.validate).to.be.a('function');
+    assert.equal(typeof validator, 'object');
+    assert.equal(typeof validator.description, 'string');
+    assert.equal(typeof validator.validate, 'function');
   });
 
   it('Throws an error when prefixPattern not provided', async () => {
@@ -89,7 +87,7 @@ describe('resolvable-ext-references-melinda', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true, messages: []});
+      assert.deepEqual(result, {valid: true, messages: []});
     });
 
     it('Finds no matching prefixPattern on record', async () => {
@@ -141,7 +139,7 @@ describe('resolvable-ext-references-melinda', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true, messages: []});
+      assert.deepEqual(result, {valid: true, messages: []});
     });
 
     it('Finds prefixPattern on record but values not resolvable', async () => {
@@ -179,7 +177,7 @@ describe('resolvable-ext-references-melinda', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: false, messages: ['Field 773$w with value 1000 is not resolvable']});
+      assert.deepEqual(result, {valid: false, messages: ['Field 773$w with value 1000 is not resolvable']});
     });
   });
 });

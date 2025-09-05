@@ -39,15 +39,6 @@ async function callback({getFixture, enabled = true, fix = false}) {
   const validator = await validatorFactory();
 
   const recordFixture = getFixture('record.json');
-  console.log("=====================1");
-  console.log(recordFixture);
-  console.log(typeof recordFixture._validationOptions);
-  const options0 = recordFixture._validationOptions || {};
-  console.log(options0);
-  const options1 = JSON.stringify(options0);
-  console.log(options1);
-  const options2 = JSON.parse(options1);
-  console.log(options2);
 
   const record = recordFixture._validationOptions ? new MarcRecord(recordFixture, recordFixture._validationOptions) : new MarcRecord(recordFixture);
   //const record = new MarcRecord(recordFixture, {"subfields": false}); // works

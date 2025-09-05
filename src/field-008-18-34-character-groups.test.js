@@ -1,4 +1,4 @@
-//import assert from 'node:assert';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from '../src/field-008-18-34-character-groups.js';
 import {READERS} from '@natlibfi/fixura';
@@ -24,12 +24,10 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/field-
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  assert(validator)
-    .to.be.an('object')
-    .that.has.any.keys('description', 'validate');
-
-  assert(validator.description).to.be.a('string');
-  assert(validator.validate).to.be.a('function');
+  assert.equal(typeof validator, 'object');
+  assert.equal(typeof validator.description, 'string');
+  assert.equal(typeof validator.fix, 'function');
+  assert.equal(typeof validator.validate, 'function');
 }
 
 async function callback({getFixture, enabled = true, fix = false}) {
@@ -45,10 +43,10 @@ async function callback({getFixture, enabled = true, fix = false}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    assert(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  assert(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

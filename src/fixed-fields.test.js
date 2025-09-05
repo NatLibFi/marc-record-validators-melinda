@@ -17,7 +17,8 @@ describe('fixed-fields: language', () => {
     try {
       validatorFactory();
     } catch (error) {
-      assert(error).to.be.an('error').with.property('message', 'No configuration provided');
+      assert.equal(error instanceof Error, true);
+      assert.equal(error.message, 'No configuration provided');
     }
   });
 
@@ -47,7 +48,8 @@ describe('fixed-fields: language', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.be.an('object').and.to.include({valid: true});
+      assert.equal(typeof result, 'object');
+      assert.partialDeepStrictEqual(result, {valid: true});
     });
 
     it('Finds the record invalid', async () => {

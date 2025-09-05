@@ -1,4 +1,4 @@
-//import assert from 'node:assert';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './fix-33X.js';
 import {READERS} from '@natlibfi/fixura';
@@ -22,13 +22,10 @@ generateTests({
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  assert(validator)
-    .to.be.an('object')
-    .that.has.any.keys('description', 'validate');
-
-  assert(validator.description).to.be.a('string');
-  assert(validator.validate).to.be.a('function');
-  assert(validator.fix).to.be.a('function');
+  assert.equal(typeof validator, 'objecr');
+  assert.equal(typeof validator.description, 'string');
+  assert.equal(typeof validator.validate, 'function');
+  assert.equal(typeof validator.fix, 'function');
 }
 
 async function callback({getFixture, fix = false}) {
@@ -39,10 +36,10 @@ async function callback({getFixture, fix = false}) {
 
   if (!fix) {
     const result = await validator.validate(record);
-    assert(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  assert(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }

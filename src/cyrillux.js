@@ -157,16 +157,24 @@ export default function (config = {}) {
     if (!subfieldRequiresTransliteration(subfield)) {
       return {code: subfield.code, value: subfield.value}; // just clone
     }
-    const value = iso9.convertToLatin(subfield.value);
 
-    return {code: subfield.code, value};
+    const conversionResult = iso9.convertToLatin(subfield.value);
+
+    return {code: subfield.code, value: conversionResult.result};
   }
 
   function mapSubfieldToSfs4900(subfield, lang = 'rus') {
     const inputLang = lang === 'ukr' ? 'ukr' : 'rus'; // Support 'ukr' and 'rus', default to 'rus'
-    const value = subfieldRequiresTransliteration(subfield) ? sfs4900.convertToLatin(subfield.value, inputLang).result : subfield.value;
+    if (!subfieldRequiresTransliteration(subfield)) {
+      return {code: subfield.code, value: subfield.value};
+    }
+    const conversionResult = sfs4900.convertToLatin(subfield.value, inputLang);
+
+    console.log(JSON.stringify(conversionResult));
+    const result = conversionResult.result;
+    console.log(JSON.stringify(result));
     //console.log(`VAL: ${subfield.value} => ${value} using ${lang}`); // eslint-disable-line no-console
-    return {code: subfield.code, value};
+    return {code: subfield.code, value: result};
   }
 
   function mapField(field, occurrenceNumber, iso9 = true, lang = 'rus') {

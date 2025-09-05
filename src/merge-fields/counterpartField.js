@@ -8,7 +8,7 @@ import {normalizeControlSubfieldValue} from '../normalize-identifiers.js';
 
 import {getMergeConstraintsForTag} from './mergeConstraints.js';
 import {controlSubfieldsPermitMerge} from './controlSubfields.js';
-import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
+import {mergableIndicator1, mergableIndicator2} from './mergableIndicator.js';
 import {partsAgree} from '../normalizeSubfieldValueForComparison.js';
 import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge.js';
 

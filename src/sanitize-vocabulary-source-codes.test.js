@@ -36,16 +36,19 @@ async function callback({getFixture, enabled = true, fix = false}) {
   }
 
   const validator = await validatorFactory();
-  const record = new MarcRecord(getFixture('record.json'));
+
+  const recordFixture = getFixture('record.json');
+  const record = recordFixture._validationOptions ? new MarcRecord(recordFixture, recordFixture._validationOptions) : new MarcRecord(recordFixture);
+
   const expectedResult = getFixture('expectedResult.json');
   // console.log(expectedResult); // eslint-disable-line
 
   if (!fix) {
     const result = await validator.validate(record);
-    assert(result).to.eql(expectedResult);
+    assert.deepEqual(result, expectedResult);
     return;
   }
 
   await validator.fix(record);
-  assert(record).to.eql(expectedResult);
+  assert.deepEqual(record, expectedResult);
 }
