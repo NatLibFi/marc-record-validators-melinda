@@ -4,6 +4,15 @@ import validatorFactory from './cyrillux-usemarcon-replacement.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
+
+before(() => {
+  MarcRecord.setValidationOptions({subfields: false, subfieldValues: false});
+});
+
+after(() => {
+  MarcRecord.setValidationOptions({});
+});
+
 generateTests({
   callback,
   path: [import.meta.dirname, '..', 'test-fixtures', 'cyrillux-usemarcon-replacement'],

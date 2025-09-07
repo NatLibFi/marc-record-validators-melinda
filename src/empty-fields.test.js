@@ -36,7 +36,7 @@ describe('empty-fields', () => {
         ]
       });
       const result = await validator.validate(record);
-      assert.equal(result.valid, true);
+      assert.deepEqual(result.valid, true);
     });
 
     it('Finds a missing subfield value', async () => {
@@ -95,7 +95,7 @@ describe('empty-fields', () => {
       });
       await validator.fix(record);
 
-      assert.equal(record, [
+      assert.deepEqual(record.fields, [
         {
           tag: '245',
           ind1: ' ',
@@ -126,7 +126,7 @@ describe('empty-fields', () => {
       });
       await validator.fix(record);
 
-      assert.equal(record.fields, [
+      assert.deepEqual(record.fields, [
         {
           tag: '001',
           value: '1234567'

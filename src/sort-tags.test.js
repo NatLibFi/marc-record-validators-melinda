@@ -51,7 +51,7 @@ describe('sort-tags', () => {
       });
       const result = await validator.validate(record);
 
-      assert(result).to.eql({valid: true, messages: []});
+      assert.deepEqual(result, {valid: true, messages: []});
     });
     it('Finds the record invalid', async () => {
       const validator = await validatorFactory();
@@ -90,7 +90,7 @@ describe('sort-tags', () => {
         ]
       });
       const result = await validator.validate(record);
-      assert(result).to.eql({valid: false, messages: ['Fields are in incorrect order']});
+      assert.deepEqual(result, {valid: false, messages: ['Fields are in incorrect order']});
     });
   });
 
@@ -180,7 +180,7 @@ describe('sort-tags', () => {
         ]
       });
       await validator.fix(record);
-      assert(record.fields).to.eql([
+      assert.deepEqual(record.fields, [
         {
           tag: '001',
           value: '100'

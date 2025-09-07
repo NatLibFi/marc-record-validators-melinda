@@ -13,7 +13,12 @@ describe('item-language', () => {
   });
 
   it('Throws an error when tagPattern is not provided', async () => {
-    await assert(validatorFactory()).to.be.rejectedWith(Error, 'No tagPattern provided');
+    await assert.rejects(validatorFactory(), (err) => {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'No tagPattern provided');
+      return true;
+     });
+    //await assert(validatorFactory()).to.be.rejectedWith(Error, 'No tagPattern provided');
   });
 
   describe('#validate', () => {

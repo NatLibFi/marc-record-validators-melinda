@@ -36,7 +36,10 @@ async function callback({getFixture, enabled = true, fix = false}) {
   }
 
   const validator = await validatorFactory();
-  const record = new MarcRecord(getFixture('record.json'));
+
+  const recordFixture = getFixture('record.json');
+  const record = recordFixture._validationOptions ? new MarcRecord(recordFixture, recordFixture._validationOptions) : new MarcRecord(recordFixture);
+
   const expectedResult = getFixture('expectedResult.json');
   // console.log(expectedResult); // eslint-disable-line
 
