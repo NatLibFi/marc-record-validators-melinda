@@ -53,12 +53,12 @@
     "xregexp": "^5.1.2"
   },
   "peerDependencies": {
-    "@natlibfi/marc-record-validate": "^8.0.14"
+    "@natlibfi/marc-record-validate": "^9.0.0-alpha.1"
   },
   "devDependencies": {
     "@natlibfi/fixugen": "^3.0.0-alpha.5",
     "@natlibfi/fixura": "^4.0.0-alpha.12",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.0.0",
     "eslint": "^9.35.0",
     "fetch-mock": "^12.5.4"
   },
