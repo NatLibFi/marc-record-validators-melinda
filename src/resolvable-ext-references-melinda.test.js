@@ -5,7 +5,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import fetchMock from 'fetch-mock';
 import * as testContext from '../src/resolvable-ext-references-melinda.js';
 import {fixture5000, fixture9550, fixture1000} from '../test-fixtures/resolvable-ext-references-melinda.js';
-import {afterEach, describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 
 //const {expect} = chai;
 //chai.use(chaiAsPromised);
@@ -18,9 +18,19 @@ const fields = {
   833: ['w', 'p']
 };
 
+
 describe('resolvable-ext-references-melinda', () => {
   afterEach(() => {
-    testContext.default.__ResetDependency__('fetch');
+    fetchMock.unmockGlobal();
+    // testContext.default.__ResetDependency__('fetch');
+  });
+
+  beforeEach(() => {
+    fetchMock.mockGlobal(); // replace fetch with fetch-mock's implementation
+    fetchMock.get(`${endpoint}${queryParam}5000`, { status: 200, headers: {}, body: fixture5000 })
+      .get(`${endpoint}${queryParam}9550`, { status: 200, headers: {}, body: fixture9550 })
+      .get(`${endpoint}${queryParam}1000`, { status: 200, headers: {}, body: fixture1000 });
+
   });
 
   it('Creates a validator', async () => {
@@ -34,22 +44,22 @@ describe('resolvable-ext-references-melinda', () => {
   it('Throws an error when prefixPattern not provided', async () => {
     const validator = await testContext.default({endpoint, prefixPattern, fields});
     // Cannot read property 'fields' of undefined or Cannot read properties of undefined (reading 'fields')'
-
-    await assert.rejects(validator, (err) => {
+    try {
+      await validator.validate();
+      throw new Error("Test expected an error");
+    }
+    catch (err) {
       assert.equal(err instanceof Error, true);
-      assert.match(err.message, /^Cannot read proper/u);
-      return true;
-     });
+      assert.match(err.message, /^Cannot read propert/u) ;
+    }
     //await assert(validator.validate()).to.be.rejectedWith(Error, /^Cannot read propert/u);
   });
 
   describe('#validate', () => {
-    it('Finds prefixPattern on record and removes it', async () => {
-      const mock = fetchMock.sandbox();
-      mock.get(`${endpoint}${queryParam}5000`, fixture5000);
-      mock.get(`${endpoint}${queryParam}9550`, fixture9550);
 
-      testContext.default.__Rewire__('fetch', mock);
+
+    it('Finds prefixPattern on record and removes it', async () => {
+
       const validator = await testContext.default({endpoint, prefixPattern, fields});
 
       const record = new MarcRecord({
@@ -97,11 +107,11 @@ describe('resolvable-ext-references-melinda', () => {
     });
 
     it('Finds no matching prefixPattern on record', async () => {
-      const mock = fetchMock.sandbox();
+      //const mock = fetchMock.sandbox();
 
-      mock.get(`${endpoint}5000`, fixture5000);
+      //mock.get(`${endpoint}5000`, fixture5000);
 
-      testContext.default.__Rewire__('fetch', mock);
+      //testContext.default.__Rewire__('fetch', mock);
       const validator = await testContext.default({endpoint, prefixPattern, fields});
 
       const record = new MarcRecord({
@@ -149,10 +159,10 @@ describe('resolvable-ext-references-melinda', () => {
     });
 
     it('Finds prefixPattern on record but values not resolvable', async () => {
-      const mock = fetchMock.sandbox();
-      mock.get(`${endpoint}${queryParam}1000`, fixture1000);
+      //const mock = fetchMock.sandbox();
+      //mock.get(`${endpoint}${queryParam}1000`, fixture1000);
 
-      testContext.default.__Rewire__('fetch', mock);
+      //testContext.default.__Rewire__('fetch', mock);
       const validator = await testContext.default({endpoint, prefixPattern, fields});
 
       const record = new MarcRecord({

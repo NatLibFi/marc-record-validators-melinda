@@ -60,7 +60,7 @@
     "@natlibfi/fixura": "^4.0.0-alpha.12",
     "cross-env": "^7.0.3",
     "eslint": "^9.35.0",
-    "fetch-mock": "^11.1.5"
+    "fetch-mock": "^12.5.4"
   },
   "overrides": {
     "nanoid": "^3.3.8"
