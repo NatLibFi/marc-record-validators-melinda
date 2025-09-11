@@ -1,4 +1,4 @@
-import {isElectronicMaterial} from './utils';
+import {isElectronicMaterial} from './utils.js';
 
 export default function (isViolaRecord = false) {
   const sf506 = [{code: 'a', value: /aineisto on käytettävissä vapaakappaletyöasemilla/ui}];
