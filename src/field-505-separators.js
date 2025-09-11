@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -47,7 +47,7 @@ export default function () {
 function field505FixSubfieldA(field) {
   const a = field.subfields.filter(sf => sf.code === 'a');
 
-  a.forEach(sf => fixSubfieldA(sf)); // eslint-disable-line array-callback-return
+  a.forEach(sf => fixSubfieldA(sf));
 
   function fixSubfieldA(a) {
     a.value = a.value.replace(/ ; /ug, ' -- ');
@@ -58,7 +58,7 @@ function field505FixSubfieldTRG(field) {
   // Modify subfield if next subfield is $t:
   const subfieldsThatWillBeModified = field.subfields.filter((sf, i) => i + 1 < field.subfields.length && field.subfields[i + 1].code === 't');
 
-  subfieldsThatWillBeModified.forEach(sf => fixSubfieldThatPrecedesT(sf)); // eslint-disable-line array-callback-return
+  subfieldsThatWillBeModified.forEach(sf => fixSubfieldThatPrecedesT(sf));
 
   function fixSubfieldThatPrecedesT(sf) {
     if (!sf.value) {

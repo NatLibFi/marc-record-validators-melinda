@@ -7,12 +7,12 @@
   Thus it is here. However, most of the testing is done via merge-reducers...
 */
 import clone from 'clone';
-import {fieldStripPunctuation} from './punctuation2';
+import {fieldStripPunctuation} from './punctuation2.js';
 import {fieldToString, isControlSubfieldCode} from './utils.js';
 
-import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from './normalize-identifiers';
+import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from './normalize-identifiers.js';
 import createDebugLogger from 'debug';
-import {normalizePartData, subfieldContainsPartData} from './normalizeSubfieldValueForComparison';
+import {normalizePartData, subfieldContainsPartData} from './normalizeSubfieldValueForComparison.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeFieldForComparison');
 //const debugData = debug.extend('data');
@@ -124,7 +124,7 @@ function fieldLowercase(field) {
     return;
   }
 
-  field.subfields.forEach(sf => subfieldLowercase(sf, field.tag)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => subfieldLowercase(sf, field.tag));
 
   function skipFieldLowercase(field) {
     if (skipAllFieldNormalizations(field.tag)) {
@@ -144,7 +144,7 @@ function hack490SubfieldA(field) {
   if (field.tag !== '490') {
     return;
   }
-  field.subfields.forEach(sf => removeSarja(sf)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => removeSarja(sf));
 
   // NB! This won't work, if the punctuation has not been stripped beforehand!
   function removeSarja(subfield) {
@@ -185,7 +185,7 @@ function normalizeISBN(field) {
 
   //nvdebug(`ISBN-field? ${fieldToString(field)}`);
   const relevantSubfields = field.subfields.filter(sf => tagAndSubfieldCodeReferToIsbn(field.tag, sf.code) && looksLikeIsbn(sf.value));
-  relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf)); // eslint-disable-line array-callback-return
+  relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf));
 
   function normalizeIsbnSubfield(sf) {
     //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);

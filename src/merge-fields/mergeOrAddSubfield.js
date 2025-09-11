@@ -1,9 +1,9 @@
 import createDebugLogger from 'debug';
 import {cloneAndNormalizeFieldForComparison, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison.js';
-import {normalizeAs, normalizeControlSubfieldValue} from '../normalize-identifiers';
+import {normalizeAs, normalizeControlSubfieldValue} from '../normalize-identifiers.js';
 import {fieldHasSubfield, fieldToString, isControlSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from '../utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
-import {sortAdjacentSubfields} from '../sortSubfields'; //'./sortSubfields.js';
+import {sortAdjacentSubfields} from '../sortSubfields.js';
 
 import {valueCarriesMeaning} from './worldKnowledge.js';
 import {resetSubfield6Tag} from '../subfield6Utils.js';

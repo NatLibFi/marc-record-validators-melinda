@@ -1,11 +1,11 @@
 import clone from 'clone';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 // Fix language codes in 008/35-37 and 041 (does not sync them)
 //
 // Author(s): Nicholas Volk
 
 //import createDebugLogger from 'debug';
-//import {fieldToString, nvdebug} from './utils';
+//import {fieldToString, nvdebug} from './utils.js';
 
 const description = 'Fix language codes';
 
@@ -25,7 +25,7 @@ export default function () {
     fixLanguageField008(field008);
 
     const f041 = record.get('041');
-    f041.forEach(f => fixField041(f)); // eslint-disable-line array-callback-return
+    f041.forEach(f => fixField041(f));
 
     return res;
   }
@@ -38,7 +38,7 @@ export default function () {
 
     const f041 = record.get('041');
 
-    f041.forEach(f => validateField041(f, res)); // eslint-disable-line array-callback-return
+    f041.forEach(f => validateField041(f, res));
 
     res.valid = !(res.message.length >= 1);
     return res;
@@ -98,7 +98,7 @@ export default function () {
       return;
     }
 
-    field.subfields.forEach(sf => fixField041Subfield(sf)); // eslint-disable-line array-callback-return
+    field.subfields.forEach(sf => fixField041Subfield(sf));
 
     function fixField041Subfield(subfield) {
       if (!isRelevantField041SubfieldCode(subfield)) {

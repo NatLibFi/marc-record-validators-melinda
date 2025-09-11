@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 // Author(s): Nicholas Volk
 // NB! CR 008/24 vs 008/25-27 is not supported yet!
 
@@ -120,7 +120,7 @@ export function justifyAndSortField008CharacterGroups(field, typeOfMaterial) {
 
   const relevantCharacterGroups = characterGroups.filter(gr => gr.type === typeOfMaterial);
 
-  relevantCharacterGroups.forEach(group => processCharacterGroup(field, group)); // eslint-disable-line array-callback-return
+  relevantCharacterGroups.forEach(group => processCharacterGroup(field, group));
 
   //justifyField008CharacterGroups(field, typeOfMaterial); // Oops: also sorts...
 

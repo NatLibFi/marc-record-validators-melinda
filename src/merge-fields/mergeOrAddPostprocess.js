@@ -1,10 +1,10 @@
 // This field should be renamed, as it is called also from outside megre.
 
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {fieldFixPunctuation} from '../punctuation2';
-import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
-import {sortAdjacentSubfields} from '../sortSubfields';
-import {sortAdjacentRelatorTerms} from '../sortRelatorTerms';
+import {fieldFixPunctuation} from '../punctuation2.js';
+import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields.js';
+import {sortAdjacentSubfields} from '../sortSubfields.js';
+import {sortAdjacentRelatorTerms} from '../sortRelatorTerms.js';
 
 function postprocessBaseRecord(base) {
 

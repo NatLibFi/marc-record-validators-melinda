@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 import clone from 'clone';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
@@ -14,7 +14,7 @@ export default function () {
 
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fixField(f, record)); // eslint-disable-line array-callback-return
+    record.fields.forEach(f => fixField(f, record));
     return res;
   }
 

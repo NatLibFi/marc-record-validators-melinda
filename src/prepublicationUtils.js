@@ -1,4 +1,4 @@
-import {fieldHasSubfield, nvdebug, nvdebugFieldArray} from './utils';
+import {fieldHasSubfield, nvdebug, nvdebugFieldArray} from './utils.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:prepublicationUtils');
@@ -178,7 +178,7 @@ export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
 
 
   nvdebug(`Delete all ${f500.length} instance(s) of field 500`, debugDev);
-  f500.forEach(field => record.removeField(field)); // eslint-disable-line array-callback-return
+  f500.forEach(field => record.removeField(field));
 }
 
 
@@ -188,7 +188,7 @@ export function removeWorsePrepubField500s(record) {
   nvdebugFieldArray(fields, '  Candidates for non-best 500 b4 filtering: ', debugDev);
   const nonBest = fields.filter(field => fields.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
   nvdebugFieldArray(nonBest, '  Remove non-best 500: ', debugDev);
-  nonBest.forEach(field => record.removeField(field)); // eslint-disable-line array-callback-return
+  nonBest.forEach(field => record.removeField(field));
 }
 
 
@@ -198,7 +198,7 @@ export function removeWorsePrepubField594s(record) {
   nvdebugFieldArray(fields594, '  Candidates for non-best 594 b4 filtering: ', debugDev);
   const nonBest = fields594.filter(field => fields594.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
   nvdebugFieldArray(nonBest, '  Remove non-best 594: ', debugDev);
-  nonBest.forEach(field => record.removeField(field)); // eslint-disable-line array-callback-return
+  nonBest.forEach(field => record.removeField(field));
 }
 
 

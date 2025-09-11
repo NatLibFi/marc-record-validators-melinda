@@ -1,15 +1,14 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldHasSubfield, fieldToString, fieldsToString, isControlSubfieldCode, nvdebug} from './utils';
-import * as iso9 from 'iso9_1995';
-import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils';
-
 import XRegExp from 'xregexp';
+import * as iso9 from '@natlibfi/iso9-1995';
 import * as sfs4900 from '@natlibfi/sfs-4900';
-import {default as sortFields} from './sortFields';
-import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers';
-import {fieldStripPunctuation} from './punctuation2';
-import {getLanguageCode} from './addMissingField041';
+import {fieldHasSubfield, fieldToString, fieldsToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils.js';
+import {default as sortFields} from './sortFields.js';
+import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers.js';
+import {fieldStripPunctuation} from './punctuation2.js';
+import {getLanguageCode} from './addMissingField041.js';
 
 const iso9Trans = 'ISO9 <TRANS>';
 const cyrillicTrans = 'CYRILLIC <TRANS>';
@@ -158,16 +157,24 @@ export default function (config = {}) {
     if (!subfieldRequiresTransliteration(subfield)) {
       return {code: subfield.code, value: subfield.value}; // just clone
     }
-    const value = iso9.convertToLatin(subfield.value);
 
-    return {code: subfield.code, value};
+    const conversionResult = iso9.convertToLatin(subfield.value);
+
+    return {code: subfield.code, value: conversionResult.result};
   }
 
   function mapSubfieldToSfs4900(subfield, lang = 'rus') {
     const inputLang = lang === 'ukr' ? 'ukr' : 'rus'; // Support 'ukr' and 'rus', default to 'rus'
-    const value = subfieldRequiresTransliteration(subfield) ? sfs4900.convertToLatin(subfield.value, inputLang).result : subfield.value;
+    if (!subfieldRequiresTransliteration(subfield)) {
+      return {code: subfield.code, value: subfield.value};
+    }
+    const conversionResult = sfs4900.convertToLatin(subfield.value, inputLang);
+
+    console.log(JSON.stringify(conversionResult));
+    const result = conversionResult.result;
+    console.log(JSON.stringify(result));
     //console.log(`VAL: ${subfield.value} => ${value} using ${lang}`); // eslint-disable-line no-console
-    return {code: subfield.code, value};
+    return {code: subfield.code, value: result};
   }
 
   function mapField(field, occurrenceNumber, iso9 = true, lang = 'rus') {

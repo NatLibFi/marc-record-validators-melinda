@@ -2,7 +2,7 @@
 // import clone from 'clone';
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:multiple-subfield-0');
 
-import {fieldHasSubfield, fieldToString} from './utils';
+import {fieldHasSubfield, fieldToString} from './utils.js';
 
 const asteriNamePrefixes = ['(FI-ASTERI-N)', '(FIN11)', 'http://urn.fi/URN:NBN:fi:au:finaf:', 'https://urn.fi/URN:NBN:fi:au:finaf:'];
 
@@ -16,14 +16,14 @@ export default function () {
   function fix(record) {
     function fixField(field) {
       const removableSubfields = fieldGetDeletableSubfields(field);
-      removableSubfields.forEach(sf => record.removeSubfield(sf, field)); // eslint-disable-line array-callback-return
+      removableSubfields.forEach(sf => record.removeSubfield(sf, field));
     }
 
     const res = {message: [], fix: [], valid: true};
 
     const relevantFields = getRelevantFields(record);
 
-    relevantFields.forEach(field => fixField(field)); // eslint-disable-line array-callback-return
+    relevantFields.forEach(field => fixField(field));
 
     // message.valid = !(message.message.length >= 1);
     return res;

@@ -1,9 +1,9 @@
 import createDebugLogger from 'debug';
-import {partsAgree, subfieldContainsPartData} from '../normalizeSubfieldValueForComparison';
-import {valueCarriesMeaning} from './worldKnowledge';
-import {nvdebug} from '../utils';
+import {partsAgree, subfieldContainsPartData} from '../normalizeSubfieldValueForComparison.js';
+import {valueCarriesMeaning} from './worldKnowledge.js';
+import {nvdebug} from '../utils.js';
 import {tagAndSubfieldCodeReferToIsbn} from '../normalizeFieldForComparison.js';
-import {canContainOptionalQualifier, splitToNameAndQualifier} from './counterpartField';
+import {canContainOptionalQualifier, splitToNameAndQualifier} from './counterpartField.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 //const debugData = debug.extend('data');

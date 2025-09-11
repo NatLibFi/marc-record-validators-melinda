@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/update-field-540');
 
@@ -86,7 +86,7 @@ function fieldHasOldCcLicense(field, fix) {
   //nvdebug(` Found valid license`);
   if (fix) {
     const subfieldsC = field.subfields.filter(sf => validLicenseInSubfieldC(sf, validLicense));
-    subfieldsC.forEach(c => fixC(field, c)); // eslint-disable-line array-callback-return
+    subfieldsC.forEach(c => fixC(field, c));
   }
 
   return true;

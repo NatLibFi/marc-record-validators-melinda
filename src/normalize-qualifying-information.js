@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -51,7 +51,7 @@ function normalizeQualifyingInformationField(field) {
     return;
   }
 
-  field.subfields.forEach(sf => fixSubfield(sf)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => fixSubfield(sf));
   return;
 
   function fixSubfield(sf) {

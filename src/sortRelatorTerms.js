@@ -4,9 +4,9 @@
 
 import clone from 'clone';
 //import createDebugLogger from 'debug';
-import {fieldToString} from './utils';
-import {fieldFixPunctuation} from './punctuation2';
-import {scoreRelatorTerm} from './sortFields';
+import {fieldToString} from './utils.js';
+import {fieldFixPunctuation} from './punctuation2.js';
+import {scoreRelatorTerm} from './sortFields.js';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortRelatorTerms');
 //const debugData = debug.extend('data');
 

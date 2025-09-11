@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {convert as nongenericNormalization} from './unicode-decomposition';
-import {fieldToString} from './utils';
+import {convert as nongenericNormalization} from './unicode-decomposition.js';
+import {fieldToString} from './utils.js';
 
 // Note that https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js contains
 // similar functionalities. It's less generic and lacks diacritic removal but has it advantages as well.

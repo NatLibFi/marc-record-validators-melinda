@@ -1,7 +1,7 @@
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalize-identifiers');
 
 /*

@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 // const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield6Utils');
 
-import {add8s, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, isValidSubfield8} from './subfield8Utils';
-import {fieldHasSubfield, fieldToString, fieldsToString, nvdebug, subfieldToString} from './utils';
+import {add8s, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, isValidSubfield8} from './subfield8Utils.js';
+import {fieldHasSubfield, fieldToString, fieldsToString, nvdebug, subfieldToString} from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
 //const debugData = debug.extend('data');
@@ -99,7 +99,7 @@ export function fieldHasOccurrenceNumber(field, occurrenceNumber) {
 }
 
 export function fieldResetOccurrenceNumber(field, newOccurrenceNumber, oldOccurrenceNumber = undefined) {
-  field.subfields.forEach(subfield => innerReset(subfield)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(subfield => innerReset(subfield));
 
   function innerReset(subfield) {
     // (Optional) Check that this is really the occurrence number we wan't to reseot
@@ -210,7 +210,7 @@ export function fieldSevenToOneOccurrenceNumber(field) {
   if (field.tag !== '880') {
     return;
   }
-  field.subfields.forEach(sf => subfieldSevenToOneOccurrenceNumber(sf)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => subfieldSevenToOneOccurrenceNumber(sf));
 }
 
 
@@ -223,12 +223,11 @@ export function fieldGetOccurrenceNumberPairs(field, candFields) {
     return pairs;
   }
   nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`);
-  pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`)); // eslint-disable-line array-callback-return
+  pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`));
   return pairs;
 }
 
 export function fieldGetOccurrenceNumbers(field) {
-  /* eslint-disable */
   let occurrenceNumbers = [];
   field.subfields?.forEach(sf => subfieldExtractOccurrenceNumber(sf));
 
@@ -242,12 +241,10 @@ export function fieldGetOccurrenceNumbers(field) {
     }
     occurrenceNumbers.push(occurrenceNumber);
   }
-  /* eslint-enable */
   return occurrenceNumbers;
 }
 
 export function fieldsGetOccurrenceNumbers(fields) {
-  /* eslint-disable */
   let occurrenceNumbers = [];
 
   fields.forEach(f => fieldProcessOccurrenceNumbers(f));
@@ -261,7 +258,6 @@ export function fieldsGetOccurrenceNumbers(fields) {
 
     });
   }
-  /* eslint-enable */
   return occurrenceNumbers;
 }
 
@@ -482,7 +478,7 @@ export function get6s(field, candidateFields) { // NB! Convert field to fields!!
 
   const relevantFields = candidateFields.filter(f => occurrenceNumbers.some(o => fieldHasOccurrenceNumber(f, o)));
   nvdebug(`${fieldToString(field)}: $6-RELFIELDS FOUND: ${relevantFields.length}...`);
-  relevantFields.forEach(f => nvdebug(fieldToString(f))); // eslint-disable-line array-callback-return
+  relevantFields.forEach(f => nvdebug(fieldToString(f)));
   return relevantFields;
 }
 

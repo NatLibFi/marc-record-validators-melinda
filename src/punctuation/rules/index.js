@@ -1,5 +1,5 @@
-import bibRules from './bib';
-import autRules from './aut';
+import bibRules from './bib.js';
+import autRules from './aut.js';
 
 export {
   bibRules,

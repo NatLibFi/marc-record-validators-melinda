@@ -1,8 +1,5 @@
 {
   "description": "v04: bug fix 20240523 (JO/Slack): $0 with no value",
   "fix": false,
-  "only": false,
-  "_validationOptions": {
-    "subfieldValues": false
-  }
+  "only": false
 }
