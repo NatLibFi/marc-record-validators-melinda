@@ -58,6 +58,29 @@ import UnicodeDecomposition from './unicode-decomposition.js';
 import UpdateField540 from './update-field-540.js';
 import Urn from './urn.js';
 
+import {getCounterpart} from './merge-fields/counterpartField.js';
+
+import {postprocessRecords} from './merge-fields/mergeOrAddPostprocess.js';
+import {mergeField} from './merge-fields/mergeField.js';
+import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, fieldToNormalizedString, fieldsToNormalizedString, get6s,
+  isValidSubfield6, recordGetMaxSubfield6OccurrenceNumberAsInteger,
+  intToOccurrenceNumberString, resetSubfield6Tag, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumber,
+  subfield6GetOccurrenceNumberAsInteger} from './subfield6Utils.js';
+
+import {getSubfield8LinkingNumber, isValidSubfield8, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from './subfield8Utils.js';
+
+import {recordFixRelatorTerms} from './fixRelatorTerms.js';
+import {fieldTrimSubfieldValues} from './normalizeFieldForComparison.js';
+import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, encodingLevelIsBetterThanPrepublication, getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from './prepublicationUtils.js';
+import {melindaFieldSpecs} from '@natlibfi/marc-record-validators-melinda/dist/melindaCustomMergeFields.js';
+
+import {cloneAndRemovePunctuation} from './normalizeFieldForComparison.js';
+import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
+import {fieldFixPunctuation} from './punctuation2.js';
+import {recordResetSubfield6OccurrenceNumbers} from './reindexSubfield6OccurenceNumbers.js';
+import {sortAdjacentSubfields} from './sortSubfields.js';
+import {fieldsToString} from './utils.js';
+
 export {
   AccessRights,
   AddMissingField041,
@@ -116,5 +139,43 @@ export {
   UpdateField540,
   Urn,
   SortFields, // Keep this penultimate
-  MergeFields // Run this last *iff* you want to use this at all
+  MergeFields, // Run this last *iff* you want to use this at all
+
+    // Functions for processing record... These should probably go to some other project.
+  // Too specific for marc-record-js though...
+  baseHasEqualOrHigherEncodingLevel,
+  cloneAndRemovePunctuation,
+  deleteAllPrepublicationNotesFromField500InNonPubRecord,
+  encodingLevelIsBetterThanPrepublication,
+  fieldFixPunctuation,
+  fieldGetOccurrenceNumberPairs,
+  fieldToNormalizedString,
+  fieldTrimSubfieldValues,
+  fieldsToNormalizedString,
+  fieldsToString,
+  getCounterpart,
+  getEncodingLevel,
+  getSubfield8LinkingNumber,
+  get6s,
+  fieldGetUnambiguousOccurrenceNumber,
+  intToOccurrenceNumberString,
+  isEnnakkotietoField,
+  isEnnakkotietoSubfield,
+  isValidSubfield6,
+  isValidSubfield8,
+  melindaFieldSpecs,
+  mergeField,
+  postprocessRecords,
+  recordFixRelatorTerms,
+  recordGetAllSubfield8LinkingNumbers,
+  recordGetFieldsWithSubfield8LinkingNumber,
+  recordGetMaxSubfield6OccurrenceNumberAsInteger,
+  recordResetSubfield6OccurrenceNumbers,
+  removeWorsePrepubField500s,
+  removeWorsePrepubField594s,
+  resetSubfield6Tag,
+  sortAdjacentSubfields,
+  subfield6ResetOccurrenceNumber,
+  subfield6GetOccurrenceNumber,
+  subfield6GetOccurrenceNumberAsInteger
 };
