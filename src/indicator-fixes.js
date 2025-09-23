@@ -229,7 +229,7 @@ function getLanguages(record) {
 
 }
 
-export function recordNormalizeIndicators(record) {
+function recordNormalizeIndicators(record) {
   recordNormalize490(record);
 
   // Language is used to handle non-filing indicators
