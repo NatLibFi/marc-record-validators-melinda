@@ -1,4 +1,4 @@
-export const melindaCustomMergeFields = {'fields':
+export const melindaFieldSpecs = {'fields':
   [
     {
       'tag': 'leader',
