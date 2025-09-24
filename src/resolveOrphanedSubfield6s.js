@@ -41,7 +41,7 @@ export default function () {
   }
 }
 
-export function recordFixSubfield6OccurrenceNumbers(record) {
+function recordFixSubfield6OccurrenceNumbers(record) {
   const fieldsContainingSubfield6 = record.fields.filter(field => fieldHasSubfield(field, '6'));
   const orphanedFields = getOrphanedFields(fieldsContainingSubfield6);
 

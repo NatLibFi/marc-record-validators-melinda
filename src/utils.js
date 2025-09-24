@@ -7,7 +7,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:ut
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-import {melindaCustomMergeFields as melindaFields} from './melindaCustomMergeFields.js';
+import {melindaFieldSpecs} from './melindaCustomMergeFields.js';
 
 //JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'melindaCustomMergeFields.json'), 'utf8'));
 
@@ -176,7 +176,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
     return true;
   }
 
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  const fieldSpecs = melindaFieldSpecs.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
     nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
     return true;
@@ -193,7 +193,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
 }
 
 function marc21GetTagsLegalIndicators(tag) {
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  const fieldSpecs = melindaFieldSpecs.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length === 0) {
     return undefined;
   }
