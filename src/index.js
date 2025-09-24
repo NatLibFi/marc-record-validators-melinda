@@ -141,41 +141,53 @@ export {
   SortFields, // Keep this penultimate
   MergeFields, // Run this last *iff* you want to use this at all
 
-    // Functions for processing record... These should probably go to some other project.
+  // Functions for processing record... These should probably go to some other project.
   // Too specific for marc-record-js though...
-  baseHasEqualOrHigherEncodingLevel,
+  // 1. generic low level stuff
+  getEncodingLevel,
+
+  // 2. text normalizations (eg. for similarity comparisons, field merge)
   cloneAndRemovePunctuation,
-  deleteAllPrepublicationNotesFromField500InNonPubRecord,
-  encodingLevelIsBetterThanPrepublication,
   fieldFixPunctuation,
-  fieldGetOccurrenceNumberPairs,
   fieldToNormalizedString,
   fieldTrimSubfieldValues,
   fieldsToNormalizedString,
   fieldsToString,
-  getCounterpart,
-  getEncodingLevel,
-  getSubfield8LinkingNumber,
+  recordFixRelatorTerms,
+  sortAdjacentSubfields,
+
+  // 3. prepublication stuff
+  baseHasEqualOrHigherEncodingLevel,
+  deleteAllPrepublicationNotesFromField500InNonPubRecord,
+  encodingLevelIsBetterThanPrepublication,
+  isEnnakkotietoField,
+  isEnnakkotietoSubfield,
+  removeWorsePrepubField500s,
+  removeWorsePrepubField594s,
+
+  // 4. subfield $6 related functions
+  fieldGetOccurrenceNumberPairs,
   get6s,
   fieldGetUnambiguousOccurrenceNumber,
   intToOccurrenceNumberString,
-  isEnnakkotietoField,
-  isEnnakkotietoSubfield,
   isValidSubfield6,
-  isValidSubfield8,
-  melindaFieldSpecs,
-  mergeField,
-  postprocessRecords,
-  recordFixRelatorTerms,
-  recordGetAllSubfield8LinkingNumbers,
-  recordGetFieldsWithSubfield8LinkingNumber,
   recordGetMaxSubfield6OccurrenceNumberAsInteger,
   recordResetSubfield6OccurrenceNumbers,
-  removeWorsePrepubField500s,
-  removeWorsePrepubField594s,
   resetSubfield6Tag,
-  sortAdjacentSubfields,
   subfield6ResetOccurrenceNumber,
   subfield6GetOccurrenceNumber,
-  subfield6GetOccurrenceNumberAsInteger
+  subfield6GetOccurrenceNumberAsInteger,
+
+  // 5. subfield $8 related functions
+  getSubfield8LinkingNumber,
+  isValidSubfield8,
+  recordGetAllSubfield8LinkingNumbers,
+  recordGetFieldsWithSubfield8LinkingNumber,
+
+  // 6. merge, other
+  getCounterpart, // field merge: finds a similar field with which a field can merge
+  melindaFieldSpecs, // contains information about the legal fields and subfields, and their repeatability
+  mergeField,
+  postprocessRecords // clean-up function that cleans up both base and source record (which may be the same)
+
 };
