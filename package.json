@@ -33,7 +33,6 @@
     "dev:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test node --watch --test --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
     "dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test"
   },
-  "comment-sfs4900": "Package sfs-4900 npm version is 1.1.0, github 1.1.3.",
   "dependencies": {
     "@natlibfi/issn-verify": "^1.0.6",
     "@natlibfi/marc-record": "^10.0.0-alpha.1",
@@ -42,7 +41,7 @@
     "@natlibfi/melinda-commons": "^14.0.0-alpha.3",
     "@natlibfi/sfs-4900": "^2.0.0-alpha.3",
     "@natlibfi/iso9-1995": "^1.0.0-alpha.2",
-    "@natlibfi/sru-client": "^7.0.0-alpha.1",
+    "@natlibfi/sru-client": "^7.0.0-alpha.3",
     "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
     "debug": "^4.4.3",
@@ -55,8 +54,8 @@
     "@natlibfi/marc-record-validate": "^9.0.0-alpha.1"
   },
   "devDependencies": {
-    "@natlibfi/fixugen": "^3.0.0-alpha.5",
-    "@natlibfi/fixura": "^4.0.0-alpha.12",
+    "@natlibfi/fixugen": "^3.0.0-alpha.6",
+    "@natlibfi/fixura": "^4.0.0-alpha.13",
     "cross-env": "^10.0.0",
     "esbuild": "^0.25.10",
     "eslint": "^9.36.0",
