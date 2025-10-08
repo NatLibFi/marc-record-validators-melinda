@@ -6,8 +6,20 @@
     { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi1"}, {"code": "2", "value": "yso/fin"}, {"code": "7", "value": "(dpenmw)AI"}]},
 
     { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi2"}, {"code": "2", "value": "yso/fin"}]},
-    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi2"}, {"code": "2", "value": "yso/fin"}, {"code": "0", "value": "something else"}]}
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi2"}, {"code": "2", "value": "yso/fin"}, {"code": "0", "value": "something else"}]},
 
+    { "tag": "773", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "7", "value": "abcd"},
+      { "code": "t", "value": "Title."},
+      { "code": "x", "value": "1234567890"},
+      { "code": "w", "value": "(FI-MELINDA)020000000"}
+    ]},
+    { "tag": "773", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "7", "value": "abcd"},
+      { "code": "t", "value": "Title."},
+      { "code": "o", "value": "ABC-123"},
+      { "code": "w", "value": "(FI-MELINDA)020000000"}
+    ]}
   ],
   "leader": "01331cam a22003498i 4500"
 
