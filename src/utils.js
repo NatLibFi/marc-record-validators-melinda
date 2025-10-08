@@ -232,3 +232,13 @@ export function hasCopyright(value) {
   const modValue = removeCopyright(value);
   return value !== modValue;
 }
+
+
+
+export function subfieldArraysContainSameData(arr1, arr2) {
+  if ( !arr1.every(sf => arr2.some(sf2 => subfieldsAreIdentical(sf, sf2))) ) {
+    return false;
+  }
+
+  return arr2.every(sf2 => arr1.some(sf => subfieldsAreIdentical(sf, sf2)));
+}
