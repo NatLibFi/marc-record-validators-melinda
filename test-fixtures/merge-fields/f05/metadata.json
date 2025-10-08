@@ -1,0 +1,6 @@
+{
+  "description": "MELKEHITYS-3277-ish: don't merge AI field",
+  "fix": true,
+  "tagPattern": "^(650)$",
+  "only": true
+}
