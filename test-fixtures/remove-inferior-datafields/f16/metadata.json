@@ -1,0 +1,5 @@
+{
+  "description": "MELKEHITYS-3277-ish: delete AI field, if there's a corresponding non-AI field",
+  "fix": true,
+  "only": false
+}

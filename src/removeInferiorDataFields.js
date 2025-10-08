@@ -332,7 +332,10 @@ function deriveIndividualDeletables(record) {
     // MET-575 (merge: applies in postprocessing)
     const inferiorTerms = getPrepublicationTerms(currString);
 
-    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...inferiorTerms];
+    // MELKEHITYS-3277-ish: non-AI is better than AI (a rare case where longer version is inferior):
+    const aiBased = `${currString} ‡7 (dpenmw)AI`;
+
+    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...inferiorTerms, aiBased];
 
     if (subsets.length) {
       return processTodoList([...stillToDo, ...moreToDo], newDeletables);

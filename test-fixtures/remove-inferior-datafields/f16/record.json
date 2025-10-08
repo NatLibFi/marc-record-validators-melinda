@@ -1,0 +1,14 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f16" },
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi1"}, {"code": "2", "value": "yso/fin"}]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi1"}, {"code": "2", "value": "yso/fin"}, {"code": "7", "value": "(dpenmw)AI"}]},
+
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi2"}, {"code": "2", "value": "yso/fin"}]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi2"}, {"code": "2", "value": "yso/fin"}, {"code": "7", "value": "something else"}]}
+
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}
