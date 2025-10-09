@@ -2,21 +2,25 @@
   "_validationOptions": {},
   "fields": [
     { "tag": "001", "value": "f05" },
-    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi1"}, {"code": "2", "value": "yso/fin"}]},
-    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi1"}, {"code": "2", "value": "yso/fin"}, {"code": "7", "value": "(dpenmw)AI"}]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "$7 does not merge"}, {"code": "2", "value": "yso/fin"}]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "$7 does not merge"}, {"code": "2", "value": "yso/fin"}, {"code": "7", "value": "(dpenmw)AI"}]},
 
-    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi2"}, {"code": "2", "value": "yso/fin"}]},
-    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "termi2"}, {"code": "2", "value": "yso/fin"}, {"code": "0", "value": "something else"}]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "non-$7 merges"}, {"code": "2", "value": "yso/fin"}]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "non-$7 merges"}, {"code": "2", "value": "yso/fin"}, {"code": "0", "value": "something else"}]},
+
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "Identical $7s can merge"}, {"code": "2", "value": "yso/fin"}, {"code": "7", "value": "(dpenmw)AI"}]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [ { "code": "a", "value": "Identical $7s can merge"}, {"code": "2", "value": "yso/fin"}, {"code": "7", "value": "(dpenmw)AI"}]},
+
 
     { "tag": "773", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "7", "value": "abcd"},
-      { "code": "t", "value": "Title."},
+      { "code": "t", "value": "Merges since $7 is not a data provenance subfield."},
       { "code": "x", "value": "1234567890"},
       { "code": "w", "value": "(FI-MELINDA)020000000"}
     ]},
     { "tag": "773", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "7", "value": "abcd"},
-      { "code": "t", "value": "Title."},
+      { "code": "t", "value": "Merges since $7 is not a data provenance subfield."},
       { "code": "o", "value": "ABC-123"},
       { "code": "w", "value": "(FI-MELINDA)020000000"}
     ]}
