@@ -106,8 +106,8 @@ function skipMergeField(baseRecord, sourceField, config) {
     return true;
   }
 
-  // Skip duplicate field:
-  if (baseRecord.fields.some(baseField => !baseField.mergeCandidate && fieldsAreIdentical(sourceField, baseField))) {
+  // Skip duplicate field when merging two records (NB! internal merge merges/removes the duplicate field):
+  if (!baseRecord.internalMerge && baseRecord.fields.some(baseField => !baseField.mergeCandidate && fieldsAreIdentical(sourceField, baseField))) {
     nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' already exists! No merge required!`, debugDev);
     sourceField.deleted = 1;
     return true;
