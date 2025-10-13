@@ -11,6 +11,7 @@ import {controlSubfieldsPermitMerge} from './controlSubfields.js';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator.js';
 import {partsAgree} from '../normalizeSubfieldValueForComparison.js';
 import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge.js';
+import { provenanceSubfieldsPermitMerge } from './dataProvenance.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeField:counterpart');
 //const debugData = debug.extend('data');
@@ -372,6 +373,11 @@ function syntacticallyMergablePair(baseField, sourceField, config) {
 
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
     nvdebug('non-mergable (reason: control subfield)', debugDev);
+    return false;
+  }
+
+  if (!provenanceSubfieldsPermitMerge(baseField, sourceField)) {
+    nvdebug('non-mergable (reason: data provenance subfield)', debugDev);
     return false;
   }
 

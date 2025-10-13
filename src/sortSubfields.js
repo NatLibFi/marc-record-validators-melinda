@@ -67,9 +67,9 @@ export default function (defaultTagPattern) {
 
 // X00, X10, X11 and X130 could also for their own sets...
 // (ouch! sometimes $c comes after $d...): LoC: 100 0# ‡a Black Foot, ‡c Chief, ‡d d. 1877 ‡c (Spirit)
-const sortOrderForX00 = ['i', 'a', 'b', 'q', 'c', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '5', '9']; // skip $g. Can't remember why, though...
-const sortOrderForX10 = ['i', 'a', 'b', 't', 'n', 'c', 'e', 'v', 'w', 'x', 'y', 'z', '0', '5', '9']; // somewhat iffy
-const sortOrderForX11 = ['a', 'n', 'd', 'c', 'e', 'g', 'j', '0', '5', '9'];
+const sortOrderForX00 = ['i', 'a', 'b', 'q', 'c', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '1', '5', '9']; // skip $g. Can't remember why, though...
+const sortOrderForX10 = ['i', 'a', 'b', 't', 'n', 'c', 'e', 'v', 'w', 'x', 'y', 'z', '0', '1', '5', '9']; // somewhat iffy
+const sortOrderForX11 = ['a', 'n', 'd', 'c', 'e', 'g', 'j', '0', '1', '5', '9'];
 const sortOrderFor7XX = ['8', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
 const sortOrderFor246 = ['i', 'a', 'b', 'n', 'p', 'f', '5', '9']; // Used by field 946 as well
 
@@ -89,7 +89,7 @@ const subfieldSortOrder = [
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'k', 'f', 'c']},
   {'tag': '246', 'sortOrder': sortOrderFor246},
   {'tag': '382', 'sortOrder': ['a']},
-  {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a', '2', '0']},
+  {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a', '2', '0', '1']},
   {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a']},
   {'tag': '490', 'sortOrder': ['a', 'x', 'y', 'v', 'l']},
   {'tag': '505', 'sortOrder': ['a']},
@@ -218,7 +218,9 @@ export function sortAdjacentSubfields(field, externalSortOrder = []) {
 
 
   const finnishWay = twoBeforeZero(field);
-  const controlSubfieldOrder = finnishWay ? ['8', '7', '3', 'a', '4', '2', '0', '1', '5', '9'] : ['8', '7', '3', 'a', '4', '0', '2', '1', '5', '9'];
+
+  // Note: 760-789: '7' comes way earlier (after '6' and '8')
+  const controlSubfieldOrder = finnishWay ? ['8', '3', 'a', '4', '2', '0', '1', '7', '5', '9'] : ['8', '7', '3', 'a', '4', '0', '1', '2', '7', '5', '9'];
   swapSubfields(field, controlSubfieldOrder);
 
   const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);

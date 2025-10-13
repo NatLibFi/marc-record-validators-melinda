@@ -4,6 +4,7 @@ import validatorFactory from './merge-fields/index.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
+import { nvdebug } from './utils.js';
 
 generateTests({
   callback,
@@ -29,17 +30,20 @@ async function testValidatorFactory() {
   assert.equal(typeof validator.validate, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
+async function callback({getFixture, enabled = true, fix = false, tagPattern = false}) {
   if (enabled === false) {
     debug('TEST SKIPPED!');
     return;
   }
 
-  const validator = await validatorFactory();
+  nvdebug(`TAG PATTERN: ${tagPattern}`);
+
+  const validator = await validatorFactory(tagPattern);
   const record = new MarcRecord(getFixture('record.json'));
   const expectedResult = getFixture('expectedResult.json');
   // console.log(expectedResult); // eslint-disable-line
 
+  // NB! This validator will only use tags matching /^[1678](?:00|10|11|30)$/ unless tagPattern is specified!
   if (!fix) {
     const result = await validator.validate(record);
     assert.deepEqual(result, expectedResult);
