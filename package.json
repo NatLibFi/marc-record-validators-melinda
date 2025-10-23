@@ -6,13 +6,12 @@
     "name": "The National Library of Finland"
   },
   "keywords": [],
-  "homepage": "https://github.com/natlibfi/marc-record-validators-melinda",
+  "homepage": "https://www.npmjs.com/package/@natlibfi/marc-record-validators-melinda",
   "bugs": {
     "url": "https://github.com/natlibfi/marc-record-validators-melinda/issues"
   },
   "repository": {
-    "type": "git",
-    "url": "git@github.com:natlibfi/marc-record-validators-melinda.git"
+    "url": "https://github.com/NatLibFi/marc-record-validators-melinda"
   },
   "license": "MIT",
   "version": "12.0.0-alpha.5",
@@ -35,13 +34,13 @@
   },
   "dependencies": {
     "@natlibfi/issn-verify": "^1.0.6",
-    "@natlibfi/marc-record": "^10.0.0-alpha.1",
-    "@natlibfi/marc-record-serializers": "^11.0.0-alpha.2",
-    "@natlibfi/marc-record-validate": "^9.0.0-alpha.1",
-    "@natlibfi/melinda-commons": "^14.0.0-alpha.3",
-    "@natlibfi/sfs-4900": "^2.0.0-alpha.3",
-    "@natlibfi/iso9-1995": "^1.0.0-alpha.2",
-    "@natlibfi/sru-client": "^7.0.0-alpha.3",
+    "@natlibfi/marc-record": "next",
+    "@natlibfi/marc-record-serializers": "next",
+    "@natlibfi/marc-record-validate": "next",
+    "@natlibfi/melinda-commons": "next",
+    "@natlibfi/sfs-4900": "next",
+    "@natlibfi/iso9-1995": "next",
+    "@natlibfi/sru-client": "next",
     "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
     "debug": "^4.4.3",
@@ -51,11 +50,11 @@
     "xregexp": "^5.1.2"
   },
   "peerDependencies": {
-    "@natlibfi/marc-record-validate": "^9.0.0-alpha.1"
+    "@natlibfi/marc-record-validate": "next"
   },
   "devDependencies": {
-    "@natlibfi/fixugen": "^3.0.0-alpha.6",
-    "@natlibfi/fixura": "^4.0.0-alpha.13",
+    "@natlibfi/fixugen": "next",
+    "@natlibfi/fixura": "next",
     "cross-env": "^10.0.0",
     "esbuild": "^0.25.10",
     "eslint": "^9.36.0",
