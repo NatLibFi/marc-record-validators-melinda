@@ -4,7 +4,7 @@ const finnishTerms = [
   /^(?:kauno|slm|yso)\//u
 ];
 
-const validPuncMarks = '?-!.)]'; // NB! ')' and ']' are only valid for some fields!
+const validPuncMarks = '?-!.'; // NB! ')' and ']' are only valid for some fields!
 const validQuoteChars = "\"'";
 // Configuration specification
 const confSpec = [
