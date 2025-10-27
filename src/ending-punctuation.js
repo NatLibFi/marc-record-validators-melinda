@@ -71,9 +71,24 @@ function validateField(field, linkedTag, fix, message) {
     return subfields.slice(-1).shift();
   }
 
+  function getDefaultPuncMarks(tag) {
+    if (tag.match(/^[1678](?:00|10|11|30)/u) || tag === '740') { // As defined in Loppupisteohje
+      return `${validPuncMarks})`;
+    }
+    // We don't want ').' here either. However, Loppupisteohje is a bit iffy here.
+    // BUG: Note that our generic rules will remove dot from Finnish terms such as https://finto.fi/yso-aika/fi/page/p1069910600
+    if (['647', '648', '650', '651', '654', '655', '656', '657', '658', '662'].includes(tag)) {
+       return `${validPuncMarks})`;
+    }
+    if(['260'].includes(tag)) {
+      return `${validPuncMarks})]`;
+    }
+    return validPuncMarks;
+  }
+
   // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
   function normalPuncRules(subfield, punc, tag, checkEnd, overrideValidPuncMarks) {
-    const puncMarks = overrideValidPuncMarks || validPuncMarks;
+    const puncMarks = overrideValidPuncMarks || getDefaultPuncMarks(tag);
     const lastChar = subfield.value.slice(-1);
     const lastPuncMark = puncMarks.includes(lastChar); // If string ends to punctuation char
     const lastPuncDot = '.'.includes(lastChar); // If string ends to dot
@@ -152,7 +167,7 @@ function validateField(field, linkedTag, fix, message) {
         if (res.special.ifInd2 && res.special.ifInd2.includes(field.ind2)) {
           normalPuncRules(lastSubField, res.special.ifBoth, tag, true, res.special.ifLastCharNot);
 
-          // Matches execption to special rule, noPuncIfInd2 (likely with value 4, that indicates copyright mark)
+          // Matches exception to special rule, noPuncIfInd2 (likely with value 4, that indicates copyright mark)
         } else if (res.special.noPuncIfInd2 && field.ind2 && res.special.noPuncIfInd2.includes(field.ind2)) {
           normalPuncRules(lastSubField, !res.special.ifBoth, tag, true, res.special.ifLastCharNot);
 
