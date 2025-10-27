@@ -27,7 +27,7 @@
 */
 
 // Import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
-import {validPuncMarks, finnishTerms, confSpec} from './ending-punctuation-conf.js';
+import {validPuncMarks, validQuoteChars, finnishTerms, confSpec} from './ending-punctuation-conf.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/ending-punctuation');
@@ -74,31 +74,49 @@ function validateField(field, linkedTag, fix, message) {
   // Punctuation rule (Boolean), Check no ending dot strict (Boolean)
   function normalPuncRules(subfield, punc, tag, checkEnd, overrideValidPuncMarks) {
     const puncMarks = overrideValidPuncMarks || validPuncMarks;
-    const lastPuncMark = puncMarks.includes(subfield.value.slice(-1)); // If string ends to punctuation char
-    const lastPuncDot = '.'.includes(subfield.value.slice(-1)); // If string ends to dot
+    const lastChar = subfield.value.slice(-1);
+    const lastPuncMark = puncMarks.includes(lastChar); // If string ends to punctuation char
+    const lastPuncDot = '.'.includes(lastChar); // If string ends to dot
+    const penultimateCharacter = subfield.value.length >= 2 ? subfield.value.charAt(subfield.value.length - 2) : undefined;
+    const antePenultimateCharacter = subfield.value.length >= 3 ? subfield.value.charAt(subfield.value.length - 3) : undefined;
+
 
     // Last char should be punc, but its not one of marks nor dot
     if (punc && !(lastPuncMark || lastPuncDot)) {
-      // Console.log("1. Invalid punctuation - missing")
-      message.message.push(`Field ${tag} has invalid ending punctuation`);
-      if (fix) {
-        subfield.value = subfield.value.concat('.');
-        message.fix.push(`Field ${tag} - Added punctuation to $${subfield.code}`);
+      console.log(puncMarks)
+      if (tag === '500' && penultimateCharacter && validQuoteChars.includes(lastChar) && puncMarks.includes(penultimateCharacter)) {
+        // Expection: do nothing! Ending in punc+quote combo is all right, and does not imply a missing punc
+      }
+      else {
+        // Console.log("1. Invalid punctuation - missing")
+        message.message.push(`Field ${tag} requires ending punctuation, ends in '${lastChar}'`);
+        if (fix) {
+          subfield.value = subfield.value.concat('.');
+          message.fix.push(`Field ${tag} - Added punctuation to $${subfield.code}`);
+        }
       }
 
       // Last char is dot, but previous char is one of punc marks, like 'Question?.'
-    } else if (lastPuncDot && subfield.value.length > 1 && puncMarks.includes(subfield.value.charAt(subfield.value.length - 2))) {
+    } else if (lastPuncDot && penultimateCharacter && puncMarks.includes(penultimateCharacter)) {
       // Console.log("2. Invalid punctuation - duplicate, like '?.'")
-      message.message.push(`Field ${tag} has invalid ending punctuation`);
+      message.message.push(`Field ${tag} has an extra dot after '${penultimateCharacter}'`);
       if (fix) {
         subfield.value = subfield.value.slice(0, -1);
-        message.fix.push(`Field ${tag} - Removed double punctuation from $${subfield.code}`);
+        message.fix.push(`Field ${tag} - Removed dot after punctuation from $${subfield.code}`);
       }
-
+      // Field is 500, last char is dot, but previous char is a quote and the prev-prev char is is on of the punc marc, like 500 ## $a "Lorum Ipsum.".
+      // https://www.loc.gov/marc/bibliographic/bd500.html says "Any punctuation within the note (e.g., quotation marks) is carried in the MARC record."
+      // Does this apply to other tags as well?
+    } else if (tag === '500' && antePenultimateCharacter && validQuoteChars.includes(penultimateCharacter)) { // && puncMarks.includes(antePenultimateCharacter)) {
+      message.message.push(`Field ${tag} has an extra dot in '${antePenultimateCharacter}${penultimateCharacter}${lastChar}'`);
+      if (fix) {
+        subfield.value = subfield.value.slice(0, -1);
+        message.fix.push(`Field ${tag} - Removed '${lastChar}' after '${antePenultimateCharacter}${penultimateCharacter}'`);
+      }
       // Last char shouldn't be dot !! This is behind checkEnd boolean, because of dots at end of abbreviations, so this is checked only in special cases !!//
     } else if (checkEnd && (!punc && lastPuncDot)) {
       // Console.log("3. Invalid punctuation - Shouldn't be dot, is")
-      message.message.push(`Field ${tag} has invalid ending punctuation`);
+      message.message.push(`Field ${tag} has unwanted ending punctuation '${lastChar}'`);
       if (fix) {
         subfield.value = subfield.value.slice(0, -1);
         message.fix.push(`Field ${tag} - Removed punctuation from $${subfield.code}`);
@@ -198,6 +216,15 @@ function validateField(field, linkedTag, fix, message) {
       }
 
       validateField(field, linkedTag, fix, message);
+    }
+    // fallback
+    else {
+      debug(`special is definedm but no rule applies`);
+      const lastSubField = findLastSubfield(field);
+
+      if (lastSubField) {
+        normalPuncRules(lastSubField, res.punc, field.tag, false, false, fix, message);
+      }
     }
   }
 
