@@ -4,7 +4,8 @@ const finnishTerms = [
   /^(?:kauno|slm|yso)\//u
 ];
 
-const validPuncMarks = '?"-!,)]';
+const validPuncMarks = '?-!.)]'; // NB! ')' and ']' are only valid for some fields!
+const validQuoteChars = "\"'";
 // Configuration specification
 const confSpec = [
   { // 010-035 EI
@@ -666,4 +667,4 @@ const confSpec = [
   }
 ];
 
-export {finnishTerms, validPuncMarks, confSpec};
+export {finnishTerms, validPuncMarks, validQuoteChars, confSpec};
