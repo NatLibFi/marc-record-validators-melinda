@@ -17,9 +17,17 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [
-            {code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+            {code: 'a', value: 'Elämäni ja tutkimusretkeni /'},
             {code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'},
             {code: '6', value: 'FOO'}
+          ]
+        }, { // Hackily putting 2nd 245 here
+          tag: '245',
+          ind1: '0',
+          ind2: '4',
+          subfields: [
+            {code: 'a', value: 'The Disaster /'},
+            {code: 'c', value: '(J.L.).'}
           ]
         }, {
           tag: '337', // Range 336-338
@@ -34,7 +42,7 @@ describe('ending-punctuation', () => {
           tag: '500', // Range 500-509
           ind1: ' ',
           ind2: ' ',
-          subfields: [{code: 'a', value: 'FOO (Bar)'}]
+          subfields: [{code: 'a', value: 'FOO (Bar).'}]
         }, {
           tag: '500', // Range 500-509
           ind1: ' ',
@@ -58,9 +66,17 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [
-            {code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+            {code: 'a', value: 'Elämäni ja tutkimusretkeni /'},
             {code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
-            {code: '6', value: 'FOO'}
+            {code: '6', value: 'FOO'} // NV: not changing this now, but this is wrong: $6 is *always* the first subfield. Also , the value is not valid for $6...
+          ]
+        }, { // Hackily putting 2nd 245 here
+          tag: '245',
+          ind1: '0',
+          ind2: '4',
+          subfields: [
+            {code: 'a', value: 'The Disaster /'},
+            {code: 'c', value: '(J.L.)'}
           ]
         }, {
           tag: '337',
@@ -75,7 +91,7 @@ describe('ending-punctuation', () => {
           tag: '500',
           ind1: ' ',
           ind2: ' ',
-          subfields: [{code: 'a', value: 'FOO (Bar).'}]
+          subfields: [{code: 'a', value: 'FOO (Bar)'}]
         }, {
           tag: '500', // Range 500-509
           ind1: ' ',
@@ -98,9 +114,17 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [
-            {code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+            {code: 'a', value: 'Elämäni ja tutkimusretkeni /'},
             {code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
             {code: '6', value: 'FOO'}
+          ]
+        }, { // Hackily putting 2nd 245 here
+          tag: '245',
+          ind1: '0',
+          ind2: '4',
+          subfields: [
+            {code: 'a', value: 'The Disaster /'},
+            {code: 'c', value: '(J.L.)'}
           ]
         }, {
           tag: '337',
@@ -108,14 +132,14 @@ describe('ending-punctuation', () => {
           ind2: ' ',
           subfields: [
             {code: 'a', value: 'käytettävissä ilman laitetta'},
-            {code: 'b', value: 'n'}, // Dot removed from possible abbreviation as it cannot be removed in fixing
+            {code: 'b', value: 'n'}, // Dot removed from possible abbreviation as it cannot be removed in fixing (NV: huh?)
             {code: '2', value: 'rdamedia'}
           ]
         }, {
           tag: '500',
           ind1: ' ',
           ind2: ' ',
-          subfields: [{code: 'a', value: 'FOO (Bar).'}]
+          subfields: [{code: 'a', value: 'FOO (Bar)'}]
         }, {
           tag: '500', // Range 500-509
           ind1: ' ',
@@ -134,10 +158,7 @@ describe('ending-punctuation', () => {
     it('Finds the record valid', async () => {
       const validator = await validatorFactory();
       const result = await validator.validate(recordValid);
-      if (!result.valid) {
-        console.info('NV=============NV');
-        console.info(JSON.stringify(result));
-      }
+      //console.info(JSON.stringify(result));
       assert.equal(result.valid, true);
     });
 
@@ -145,7 +166,7 @@ describe('ending-punctuation', () => {
       const validator = await validatorFactory();
       const result = await validator.validate(recordInvalid);
       assert.deepEqual(result, {
-        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 500 has an extra dot after \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
+        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 245 requires ending punctuation, ends in \')\'', 'Field 500 requires ending punctuation, ends in \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
         valid: false
       });
     });
@@ -153,12 +174,13 @@ describe('ending-punctuation', () => {
     it('Repairs the invalid record', async () => {
       const validator = await validatorFactory();
       const result = await validator.fix(recordBroken);
-      assert.deepEqual(recordBroken.equalsTo(recordValid), true);
+
       assert.deepEqual(result, {
-        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 500 has an extra dot after \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
-        fix: ['Field 245 - Added punctuation to $c', 'Field 500 - Removed dot after punctuation from $a', 'Field 500 - Removed \'.\' after \'."\'', 'Field 500 - Added punctuation to $a'],
+        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 245 requires ending punctuation, ends in \')\'', 'Field 500 requires ending punctuation, ends in \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
+        fix: ['Field 245 - Added punctuation to $c', 'Field 245 - Added punctuation to $c', 'Field 500 - Added punctuation to $a', 'Field 500 - Removed \'.\' after \'."\'', 'Field 500 - Added punctuation to $a'],
         valid: false
       });
+      assert.equal(recordBroken.equalsTo(recordValid), true);
     });
   });
 
@@ -230,7 +252,7 @@ describe('ending-punctuation', () => {
             ind1: ' ',
             ind2: ' ',
             subfields: [{code: 'a', value: 'CNRS 84115.'}] // $a is register number, no change for abbreviation
-          }
+          },
         ]
       });
 
@@ -1892,7 +1914,7 @@ describe('ending-punctuation', () => {
     // "654-662 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ"
     // Finnish terms at $2:['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars']
     // Default TRUE, until more special cases are added
-    describe('#654-662 TRUE - If finnish, else TRUE', () => {
+    describe('#654-662 TRUE - If Finnish, else TRUE', () => {
       // Valid tests
       const recordValid655FinNo = new MarcRecord({
         leader: '',
