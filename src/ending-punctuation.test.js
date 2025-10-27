@@ -40,6 +40,12 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [{code: 'a', value: '"Lorum ipsum."'}]
+        },
+        {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Foo "Bar".'}]
         }
       ]
     });
@@ -75,6 +81,12 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [{code: 'a', value: '"Lorum ipsum.".'}]
+        },
+        {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Foo "Bar"'}]
         }
       ]
     });
@@ -109,6 +121,12 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [{code: 'a', value: '"Lorum ipsum.".'}]
+        },
+        {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Foo "Bar"'}]
         }
       ]
     });
@@ -127,7 +145,7 @@ describe('ending-punctuation', () => {
       const validator = await validatorFactory();
       const result = await validator.validate(recordInvalid);
       assert.deepEqual(result, {
-        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 500 has an extra dot after \')\'', 'Field 500 has an extra dot in \'.".\''],
+        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 500 has an extra dot after \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
         valid: false
       });
     });
@@ -137,8 +155,8 @@ describe('ending-punctuation', () => {
       const result = await validator.fix(recordBroken);
       assert.deepEqual(recordBroken.equalsTo(recordValid), true);
       assert.deepEqual(result, {
-        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 500 has an extra dot after \')\'', 'Field 500 has an extra dot in \'.".\''],
-        fix: ['Field 245 - Added punctuation to $c', 'Field 500 - Removed dot after punctuation from $a', 'Field 500 - Removed \'.\' after \'."\''],
+        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 500 has an extra dot after \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
+        fix: ['Field 245 - Added punctuation to $c', 'Field 500 - Removed dot after punctuation from $a', 'Field 500 - Removed \'.\' after \'."\'', 'Field 500 - Added punctuation to $a'],
         valid: false
       });
     });
