@@ -81,11 +81,11 @@ function validateField(field, linkedTag, fix, message) {
     const antePenultimateCharacter = subfield.value.length >= 3 ? subfield.value.charAt(subfield.value.length - 3) : undefined;
 
 
-    // Last char should be punc, but its not one of marks nor dot
+    // Last char should be punc, but it's not one of listed punctuation marks nor dot
     if (punc && !(lastPuncMark || lastPuncDot)) {
       console.log(puncMarks)
-      if (tag === '500' && penultimateCharacter && validQuoteChars.includes(lastChar) && puncMarks.includes(penultimateCharacter)) {
-        // Expection: do nothing! Ending in punc+quote combo is all right, and does not imply a missing punc
+      if (penultimateCharacter && validQuoteChars.includes(lastChar) && puncMarks.includes(penultimateCharacter)) {
+        // Exception: do nothing! Ending in punc+quote combo is all right, and does not imply a missing punc
       }
       else {
         // Console.log("1. Invalid punctuation - missing")
@@ -104,10 +104,8 @@ function validateField(field, linkedTag, fix, message) {
         subfield.value = subfield.value.slice(0, -1);
         message.fix.push(`Field ${tag} - Removed dot after punctuation from $${subfield.code}`);
       }
-      // Field is 500, last char is dot, but previous char is a quote and the prev-prev char is is on of the punc marc, like 500 ## $a "Lorum Ipsum.".
-      // https://www.loc.gov/marc/bibliographic/bd500.html says "Any punctuation within the note (e.g., quotation marks) is carried in the MARC record."
-      // Does this apply to other tags as well?
-    } else if (tag === '500' && antePenultimateCharacter && validQuoteChars.includes(penultimateCharacter)) { // && puncMarks.includes(antePenultimateCharacter)) {
+      // Last char is dot, but previous two cars are punc+quote, like 'Lorum "Ipsum.".'
+    } else if (lastPuncDot && antePenultimateCharacter && validQuoteChars.includes(penultimateCharacter) && puncMarks.includes(antePenultimateCharacter)) {
       message.message.push(`Field ${tag} has an extra dot in '${antePenultimateCharacter}${penultimateCharacter}${lastChar}'`);
       if (fix) {
         subfield.value = subfield.value.slice(0, -1);
