@@ -252,7 +252,7 @@ describe('ending-punctuation', () => {
             ind1: ' ',
             ind2: ' ',
             subfields: [{code: 'a', value: 'CNRS 84115.'}] // $a is register number, no change for abbreviation
-          },
+          }
         ]
       });
 
