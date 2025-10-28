@@ -17,9 +17,17 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [
-            {code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+            {code: 'a', value: 'Elämäni ja tutkimusretkeni /'},
             {code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola.'},
             {code: '6', value: 'FOO'}
+          ]
+        }, { // Hackily putting 2nd 245 here
+          tag: '245',
+          ind1: '0',
+          ind2: '4',
+          subfields: [
+            {code: 'a', value: 'The Disaster /'},
+            {code: 'c', value: '(J.L.).'}
           ]
         }, {
           tag: '337', // Range 336-338
@@ -34,7 +42,18 @@ describe('ending-punctuation', () => {
           tag: '500', // Range 500-509
           ind1: ' ',
           ind2: ' ',
-          subfields: [{code: 'a', value: 'FOO (Bar)'}]
+          subfields: [{code: 'a', value: 'FOO (Bar).'}]
+        }, {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: '"Lorum ipsum."'}]
+        },
+        {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Foo "Bar".'}]
         }
       ]
     });
@@ -47,9 +66,17 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [
-            {code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+            {code: 'a', value: 'Elämäni ja tutkimusretkeni /'},
             {code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
-            {code: '6', value: 'FOO'}
+            {code: '6', value: 'FOO'} // NV: not changing this now, but this is wrong: $6 is *always* the first subfield. Also , the value is not valid for $6...
+          ]
+        }, { // Hackily putting 2nd 245 here
+          tag: '245',
+          ind1: '0',
+          ind2: '4',
+          subfields: [
+            {code: 'a', value: 'The Disaster /'},
+            {code: 'c', value: '(J.L.)'}
           ]
         }, {
           tag: '337',
@@ -57,14 +84,25 @@ describe('ending-punctuation', () => {
           ind2: ' ',
           subfields: [
             {code: 'a', value: 'käytettävissä ilman laitetta'},
-            {code: 'b', value: 'n.'}, // This can be abbreviation -> does not generate error
+            {code: 'b', value: 'n.'}, // This can be abbreviation -> does not generate error (NV: huh?!?)
             {code: '2', value: 'rdamedia'}
           ]
         }, {
           tag: '500',
           ind1: ' ',
           ind2: ' ',
-          subfields: [{code: 'a', value: 'FOO (Bar).'}]
+          subfields: [{code: 'a', value: 'FOO (Bar)'}]
+        }, {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: '"Lorum ipsum.".'}]
+        },
+        {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Foo "Bar"'}]
         }
       ]
     });
@@ -76,9 +114,17 @@ describe('ending-punctuation', () => {
           ind1: ' ',
           ind2: ' ',
           subfields: [
-            {code: 'a', value: 'Elämäni ja tutkimusretkeni / '},
+            {code: 'a', value: 'Elämäni ja tutkimusretkeni /'},
             {code: 'c', value: 'Roald Amundsen ; suomentanut Sulo Veikko Pekkola'},
             {code: '6', value: 'FOO'}
+          ]
+        }, { // Hackily putting 2nd 245 here
+          tag: '245',
+          ind1: '0',
+          ind2: '4',
+          subfields: [
+            {code: 'a', value: 'The Disaster /'},
+            {code: 'c', value: '(J.L.)'}
           ]
         }, {
           tag: '337',
@@ -86,14 +132,25 @@ describe('ending-punctuation', () => {
           ind2: ' ',
           subfields: [
             {code: 'a', value: 'käytettävissä ilman laitetta'},
-            {code: 'b', value: 'n'}, // Dot removed from possible abbreviation as it cannot be removed in fixing
+            {code: 'b', value: 'n'}, // Dot removed from possible abbreviation as it cannot be removed in fixing (NV: huh?)
             {code: '2', value: 'rdamedia'}
           ]
         }, {
           tag: '500',
           ind1: ' ',
           ind2: ' ',
-          subfields: [{code: 'a', value: 'FOO (Bar).'}]
+          subfields: [{code: 'a', value: 'FOO (Bar)'}]
+        }, {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: '"Lorum ipsum.".'}]
+        },
+        {
+          tag: '500', // Range 500-509
+          ind1: ' ',
+          ind2: ' ',
+          subfields: [{code: 'a', value: 'Foo "Bar"'}]
         }
       ]
     });
@@ -101,6 +158,7 @@ describe('ending-punctuation', () => {
     it('Finds the record valid', async () => {
       const validator = await validatorFactory();
       const result = await validator.validate(recordValid);
+      //console.info(JSON.stringify(result));
       assert.equal(result.valid, true);
     });
 
@@ -108,7 +166,7 @@ describe('ending-punctuation', () => {
       const validator = await validatorFactory();
       const result = await validator.validate(recordInvalid);
       assert.deepEqual(result, {
-        message: ['Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation'],
+        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 245 requires ending punctuation, ends in \')\'', 'Field 500 requires ending punctuation, ends in \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
         valid: false
       });
     });
@@ -116,12 +174,13 @@ describe('ending-punctuation', () => {
     it('Repairs the invalid record', async () => {
       const validator = await validatorFactory();
       const result = await validator.fix(recordBroken);
-      assert.equal(recordBroken.equalsTo(recordValid), true);
+
       assert.deepEqual(result, {
-        message: ['Field 245 has invalid ending punctuation', 'Field 500 has invalid ending punctuation'],
-        fix: ['Field 245 - Added punctuation to $c', 'Field 500 - Removed double punctuation from $a'],
+        message: ['Field 245 requires ending punctuation, ends in \'a\'', 'Field 245 requires ending punctuation, ends in \')\'', 'Field 500 requires ending punctuation, ends in \')\'', 'Field 500 has an extra dot in \'.".\'', 'Field 500 requires ending punctuation, ends in \'"\''],
+        fix: ['Field 245 - Added punctuation to $c', 'Field 245 - Added punctuation to $c', 'Field 500 - Added punctuation to $a', 'Field 500 - Removed \'.\' after \'."\'', 'Field 500 - Added punctuation to $a'],
         valid: false
       });
+      assert.equal(recordBroken.equalsTo(recordValid), true);
     });
   });
 
@@ -201,7 +260,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
         assert.deepEqual(result, {
-          message: ['Field 036 has invalid ending punctuation'],
+          message: ['Field 036 requires ending punctuation, ends in \'e\''],
           valid: false
         });
       });
@@ -210,7 +269,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyA);
         assert.deepEqual(result, {
-          message: ['Field 036 has invalid ending punctuation'],
+          message: ['Field 036 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -221,7 +280,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid);
         assert.equal(recordInvalid.equalsTo(recordValid), true);
         assert.deepEqual(result, {
-          message: ['Field 036 has invalid ending punctuation'],
+          message: ['Field 036 requires ending punctuation, ends in \'e\''],
           fix: ['Field 036 - Added punctuation to $b'],
           valid: false
         });
@@ -232,7 +291,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidOnlyA);
         assert.equal(recordInvalidOnlyA.equalsTo(recordValidOnlyA), true);
         assert.deepEqual(result, {
-          message: ['Field 036 has invalid ending punctuation'],
+          message: ['Field 036 has unwanted ending punctuation \'.\''],
           fix: ['Field 036 - Removed punctuation from $a'],
           valid: false
         });
@@ -385,7 +444,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyAMissingA);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 requires ending punctuation, ends in \'t\''],
           valid: false
         });
       });
@@ -394,7 +453,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyAPuncY);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -403,7 +462,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyAMissingAPuncY);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation'],
+          message: ['Field 242 has unwanted ending punctuation \'.\'', 'Field 242 requires ending punctuation, ends in \'t\''],
           valid: false
         });
       });
@@ -412,7 +471,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidMultipleMissingP);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 requires ending punctuation, ends in \'y\''],
           valid: false
         });
       });
@@ -421,7 +480,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordValidWithoutYMissingA);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 requires ending punctuation, ends in \'t\''],
           valid: false
         });
       });
@@ -432,7 +491,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidOnlyAMissingA);
         assert.equal(recordInvalidOnlyAMissingA.equalsTo(recordValidOnlyA), true);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 requires ending punctuation, ends in \'t\''],
           fix: ['Field 242 - Added punctuation to $a'],
           valid: false
         });
@@ -443,7 +502,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidOnlyAPuncY);
         assert.equal(recordInvalidOnlyAPuncY.equalsTo(recordValidOnlyA), true);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 has unwanted ending punctuation \'.\''],
           fix: ['Field 242 - Removed punctuation from $y'],
           valid: false
         });
@@ -454,7 +513,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidOnlyAMissingAPuncY);
         assert.equal(recordInvalidOnlyAMissingAPuncY.equalsTo(recordValidOnlyA), true);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation', 'Field 242 has invalid ending punctuation'],
+          message: ['Field 242 has unwanted ending punctuation \'.\'', 'Field 242 requires ending punctuation, ends in \'t\''],
           fix: ['Field 242 - Removed punctuation from $y', 'Field 242 - Added punctuation to $a'],
           valid: false
         });
@@ -465,7 +524,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordValidMultipleMissingP);
         assert.equal(recordValidMultipleMissingP.equalsTo(recordValidMultiple), true);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 requires ending punctuation, ends in \'y\''],
           fix: ['Field 242 - Added punctuation to $p'],
           valid: false
         });
@@ -476,7 +535,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordValidWithoutYMissingA);
         assert.equal(recordValidWithoutYMissingA.equalsTo(recordValidWithoutY), true);
         assert.deepEqual(result, {
-          message: ['Field 242 has invalid ending punctuation'],
+          message: ['Field 242 requires ending punctuation, ends in \'t\''],
           fix: ['Field 242 - Added punctuation to $a'],
           valid: false
         });
@@ -592,7 +651,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidEndC);
         assert.deepEqual(result, {
-          message: ['Field 260 has invalid ending punctuation'],
+          message: ['Field 260 requires ending punctuation, ends in \'2\''],
           valid: false
         });
       });
@@ -601,7 +660,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidEndGDouble);
         assert.deepEqual(result, {
-          message: ['Field 260 has invalid ending punctuation'],
+          message: ['Field 260 has an extra dot after \')\''],
           valid: false
         });
       });
@@ -612,7 +671,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidEndC);
         assert.equal(recordInvalidEndC.equalsTo(recordValidEndC), true);
         assert.deepEqual(result, {
-          message: ['Field 260 has invalid ending punctuation'],
+          message: ['Field 260 requires ending punctuation, ends in \'2\''],
           fix: ['Field 260 - Added punctuation to $c'],
           valid: false
         });
@@ -623,8 +682,8 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidEndGDouble);
         assert.equal(recordInvalidEndGDouble.equalsTo(recordValidEndG), true);
         assert.deepEqual(result, {
-          message: ['Field 260 has invalid ending punctuation'],
-          fix: ['Field 260 - Removed double punctuation from $g'],
+          message: ['Field 260 has an extra dot after \')\''],
+          fix: ['Field 260 - Removed dot after punctuation from $g'],
           valid: false
         });
       });
@@ -767,7 +826,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidInd2v1);
         assert.deepEqual(result, {
-          message: ['Field 264 has invalid ending punctuation'],
+          message: ['Field 264 requires ending punctuation, ends in \'6\''],
           valid: false
         });
       });
@@ -776,7 +835,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidCopyrightCExtra);
         assert.deepEqual(result, {
-          message: ['Field 264 has invalid ending punctuation'],
+          message: ['Field 264 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -787,7 +846,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidInd2v1);
         assert.equal(recordInvalidInd2v1.equalsTo(recordValidInd2v1), true);
         assert.deepEqual(result, {
-          message: ['Field 264 has invalid ending punctuation'],
+          message: ['Field 264 requires ending punctuation, ends in \'6\''],
           fix: ['Field 264 - Added punctuation to $c'],
           valid: false
         });
@@ -798,7 +857,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidCopyrightCExtra);
         assert.equal(recordInvalidCopyrightCExtra.equalsTo(recordValidCopyright), true);
         assert.deepEqual(result, {
-          message: ['Field 264 has invalid ending punctuation'],
+          message: ['Field 264 has unwanted ending punctuation \'.\''],
           fix: ['Field 264 - Removed punctuation from $c'],
           valid: false
         });
@@ -998,7 +1057,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidA);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'e\''],
           valid: false
         });
       });
@@ -1007,7 +1066,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidAMissingB);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'t\''],
           valid: false
         });
       });
@@ -1016,7 +1075,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidABMissing);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'m\''],
           valid: false
         });
       });
@@ -1025,7 +1084,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidDDMissing);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'d\''],
           valid: false
         });
       });
@@ -1034,7 +1093,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidComplexDMissing);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'e\''],
           valid: false
         });
       });
@@ -1045,7 +1104,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidA);
         assert.equal(recordInvalidA.equalsTo(recordInvalidA), true);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'e\''],
           fix: ['Field 340 - Added punctuation to $a'],
           valid: false
         });
@@ -1056,7 +1115,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidAMissingB);
         assert.equal(recordInvalidAMissingB.equalsTo(recordValidAB), true);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'t\''],
           fix: ['Field 340 - Added punctuation to $a'],
           valid: false
         });
@@ -1067,7 +1126,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidABMissing);
         assert.equal(recordInvalidABMissing.equalsTo(recordValidAB), true);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'m\''],
           fix: ['Field 340 - Added punctuation to $b'],
           valid: false
         });
@@ -1078,7 +1137,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidDDMissing);
         assert.equal(recordInvalidDDMissing.equalsTo(recordValidDD), true);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'d\''],
           fix: ['Field 340 - Added punctuation to $d'],
           valid: false
         });
@@ -1089,7 +1148,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidComplexDMissing);
         assert.equal(recordInvalidComplexDMissing.equalsTo(recordInvalidComplexDMissing), true);
         assert.deepEqual(result, {
-          message: ['Field 340 has invalid ending punctuation'],
+          message: ['Field 340 requires ending punctuation, ends in \'e\''],
           fix: ['Field 340 - Added punctuation to $d'],
           valid: false
         });
@@ -1191,7 +1250,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
         assert.deepEqual(result, {
-          message: ['Field 520 has invalid ending punctuation'],
+          message: ['Field 520 requires ending punctuation, ends in \'ö\''],
           valid: false
         });
       });
@@ -1200,7 +1259,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidWithU);
         assert.deepEqual(result, {
-          message: ['Field 520 has invalid ending punctuation'],
+          message: ['Field 520 requires ending punctuation, ends in \'i\''],
           valid: false
         });
       });
@@ -1211,7 +1270,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid);
         assert.equal(recordInvalid.equalsTo(recordValid), true);
         assert.deepEqual(result, {
-          message: ['Field 520 has invalid ending punctuation'],
+          message: ['Field 520 requires ending punctuation, ends in \'ö\''],
           fix: ['Field 520 - Added punctuation to $a'],
           valid: false
         });
@@ -1222,7 +1281,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidWithU);
         assert.equal(recordInvalidWithU.equalsTo(recordValidWithU), true);
         assert.deepEqual(result, {
-          message: ['Field 520 has invalid ending punctuation'],
+          message: ['Field 520 requires ending punctuation, ends in \'i\''],
           fix: ['Field 520 - Added punctuation to $a'],
           valid: false
         });
@@ -1345,7 +1404,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidMissingI);
         assert.deepEqual(result, {
-          message: ['Field 538 has invalid ending punctuation'],
+          message: ['Field 538 requires ending punctuation, ends in \'s\''],
           valid: false
         });
       });
@@ -1354,7 +1413,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidI);
         assert.deepEqual(result, {
-          message: ['Field 538 has invalid ending punctuation'],
+          message: ['Field 538 requires ending punctuation, ends in \':\''],
           valid: false
         });
       });
@@ -1363,7 +1422,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyA);
         assert.deepEqual(result, {
-          message: ['Field 538 has invalid ending punctuation'],
+          message: ['Field 538 requires ending punctuation, ends in \'e\''],
           valid: false
         });
       });
@@ -1374,7 +1433,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidMissingI);
         assert.equal(recordInvalidMissingI.equalsTo(recordValid), true);
         assert.deepEqual(result, {
-          message: ['Field 538 has invalid ending punctuation'],
+          message: ['Field 538 requires ending punctuation, ends in \'s\''],
           fix: ['Field 538 - Added punctuation to $i'],
           valid: false
         });
@@ -1385,7 +1444,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidOnlyA);
         assert.equal(recordInvalidOnlyA.equalsTo(recordValidOnlyA), true);
         assert.deepEqual(result, {
-          message: ['Field 538 has invalid ending punctuation'],
+          message: ['Field 538 requires ending punctuation, ends in \'e\''],
           fix: ['Field 538 - Added punctuation to $a'],
           valid: false
         });
@@ -1467,7 +1526,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
         assert.deepEqual(result, {
-          message: ['Field 567 has invalid ending punctuation'],
+          message: ['Field 567 requires ending punctuation, ends in \'s\''],
           valid: false
         });
       });
@@ -1476,7 +1535,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidWithoutA);
         assert.deepEqual(result, {
-          message: ['Field 567 has invalid ending punctuation'],
+          message: ['Field 567 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -1487,7 +1546,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid);
         assert.equal(recordInvalid.equalsTo(recordValid), true);
         assert.deepEqual(result, {
-          message: ['Field 567 has invalid ending punctuation'],
+          message: ['Field 567 requires ending punctuation, ends in \'s\''],
           fix: ['Field 567 - Added punctuation to $a'],
           valid: false
         });
@@ -1498,7 +1557,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidWithoutA);
         assert.equal(recordInvalidWithoutA.equalsTo(recordValidWithoutA), true);
         assert.deepEqual(result, {
-          message: ['Field 567 has invalid ending punctuation'],
+          message: ['Field 567 has unwanted ending punctuation \'.\''],
           fix: ['Field 567 - Removed punctuation from $b'],
           valid: false
         });
@@ -1733,7 +1792,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid647FastEndPunc);
         assert.deepEqual(result, {
-          message: ['Field 647 has invalid ending punctuation'],
+          message: ['Field 647 has an extra dot after \')\''],
           valid: false
         });
       });
@@ -1742,7 +1801,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvali648dFinYes);
         assert.deepEqual(result, {
-          message: ['Field 648 has invalid ending punctuation'],
+          message: ['Field 648 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -1751,12 +1810,12 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid648FastYes);
         assert.deepEqual(result, {
-          message: ['Field 648 has invalid ending punctuation'],
+          message: ['Field 648 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
 
-      const invalidField650Message = 'Field 650 has invalid ending punctuation';
+      const invalidField650Message = 'Field 650 has unwanted ending punctuation \'.\'';
       it('Finds record invalid - 650 Finnish, with punc', async () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650FinYes);
@@ -1770,7 +1829,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650EngNoControl);
         assert.deepEqual(result, {
-          message: [invalidField650Message],
+          message: ['Field 650 requires ending punctuation, ends in \'s\''],
           valid: false
         });
       });
@@ -1779,7 +1838,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid650EngControl);
         assert.deepEqual(result, {
-          message: ['Field 650 has invalid ending punctuation'],
+          message: ['Field 650 requires ending punctuation, ends in \'n\''],
           valid: false
         });
       });
@@ -1790,8 +1849,8 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid647FastEndPunc);
         assert.equal(recordInvalid647FastEndPunc.equalsTo(recordValid647FastEndPunc), true);
         assert.deepEqual(result, {
-          message: ['Field 647 has invalid ending punctuation'],
-          fix: ['Field 647 - Removed double punctuation from $d'],
+          message: ['Field 647 has an extra dot after \')\''],
+          fix: ['Field 647 - Removed dot after punctuation from $d'],
           valid: false
         });
       });
@@ -1801,7 +1860,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvali648dFinYes);
         assert.equal(recordInvali648dFinYes.equalsTo(recordVali648dFinNo), true);
         assert.deepEqual(result, {
-          message: ['Field 648 has invalid ending punctuation'],
+          message: ['Field 648 has unwanted ending punctuation \'.\''],
           fix: ['Field 648 - Removed punctuation from $a'],
           valid: false
         });
@@ -1812,7 +1871,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid648FastYes);
         assert.equal(recordInvalid648FastYes.equalsTo(recordValid648FastNo), true);
         assert.deepEqual(result, {
-          message: ['Field 648 has invalid ending punctuation'],
+          message: ['Field 648 has unwanted ending punctuation \'.\''],
           fix: ['Field 648 - Removed punctuation from $a'],
           valid: false
         });
@@ -1834,7 +1893,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid650EngNoControl);
         assert.equal(recordInvalid650EngNoControl.equalsTo(recordValid650EngNoControl), true);
         assert.deepEqual(result, {
-          message: ['Field 650 has invalid ending punctuation'],
+          message: ['Field 650 requires ending punctuation, ends in \'s\''],
           fix: ['Field 650 - Added punctuation to $v'],
           valid: false
         });
@@ -1845,7 +1904,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid650EngControl);
         assert.equal(recordInvalid650EngControl.equalsTo(recordValid650EngControl), true);
         assert.deepEqual(result, {
-          message: ['Field 650 has invalid ending punctuation'],
+          message: ['Field 650 requires ending punctuation, ends in \'n\''],
           fix: ['Field 650 - Added punctuation to $a'],
           valid: false
         });
@@ -1855,7 +1914,7 @@ describe('ending-punctuation', () => {
     // "654-662 EI - EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ"
     // Finnish terms at $2:['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars']
     // Default TRUE, until more special cases are added
-    describe('#654-662 TRUE - If finnish, else TRUE', () => {
+    describe('#654-662 TRUE - If Finnish, else TRUE', () => {
       // Valid tests
       const recordValid655FinNo = new MarcRecord({
         leader: '',
@@ -2152,7 +2211,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655FinYes);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -2161,7 +2220,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655FinYes2);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -2170,7 +2229,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655EngNo);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 requires ending punctuation, ends in \'4\''],
           valid: false
         });
       });
@@ -2179,7 +2238,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid655EngNoNoControl);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 requires ending punctuation, ends in \'s\''],
           valid: false
         });
       });
@@ -2188,7 +2247,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid656FinYes);
         assert.deepEqual(result, {
-          message: ['Field 656 has invalid ending punctuation'],
+          message: ['Field 656 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -2197,7 +2256,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid657EngNo);
         assert.deepEqual(result, {
-          message: ['Field 657 has invalid ending punctuation'],
+          message: ['Field 657 requires ending punctuation, ends in \'k\''],
           valid: false
         });
       });
@@ -2206,7 +2265,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid658EngNo);
         assert.deepEqual(result, {
-          message: ['Field 658 has invalid ending punctuation'],
+          message: ['Field 658 requires ending punctuation, ends in \'d\''],
           valid: false
         });
       });
@@ -2215,7 +2274,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid662EngNo);
         assert.deepEqual(result, {
-          message: ['Field 662 has invalid ending punctuation'],
+          message: ['Field 662 requires ending punctuation, ends in \'a\''],
           valid: false
         });
       });
@@ -2226,7 +2285,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid655FinYes);
         assert.equal(recordInvalid655FinYes.equalsTo(recordValid655FinNo), true);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 has unwanted ending punctuation \'.\''],
           fix: ['Field 655 - Removed punctuation from $a'],
           valid: false
         });
@@ -2237,7 +2296,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid655FinYes2);
         assert.equal(recordInvalid655FinYes2.equalsTo(recordValid655FinNo2), true);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 has unwanted ending punctuation \'.\''],
           fix: ['Field 655 - Removed punctuation from $a'],
           valid: false
         });
@@ -2248,7 +2307,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid655EngNo);
         assert.equal(recordInvalid655EngNo.equalsTo(recordValid655EngYes), true);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 requires ending punctuation, ends in \'4\''],
           fix: ['Field 655 - Added punctuation to $y'],
           valid: false
         });
@@ -2259,7 +2318,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid655EngNoNoControl);
         assert.equal(recordInvalid655EngNoNoControl.equalsTo(recordValid655EngYesNoControl), true);
         assert.deepEqual(result, {
-          message: ['Field 655 has invalid ending punctuation'],
+          message: ['Field 655 requires ending punctuation, ends in \'s\''],
           fix: ['Field 655 - Added punctuation to $a'],
           valid: false
         });
@@ -2270,7 +2329,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid656FinYes);
         assert.equal(recordInvalid656FinYes.equalsTo(recordValid656FinNo), true);
         assert.deepEqual(result, {
-          message: ['Field 656 has invalid ending punctuation'],
+          message: ['Field 656 has unwanted ending punctuation \'.\''],
           fix: ['Field 656 - Removed punctuation from $a'],
           valid: false
         });
@@ -2281,7 +2340,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid657EngNo);
         assert.equal(recordInvalid657EngNo.equalsTo(recordValid657EngYes), true);
         assert.deepEqual(result, {
-          message: ['Field 657 has invalid ending punctuation'],
+          message: ['Field 657 requires ending punctuation, ends in \'k\''],
           fix: ['Field 657 - Added punctuation to $z'],
           valid: false
         });
@@ -2292,18 +2351,18 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid658EngNo);
         assert.equal(recordInvalid658EngNo.equalsTo(recordValid658EngYes), true);
         assert.deepEqual(result, {
-          message: ['Field 658 has invalid ending punctuation'],
+          message: ['Field 658 requires ending punctuation, ends in \'d\''],
           fix: ['Field 658 - Added punctuation to $d'],
           valid: false
         });
       });
 
-      it('Repairs the invalid record - 662 !Finnish, add pun $a', async () => {
+      it('Repairs the invalid record - 662 !Finnish, add punc $a', async () => {
         const validator = await validatorFactory();
         const result = await validator.fix(recordInvalid662EngNo);
         assert.equal(recordInvalid662EngNo.equalsTo(recordValid662EngYes), true);
         assert.deepEqual(result, {
-          message: ['Field 662 has invalid ending punctuation'],
+          message: ['Field 662 requires ending punctuation, ends in \'a\''],
           fix: ['Field 662 - Added punctuation to $a'],
           valid: false
         });
@@ -2387,7 +2446,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalid);
         assert.deepEqual(result, {
-          message: ['Field 760 has invalid ending punctuation'],
+          message: ['Field 760 has unwanted ending punctuation \'.\''],
           valid: false
         });
       });
@@ -2396,7 +2455,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidOnlyA);
         assert.deepEqual(result, {
-          message: ['Field 760 has invalid ending punctuation'],
+          message: ['Field 760 requires ending punctuation, ends in \'c\''],
           valid: false
         });
       });
@@ -2407,7 +2466,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalid);
         assert.equal(recordInvalid.equalsTo(recordValid), true);
         assert.deepEqual(result, {
-          message: ['Field 760 has invalid ending punctuation'],
+          message: ['Field 760 has unwanted ending punctuation \'.\''],
           fix: ['Field 760 - Removed punctuation from $e'],
           valid: false
         });
@@ -2418,7 +2477,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidOnlyA);
         assert.equal(recordInvalidOnlyA.equalsTo(recordValidOnlyA), true);
         assert.deepEqual(result, {
-          message: ['Field 760 has invalid ending punctuation'],
+          message: ['Field 760 requires ending punctuation, ends in \'c\''],
           fix: ['Field 760 - Added punctuation to $a'],
           valid: false
         });
@@ -2513,7 +2572,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidSimple);
         assert.deepEqual(result, {
-          message: ['Field 880 has invalid ending punctuation'],
+          message: ['Field 880 requires ending punctuation, ends in \'3\''],
           valid: false
         });
       });
@@ -2522,7 +2581,7 @@ describe('ending-punctuation', () => {
         const validator = await validatorFactory();
         const result = await validator.validate(recordInvalidComplex);
         assert.deepEqual(result, {
-          message: ['Field 880 has invalid ending punctuation'],
+          message: ['Field 880 requires ending punctuation, ends in \'6\''],
           valid: false
         });
       });
@@ -2533,7 +2592,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidSimple);
         assert.equal(recordInvalidSimple.equalsTo(recordValidSimple), true);
         assert.deepEqual(result, {
-          message: ['Field 880 has invalid ending punctuation'],
+          message: ['Field 880 requires ending punctuation, ends in \'3\''],
           fix: ['Field 880 - Added punctuation to $b'],
           valid: false
         });
@@ -2544,7 +2603,7 @@ describe('ending-punctuation', () => {
         const result = await validator.fix(recordInvalidComplex);
         assert.equal(recordInvalidComplex.equalsTo(recordValidComplex), true);
         assert.deepEqual(result, {
-          message: ['Field 880 has invalid ending punctuation'],
+          message: ['Field 880 requires ending punctuation, ends in \'6\''],
           fix: ['Field 880 - Added punctuation to $c'],
           valid: false
         });
