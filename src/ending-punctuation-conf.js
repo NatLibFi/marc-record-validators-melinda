@@ -1,7 +1,7 @@
 // Const finnishTerms = ['ysa', 'yso', 'kassu', 'seko', 'valo', 'kulo', 'puho', 'oiko', 'mero', 'liito', 'fast', 'allars', 'kaunokki'];
 const finnishTerms = [
   /^(?:allars|bella|fast|juho|jupo|kassu|kauno|kaunokki|keko|koko|kulo|liiko|liito|local|mero|mts|musa|oiko|puho|seko|woto|valo|ysa|yso)$/u,
-  /^(?:kauno|slm|yso)\//u
+  /^(?:kauno|slm|yso)\//u // <= yso/* etc
 ];
 
 const validPuncMarks = '?-!.'; // NB! ')' and ']' are only valid for some fields!

@@ -1585,7 +1585,7 @@ describe('ending-punctuation', () => {
         ]
       });
 
-      const recordVali648dFinNo = new MarcRecord({
+      const recordValid648FinNo = new MarcRecord({
         leader: '',
         fields: [
           {
@@ -1595,6 +1595,16 @@ describe('ending-punctuation', () => {
             subfields: [
               {code: 'a', value: '1900-luku'},
               {code: '2', value: 'yso/swe'}
+            ]
+          },
+          { // Exception: term ending in dot:
+            tag : '648',
+            ind1: ' ',
+            ind2: '7',
+            subfields: [
+              {code: 'a', value: '1200-luku eaa.'},
+              {code: '2', value: 'yso/fin'},
+              {code: '0', value: 'http://www.yso.fi/onto/yso/p1129911200'}
             ]
           }
         ]
@@ -1668,7 +1678,7 @@ describe('ending-punctuation', () => {
 
       it('Finds record valid - 648 Finnish, without punc', async () => {
         const validator = await validatorFactory();
-        const result = await validator.validate(recordVali648dFinNo);
+        const result = await validator.validate(recordValid648FinNo);
         assert.equal(result.valid, true);
       });
 
@@ -1713,7 +1723,7 @@ describe('ending-punctuation', () => {
         ]
       });
 
-      const recordInvali648dFinYes = new MarcRecord({
+      const recordInvalid648FinYes = new MarcRecord({
         leader: '',
         fields: [
           {
@@ -1723,6 +1733,15 @@ describe('ending-punctuation', () => {
             subfields: [
               {code: 'a', value: '1900-luku.'},
               {code: '2', value: 'yso/swe'}
+            ]
+          }, { // Exception:
+            tag: '648',
+            ind1: ' ',
+            ind2: '7',
+            subfields: [
+              {code: 'a', value: '1200-luku eaa'},
+              {code: '2', value: 'yso/fin'},
+              {code: '0', value: 'http://www.yso.fi/onto/yso/p1129911200'}
             ]
           }
         ]
@@ -1799,9 +1818,9 @@ describe('ending-punctuation', () => {
 
       it('Finds record invalid - 648 Finnish, with punc', async () => {
         const validator = await validatorFactory();
-        const result = await validator.validate(recordInvali648dFinYes);
+        const result = await validator.validate(recordInvalid648FinYes);
         assert.deepEqual(result, {
-          message: ['Field 648 has unwanted ending punctuation \'.\''],
+          message: ['Field 648 has unwanted ending punctuation \'.\'', "Field 648 requires ending punctuation, ends in 'a'"],
           valid: false
         });
       });
@@ -1857,11 +1876,16 @@ describe('ending-punctuation', () => {
 
       it('Repairs the invalid record - 648 Finnish, removes punc $a', async () => {
         const validator = await validatorFactory();
-        const result = await validator.fix(recordInvali648dFinYes);
-        assert.equal(recordInvali648dFinYes.equalsTo(recordVali648dFinNo), true);
+        const result = await validator.fix(recordInvalid648FinYes);
+        //console.info("NV-------");
+        //console.info(JSON.stringify(recordInvalid648FinYes));
+        //console.info(JSON.stringify(recordValid648FinNo));
+        //assert.equal(recordInvalid648FinYes.equalsTo(recordValid648FinNo), true);
+        assert.deepEqual(recordInvalid648FinYes, recordValid648FinNo);
+        //console.info(JSON.stringify(result));
         assert.deepEqual(result, {
-          message: ['Field 648 has unwanted ending punctuation \'.\''],
-          fix: ['Field 648 - Removed punctuation from $a'],
+          message: ['Field 648 has unwanted ending punctuation \'.\'', "Field 648 requires ending punctuation, ends in 'a'"],
+          fix: ['Field 648 - Removed punctuation from $a', 'Field 648 - Added punctuation to $a'],
           valid: false
         });
       });
