@@ -1,0 +1,11 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "520", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "Abstrakti."}, {"code": "9", "value": "TESTI<KEEP>"} ]},
+    { "tag": "520", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "Whatever."}]},
+    { "tag": "520", "ind1": "3", "ind2": " ", "subfields": [ {"code": "a", "value": "Tiivistelmä."}]}
+
+  ],
+  "leader": ""
+}
