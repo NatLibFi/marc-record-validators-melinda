@@ -189,11 +189,11 @@ function validateField(field, linkedTag, fix, message) {
       normalPuncRules(lastSubField, res.punc, tag, false, false);
 
       // Search for Finnish terms
-    } else if (res.special.termField) {
+    } else if (res.special.termSubfieldCode) {
       lastSubField = findLastSubfield(field);
 
       if (lastSubField) {
-        const languageField = field.subfields.find(({code}) => code === res.special.termField);
+        const languageField = field.subfields.find(({code}) => code === res.special.termSubfieldCode);
         if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
           // If (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
           normalPuncRules(lastSubField, res.punc, tag, true, false);

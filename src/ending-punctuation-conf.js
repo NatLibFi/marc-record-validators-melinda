@@ -501,7 +501,7 @@ const confSpec = [
     index: null,
     punc: false,
     special: {
-      termField: '2',
+      termSubfieldCode: '2',
       finnishTerms,
       else: true
     }
@@ -517,7 +517,7 @@ const confSpec = [
     index: null,
     punc: false,
     special: {
-      termField: '2',
+      termSubfieldCode: '2',
       finnishTerms,
       else: true
     }
