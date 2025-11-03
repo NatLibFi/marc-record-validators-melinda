@@ -33,19 +33,20 @@
     "dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test"
   },
   "dependencies": {
+    "@natlibfi/iso9-1995": "next",
     "@natlibfi/issn-verify": "^1.0.6",
     "@natlibfi/marc-record": "next",
     "@natlibfi/marc-record-serializers": "next",
     "@natlibfi/marc-record-validate": "next",
     "@natlibfi/melinda-commons": "next",
     "@natlibfi/sfs-4900": "next",
-    "@natlibfi/iso9-1995": "next",
     "@natlibfi/sru-client": "next",
     "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
     "debug": "^4.4.3",
-    "isbn3": "^1.2.15",
+    "isbn3": "1.2.15",
     "langs": "^2.0.0",
+    "undici": "^7.16.0",
     "xml2js": "^0.6.2",
     "xregexp": "^5.1.2"
   },
@@ -56,12 +57,12 @@
     "@natlibfi/fixugen": "next",
     "@natlibfi/fixura": "next",
     "cross-env": "^10.0.0",
-    "esbuild": "^0.25.10",
-    "eslint": "^9.36.0",
-    "fetch-mock": "^12.5.4"
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.0",
+    "fetch-mock": "^12.6.0"
   },
   "overrides": {
     "nanoid": "^3.3.8"
   },
-  "nvolkComment": "cld3-asm 4.0.0 uses emscripten-wasm-loader ^3.0.3 which uses problematic, non-secure nanoid version 2.X.X"
+  "nvolkComment": "cld3-asm 4.0.0 uses emscripten-wasm-loader ^3.0.3 which uses problematic, non-secure nanoid version 2.X.X. Isbn3 has breaking changes in 1.2.16-18 at least."
 }
