@@ -171,6 +171,18 @@ function normalize245Indicator1(field, record) {
   field.ind1 = field1XX.length === 0 ? '0' : '1';
 }
 
+function noDisplayConstantGenerated520Indicator1(field) {
+  if (field.tag !== '520') {
+    return;
+  }
+  const as = field.subfields.filter(sf => sf.code === 'a');
+  // Set ind1=8 "no display constant generated" fro certain values (part of MELKEHITYS-2579):
+  if (as.length === 1 && ['Abstract.', 'Abstrakt.', 'Abstrakti.', 'Abstract.', 'English Summary.', 'Sammandrag.', 'Tiivistelmä.'].includes(field.subfields[0].value)) {
+    field.ind1 = '8';
+  }
+
+}
+
 function normalize776Indicator2(field) {
   if (field.tag !== '776') {
     return;
@@ -242,6 +254,7 @@ function recordNormalizeIndicators(record) {
 function fieldNormalizeIndicators(field, record, languages) {
   normalize084Indicator1(field);
   normalize245Indicator1(field, record);
+  noDisplayConstantGenerated520Indicator1(field);
   normalizeNonFilingIndicator1(field, languages);
   normalizeNonFilingIndicator2(field, languages);
   normalize776Indicator2(field);

@@ -2,7 +2,7 @@
 
 import {subfieldArraysContainSameData} from "../utils.js";
 
-function tagToDataProvenanceSubfieldCode(tag) {
+export function tagToDataProvenanceSubfieldCode(tag) {
     if ( ['533', '800', '810', '811', '830'].includes(tag)) {
         return 'y';
     }

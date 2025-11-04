@@ -65,12 +65,6 @@ export default function () {
 
 // Field validation with punctuation rules for normal and special cases in subfunction (to reduce complexity to please travisci)
 function validateField(field, linkedTag, fix, message) {
-  // This is used to find last subfield that should have punctuation
-  function findLastSubfield(field) {
-    const subfields = field.subfields.filter(sf => isNaN(sf.code) && 'value' in sf);
-    return subfields.slice(-1).shift();
-  }
-
   function getDefaultPuncMarks(tag) {
     if (tag.match(/^[1678](?:00|10|11|30)/u) || tag === '740') { // As defined in Loppupisteohje
       return `${validPuncMarks})`;
@@ -98,7 +92,7 @@ function validateField(field, linkedTag, fix, message) {
 
     // Last char should be punc, but it's not one of listed punctuation marks nor dot
     if (punc && !(lastPuncMark || lastPuncDot)) {
-      console.log(puncMarks)
+      //console.log(puncMarks)
       if (penultimateCharacter && validQuoteChars.includes(lastChar) && puncMarks.includes(penultimateCharacter)) {
         // Exception: do nothing! Ending in punc+quote combo is all right, and does not imply a missing punc
       }
@@ -189,12 +183,17 @@ function validateField(field, linkedTag, fix, message) {
       normalPuncRules(lastSubField, res.punc, tag, false, false);
 
       // Search for Finnish terms
-    } else if (res.special.termField) {
+    } else if (res.special.termSubfieldCode) {
       lastSubField = findLastSubfield(field);
 
       if (lastSubField) {
-        const languageField = field.subfields.find(({code}) => code === res.special.termField);
-        if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
+        const lexicon = getLexicon(field, res.special.termSubfieldCode);
+        const proceed = !finnishException(field, res.special.termSubfieldCode, false);
+
+
+        //const languageField = field.subfields.find(({code}) => code === res.special.termSubfieldCode);
+        //if (languageField && languageField.value && finnishTerms.some(p => p.test(languageField.value))) {
+        if (lexicon && finnishTerms.some(p => p.test(lexicon)) && proceed) {
           // If (languageField && languageField.value && finnishTerms.indexOf(languageField.value) > -1) {
           normalPuncRules(lastSubField, res.punc, tag, true, false);
         } else {
@@ -272,8 +271,12 @@ function validateField(field, linkedTag, fix, message) {
     return;
   }
 
+  const forceNormal = res.special ? finnishException(field, res.special.termSubfieldCode, true) : false;
   // Normal rules
-  if (typeof res.special === 'undefined' || res.special === null) {
+  if (typeof res.special === 'undefined' || res.special === null || forceNormal) {
+    if (forceNormal) {
+      console.info("EXCEPTION. SKIP FINNISH RULES");
+    }
     lastSubField = findLastSubfield(field);
 
     if (lastSubField) {
@@ -300,3 +303,51 @@ export function validateSingleField(field, linkedTag, fix) {
   return message;
 }
 
+function getLexicon(field, subfieldCode) {
+  const languageSubfield = field.subfields.find(({code}) => code === subfieldCode); // res.special.termSubfieldCode);
+  if (!languageSubfield || !languageSubfield.value) {
+    return undefined;
+  }
+  if (finnishTerms.find(p => p.test(languageSubfield.value))) {
+    return languageSubfield.value;
+  }
+  return undefined;
+}
+
+function finnishException(field, termSubfieldCode, hasDot = true) {
+  const lexicon = getLexicon(field, termSubfieldCode);
+  if (!lexicon) {
+    return false;
+  }
+
+  const lastSubfield = findLastSubfield(field);
+  if (!lastSubfield || !lastSubfield.value) {
+    return false;
+  }
+  // Some terms can end in '.' that we want to keep
+  if (field.tag === '648') { // Yso-aika checks
+    //console.log(`Finnish Exception? '${lastSubfield.value}', '${lexicon}', '${field.tag}'`);
+    if (lexicon === 'yso/fin') { // 'eaa.' appears in prefLAbels and 'eKr.' in altLabels
+      if (hasDot) {
+        return lastSubfield.value.match(/ (?:eaa|[ej]Kr|jaa)\.$/u); // Finnish term from which the dot is not to be removed
+      }
+      return lastSubfield.value.match(/ (?:eaa|[ej]Kr)|jaa$/u); // Finnish word that needs a dot
+    }
+
+    if (lexicon === 'yso/swe') {
+      if (hasDot) {
+        return lastSubfield.value.match(/ (?:[ef]\.Kr|f\.v\.t)\.$/u);
+      }
+      return lastSubfield.value.match(/ (?:[ef]\.Kr|f\.v\.t)$/u);
+    }
+  }
+  // yso has 'MODEL.LA.' and 'Corel R.A.V.E.' but these are so rare I'm not listing them
+
+  return false;
+}
+
+  // This is used to find last subfield that should have punctuation
+  function findLastSubfield(field) {
+    const subfields = field.subfields.filter(sf => isNaN(sf.code) && 'value' in sf);
+    return subfields.slice(-1).shift();
+  }
