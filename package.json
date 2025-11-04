@@ -58,7 +58,7 @@
     "@natlibfi/fixura": "next",
     "cross-env": "^10.0.0",
     "esbuild": "^0.25.12",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.1",
     "fetch-mock": "^12.6.0"
   },
   "overrides": {
