@@ -29,14 +29,14 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 
   function invalidISBN(isbn) {
     const isbnOnly = getFirstWord(isbn);
-    let auditedIsbn;
     try {
-      auditedIsbn = ISBN.audit(isbnOnly);
+      const auditedIsbn = ISBN.audit(isbnOnly);
+      return !auditedIsbn.validIsbn;
     }
     catch {
       return true;
     }
-    return !auditedIsbn.validIsbn;
+
   }
 
   function invalidSubfield(subfield) {
