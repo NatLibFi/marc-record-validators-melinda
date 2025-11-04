@@ -171,7 +171,7 @@ function normalize245Indicator1(field, record) {
   field.ind1 = field1XX.length === 0 ? '0' : '1';
 }
 
-function noDisplayContantGenerated520Indicator1(field) {
+function noDisplayConstantGenerated520Indicator1(field) {
   if (field.tag !== '520') {
     return;
   }
@@ -254,7 +254,7 @@ function recordNormalizeIndicators(record) {
 function fieldNormalizeIndicators(field, record, languages) {
   normalize084Indicator1(field);
   normalize245Indicator1(field, record);
-  noDisplayContantGenerated520Indicator1(field);
+  noDisplayConstantGenerated520Indicator1(field);
   normalizeNonFilingIndicator1(field, languages);
   normalizeNonFilingIndicator2(field, languages);
   normalize776Indicator2(field);
