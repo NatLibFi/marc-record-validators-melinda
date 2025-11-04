@@ -325,23 +325,23 @@ function finnishException(field, termSubfieldCode, hasDot = true) {
     return false;
   }
   // Some terms can end in '.' that we want to keep
-  if (field.tag === '648') {
+  if (field.tag === '648') { // Yso-aika checks
     //console.log(`Finnish Exception? '${lastSubfield.value}', '${lexicon}', '${field.tag}'`);
     if (lexicon === 'yso/fin') { // 'eaa.' appears in prefLAbels and 'eKr.' in altLabels
       if (hasDot) {
-        return lastSubfield.value.match(/ (?:eaa|eKr)\.$/u); // Finnish term from which the dot is not to be removed
+        return lastSubfield.value.match(/ (?:eaa|[ej]Kr|jaa)\.$/u); // Finnish term from which the dot is not to be removed
       }
-      return lastSubfield.value.match(/ (?:eaa|eKr)$/u); // Finnish word that needs a dot
+      return lastSubfield.value.match(/ (?:eaa|[ej]Kr)|jaa$/u); // Finnish word that needs a dot
     }
 
     if (lexicon === 'yso/swe') {
       if (hasDot) {
-        return lastSubfield.value.match(/ (?:f\.Kr|f\.v\.t)\.$/u);
+        return lastSubfield.value.match(/ (?:[ef]\.Kr|f\.v\.t)\.$/u);
       }
-      return lastSubfield.value.match(/ (?:f\.Kr|f\.v\.t)$/u);
+      return lastSubfield.value.match(/ (?:[ef]\.Kr|f\.v\.t)$/u);
     }
   }
-    // yso has 'MODEL.LA.' and 'Corel R.A.V.E.' but these are so rare I'm not listing them
+  // yso has 'MODEL.LA.' and 'Corel R.A.V.E.' but these are so rare I'm not listing them
 
   return false;
 }
