@@ -19,6 +19,9 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:no
 const debugDev = debug.extend('dev');
 
 export function isEnnakkotietoSubfieldG(subfield) {
+  if (valuelessSubfield(subfield)) {
+    return false;
+  }
   if (subfield.code !== 'g') {
     return false;
   }
@@ -116,6 +119,9 @@ function subfieldValueLowercase(value, subfieldCode, tag) {
 }
 
 function subfieldLowercase(sf, tag) {
+  if (valuelessSubfield(sf)) {
+    return;
+  }
   sf.value = subfieldValueLowercase(sf.value, sf.code, tag);
 }
 
@@ -148,6 +154,10 @@ function hack490SubfieldA(field) {
 
   // NB! This won't work, if the punctuation has not been stripped beforehand!
   function removeSarja(subfield) {
+    if (valuelessSubfield(subfield)) {
+      return;
+    }
+
     if (subfield.code !== 'a') {
       return;
     }
@@ -188,6 +198,9 @@ function normalizeISBN(field) {
   relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf));
 
   function normalizeIsbnSubfield(sf) {
+    if (valuelessSubfield(sf)) {
+      return;
+    }
     //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);
     sf.value = sf.value.replace(/-/ug, '');
     sf.value = sf.value.replace(/x/u, 'X');
@@ -202,6 +215,9 @@ function fieldSpecificHacks(field) {
 
 export function fieldTrimSubfieldValues(field) {
   field.subfields?.forEach((sf) => {
+    if (valuelessSubfield(sf)) {
+      return;
+    }
     sf.value = sf.value.replace(/^[ \t\n]+/u, '');
     sf.value = sf.value.replace(/[ \t\n]+$/u, '');
     sf.value = sf.value.replace(/[ \t\n]+/gu, ' ');
@@ -212,6 +228,9 @@ function fieldRemoveDecomposedDiacritics(field) {
   // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
   // allows us to compare authors and avoid duplicate fields.
   field.subfields.forEach((sf) => {
+    if (valuelessSubfield(sf)) {
+        return;
+    }
     sf.value = removeDecomposedDiacritics(sf.value);
   });
 }
@@ -297,6 +316,9 @@ export function cloneAndNormalizeFieldForComparison(field) {
     return clonedField;
   }
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
+    if (valuelessSubfield(sf)) {
+      return;
+    }
     sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag);
     sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);
   });
@@ -317,4 +339,8 @@ function fieldSkipNormalization(field) {
     return true;
   }
   return false;
+}
+
+function valuelessSubfield(sf) {
+  return sf.value === undefined;
 }
