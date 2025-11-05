@@ -51,7 +51,7 @@
     "xregexp": "^5.1.2"
   },
   "peerDependencies": {
-    "@natlibfi/marc-record-validate": "next"
+    "@natlibfi/marc-record-validate": "^9.0.0"
   },
   "devDependencies": {
     "@natlibfi/fixugen": "^3.0.0",
