@@ -1,17 +1,8 @@
 import assert from 'node:assert';
-import {after, before} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './cyrillux-usemarcon-replacement.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-
-before(() => {
-  MarcRecord.setValidationOptions({subfields: false, subfieldValues: false});
-});
-
-after(() => {
-  MarcRecord.setValidationOptions({});
-});
 
 generateTests({
   callback,
@@ -23,7 +14,11 @@ generateTests({
   },
   hooks: {
     before: async () => {
+      MarcRecord.setValidationOptions({subfields: false, subfieldValues: false});
       testValidatorFactory();
+    },
+    after: async () => {
+      MarcRecord.setValidationOptions({});
     }
   }
 });
