@@ -29,8 +29,14 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
 
   function invalidISBN(isbn) {
     const isbnOnly = getFirstWord(isbn);
-    const auditedIsbn = ISBN.audit(isbnOnly);
-    return !auditedIsbn.validIsbn;
+    try {
+      const auditedIsbn = ISBN.audit(isbnOnly);
+      return !auditedIsbn.validIsbn;
+    }
+    catch {
+      return true;
+    }
+
   }
 
   function invalidSubfield(subfield) {
@@ -238,9 +244,8 @@ export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
       function normalizeIsbnValue(value) {
         const trimmedValue = getFirstWord(value);
         //const trimmedValue = trimISBN(value); // NB! This might lose information that should be stored in $q...
-        const auditResult = ISBN.audit(trimmedValue);
-        if (!auditResult.validIsbn) {
-          return undefined;
+        if (invalidISBN(trimmedValue)) {
+          return undefined; // should this return value (= nothing normalized), not undefined?
         }
         const numbersOnly = trimmedValue.replace(/[^0-9Xx]+/ug, '');
         const parsedIsbn = ISBN.parse(trimmedValue);
