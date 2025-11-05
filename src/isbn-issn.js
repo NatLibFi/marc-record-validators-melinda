@@ -1,5 +1,5 @@
 import ISBN from 'isbn3';
-import validateISSN from '@natlibfi/issn-verify';
+import {issn as validateISSN} from '@natlibfi/issn-verify';
 
 // handleInvalid: move invalid 020$a to 020$z, and invalid 022$a to 022$y
 export default ({hyphenateISBN = false, handleInvalid = false} = {}) => {
