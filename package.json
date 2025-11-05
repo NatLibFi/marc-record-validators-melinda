@@ -14,7 +14,7 @@
     "url": "https://github.com/NatLibFi/marc-record-validators-melinda"
   },
   "license": "MIT",
-  "version": "12.0.0-alpha.9",
+  "version": "12.0.0-alpha.10",
   "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -65,5 +65,4 @@
     "nanoid": "^3.3.8"
   },
   "nvolkComment": "cld3-asm 4.0.0 uses emscripten-wasm-loader ^3.0.3 which uses problematic, non-secure nanoid version 2.X.X. check: marc-record-validate"
-
 }
