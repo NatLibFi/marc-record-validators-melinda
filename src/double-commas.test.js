@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/double-commas.js';
+import validatorFactory from './double-commas.js';
 import {describe, it} from 'node:test';
 
 describe('double-commas', () => {

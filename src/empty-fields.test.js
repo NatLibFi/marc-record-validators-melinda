@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/empty-fields.js';
+import validatorFactory from './empty-fields.js';
 import {after, before, describe, it} from 'node:test';
 
 before(() => {

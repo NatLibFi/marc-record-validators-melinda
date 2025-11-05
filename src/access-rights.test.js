@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/access-rights.js';
+import validatorFactory from './access-rights.js';
 
 
 describe('access-rights', async () => {

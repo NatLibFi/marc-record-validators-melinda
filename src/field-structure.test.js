@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/field-structure.js';
+import validatorFactory from './field-structure.js';
 
 
 // Factory validation
