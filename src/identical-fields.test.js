@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/identical-fields.js';
+import validatorFactory from './identical-fields.js';
 import {describe, it} from 'node:test';
 
 describe('identical-fields', () => {

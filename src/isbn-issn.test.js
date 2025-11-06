@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/isbn-issn.js';
+import validatorFactory from './isbn-issn.js';
 import {describe, it} from 'node:test';
 
 describe('isbn-issn', () => {
@@ -186,11 +186,13 @@ describe('isbn-issn', () => {
       });
       const result = await validator.validate(record);
 
-      assert.deepEqual(result, {valid: false, messages: [
-        'ISBN (9789519155470) is not valid',
-        'ISBN (9068-31-372-X) is not valid',
-        'ISBN (386006004X) is not valid'
-      ]});
+      assert.deepEqual(result, {
+        valid: false, messages: [
+          'ISBN (9789519155470) is not valid',
+          'ISBN (9068-31-372-X) is not valid',
+          'ISBN (386006004X) is not valid'
+        ]
+      });
     });
 
     it.skip('Finds the record invalid (Missing ISBN)');

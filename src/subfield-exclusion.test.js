@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/subfield-exclusion.js';
+import validatorFactory from './subfield-exclusion.js';
 import {describe, it} from 'node:test';
 
 //chai.use(chaiAsPromised);

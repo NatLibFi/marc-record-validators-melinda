@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/item-language.js';
+import validatorFactory from './item-language.js';
 import {describe, it} from 'node:test';
 
 describe('item-language', () => {
@@ -17,7 +17,7 @@ describe('item-language', () => {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'No tagPattern provided');
       return true;
-     });
+    });
     //await assert(validatorFactory()).to.be.rejectedWith(Error, 'No tagPattern provided');
   });
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/unicode-decomposition.js';
+import validatorFactory from './unicode-decomposition.js';
 import {describe, it} from 'node:test';
 
 describe('unicode-decomposition', () => {

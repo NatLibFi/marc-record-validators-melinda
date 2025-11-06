@@ -3,7 +3,7 @@ import assert from 'node:assert';
 //import chaiAsPromised from 'chai-as-promised';
 import {MarcRecord} from '@natlibfi/marc-record';
 import fetchMock from 'fetch-mock';
-import * as testContext from '../src/resolvable-ext-references-melinda.js';
+import * as testContext from './resolvable-ext-references-melinda.js';
 import {fixture5000, fixture9550, fixture1000} from '../test-fixtures/resolvable-ext-references-melinda.js';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
@@ -27,9 +27,9 @@ describe('resolvable-ext-references-melinda', () => {
 
   beforeEach(() => {
     fetchMock.mockGlobal(); // replace fetch with fetch-mock's implementation
-    fetchMock.get(`${endpoint}${queryParam}5000`, { status: 200, headers: {}, body: fixture5000 })
-      .get(`${endpoint}${queryParam}9550`, { status: 200, headers: {}, body: fixture9550 })
-      .get(`${endpoint}${queryParam}1000`, { status: 200, headers: {}, body: fixture1000 });
+    fetchMock.get(`${endpoint}${queryParam}5000`, {status: 200, headers: {}, body: fixture5000})
+      .get(`${endpoint}${queryParam}9550`, {status: 200, headers: {}, body: fixture9550})
+      .get(`${endpoint}${queryParam}1000`, {status: 200, headers: {}, body: fixture1000});
 
   });
 
@@ -50,7 +50,7 @@ describe('resolvable-ext-references-melinda', () => {
     }
     catch (err) {
       assert.equal(err instanceof Error, true);
-      assert.match(err.message, /^Cannot read propert/u) ;
+      assert.match(err.message, /^Cannot read propert/u);
     }
     //await assert(validator.validate()).to.be.rejectedWith(Error, /^Cannot read propert/u);
   });

@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/sort-tags.js';
+import validatorFactory from './sort-tags.js';
 import {describe, it} from 'node:test';
 
 describe('sort-tags', () => {

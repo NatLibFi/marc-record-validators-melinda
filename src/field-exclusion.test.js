@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/field-exclusion.js';
+import validatorFactory from './field-exclusion.js';
 import {describe, it} from 'node:test';
 
 // Factory validation
@@ -729,13 +729,15 @@ describe('field-exclusion', () => {
     it('Finds the record invalid (spec)', async () => {
       const validator = await validatorFactory(config);
       const {valid, message} = await validator.validate(recordInvalidMulti);
-      assert.deepEqual({valid, message}, {valid: false, message: [
-        'Field $648 should be excluded',
-        'Field $650 should be excluded',
-        'Field $650 should be excluded',
-        'Field $651 should be excluded',
-        'Field $655 should be excluded'
-      ]});
+      assert.deepEqual({valid, message}, {
+        valid: false, message: [
+          'Field $648 should be excluded',
+          'Field $650 should be excluded',
+          'Field $650 should be excluded',
+          'Field $651 should be excluded',
+          'Field $655 should be excluded'
+        ]
+      });
     });
 
     it('Repairs invalid multi record', async () => {

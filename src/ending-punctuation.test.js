@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import validatorFactory from '../src/ending-punctuation.js';
+import validatorFactory from './ending-punctuation.js';
 import {describe, it} from 'node:test';
 
 
@@ -1598,7 +1598,7 @@ describe('ending-punctuation', () => {
             ]
           },
           { // Exception: term ending in dot:
-            tag : '648',
+            tag: '648',
             ind1: ' ',
             ind2: '7',
             subfields: [
@@ -1628,15 +1628,19 @@ describe('ending-punctuation', () => {
       const recordValid650FinNo = new MarcRecord({
         leader: '',
         fields: [
-          {tag: '650', ind1: ' ', ind2: '7', subfields: [
-            {code: 'a', value: 'kirjastot'},
-            {code: 'x', value: 'atk-järjestelmät'},
-            {code: '2', value: 'kauno/fin'}
-          ]},
-          {tag: '650', ind1: ' ', ind2: '7', subfields: [
-            {code: 'a', value: 'ajovalot'},
-            {code: '2', value: 'juho'}
-          ]}
+          {
+            tag: '650', ind1: ' ', ind2: '7', subfields: [
+              {code: 'a', value: 'kirjastot'},
+              {code: 'x', value: 'atk-järjestelmät'},
+              {code: '2', value: 'kauno/fin'}
+            ]
+          },
+          {
+            tag: '650', ind1: ' ', ind2: '7', subfields: [
+              {code: 'a', value: 'ajovalot'},
+              {code: '2', value: 'juho'}
+            ]
+          }
         ]
       });
 
@@ -1765,15 +1769,19 @@ describe('ending-punctuation', () => {
       const recordInvalid650FinYes = new MarcRecord({
         leader: '',
         fields: [
-          {tag: '650', ind1: ' ', ind2: '7', subfields: [
-            {code: 'a', value: 'kirjastot'},
-            {code: 'x', value: 'atk-järjestelmät.'},
-            {code: '2', value: 'kauno/fin'}
-          ]},
-          {tag: '650', ind1: ' ', ind2: '7', subfields: [
-            {code: 'a', value: 'ajovalot.'},
-            {code: '2', value: 'juho'}
-          ]}
+          {
+            tag: '650', ind1: ' ', ind2: '7', subfields: [
+              {code: 'a', value: 'kirjastot'},
+              {code: 'x', value: 'atk-järjestelmät.'},
+              {code: '2', value: 'kauno/fin'}
+            ]
+          },
+          {
+            tag: '650', ind1: ' ', ind2: '7', subfields: [
+              {code: 'a', value: 'ajovalot.'},
+              {code: '2', value: 'juho'}
+            ]
+          }
         ]
       });
 
