@@ -1,16 +1,17 @@
 // For each incoming field that
 
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright} from '../utils';
-import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '../normalizeFieldForComparison';
+import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright} from '../utils.js';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '../normalizeFieldForComparison.js';
 // This should be done via our own normalizer:
-import {normalizeControlSubfieldValue} from '../normalize-identifiers';
+import {normalizeControlSubfieldValue} from '../normalize-identifiers.js';
 
-import {getMergeConstraintsForTag} from './mergeConstraints';
-import {controlSubfieldsPermitMerge} from './controlSubfields';
-import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
-import {partsAgree} from '../normalizeSubfieldValueForComparison';
-import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge';
+import {getMergeConstraintsForTag} from './mergeConstraints.js';
+import {controlSubfieldsPermitMerge} from './controlSubfields.js';
+import {mergableIndicator1, mergableIndicator2} from './mergableIndicator.js';
+import {partsAgree} from '../normalizeSubfieldValueForComparison.js';
+import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge.js';
+import { provenanceSubfieldsPermitMerge } from './dataProvenance.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeField:counterpart');
 //const debugData = debug.extend('data');
@@ -201,7 +202,6 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   value = value.replace(/http:\/\//ug, 'https://'); // MET-501: http vs https
   value = normalizeForSamenessCheck(tag, subfieldCode, value);
 
-  /* eslint-enable */
   return value;
 }
 
@@ -373,6 +373,11 @@ function syntacticallyMergablePair(baseField, sourceField, config) {
 
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
     nvdebug('non-mergable (reason: control subfield)', debugDev);
+    return false;
+  }
+
+  if (!provenanceSubfieldsPermitMerge(baseField, sourceField)) {
+    nvdebug('non-mergable (reason: data provenance subfield)', debugDev);
     return false;
   }
 

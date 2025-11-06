@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
-import {fieldsToString, fieldToString, nvdebug} from './utils';
-import {fieldHasValidSubfield6, fieldsGetOccurrenceNumbers, fieldsToNormalizedString, fieldToNormalizedString, get6s} from './subfield6Utils';
-import {add8s, fieldHasLinkingNumber, fieldHasValidSubfield8, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from './subfield8Utils';
+import {fieldsToString, fieldToString, nvdebug} from './utils.js';
+import {fieldHasValidSubfield6, fieldsGetOccurrenceNumbers, fieldsToNormalizedString, fieldToNormalizedString, get6s} from './subfield6Utils.js';
+import {add8s, fieldHasLinkingNumber, fieldHasValidSubfield8, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from './subfield8Utils.js';
 
 const LINK_ROOT = 4;
 const LINKED_AND_PROCESSED = 2;
@@ -56,14 +56,13 @@ function numberOfLinkageSubfields(field) {
 */
 
 function removeLinkNotes(record) {
-  record.fields.forEach(f => delete f.linkNote); // eslint-disable-line array-callback-return
+  record.fields.forEach(f => delete f.linkNote);
 }
 
 
 function newGetAllLinkedFields(field, record, useSixes = true, useEights = true) {
   removeLinkNotes(record); // should be clear, but let's play safe
 
-  /* eslint-disable */
   field.linkNote = LINK_ROOT;
 
   let currField = field;
@@ -97,8 +96,6 @@ function newGetAllLinkedFields(field, record, useSixes = true, useEights = true)
     }
   }
 
-
-  /* eslint-enable */
 }
 
 
@@ -109,7 +106,7 @@ function recordRemoveFieldOrSubfield8(record, field, currLinkingNumber) {
     return;
   }
   const subfields = field.subfields.filter(sf => getSubfield8LinkingNumber(sf) === currLinkingNumber);
-  subfields.forEach(sf => record.removeSubfield(sf, field)); // eslint-disable-line array-callback-return
+  subfields.forEach(sf => record.removeSubfield(sf, field));
 }
 
 function newRecordRemoveFieldOrSubfield8(record, field, currLinkingNumber, fix) {
@@ -138,7 +135,6 @@ export function removeDuplicateSubfield8Chains(record, fix = true) {
   // 1 100
   // Given these stats, there's no need to check for 1XX-vs-7XX removals
 
-  /* eslint-disable */
   let seen = {};
 
   let removables = []; // for validation
@@ -178,7 +174,6 @@ export function removeDuplicateSubfield8Chains(record, fix = true) {
     return;
   });
 
-  /* eslint-enable */
   return removables;
 }
 
@@ -193,7 +188,6 @@ export function handleDuplicateSubfield8Chains(record, fix) {
   // 1 100
   // Given these stats, there's no need to check for 1XX-vs-7XX removals
 
-  /* eslint-disable */
   let seen = {};
 
   nvdebug("CHAIN-8");
@@ -222,8 +216,6 @@ export function handleDuplicateSubfield8Chains(record, fix) {
     return;
   });
 
-  /* eslint-enable */
-
 }
 
 function markIdenticalSubfield6Chains(chain, record) {
@@ -232,7 +224,7 @@ function markIdenticalSubfield6Chains(chain, record) {
   const chainAsString = fieldsToNormalizedString(chain, 0, normalizeOccurrenceNumber, normalizeTag);
 
   nvdebug(`markIdenticalSubfield6Chains: ${chainAsString}`);
-  record.fields.forEach(f => compareWithChain(f)); // eslint-disable-line array-callback-return
+  record.fields.forEach(f => compareWithChain(f));
 
 
   function compareWithChain(f) {
@@ -421,24 +413,24 @@ export function removeDuplicateDatafields(record, fix = true) {
 
   const dataFields = record.fields.filter(f => f.subfields !== undefined);
 
-  dataFields.forEach(f => fieldHandleDuplicateDatafields(f, record)); // eslint-disable-line array-callback-return
+  dataFields.forEach(f => fieldHandleDuplicateDatafields(f, record));
 
   const deletableFields = dataFields.filter(f => f.deleted);
   const modifiedFields = dataFields.filter(f => f.modified && !f.deleted);
 
   const result = deletableFields.map(f => `DEL: ${fieldToString(f)}`);
   if (modifiedFields.length) {
-    modifiedFields.forEach(f => delete f.modified); // eslint-disable-line array-callback-return
+    modifiedFields.forEach(f => delete f.modified);
     result.push(modifiedFields.map(f => `MOD: ${fieldToString(f)}`));
   }
 
   if (fix) {
-    deletableFields.forEach(f => record.removeField(f)); // eslint-disable-line array-callback-return
+    deletableFields.forEach(f => record.removeField(f));
     return result;
   }
 
-  deletableFields.forEach(f => delete f.deleted); // eslint-disable-line array-callback-return
-  deletableFields.forEach(f => delete f.modified); // eslint-disable-line array-callback-return
+  deletableFields.forEach(f => delete f.deleted);
+  deletableFields.forEach(f => delete f.modified);
 
 
   return result;

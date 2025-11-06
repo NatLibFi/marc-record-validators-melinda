@@ -1,6 +1,6 @@
 import clone from 'clone';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
+import {fieldHasSubfield, fieldToString, nvdebug} from './utils.js';
 
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:translate-terms');
@@ -23,9 +23,9 @@ export default function () {
   async function fix(record) {
     const newFields = await getFields(record, defaultTags, []);
 
-    newFields.forEach(nf => nvdebug(`Add new field '${fieldToString(nf)}'`, debug)); // eslint-disable-line array-callback-return
+    newFields.forEach(nf => nvdebug(`Add new field '${fieldToString(nf)}'`, debug));
 
-    newFields.forEach(nf => record.insertField(nf)); // eslint-disable-line array-callback-return
+    newFields.forEach(nf => record.insertField(nf));
 
     const newFieldsAsStrings = newFields.map(f => fieldToString(f));
 

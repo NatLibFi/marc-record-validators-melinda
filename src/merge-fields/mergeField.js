@@ -1,12 +1,12 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldToString, fieldsToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from '../utils';
+import {fieldToString, fieldsToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from '../utils.js';
 import {fieldGetOccurrenceNumberPairs} from '../subfield6Utils.js';
-import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison';
-import {mergeOrAddSubfield} from './mergeOrAddSubfield';
-import {mergeIndicators} from './mergeIndicator';
-import {mergableTag} from './mergableTag';
-import {getCounterpart} from './counterpartField';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison.js';
+import {mergeOrAddSubfield} from './mergeOrAddSubfield.js';
+import {mergeIndicators} from './mergeIndicator.js';
+import {mergableTag} from './mergableTag.js';
+import {getCounterpart} from './counterpartField.js';
 //import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 //import {postprocessRecords} from './mergeOrAddPostprocess.js';
 //import {preprocessBeforeAdd} from './processFilter.js';
@@ -106,8 +106,8 @@ function skipMergeField(baseRecord, sourceField, config) {
     return true;
   }
 
-  // Skip duplicate field:
-  if (baseRecord.fields.some(baseField => !baseField.mergeCandidate && fieldsAreIdentical(sourceField, baseField))) {
+  // Skip duplicate field when merging two records (NB! internal merge merges/removes the duplicate field):
+  if (!baseRecord.internalMerge && baseRecord.fields.some(baseField => !baseField.mergeCandidate && fieldsAreIdentical(sourceField, baseField))) {
     nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' already exists! No merge required!`, debugDev);
     sourceField.deleted = 1;
     return true;

@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalizeIdentifiers');
 
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 
 
 export default function () {
@@ -35,7 +35,7 @@ export default function () {
     const clonedFields = JSON.parse(JSON.stringify(record.fields));
     recordNormalizeIndicators(record);
 
-    record.fields.forEach((field, index) => compareFields(field, index)); // eslint-disable-line array-callback-return
+    record.fields.forEach((field, index) => compareFields(field, index));
 
     function compareFields(field, index) {
       const origFieldAsString = fieldToString(clonedFields[index]);
@@ -171,6 +171,18 @@ function normalize245Indicator1(field, record) {
   field.ind1 = field1XX.length === 0 ? '0' : '1';
 }
 
+function noDisplayConstantGenerated520Indicator1(field) {
+  if (field.tag !== '520') {
+    return;
+  }
+  const as = field.subfields.filter(sf => sf.code === 'a');
+  // Set ind1=8 "no display constant generated" fro certain values (part of MELKEHITYS-2579):
+  if (as.length === 1 && ['Abstract.', 'Abstrakt.', 'Abstrakti.', 'Abstract.', 'English Summary.', 'Sammandrag.', 'Tiivistelmä.'].includes(field.subfields[0].value)) {
+    field.ind1 = '8';
+  }
+
+}
+
 function normalize776Indicator2(field) {
   if (field.tag !== '776') {
     return;
@@ -229,19 +241,20 @@ function getLanguages(record) {
 
 }
 
-export function recordNormalizeIndicators(record) {
+function recordNormalizeIndicators(record) {
   recordNormalize490(record);
 
   // Language is used to handle non-filing indicators
   const languages = getLanguages(record);
 
-  record.fields.forEach(field => fieldNormalizeIndicators(field, record, languages)); // eslint-disable-line array-callback-return
+  record.fields.forEach(field => fieldNormalizeIndicators(field, record, languages));
 
 }
 
 function fieldNormalizeIndicators(field, record, languages) {
   normalize084Indicator1(field);
   normalize245Indicator1(field, record);
+  noDisplayConstantGenerated520Indicator1(field);
   normalizeNonFilingIndicator1(field, languages);
   normalizeNonFilingIndicator2(field, languages);
   normalize776Indicator2(field);

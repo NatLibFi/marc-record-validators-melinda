@@ -1,7 +1,7 @@
 // import createDebugLogger from 'debug';
 // const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield8Utils');
 
-import {fieldToString, nvdebug} from './utils';
+import {fieldToString, nvdebug} from './utils.js';
 
 const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u;
 
@@ -77,9 +77,9 @@ export function add8s(fields, record) {
   }
 
   nvdebug(`Linking number(s): ${linkingNumbers.join(', ')}`);
-  linkingNumbers.forEach(number => collectLinkingNumberFields(number)); // eslint-disable-line array-callback-return
+  linkingNumbers.forEach(number => collectLinkingNumberFields(number));
 
-  fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`)); // eslint-disable-line array-callback-return
+  fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`));
 
   return fields;
 
@@ -88,7 +88,7 @@ export function add8s(fields, record) {
     fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber));
     // Add them and their "sisters" back:
     const addableFields = record.fields.filter(f => fieldHasLinkingNumber(f, linkingNumber));
-    addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));  // eslint-disable-line array-callback-return
+    addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));
     fields = fields.concat(addableFields);
 
   }

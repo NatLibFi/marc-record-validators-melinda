@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -59,7 +59,7 @@ function fixSubfieldA(a) {
 function fixSubfieldAInternalPunctuation(field) {
   const a = field.subfields.filter(sf => sf.code === 'a');
 
-  a.forEach(sf => fixSubfieldA(sf)); // eslint-disable-line array-callback-return
+  a.forEach(sf => fixSubfieldA(sf));
 }
 
 function getIndicator1(field) {

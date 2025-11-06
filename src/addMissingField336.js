@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
-import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
-import {getFormOfItem, map336CodeToTerm} from './field33XUtils';
+import {fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
+import {getFormOfItem, map336CodeToTerm} from './field33XUtils.js';
 
 const description = 'Add missing 336 field(s)';
 
@@ -21,7 +21,7 @@ export default function () {
     // 336 ## ‡a tietokoneohjelma ‡b cop ‡2 rdacontent
     const res = {message: [], fix: [], valid: true};
     if (newFields.length) {
-      newFields.forEach(f => record.insertField(f)); // eslint-disable-line array-callback-return
+      newFields.forEach(f => record.insertField(f));
       return res;
     }
     return res;

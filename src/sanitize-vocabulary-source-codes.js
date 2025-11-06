@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {fieldToString} from './utils';
+import {fieldToString} from './utils.js';
 import clone from 'clone';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
@@ -15,7 +15,7 @@ export default function () {
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
     const relevantFields = getRelevantFields(record);
-    relevantFields.forEach(f => fieldSanitizeVocabularySourceCode(f)); // eslint-disable-line array-callback-return
+    relevantFields.forEach(f => fieldSanitizeVocabularySourceCode(f));
     return res;
   }
 
@@ -23,7 +23,7 @@ export default function () {
     const res = {message: []};
     const relevantFields = getRelevantFields(record);
 
-    relevantFields.forEach(field => validateField(field, res)); // eslint-disable-line array-callback-return
+    relevantFields.forEach(field => validateField(field, res));
 
     res.valid = !(res.message.length >= 1);
     return res;
@@ -52,7 +52,7 @@ export default function () {
 
 
   function fieldSanitizeVocabularySourceCode(field) {
-    field.subfields.forEach(sf => subfieldSanitizeVocabularySourceCode(sf)); // eslint-disable-line array-callback-return
+    field.subfields.forEach(sf => subfieldSanitizeVocabularySourceCode(sf));
     return field;
   }
 

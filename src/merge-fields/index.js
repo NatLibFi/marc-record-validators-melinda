@@ -8,7 +8,7 @@
 //import createDebugLogger from 'debug';
 //import fs from 'fs';
 //import path from 'path';
-import {mergeField} from './mergeField';
+import {mergeField} from './mergeField.js';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
 
@@ -18,16 +18,25 @@ import {mergeConfig as defaultConfig} from './mergeConfig.js';
 
 //const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'merge-fields', 'config.json'), 'utf8'));
 
-export default function () {
+export default function (defaultTagPattern = undefined) {
 
   return {
     description, validate, fix
   };
 
+  function getTagPattern(config) {
+    if (config && config.tagPattern) {
+      return config.tagPattern;
+    }
+    if (defaultTagPattern) { // Used by tests
+      return defaultTagPattern;
+    }
+    return '^[1678](?:00|10|11|30)$';
+  }
 
   function mergeFieldsWithinRecord(record, config) {
     //const candFields = record.fields.toReversed(); // Node 20+ only! Filter via config?
-    const fields = config && config.tagPattern ? record.get(config.tagPattern) : record.get(/^[1678](?:00|10|11|30)$/u);
+    const fields = record.get(getTagPattern(config)); // config && config.tagPattern ? record.get(config.tagPattern) : record.get(/^[1678](?:00|10|11|30)$/u);
 
     fields.reverse();
     const mergedField = fields.find(f => mergeField(record, record, f, config));

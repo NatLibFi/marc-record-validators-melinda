@@ -7,7 +7,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:ut
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-import {melindaCustomMergeFields as melindaFields} from './melindaCustomMergeFields';
+import {melindaFieldSpecs} from './melindaCustomMergeFields.js';
 
 //JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'melindaCustomMergeFields.json'), 'utf8'));
 
@@ -99,10 +99,16 @@ export function fieldsToString(fields) {
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
-  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func)); // eslint-disable-line array-callback-return
+  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
 }
 
 export function isControlSubfieldCode(subfieldCode) {
+  // NB! Only $w, $0, $1, $5, $6 and $8 are really control subfields. In Finland $9 is oft a control subfield
+  // $3 material (part of the whole thing)
+  // $4 means 'relationship' (similar to relator terms at least in X00 and similar)
+  // $7 is usually provinance subfield. However, it can be stored in other subfields as well. See merge-fields/dataProvenance.js for details
+  // However, change this only if needed. Maybe all provinance subfields should return true?
+  // This may become relevant when AI starts to create stuff...
   if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'w'].includes(subfieldCode)) {
     return true;
   }
@@ -176,7 +182,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
     return true;
   }
 
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  const fieldSpecs = melindaFieldSpecs.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
     nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
     return true;
@@ -193,7 +199,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
 }
 
 function marc21GetTagsLegalIndicators(tag) {
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  const fieldSpecs = melindaFieldSpecs.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length === 0) {
     return undefined;
   }
@@ -217,7 +223,7 @@ export function marc21GetTagsLegalInd2Value(tag) {
 }
 
 export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
-  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func)); // eslint-disable-line array-callback-return
+  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
 }
 
 export function subfieldsAreIdentical(subfieldA, subfieldB) {
@@ -231,4 +237,14 @@ export function fieldHasMultipleSubfields(field, subfieldCode/*, subfieldValue =
 export function hasCopyright(value) {
   const modValue = removeCopyright(value);
   return value !== modValue;
+}
+
+
+
+export function subfieldArraysContainSameData(arr1, arr2) {
+  if ( !arr1.every(sf => arr2.some(sf2 => subfieldsAreIdentical(sf, sf2))) ) {
+    return false;
+  }
+
+  return arr2.every(sf2 => arr1.some(sf => subfieldsAreIdentical(sf, sf2)));
 }

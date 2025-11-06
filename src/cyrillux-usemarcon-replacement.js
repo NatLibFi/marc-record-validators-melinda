@@ -7,21 +7,21 @@
 
 import clone from 'clone';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {default as fix33X} from './fix-33X';
-import {default as add041} from './addMissingField041';
-import {default as add336} from './addMissingField336';
-import {default as add337} from './addMissingField337';
-import {default as add338} from './addMissingField338';
-import {default as fixCountryCodes} from './fix-country-codes';
-import {default as fixLanguageCodes} from './fix-language-codes';
-import {default as fixRelatorTerms} from './fixRelatorTerms';
-import {default as fixIndicators} from './indicator-fixes';
-import {default as fixPunctuation} from './punctuation2';
-import {default as fixQualifyingInformation} from './normalize-qualifying-information';
-import {sortAdjacentSubfields} from './sortSubfields';
+import {default as fix33X} from './fix-33X.js';
+import {default as add041} from './addMissingField041.js';
+import {default as add336} from './addMissingField336.js';
+import {default as add337} from './addMissingField337.js';
+import {default as add338} from './addMissingField338.js';
+import {default as fixCountryCodes} from './fix-country-codes.js';
+import {default as fixLanguageCodes} from './fix-language-codes.js';
+import {default as fixRelatorTerms} from './fixRelatorTerms.js';
+import {default as fixIndicators} from './indicator-fixes.js';
+import {default as fixPunctuation} from './punctuation2.js';
+import {default as fixQualifyingInformation} from './normalize-qualifying-information.js';
+import {sortAdjacentSubfields} from './sortSubfields.js';
 
 // import createDebugLogger from 'debug';
-import {fieldHasSubfield, nvdebug, recordRemoveValuelessSubfields, recordToString, removeSubfield} from './utils';
+import {fieldHasSubfield, nvdebug, recordRemoveValuelessSubfields, recordToString, removeSubfield} from './utils.js';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
 
@@ -121,7 +121,7 @@ export default function () {
 
     // Field 028: use $b$a, not $a$b:
     const f028 = record.fields.filter(f => f.tag === '028');
-    f028.forEach(f => sortAdjacentSubfields(f)); // eslint-disable-line array-callback-return
+    f028.forEach(f => sortAdjacentSubfields(f));
 
     add041().fix(record);
 
@@ -187,7 +187,7 @@ function fixField040(record) {
     return;
   }
 
-  f040.forEach(f => fixField040Subfields(f)); // eslint-disable-line array-callback-return
+  f040.forEach(f => fixField040Subfields(f));
 
   function fixField040Subfields(field) {
     field.subfields = field.subfields.filter(sf => !['b', 'e'].includes(sf.code));
@@ -203,7 +203,7 @@ export function removeFromOldCatalog(field) {
     return;
   }
   // See https://catalog.loc.gov/vwebv/ui/en_US/htdocs/help/faqs.html for motivation
-  field.subfields?.forEach(sf => removeFromOldCatalogFromSubfield(sf)); // eslint-disable-line array-callback-return
+  field.subfields?.forEach(sf => removeFromOldCatalogFromSubfield(sf));
 
   function removeFromOldCatalogFromSubfield(subfield) {
     if (!subfield.value.includes('[from old catalog]')) {
@@ -303,7 +303,7 @@ function field260To264s(field, record) { // might be generic... if so, move to u
     return false;
   }
 
-  field.subfields?.forEach(sf => field260To264Normalization(sf)); // eslint-disable-line array-callback-return
+  field.subfields?.forEach(sf => field260To264Normalization(sf));
 
   function field260To264Normalization(subfield) {
     subfield.value = field260To264Normalization2(subfield);
@@ -380,7 +380,7 @@ function translateFieldToFinnish(field) {
   if (!['020', '300'].includes(field.tag)) {
     return;
   }
-  field.subfields?.forEach(sf => translateSubfieldToFinnish(sf));  // eslint-disable-line array-callback-return
+  field.subfields?.forEach(sf => translateSubfieldToFinnish(sf));
 
   function translateSubfieldToFinnish(subfield) {
     if (field.tag === '020' && ['a', 'q', 'z'].includes(subfield.code)) {

@@ -7,18 +7,21 @@
   Thus it is here. However, most of the testing is done via merge-reducers...
 */
 import clone from 'clone';
-import {fieldStripPunctuation} from './punctuation2';
+import {fieldStripPunctuation} from './punctuation2.js';
 import {fieldToString, isControlSubfieldCode} from './utils.js';
 
-import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from './normalize-identifiers';
+import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from './normalize-identifiers.js';
 import createDebugLogger from 'debug';
-import {normalizePartData, subfieldContainsPartData} from './normalizeSubfieldValueForComparison';
+import {normalizePartData, subfieldContainsPartData} from './normalizeSubfieldValueForComparison.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeFieldForComparison');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
 export function isEnnakkotietoSubfieldG(subfield) {
+  if (valuelessSubfield(subfield)) {
+    return false;
+  }
   if (subfield.code !== 'g') {
     return false;
   }
@@ -116,6 +119,9 @@ function subfieldValueLowercase(value, subfieldCode, tag) {
 }
 
 function subfieldLowercase(sf, tag) {
+  if (valuelessSubfield(sf)) {
+    return;
+  }
   sf.value = subfieldValueLowercase(sf.value, sf.code, tag);
 }
 
@@ -124,7 +130,7 @@ function fieldLowercase(field) {
     return;
   }
 
-  field.subfields.forEach(sf => subfieldLowercase(sf, field.tag)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => subfieldLowercase(sf, field.tag));
 
   function skipFieldLowercase(field) {
     if (skipAllFieldNormalizations(field.tag)) {
@@ -144,10 +150,14 @@ function hack490SubfieldA(field) {
   if (field.tag !== '490') {
     return;
   }
-  field.subfields.forEach(sf => removeSarja(sf)); // eslint-disable-line array-callback-return
+  field.subfields.forEach(sf => removeSarja(sf));
 
   // NB! This won't work, if the punctuation has not been stripped beforehand!
   function removeSarja(subfield) {
+    if (valuelessSubfield(subfield)) {
+      return;
+    }
+
     if (subfield.code !== 'a') {
       return;
     }
@@ -185,9 +195,12 @@ function normalizeISBN(field) {
 
   //nvdebug(`ISBN-field? ${fieldToString(field)}`);
   const relevantSubfields = field.subfields.filter(sf => tagAndSubfieldCodeReferToIsbn(field.tag, sf.code) && looksLikeIsbn(sf.value));
-  relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf)); // eslint-disable-line array-callback-return
+  relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf));
 
   function normalizeIsbnSubfield(sf) {
+    if (valuelessSubfield(sf)) {
+      return;
+    }
     //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);
     sf.value = sf.value.replace(/-/ug, '');
     sf.value = sf.value.replace(/x/u, 'X');
@@ -202,6 +215,9 @@ function fieldSpecificHacks(field) {
 
 export function fieldTrimSubfieldValues(field) {
   field.subfields?.forEach((sf) => {
+    if (valuelessSubfield(sf)) {
+      return;
+    }
     sf.value = sf.value.replace(/^[ \t\n]+/u, '');
     sf.value = sf.value.replace(/[ \t\n]+$/u, '');
     sf.value = sf.value.replace(/[ \t\n]+/gu, ' ');
@@ -212,6 +228,9 @@ function fieldRemoveDecomposedDiacritics(field) {
   // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
   // allows us to compare authors and avoid duplicate fields.
   field.subfields.forEach((sf) => {
+    if (valuelessSubfield(sf)) {
+        return;
+    }
     sf.value = removeDecomposedDiacritics(sf.value);
   });
 }
@@ -297,6 +316,9 @@ export function cloneAndNormalizeFieldForComparison(field) {
     return clonedField;
   }
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
+    if (valuelessSubfield(sf)) {
+      return;
+    }
     sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag);
     sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);
   });
@@ -317,4 +339,8 @@ function fieldSkipNormalization(field) {
     return true;
   }
   return false;
+}
+
+function valuelessSubfield(sf) {
+  return sf.value === undefined;
 }

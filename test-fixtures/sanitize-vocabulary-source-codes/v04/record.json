@@ -1,8 +1,8 @@
 {
-  "leader": "01470cam a22004214i 4500",
   "_validationOptions": {
     "subfieldValues": false
   },
+  "leader": "01470cam a22004214i 4500",
   "fields" : [
     { "tag": "001", "value": "001173044" },
     { "tag": "003", "value": "FI-MELINDA" },

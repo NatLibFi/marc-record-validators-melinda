@@ -23,7 +23,7 @@ const configSrc = {
     "array-callback-return": [
       "error",
       {
-        "checkForEach": true
+        "checkForEach": false
       }
     ],
     "no-unused-vars": [
@@ -41,7 +41,6 @@ const configSrc = {
 // - ignore all files inside directories named 'dist'
 const configIgnores = {
   ignores: [
-    "coverage",
     "**/.*",
     "**/dist/"
   ]

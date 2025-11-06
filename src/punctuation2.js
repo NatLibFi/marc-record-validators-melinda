@@ -9,10 +9,11 @@
 * NOTE #3: As of 2023-06-05 control subfields ($0...$9) are obsolete. Don't use them in rules.
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
-import {validateSingleField} from './ending-punctuation';
-import {fieldGetUnambiguousTag} from './subfield6Utils';
+import {validateSingleField} from './ending-punctuation.js';
+import {tagToDataProvenanceSubfieldCode} from './merge-fields/dataProvenance.js';
+import {fieldGetUnambiguousTag} from './subfield6Utils.js';
 //import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
+import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 import clone from 'clone';
 
 //const debug = createDebugLogger('debug/punctuation2');
@@ -27,7 +28,7 @@ export default function () {
   function fix(record) {
     nvdebug(`${descriptionString}: fixer`);
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fieldFixPunctuation(f)); // eslint-disable-line array-callback-return
+    record.fields.forEach(f => fieldFixPunctuation(f));
     return res;
   }
 
@@ -49,12 +50,19 @@ export default function () {
   }
 }
 
-function isControlSubfield(subfield) {
-  return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subfield.code);
+
+
+function isIrrelevantSubfield(subfield, tag) {
+  const dataProvenanceSubfieldCode = tagToDataProvenanceSubfieldCode(tag);
+  if (subfield.code === dataProvenanceSubfieldCode) {
+    return true;
+  }
+  return isControlSubfieldCode(subfield.code); // Currently this contains other stuff as well ($3, $4, $7, $9...)
 }
 
+
 function getNextRelevantSubfield(field, currSubfieldIndex) {
-  return field.subfields.find((subfield, index) => index > currSubfieldIndex && !isControlSubfield(subfield));
+  return field.subfields.find((subfield, index) => index > currSubfieldIndex && !isIrrelevantSubfield(subfield, field.tag));
 }
 
 export function fieldGetFixedString(field, add = true) {
@@ -155,7 +163,8 @@ const remove490And830Whatever = [{'code': 'axyzv', 'followedBy': 'axyzv', 'remov
 const linkingEntryRemoveWhatever = [
   {'code': 'i', 'followedBy': 'at', 'remove': / ?:$/u}, // ':'
   {'code': 'at', 'remove': /\.$/u},
-  {'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'abdghiklmnopqrstuwxyz', 'remove': /\. -$/u}
+  // Only ". -" separator is still used in music. We can strip it, but can only create the non-music punctuation!
+  {'code': 'abdghiklmnopqrstuwxyz', 'followedBy': 'abdghiklmnopqrstuwxyz#', 'remove': /\. -$/u}
 ];
 
 

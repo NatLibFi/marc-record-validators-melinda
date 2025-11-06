@@ -127,7 +127,7 @@ function extractAllPrintData(relevantFields) {
 }
 
 
-export function mergeLisapainokset(record) {
+function mergeLisapainokset(record) {
   const relevantFields = getRelevantFields(record);
   if (relevantFields.length < 2) {
     return;

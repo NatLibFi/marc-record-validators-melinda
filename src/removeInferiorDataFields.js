@@ -1,11 +1,11 @@
 import createDebugLogger from 'debug';
-import {fieldToChain, sameField} from './removeDuplicateDataFields';
-import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils';
-import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug, uniqArray} from './utils';
-import {fieldHasValidSubfield8} from './subfield8Utils';
-import {encodingLevelIsBetterThanPrepublication, fieldRefersToKoneellisestiTuotettuTietue, getEncodingLevel} from './prepublicationUtils';
-import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison';
-import {fixComposition, precomposeFinnishLetters} from './normalize-utf8-diacritics';
+import {fieldToChain, sameField} from './removeDuplicateDataFields.js';
+import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils.js';
+import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug, uniqArray} from './utils.js';
+import {fieldHasValidSubfield8} from './subfield8Utils.js';
+import {encodingLevelIsBetterThanPrepublication, fieldRefersToKoneellisestiTuotettuTietue, getEncodingLevel} from './prepublicationUtils.js';
+import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison.js';
+import {fixComposition, precomposeFinnishLetters} from './normalize-utf8-diacritics.js';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
@@ -46,7 +46,7 @@ function deriveInferiorChains(fields, record) {
   //nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`);
   const hash = {};
 
-  fields.forEach(f => fieldToChainToDeletables(f)); // eslint-disable-line array-callback-return
+  fields.forEach(f => fieldToChainToDeletables(f));
 
   return hash;
 
@@ -151,14 +151,14 @@ export function removeInferiorChains(record, fix = true) {
 
     // If the inferior (deletable) chain is 1XX-based, convert the triggering better chain from 7XX to 1XX:
     if (chainContains1XX(chain)) {
-      triggeringChain.forEach(f => sevenToOne(f, triggeringChain)); // eslint-disable-line array-callback-return
+      triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
     }
     //nvdebug(`iRIS6C: ${chainAsString}`);
     const deletedString = fieldsToString(chain);
     const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
     if (fix) {
       //nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
-      chain.forEach(field => record.removeField(field)); // eslint-disable-line array-callback-return
+      chain.forEach(field => record.removeField(field));
     }
     return innerRemoveInferiorChains(remainingFields, [...deletedStringsArray, message]);
   }
@@ -176,7 +176,7 @@ export function removeInferiorChains(record, fix = true) {
     const pairs = fieldGetOccurrenceNumberPairs(field, chain);
     field.tag = `1${field.tag.substring(1)}`;
     // There should always be one pair, but I'm not sanity-checking this
-    pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField)); // eslint-disable-line array-callback-return
+    pairs.forEach(pairedField => fieldSevenToOneOccurrenceNumber(pairedField));
   }
 
 }
@@ -332,7 +332,10 @@ function deriveIndividualDeletables(record) {
     // MET-575 (merge: applies in postprocessing)
     const inferiorTerms = getPrepublicationTerms(currString);
 
-    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...inferiorTerms];
+    // MELKEHITYS-3277-ish: non-AI is better than AI (a rare case where longer version is inferior):
+    const aiBased = `${currString} ‡7 (dpenmw)AI`;
+
+    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...inferiorTerms, aiBased];
 
     if (subsets.length) {
       return processTodoList([...stillToDo, ...moreToDo], newDeletables);

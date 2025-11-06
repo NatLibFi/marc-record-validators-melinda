@@ -5,9 +5,9 @@
 *
 */
 
-import {fieldGetFixedString, fieldNeedsModification, fieldStripPunctuation} from './punctuation2';
+import {fieldGetFixedString, fieldNeedsModification, fieldStripPunctuation} from './punctuation2.js';
 // import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
+import {fieldToString, nvdebug} from './utils.js';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
 
@@ -20,7 +20,7 @@ export default function () {
   function fix(record) {
     nvdebug('Strip punctuation to data fields: fixer');
     const res = {message: [], fix: [], valid: true};
-    record.fields.forEach(f => fieldStripPunctuation(f)); // eslint-disable-line array-callback-return
+    record.fields.forEach(f => fieldStripPunctuation(f));
     return res;
   }
 

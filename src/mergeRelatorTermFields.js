@@ -7,10 +7,10 @@
 
 
 import clone from 'clone';
-import {fieldFixPunctuation, fieldStripPunctuation} from './punctuation2';
-import {fieldToString, nvdebug} from './utils';
-import {sortAdjacentSubfields} from './sortSubfields';
-import {sortAdjacentRelatorTerms, tagToRelatorTermSubfieldCode} from './sortRelatorTerms';
+import {fieldFixPunctuation, fieldStripPunctuation} from './punctuation2.js';
+import {fieldToString, nvdebug} from './utils.js';
+import {sortAdjacentSubfields} from './sortSubfields.js';
+import {sortAdjacentRelatorTerms, tagToRelatorTermSubfieldCode} from './sortRelatorTerms.js';
 //import createDebugLogger from 'debug';
 /*
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeRelatorTermFields');
@@ -74,12 +74,11 @@ function copyRelatorSubfields(fromField, toField) {
   const relatorTermSubfieldCode = tagToRelatorTermSubfieldCode(fromField.tag);
   const newRelatorTerms = extractAddableRelatorTerms(fromField, toField);
 
-  newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term})); // eslint-disable-line array-callback-return
+  newRelatorTerms.forEach(term => toField.subfields.push({code: relatorTermSubfieldCode, value: term}));
 
 }
 
 function mergeRelatorTermFields(record, fix = false) {
-  /* eslint-disable */
   // NV: 111/711, 751 and 752 where so rare that I did not add them here. Can't remember why I skipped 6XX and 8XX...
   let fields = record.get('(?:[17][01]0|720)'); 
   let result = [];
@@ -128,6 +127,5 @@ function mergeRelatorTermFields(record, fix = false) {
   }
 
   record.fields = record.fields.filter(f => !f.deleted);
-  /* eslint-enable */
   return result;
 }

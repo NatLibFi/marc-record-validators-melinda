@@ -1,4 +1,7 @@
 {
+  "_validationOptions": {
+    "subfieldValues": false
+  },
   "fields": [
     {
       "tag": "005",

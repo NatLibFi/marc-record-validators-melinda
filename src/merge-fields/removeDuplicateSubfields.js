@@ -2,8 +2,8 @@
 import {nvdebug, subfieldToString} from '../utils.js';
 import createDebugLogger from 'debug';
 import {cloneAndRemovePunctuation} from '../normalizeFieldForComparison.js';
-import {sortAdjacentSubfields} from '../sortSubfields';
-import {fieldFixPunctuation} from '../punctuation2';
+import {sortAdjacentSubfields} from '../sortSubfields.js';
+import {fieldFixPunctuation} from '../punctuation2.js';
 
 
 // NB This should be moved and converted to a validator/fixer as well...

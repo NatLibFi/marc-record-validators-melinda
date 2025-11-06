@@ -1,6 +1,6 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebug from 'debug';
-import {autRules, bibRules} from './rules';
+import {autRules, bibRules} from './rules/index.js';
 
 const debug = createDebug('@natlibfi/marc-record-validator-melinda/punctuation:dev');
 
