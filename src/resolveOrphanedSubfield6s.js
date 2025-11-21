@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils.js';
+import {fieldHasSubfield, fieldToString, nvdebug /*, subfieldToString*/ } from './utils.js';
 import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from './subfield6Utils.js';
 
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
@@ -77,7 +77,7 @@ function findPairForSubfield6OccurrenceNumber(subfield6, myTag, candPairFields) 
   if (!isValidSubfield6(subfield6)) {
     return undefined;
   }
-  nvdebug(`LOOKING FOR PAIR: ${myTag} ${subfieldToString(subfield6)}`);
+  //nvdebug(`LOOKING FOR PAIR: ${myTag} ${subfieldToString(subfield6)}`);
   candPairFields.forEach(field => fieldToString(field));
 
   // Only valid $6 value that fails to map to another field is iffy...
@@ -88,7 +88,7 @@ function findPairForSubfield6OccurrenceNumber(subfield6, myTag, candPairFields) 
     return undefined;
   }
   const tagAndOccurrenceNumber = `${myTag}-${occurrenceNumber}`;
-  nvdebug(`Try to find occurrence number ${tagAndOccurrenceNumber} in field ${referredTag}...`);
+  //nvdebug(`Try to find occurrence number ${tagAndOccurrenceNumber} in field ${referredTag}...`);
   //const relevantFields = fields.filter(field => field.tag === referredTag && field.subfields.some(sf => subfield6GetOccurrenceNumber(sf) === occurrenceNumber));
   const relevantFields = candPairFields.filter(field => field.tag === referredTag && fieldHasWantedTagAndOccurrenceNumber(field, tagAndOccurrenceNumber));
   if (relevantFields.length === 0) {

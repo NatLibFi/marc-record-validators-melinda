@@ -1,12 +1,12 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 // const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield6Utils');
 
 import {add8s, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, isValidSubfield8} from './subfield8Utils.js';
-import {fieldHasSubfield, fieldToString, fieldsToString, nvdebug, subfieldToString} from './utils.js';
+import {fieldHasSubfield, fieldToString, /* fieldsToString, */ nvdebug, subfieldToString} from './utils.js';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
 //const debugData = debug.extend('data');
-const debugDev = debug.extend('dev');
+//const debugDev = debug.extend('dev');
 
 // NB! Subfield 6 is non-repeatable and it should always comes first!
 // NB! Index size should always be 2 (preceding 0 required for 01..09) However, support for 100+ was added on 2023-02-27.
@@ -71,7 +71,7 @@ export function subfield6HasWantedTagAndOccurrenceNumber(subfield, tagAndOccurre
   }
   // We could also use generic code and go getTag()+'-'+getIndex() instead of regexp...
   const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1');
-  nvdebug(` Compare '${key}' vs '${tagAndOccurrenceNumber}'`);
+  //nvdebug(` Compare '${key}' vs '${tagAndOccurrenceNumber}'`);
   return key === tagAndOccurrenceNumber;
 }
 
@@ -222,7 +222,7 @@ export function fieldGetOccurrenceNumberPairs(field, candFields) {
     nvdebug(`NO PAIRS FOUND FOR '${fieldToString(field)}'`);
     return pairs;
   }
-  nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`);
+  //nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`);
   pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`));
   return pairs;
 }
@@ -357,7 +357,7 @@ function guessTargetLinkingNumber(fields, defaultTargetLinkingNumber) {
 export function fieldsToNormalizedString(fields, defaultTargetLinkingNumber = 0, normalizeOccurrenceNumber = false, normalizeEntryTag = false) {
   const targetLinkingNumber = guessTargetLinkingNumber(fields, defaultTargetLinkingNumber);
 
-  nvdebug(`fieldsToNormalizedString: OCC: ${normalizeOccurrenceNumber}`);
+  //nvdebug(`fieldsToNormalizedString: OCC: ${normalizeOccurrenceNumber}`);
   const strings = fields.map(field => fieldToNormalizedString(field, targetLinkingNumber, normalizeOccurrenceNumber, normalizeEntryTag));
   strings.sort();
   return strings.join('\t__SEPARATOR__\t');
@@ -445,7 +445,7 @@ export function isFirstLinkedSubfield6Field(field, record) {
   }
   const chain = getAllLinkedSubfield6Fields(field, record);
   if (!isRelevantSubfield6Chain(chain)) {
-    nvdebug(`Rejected 6: ${fieldsToString(chain)}`);
+    //nvdebug(`Rejected 6: ${fieldsToString(chain)}`);
     return false;
   }
 
@@ -472,13 +472,13 @@ export function get6s(field, candidateFields) { // NB! Convert field to fields!!
   if (sixes.length === 0) {
     return [field];
   }
-  nvdebug(`SIXES: ${sixes.length}`);
+  //nvdebug(`SIXES: ${sixes.length}`);
   const occurrenceNumbers = sixes.map(sf => subfield6GetOccurrenceNumber(sf)).filter(value => value !== undefined && value !== '00');
-  nvdebug(occurrenceNumbers.join(' -- '));
+  //nvdebug(occurrenceNumbers.join(' -- '));
 
   const relevantFields = candidateFields.filter(f => occurrenceNumbers.some(o => fieldHasOccurrenceNumber(f, o)));
-  nvdebug(`${fieldToString(field)}: $6-RELFIELDS FOUND: ${relevantFields.length}...`);
-  relevantFields.forEach(f => nvdebug(fieldToString(f)));
+  //nvdebug(`${fieldToString(field)}: $6-RELFIELDS FOUND: ${relevantFields.length}...`);
+  //relevantFields.forEach(f => nvdebug(fieldToString(f)));
   return relevantFields;
 }
 
@@ -488,6 +488,6 @@ export function resetSubfield6Tag(subfield, tag) {
   }
   // NB! mainly for 1XX<->7XX transfers
   const newValue = `${tag}-${subfield.value.substring(4)}`;
-  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
+  //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
   subfield.value = newValue;
 }
