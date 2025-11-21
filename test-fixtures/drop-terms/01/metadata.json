@@ -1,0 +1,6 @@
+{
+  "description": "01: Drop some bad terms",
+  "fix": true,
+  "only": true,
+  "skip": false
+}
