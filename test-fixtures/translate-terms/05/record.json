@@ -1,0 +1,11 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "ruotsinnukseton valetermi, joka toimii vain mockina'" },
+      { "code": "2", "value": "yso/fin" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p666"}
+    ]}
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "description": "05: yso/fin term that has not yet been translated into Swedish",
+  "comment": "No translation is added. Checks that nothing breaks.",
+  "fix": true,
+  "only": false,
+  "skip": false
+}

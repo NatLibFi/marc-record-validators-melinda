@@ -8,6 +8,12 @@ const fakeTerms = {
             ]
         },
         {
+            uri: 'http://www.yso.fi/onto/yso/p666',
+            prefLabel: [
+                { lang: 'fi', value: 'ruotsinnukseton valetermi, joka toimii vain mockina' },
+            ]
+        },
+        {
             uri: 'http://www.yso.fi/onto/yso/p111739',
             prefLabel: [
                 { lang: 'fi', value: 'Ivalo (Inari)' },
