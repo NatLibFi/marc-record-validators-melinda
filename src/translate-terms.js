@@ -246,14 +246,29 @@ async function getTermDataFromFinto(uri) {
     }
     const arr = json.graph;
     const [hit] = arr.filter(row => row.uri === uri);
-    console.log(`NEW JSON: ${JSON.stringify(hit.prefLabel)}`); // eslint-disable-line no-console
-    return { prefLabel: hit.prefLabel, altLabel: hit.altLabel };
+    const subset = {
+      prefLabel: processLabel(hit.prefLabel),
+      altLabel: processLabel(hit.altLabel)
+    };
+    console.log(`NEW JSON: ${JSON.stringify(subset)}`); // eslint-disable-line no-console
+    //console.log(`NEW JSON: ${JSON.stringify(hit)}`); // eslint-disable-line no-console
+
+    return subset;
 
     function swaggerQuery(uri) {
       // This would work for only yso, not yso-paikat etc `https://api.finto.fi/rest/v1/yso/data?format=application%2Fjson&uri=${uri}`;
       return `https://api.finto.fi/rest/v1/data?uri=${uri}&format=application%2Fjson`; // This is simpler, but contains more irrelevant data
     }
 
+    function processLabel(label) {
+      if (typeof label === 'object') {
+        if (Array.isArray(label)) {
+          return label;
+        }
+        return [label];
+      }
+      return [];
+    }
 }
 
 export function getLexiconAndLanguage(field) {
@@ -286,7 +301,7 @@ export function isLabel(labels, term, lang = undefined) {
     if (label.value !== term) {
       return false;
     }
-    if (!twoLetterLanguageCode) { // If lanuguage code is not defined, any hit will do
+    if (!twoLetterLanguageCode) { // If language code is not defined, any hit will do
       return true;
     }
     return label.lang === twoLetterLanguageCode;
