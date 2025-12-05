@@ -65,15 +65,17 @@ async function callback({getFixture, enabled = true, fix = false}) {
 
   const validator = await validatorFactory();
   const record = new MarcRecord(getFixture('record.json'));
-  const expectedResult = new MarcRecord(getFixture('expectedResult.json'));
+  const expectedResult = getFixture('expectedResult.json');
   // console.log(expectedResult); // eslint-disable-line
 
   if (!fix) {
     const result = await validator.validate(record);
     assert.deepEqual(result, expectedResult);
+    const originalRecord = new MarcRecord(getFixture('record.json'));
+    assert.deepEqual(record, originalRecord); // Validation should not change the record
     return;
   }
-
+  const expectedResult2 = new MarcRecord(expectedResult);
   await validator.fix(record);
-  assert.deepEqual(record, expectedResult);
+  assert.deepEqual(record, expectedResult2);
 }
