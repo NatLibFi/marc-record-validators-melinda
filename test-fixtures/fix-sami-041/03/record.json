@@ -1,0 +1,8 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "eng" } ]},
+    { "tag": "041", "ind1": "1", "ind2": "7", "subfields": [ { "code": "a", "value": "smi" }, {"code": "2", "value": "iso-639-3"} ]}
+  ]
+}
