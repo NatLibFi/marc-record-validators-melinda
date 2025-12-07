@@ -57,13 +57,15 @@ async function testValidatorFactory() {
   assert.equal(typeof validator.validate, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
+async function callback({getFixture, enabled = true, fix = false, config = undefined}) {
+  console.log("CONSOLE CALLBACK CONFIG");
+  console.log(JSON.stringify(config));
   if (enabled === false) {
     debug('TEST SKIPPED!');
     return;
   }
 
-  const validator = await validatorFactory();
+  const validator = await validatorFactory(config);
   const record = new MarcRecord(getFixture('record.json'));
   const expectedResult = getFixture('expectedResult.json');
   // console.log(expectedResult); // eslint-disable-line

@@ -1,10 +1,11 @@
 // Author(s): Nicholas Volk
 
-import createDebugLogger from 'debug';
+import clone from 'clone';
+// import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils.js';
 import {fieldHasValidSubfield0, getLexiconAndLanguage, getTermData, isLabel, isValidSubfield0} from './translate-terms.js';
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:drop-terms');
+// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:drop-terms');
 
 const defaultConfig = {
   'constraints': [
@@ -31,34 +32,47 @@ export default function (config = defaultConfig) {
   };
 
   async function fix(record, validateMode = false) {
-    const relevantFields = getPotentialFields(record);
-    const removableFields = await getRemovableFields(relevantFields);
+    const clonedFields = record.fields.map(f => clone(f));
 
-    removableFields.forEach(f => nvdebug(`Remove field '${fieldToString(f)}'`, debug));
+    const results = await processFields(clonedFields);
 
-    const removableFieldsAsStrings = removableFields.map(f => fieldToString(f));
+    const removables = results.map((f, i) => !f ? record.fields[i] : undefined).filter(f => f);
+    const modMessages = results.map((f, i) => getMod(f, i)).filter(f => f);
+    const removalMessages = removables.map(f => `Remove '${fieldToString(f)}'`);
+    const allMessages = [...modMessages, ...removalMessages];
 
     if (validateMode) {
-      if (removableFields.length === 0) {
+      if (allMessages.length === 0) {
         return {'message': [], 'valid': true};
       }
-      return {'message': removableFieldsAsStrings, 'valid': false};
+      return {'message': allMessages, 'valid': false};
     }
 
-    removableFields.forEach(f => record.removeField(f));
+    removables.forEach(f => record.removeField(f));
 
-    return {message: [], fix: removableFieldsAsStrings, valid: true};
+    return {message: [], fix: allMessages, valid: true};
+
+    function getMod(field, index) {
+      if (!field) {
+        return undefined;
+      }
+      const before = fieldToString(record.fields[index]);
+      const after = fieldToString(results[index]);
+      if (before !== after) {
+        if (!validateMode) {
+          record.fields[index] = field;
+        }
+        return `Modify '${before}' => '${after}'`;
+      }
+      return undefined;
+    }
   }
 
-  function getPotentialFields(record) {
-    return record.fields?.filter(f => isPotentialField(f));
-
-    function isPotentialField(f) {
-      if (!config || !config.constraints) {
-        return false;
-      }
-      return config.constraints.some(c => c.tag === f.tag && f.subfields?.some(sf => sf.code === '2' && sf.value === c.lex));
+  function isPotentialField(f) {
+    if (!config || !config.constraints) {
+      return false;
     }
+    return config.constraints.some(c => c.tag === f.tag && f.subfields?.some(sf => sf.code === '2' && sf.value === c.lex));
   }
 
   async function validate(record) {
@@ -66,25 +80,28 @@ export default function (config = defaultConfig) {
   }
 
 
-  async function getRemovableFields(fields, results = []) {
+  async function processFields(fields, results = []) {
     const [currField, ...remainingFields] = fields;
     if (!currField) {
       return results;
     }
 
+    if (!isPotentialField(currField)) {
+      return processFields(remainingFields, [...results, currField]);
+    }
+
     removeIllegalSubfield0s(currField); // iff config wants them to be removed...
 
     const removable = await isRemovableField(currField);
-    if (removable) {
-      return getRemovableFields(remainingFields, [...results, currField]);
-    }
-    return getRemovableFields(remainingFields, results);
+
+    return processFields(remainingFields, [...results, removable ? undefined : currField]);
   }
 
   function removeIllegalSubfield0s(field) {
-    if (config['keep invalid url']) {
+    if (config['keep invalid url'] || !isPotentialField(field)) {
       return;
     }
+  
     const lexData = getLexiconAndLanguage(field);
     if (!lexData.lang) { // This is an error of sorts. Should we proceed and remove $0s?
       return;
