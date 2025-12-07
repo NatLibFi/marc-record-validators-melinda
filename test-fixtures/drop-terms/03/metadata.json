@@ -1,0 +1,16 @@
+{
+  "description": "02: Drop some bad terms (valitation)",
+  "fix": false,
+  "skip": false,
+  "only": true,
+
+  "config": {
+    "constraints": [
+
+      {"tag": "650", "lex": "yso/fin"},
+      {"tag": "650", "lex": "yso/swe"}
+    ],
+    "keep invalid url": true,
+    "remove 0-less": false
+  }
+}
