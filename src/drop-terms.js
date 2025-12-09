@@ -1,11 +1,11 @@
 // Author(s): Nicholas Volk
 
 import clone from 'clone';
-// import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils.js';
 import {getLexiconAndLanguage, getTermData, isLabel, isValidSubfield0} from './translate-terms.js';
 
-// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:drop-terms');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:drop-terms');
 
 
 const defaultConfig = {
@@ -19,7 +19,7 @@ const defaultConfig = {
     {'tag': '655', 'lex': 'slm/fin'},
     {'tag': '655', 'lex': 'slm/swe'}
   ],
-  'keep invalid url': false, // If not true, removes *syntactically* illegal subfield $0. The whole field removal is later decided by 'keep 0-less'
+  'keep invalid url': false, // If not true, removes illegal subfield $0. The whole field removal is later decided by 'keep 0-less'
   'keep invalid label': false, // label ($a) is neither pref Label nor altLabel => remove whole field
   'remove altLabel': false,
   'remove 0-less': true
@@ -91,13 +91,9 @@ export default function (config = defaultConfig) {
       return processFields(remainingFields, [...results, currField]);
     }
 
-  
     removeSyntacticallyIllegalSubfield0s(currField); // iff config wants them to be removed...
-  
 
     const removable = await isRemovableField(currField);
-
-  
 
     return processFields(remainingFields, [...results, removable ? undefined : currField]);
   }
@@ -106,12 +102,12 @@ export default function (config = defaultConfig) {
     if (config['keep invalid url']) {
       return;
     }
-    nvdebug(`RIS WP1 ${fieldToString(field)}`);
+
     const lexData = getLexiconAndLanguage(field);
     if (!lexData.lang) { // This is an error of sorts. Should we proceed and remove $0s?
       return;
     }
-    nvdebug(`RIS WP2 ${JSON.stringify(lexData)}`);
+
     field.subfields = field.subfields.filter(sf => sf.code !== '0' || isValidSubfield0(sf, lexData.lex));
   }
 
@@ -124,10 +120,7 @@ export default function (config = defaultConfig) {
       return config['remove 0-less'];
     }
 
-    nvdebug(`FOO3===== ${fieldToString(field)}`);
-
     const subfield0 = field.subfields.find(sf => sf.code === '0');
-    nvdebug(`=============== NIKO ${subfield0.value}`);
     const data = await getTermData(subfield0.value);
     // NB! No data might be a BUG! This might delete all incoming terms if Finto is down... (we should distinguish between a miss and a failure)
     // However, if we use this validator only for incoming records, it's fine enough.
@@ -136,21 +129,22 @@ export default function (config = defaultConfig) {
       const subfieldA = field.subfields.find(sf => sf.code === 'a');
       if (subfieldA) {
         const lexData = getLexiconAndLanguage(field);
-        nvdebug(`== DATA1: ${subfieldA.value}`);
+
         // $a is the pref label. All is fine!
         if (isLabel(data.prefLabel, subfieldA.value, lexData.lang)) {
+          debug(`altLabel found: ${subfieldA.value}`);
           return false;
         }
-        nvdebug(`== DATA2`);
         if (isLabel(data.altLabel, subfieldA.value, lexData.lang)) {
+          debug(`altLabel found: ${subfieldA.value}`);
           // Oddly enough this could remove altLabel but keep totally invalid labels...
           return config['remove altLabel'];
         }
-        nvdebug(`== DATA3`);
+        debug(`a-2-0 mismatch: ${fieldToString(field)}`);
       }
     }
 
-    nvdebug(`=============== KEEP INVALID? ${config['keep invalid label']}`);
+
     if (config['keep invalid label']) {
       // We keep the label $a. However, we can get rid of $0 if we want to (semantic reasons)
       if (!config['keep invalid url']) {
