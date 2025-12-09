@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import createDebugLogger from 'debug';
-//import fetchMock from 'fetch-mock';
+import fetchMock from 'fetch-mock';
 
 import validatorFactory from './drop-terms.js';
 
@@ -8,18 +8,21 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
-/*
-//import {fakeData} from '../test-fixtures/drop-terms-data.js';
+
+import {fakeData} from '../test-fixtures/translate-terms-data.js';
 
 
 const uris = [
+  'http://www.yso.fi/onto/yso/p444',
+  'http://www.yso.fi/onto/yso/p500',
   'http://www.yso.fi/onto/yso/p13299',
   'http://www.yso.fi/onto/yso/p111739',
   'http://www.yso.fi/onto/yso/p6197061979',
   'http://www.yso.fi/onto/yso/p6196061969',
   'http://urn.fi/URN:NBN:fi:au:slm:s161'
 ];
-*/
+
+const useMock = 1;
 
 
 generateTests({
@@ -33,14 +36,16 @@ generateTests({
   hooks: {
     before: async () => {
 
-      /*
-      fetchMock.mockGlobal()
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[0]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[1]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[2]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[3]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[4]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData});
-*/
+      if (useMock) {
+        fetchMock.mockGlobal()
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[0]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[1]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[2]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[3]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[4]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[5]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[6]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData});
+      }
 
       testValidatorFactory();
     }
