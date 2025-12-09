@@ -8,6 +8,16 @@ const fakeTerms = {
             ]
         },
         {
+            uri: 'http://www.yso.fi/onto/yso/p500',
+            prefLabel: [
+                { lang: 'fi', value: 'ravihevoset' },
+                { lang: 'sv', value: 'travhästar'}
+            ],
+            altLabel: [
+                { lang: 'fi', value: 'ravurit' }
+            ]
+        },
+        {
             uri: 'http://www.yso.fi/onto/yso/p666',
             prefLabel: [
                 { lang: 'fi', value: 'ruotsinnukseton valetermi, joka toimii vain mockina' },
