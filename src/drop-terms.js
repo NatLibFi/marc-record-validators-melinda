@@ -3,9 +3,10 @@
 import clone from 'clone';
 // import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils.js';
-import {fieldHasValidSubfield0, getLexiconAndLanguage, getTermData, isLabel, isValidSubfield0} from './translate-terms.js';
+import {getLexiconAndLanguage, getTermData, isLabel, isValidSubfield0} from './translate-terms.js';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:drop-terms');
+
 
 const defaultConfig = {
   'constraints': [
@@ -18,9 +19,9 @@ const defaultConfig = {
     {'tag': '655', 'lex': 'slm/fin'},
     {'tag': '655', 'lex': 'slm/swe'}
   ],
-  'keep invalid url': false, // Removes illegal subfield $0. The whole field removal is later decided by 'keep 0-less'
+  'keep invalid url': false, // If not true, removes *syntactically* illegal subfield $0. The whole field removal is later decided by 'keep 0-less'
   'keep invalid label': false, // label ($a) is neither pref Label nor altLabel => remove whole field
-  'keep altLabel': true,
+  'remove altLabel': false,
   'remove 0-less': true
 };
 
@@ -86,73 +87,79 @@ export default function (config = defaultConfig) {
       return results;
     }
 
-    if (!isPotentialField(currField)) {
+    if (!isPotentialField(currField)) { // Not interested in this field
       return processFields(remainingFields, [...results, currField]);
     }
 
-    removeIllegalSubfield0s(currField); // iff config wants them to be removed...
+  
+    removeSyntacticallyIllegalSubfield0s(currField); // iff config wants them to be removed...
+  
 
     const removable = await isRemovableField(currField);
+
+  
 
     return processFields(remainingFields, [...results, removable ? undefined : currField]);
   }
 
-  function removeIllegalSubfield0s(field) {
-    if (config['keep invalid url'] || !isPotentialField(field)) {
+  function removeSyntacticallyIllegalSubfield0s(field) {
+    if (config['keep invalid url']) {
       return;
     }
-  
+    nvdebug(`RIS WP1 ${fieldToString(field)}`);
     const lexData = getLexiconAndLanguage(field);
     if (!lexData.lang) { // This is an error of sorts. Should we proceed and remove $0s?
       return;
     }
+    nvdebug(`RIS WP2 ${JSON.stringify(lexData)}`);
     field.subfields = field.subfields.filter(sf => sf.code !== '0' || isValidSubfield0(sf, lexData.lex));
-
   }
 
   async function isRemovableField(field) {
-    nvdebug(`FOO===== ${fieldToString(field)}`);
+    // nvdebug(`FOO===== ${fieldToString(field)}`);
 
 
     // $0-less field:
     if (!field.subfields.some(sf => sf.code === '0')) {
-      if (config['remove 0-less']) {
-        nvdebug('=============== REMOVE 0-LESS');
-        return true;
-      }
-      nvdebug('=============== KEEP 0-LESS');
-      // We can't (trivially) check whether the term exists in lexicon
-      return false;
+      return config['remove 0-less'];
     }
 
-    // Check 0 validity
-    if (!fieldHasValidSubfield0(field)) {
-       nvdebug(`FIELD ${fieldToString(field)} HAS INVALID $0`);
-      return true;
-    }
     nvdebug(`FOO3===== ${fieldToString(field)}`);
-    // Check value... KESKEN!
+
     const subfield0 = field.subfields.find(sf => sf.code === '0');
     nvdebug(`=============== NIKO ${subfield0.value}`);
     const data = await getTermData(subfield0.value);
-    if (!data) { // BUG! This will delete incoming terms if Finto is down...
-      return true;
-    }
-    const subfieldA= field.subfields.find(sf => sf.code === 'a');
-    const lexData = getLexiconAndLanguage(field);
+    // NB! No data might be a BUG! This might delete all incoming terms if Finto is down... (we should distinguish between a miss and a failure)
+    // However, if we use this validator only for incoming records, it's fine enough.
 
-    if (isLabel(data.prefLabel, subfieldA.value, lexData.lang)) {
+    if (data) {
+      const subfieldA = field.subfields.find(sf => sf.code === 'a');
+      if (subfieldA) {
+        const lexData = getLexiconAndLanguage(field);
+        nvdebug(`== DATA1: ${subfieldA.value}`);
+        // $a is the pref label. All is fine!
+        if (isLabel(data.prefLabel, subfieldA.value, lexData.lang)) {
+          return false;
+        }
+        nvdebug(`== DATA2`);
+        if (isLabel(data.altLabel, subfieldA.value, lexData.lang)) {
+          // Oddly enough this could remove altLabel but keep totally invalid labels...
+          return config['remove altLabel'];
+        }
+        nvdebug(`== DATA3`);
+      }
+    }
+
+    nvdebug(`=============== KEEP INVALID? ${config['keep invalid label']}`);
+    if (config['keep invalid label']) {
+      // We keep the label $a. However, we can get rid of $0 if we want to (semantic reasons)
+      if (!config['keep invalid url']) {
+        nvdebug(`=============== 0-removal`);
+        field.subfields = field.subfields.filter(sf => sf.code !== '0');
+      }
       return false;
     }
-
-    if (isLabel(data.altLabel, subfieldA.value, lexData.lang)) {
-      if (config['keep altLabel']) {
-        return false;
-      }
-      return true; // Removes altLabel
-    }
-
-    return !config['keep invalid label'];
+    return true;
 
   }
 
