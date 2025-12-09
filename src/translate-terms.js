@@ -248,8 +248,8 @@ async function getTermDataFromFinto(uri) {
     const arr = json.graph;
     const [hit] = arr.filter(row => row.uri === uri);
     const subset = {
-      prefLabel: processLabel(hit.prefLabel),
-      altLabel: processLabel(hit.altLabel)
+      prefLabel: processLabel(hit?.prefLabel || undefined),
+      altLabel: processLabel(hit?.altLabel || undefined)
     };
     //console.log(`NEW JSON: ${JSON.stringify(hit)}`); // eslint-disable-line no-console
 
