@@ -192,6 +192,7 @@ export function isValidSubfield0(subfield, lex = '???') {
   if (subfield.code !== '0') {
     return false;
   }
+  // Should we support https as well?
   if (['yso', 'yso/fin', 'yso/swe'].includes(lex) && subfield.value.match(/^http:\/\/www\.yso\.fi\/onto\/yso\/p[0-9]+$/u)) {
     return true;
   }
@@ -234,7 +235,7 @@ export async function getTermData(uri) {
 async function getTermDataFromFinto(uri) {
     const headers = {'Accept': 'application/json'};
     const uri2 = swaggerQuery(uri);
-    nvdebug(`FINTO URL ${uri2}`);
+
     const response = await fetch(uri2, {method: 'GET', headers});
     if (!response.ok) {
       return undefined;
@@ -250,7 +251,6 @@ async function getTermDataFromFinto(uri) {
       prefLabel: processLabel(hit.prefLabel),
       altLabel: processLabel(hit.altLabel)
     };
-    console.log(`NEW JSON: ${JSON.stringify(subset)}`); // eslint-disable-line no-console
     //console.log(`NEW JSON: ${JSON.stringify(hit)}`); // eslint-disable-line no-console
 
     return subset;
