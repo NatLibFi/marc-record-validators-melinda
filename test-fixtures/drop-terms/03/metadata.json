@@ -1,5 +1,5 @@
 {
-  "description": "02: Drop some bad terms (valitation)",
+  "description": "02: Drop incorrect $0 from a bad term 'saiturit' (using non-default config, otherwise the whole field would be removed)",
   "fix": false,
   "skip": false,
   "only": true,
@@ -10,7 +10,9 @@
       {"tag": "650", "lex": "yso/fin"},
       {"tag": "650", "lex": "yso/swe"}
     ],
-    "keep invalid url": true,
+    "keep invalid label": true,
+    "keep invalid url": false,
     "remove 0-less": false
-  }
+  },
+  "comment": "True 'keep invalid label' means that field is not removed, however 'keep invalid url' will remove $0 from it"
 }
