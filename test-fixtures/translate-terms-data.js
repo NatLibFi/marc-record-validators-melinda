@@ -8,6 +8,13 @@ const fakeTerms = {
             ]
         },
         {
+            uri: 'http://www.yso.fi/onto/yso/p444',
+            prefLabel: [
+                { lang: 'fi', value: 'marxismi' },
+                { lang: 'sv', value: 'marxism'}
+            ]
+        },
+        {
             uri: 'http://www.yso.fi/onto/yso/p500',
             prefLabel: [
                 { lang: 'fi', value: 'ravihevoset' },
