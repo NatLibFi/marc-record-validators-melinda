@@ -192,11 +192,12 @@ export function isValidSubfield0(subfield, lex = '???') {
   if (subfield.code !== '0') {
     return false;
   }
-  // Should we support https as well?
-  if (['yso', 'yso/fin', 'yso/swe'].includes(lex) && subfield.value.match(/^http:\/\/www\.yso\.fi\/onto\/yso\/p[0-9]+$/u)) {
+  // 2025-12-10: supports both http and https as well. Note that translation will copy the original $0 idenfifier even though it might be non-standard.
+  // Note that currently 'http' is teh standard!!!
+  if (['yso', 'yso/fin', 'yso/swe'].includes(lex) && subfield.value.match(/^https?:\/\/www\.yso\.fi\/onto\/yso\/p[0-9]+$/u)) {
     return true;
   }
-  if (['slm', 'slm/fin', 'slm/swe'].includes(lex) && subfield.value.match(/^http:\/\/urn\.fi\/URN:NBN:fi:au:slm:s[0-9]+$/u)) {
+  if (['slm', 'slm/fin', 'slm/swe'].includes(lex) && subfield.value.match(/^https?:\/\/urn\.fi\/URN:NBN:fi:au:slm:s[0-9]+$/u)) {
     return true;
   }
   return false;
