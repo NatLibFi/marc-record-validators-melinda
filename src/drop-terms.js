@@ -28,7 +28,7 @@ const defaultConfig = {
 export default function (config = defaultConfig) {
 
   return {
-    description: 'Drop yso and slm terms that do not match. Use for incoming records only! Not for records already in Melinda!',
+    description: 'Drop yso and slm terms that do not match their identifiers. Use for incoming records only! Not for records already in Melinda!',
     validate, fix
   };
 
