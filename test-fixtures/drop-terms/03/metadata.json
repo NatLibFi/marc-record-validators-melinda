@@ -1,5 +1,5 @@
 {
-  "description": "02: Drop incorrect $0 from a bad term 'saiturit' (using non-default config, otherwise the whole field would be removed)",
+  "description": "03: Drop incorrect $0 from a bad term 'saiturit' (using non-default config, otherwise the whole field would be removed)",
   "fix": false,
   "skip": false,
   "only": true,
