@@ -7,11 +7,12 @@ import {fieldToString} from './utils.js';
 
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-sami-041');
 
-/* 'sma': eteläsaame, 'sme': pohjoissaame, 'smj': luulajansaame, 'smn': inarinsaame, 'sms': koltansaame */
-const samiLanguages = ['sma', 'sme', 'smj', 'smn', 'sms'];
-const relevantSubfieldCodes = ['a', 'd']; // Subfield codes that should also have 'smi' if a sami langauge is used. Confirmed by A.R. via Slack 2025-12-05
+
 
 export default function () {
+  /* 'sma': eteläsaame, 'sme': pohjoissaame, 'smj': luulajansaame, 'smn': inarinsaame, 'sms': koltansaame */
+  const samiLanguages = ['sma', 'sme', 'smj', 'smn', 'sms'];
+  const relevantSubfieldCodes = ['a', 'd']; // Subfield codes that should also have 'smi' if a sami langauge is used. Confirmed by A.R. via Slack 2025-12-05
 
   return {
     description: 'Add corresponing \'smi\' subfield before a specific sami language subfields, if needed',
