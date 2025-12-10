@@ -3,7 +3,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './reindexSubfield6OccurenceNumbers.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 
 generateTests({
   callback,
@@ -19,7 +19,7 @@ generateTests({
     }
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/reindexSubfield6OccurrenceNumbers:test');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/reindexSubfield6OccurrenceNumbers:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
@@ -29,12 +29,7 @@ async function testValidatorFactory() {
   assert.equal(typeof validator.validate, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
-  if (enabled === false) {
-    debug('TEST SKIPPED!');
-    return;
-  }
-
+async function callback({getFixture, fix = false}) {
   const validator = await validatorFactory();
   const record = new MarcRecord(getFixture('record.json'));
   const expectedResult = getFixture('expectedResult.json');

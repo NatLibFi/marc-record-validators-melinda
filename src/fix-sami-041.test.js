@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 
 import validatorFactory from './fix-sami-041.js';
 
@@ -22,7 +22,7 @@ generateTests({
   }
 });
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/drop-terms:test');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/drop-terms:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
@@ -32,12 +32,7 @@ async function testValidatorFactory() {
   assert.equal(typeof validator.validate, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
-  if (enabled === false) {
-    debug('TEST SKIPPED!');
-    return;
-  }
-
+async function callback({getFixture, fix = false}) {
   const validator = await validatorFactory();
   const record = new MarcRecord(getFixture('record.json'));
   const expectedResult = getFixture('expectedResult.json');
