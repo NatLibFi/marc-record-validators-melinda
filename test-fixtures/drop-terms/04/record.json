@@ -1,0 +1,24 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    { "tag": "001", "value": "test1"},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+        { "code": "a", "value": "ravurit2" },
+        { "code": "2", "value": "yso/fin" },
+        { "code": "0", "value": "http://www.yso.fi/onto/yso/p13299" }
+      ]
+    },
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+        { "code": "a", "value": "ravurit" },
+        { "code": "2", "value": "yso/fin" },
+        { "code": "0", "value": "http://www.yso.fi/onto/yso/p500" }
+      ]
+    },
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+        { "code": "a", "value": "ravurit3" },
+        { "code": "2", "value": "yso/fin" }
+      ]
+    }
+  ]
+}

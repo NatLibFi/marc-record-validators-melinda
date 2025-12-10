@@ -1,0 +1,19 @@
+{
+  "description": "04: Drop altLabel 'ravurit'. However, keeps totally wrong 'ravurit2' and 0-less 'ravurit3'",
+  "comment": "Uses a very unlikely config, used mainly for tests",
+  "fix": false,
+  "skip": false,
+  "only": true,
+
+  "config": {
+    "constraints": [
+
+      {"tag": "650", "lex": "yso/fin"},
+      {"tag": "650", "lex": "yso/swe"}
+    ],
+    "keep invalid url": true,
+    "keep invalid label": true,
+    "remove altLabel": true,
+    "remove 0-less": false
+  }
+}
