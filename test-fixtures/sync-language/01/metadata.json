@@ -1,0 +1,5 @@
+{
+  "description": "01: Validate language codes: nothing to do as 008/35-37 and 041$a are identical",
+  "fix": false,
+  "only": false
+}
