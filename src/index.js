@@ -21,6 +21,7 @@ import Fix33X from './fix-33X.js';
 import FixCountryCodes from './fix-country-codes.js';
 import FixLanguageCodes from './fix-language-codes.js';
 import FixRelatorTerms from './fixRelatorTerms.js';
+import FixSami041 from './fix-sami-041.js';
 import FixedFields from './fixed-fields.js';
 import IdenticalFields from './identical-fields.js';
 import IndicatorFixes from './indicator-fixes.js';
@@ -39,6 +40,7 @@ import NormalizeUTF8Diacritics from './normalize-utf8-diacritics.js';
 import Punctuation from './punctuation/index.js';
 import Punctuation2 from './punctuation2.js';
 import ReindexSubfield6OccurenceNumbers from './reindexSubfield6OccurenceNumbers.js';
+import Remove041zxx from './remove-041-zxx.js';
 import RemoveDuplicateDataFields from './removeDuplicateDataFields.js';
 import RemoveInferiorDataFields from './removeInferiorDataFields.js';
 import ResolvableExtReferences from './resolvable-ext-references-melinda.js';
@@ -52,6 +54,7 @@ import SortTags from './sort-tags.js';
 import SubfieldValueNormalizations from './subfieldValueNormalizations.js';
 import SubfieldExclusion from './subfield-exclusion.js';
 import Sync007And300 from './sync-007-and-300.js';
+import SyncLanguage from './sync-language.js';
 import TranslateTerms from './translate-terms.js';
 import TypeOfDateF008 from './typeOfDate-008.js';
 import UnicodeDecomposition from './unicode-decomposition.js';
@@ -105,11 +108,13 @@ export {
   FixCountryCodes,
   FixLanguageCodes,
   FixRelatorTerms,
+  FixSami041,
   FixedFields,
   IdenticalFields,
   IndicatorFixes,
   IsbnIssn,
   ItemLanguage,
+
   MergeField500Lisapainokset,
   MergeRelatorTermFields,
   Modernize502, //
@@ -123,6 +128,7 @@ export {
   Punctuation2,
   ResolveOrphanedSubfield6s, // Do this before reindexing! (thus I'm not sticking with alphabetical order here)
   ReindexSubfield6OccurenceNumbers,
+  Remove041zxx,
   RemoveDuplicateDataFields,
   RemoveInferiorDataFields,
   ResolvableExtReferences,
@@ -133,8 +139,9 @@ export {
   SubfieldExclusion,
   SubfieldValueNormalizations,
   Sync007And300,
-  TypeOfDateF008,
+  SyncLanguage,
   TranslateTerms,
+  TypeOfDateF008,
   UnicodeDecomposition,
   UpdateField540,
   Urn,
