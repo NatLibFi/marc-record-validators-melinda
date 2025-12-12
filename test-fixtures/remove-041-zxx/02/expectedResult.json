@@ -1,0 +1,7 @@
+{
+  "message" : [
+    "Modify '041 1# ‡a zxx ‡h spa ‡5 zxx' => '041 1# ‡h spa ‡5 zxx",
+    "Remove '041 1# ‡d zxx'"
+  ],
+  "valid": false
+}
