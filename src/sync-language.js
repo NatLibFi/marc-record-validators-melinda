@@ -5,7 +5,7 @@ import clone from 'clone';
 
 import {fieldToString} from './utils.js';
 
-// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-sami-041');
+// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sync-language');
 
 export default function () {
 
@@ -99,11 +99,10 @@ export default function () {
       // Insert missing 041
       if (transferableValue(lang008)) {
         const newField = {'tag': '041', 'ind1': ' ', 'ind2': ' ', 'subfields': [ {'code': subfieldCode, 'value': lang008}]};
-        const msg = [ `Add '${fieldToString(newField)}'` ];
         if (!validateMode) {
           record.insertField(newField);
         }
-        return msg;
+        return [ `Add '${fieldToString(newField)}'` ];
       }
       // Can't do anything, and we only report this we can fix...
       return [];
@@ -121,11 +120,11 @@ export default function () {
     const cloned008 = clone(f008);
     cloned008.value = `${f008.value.substring(0, 35)}${firstRelevantSubfield.value}${f008.value.substring(38)}`;
 
-    const msg = [ `Modify '${f008.value}' to '${cloned008.value}'` ];
+
     if (!validateMode) {
       f008.value = cloned008.value;
     }
-    return msg;
+    return [ `Modify '${f008.value}' to '${cloned008.value}'` ];
   }
 
   function fix(record, validateMode = false) {
