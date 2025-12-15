@@ -14,7 +14,7 @@
     "url": "https://github.com/NatLibFi/marc-record-validators-melinda"
   },
   "license": "MIT",
-  "version": "12.0.0",
+  "version": "12.0.1-alpha.1",
   "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -29,22 +29,24 @@
     "lint:dev": "eslint --fix ./src",
     "test": "npm run lint && npm run test:base",
     "test:base": "node --test --test-force-exit --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
+    "test:only": "npm run lint && npm run test:base:only",
+    "test:base:only": "node --test --test-only --test-force-exit --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
     "dev:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test node --watch --test --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
     "dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test"
   },
   "dependencies": {
     "@natlibfi/iso9-1995": "^1.0.0",
     "@natlibfi/issn-verify": "^2.0.0",
-    "@natlibfi/marc-record": "^10.0.0",
-    "@natlibfi/marc-record-serializers": "^11.0.0",
+    "@natlibfi/marc-record": "^10.0.1",
+    "@natlibfi/marc-record-serializers": "^11.0.1",
     "@natlibfi/marc-record-validate": "^9.0.0",
-    "@natlibfi/melinda-commons": "^14.0.0",
+    "@natlibfi/melinda-commons": "^14.0.1",
     "@natlibfi/sfs-4900": "^2.0.0",
     "@natlibfi/sru-client": "^7.0.0",
     "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
     "debug": "^4.4.3",
-    "isbn3": "^2.0.0",
+    "isbn3": "^2.0.1",
     "langs": "^2.0.0",
     "undici": "^7.16.0",
     "xml2js": "^0.6.2",
@@ -57,7 +59,7 @@
     "@natlibfi/fixugen": "^3.0.0",
     "@natlibfi/fixura": "^4.0.0",
     "cross-env": "^10.1.0",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.27.1",
     "eslint": "^9.39.1",
     "fetch-mock": "^12.6.0"
   },

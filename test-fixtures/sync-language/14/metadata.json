@@ -1,0 +1,5 @@
+{
+  "description": "11: Don't copy 008/35-37 '|||' to 041$d",
+  "fix": true,
+  "only": false
+}

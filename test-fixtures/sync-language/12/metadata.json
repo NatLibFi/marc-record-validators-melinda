@@ -1,0 +1,6 @@
+{
+  "description": "12: Copy 008/35-37 to 041$a",
+  "comment": "No leader, 041 subfield selection defaults to '$a'",
+  "fix": true,
+  "only": false
+}

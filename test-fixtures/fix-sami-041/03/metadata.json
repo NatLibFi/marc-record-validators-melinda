@@ -1,0 +1,5 @@
+{
+  "description": "Validate sami 041: success, since nothing to do",
+  "fix": false,
+  "only": false
+}

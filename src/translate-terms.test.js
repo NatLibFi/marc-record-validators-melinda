@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import fetchMock from 'fetch-mock';
 
 import validatorFactory from './translate-terms.js';
@@ -17,7 +17,7 @@ const uris = [
   'http://urn.fi/URN:NBN:fi:au:slm:s161'
 ];
 
-
+const useMock = false;
 
 generateTests({
   callback,
@@ -30,20 +30,21 @@ generateTests({
   hooks: {
     before: async () => {
 
-      fetchMock.mockGlobal()
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[0]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[1]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[2]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[3]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
-      .get(`https://api.finto.fi/rest/v1/data?uri=${uris[4]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData});
-
+      if (useMock){ 
+        fetchMock.mockGlobal()
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[0]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[1]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[2]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[3]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData})
+        .get(`https://api.finto.fi/rest/v1/data?uri=${uris[4]}&format=application%2Fjson`, {status: 200, headers: {}, body: fakeData});
+      }
 
       testValidatorFactory();
     }
   }
 });
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/translate-terms:test');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/translate-terms:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
@@ -53,12 +54,7 @@ async function testValidatorFactory() {
   assert.equal(typeof validator.validate, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
-  if (enabled === false) {
-    debug('TEST SKIPPED!');
-    return;
-  }
-
+async function callback({getFixture, fix = false}) {
   const validator = await validatorFactory();
   const record = new MarcRecord(getFixture('record.json'));
   const expectedResult = getFixture('expectedResult.json');

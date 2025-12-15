@@ -1,0 +1,31 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "test1"},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+        { "code": "a", "value": "laiturit" },
+        { "code": "2", "value": "yso/fin" },
+        { "code": "0", "value": "http://www.yso.fi/onto/yso/p13299" }
+      ]
+    },
+
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "marxismi" },
+      { "code": "2", "value": "yso/fin" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p444" }
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "marxism" },
+      { "code": "2", "value": "yso/swe" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p444" }
+    ]},
+    { "tag": "651", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "Ivalo (Enare)" },
+      { "code": "2", "value": "yso/swe" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p111739" }
+    ]}
+
+
+  ],
+  "leader": ""
+}

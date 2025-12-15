@@ -6,26 +6,29 @@
 */
 
 import {fieldGetFixedString, fieldNeedsModification, fieldStripPunctuation} from './punctuation2.js';
-// import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils.js';
+import createDebugLogger from 'debug';
 
-// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
+import {fieldToString} from './utils.js';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
+
+const description =  'Strip punctuation in data fields';
 
 export default function () {
   return {
-    description: 'Strip punctuation to data fields',
+    description: description,
     validate, fix
   };
 
   function fix(record) {
-    nvdebug('Strip punctuation to data fields: fixer');
+    debug(`${description}: fixer`);
     const res = {message: [], fix: [], valid: true};
     record.fields.forEach(f => fieldStripPunctuation(f));
     return res;
   }
 
   function validate(record) {
-    nvdebug('Strip punctuation to data fields: validate');
+    debug(`${description}: validate`);
 
     const fieldsNeedingModification = record.fields.filter(f => fieldNeedsModification(f, false));
 

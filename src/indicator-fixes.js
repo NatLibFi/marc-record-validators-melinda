@@ -241,6 +241,17 @@ function getLanguages(record) {
 
 }
 
+function translated041Indicator1(field){
+  if (field.tag !== '041' || !field.subfields) {
+    return;
+  }
+  if (field.ind1 !== '1' && field.subfields.some(sf => ['h', 'k', 'm', 'n'].includes(sf.code))) {
+    field.ind1 = '1';
+    return;
+  }
+
+}
+
 function recordNormalizeIndicators(record) {
   recordNormalize490(record);
 
@@ -252,6 +263,7 @@ function recordNormalizeIndicators(record) {
 }
 
 function fieldNormalizeIndicators(field, record, languages) {
+  translated041Indicator1(field);
   normalize084Indicator1(field);
   normalize245Indicator1(field, record);
   noDisplayConstantGenerated520Indicator1(field);

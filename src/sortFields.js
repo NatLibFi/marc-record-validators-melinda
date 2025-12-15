@@ -211,7 +211,7 @@ export function fieldOrderComparator(fieldA, fieldB) {
 
   //const sorterFunctions = [sortByTag, sortByIndexTerms, sortAlphabetically, sortByRelatorTerm, sortByOccurrenceNumber, preferFenniKeep, sortByFieldLinkAndSequenceNumber];
 
-  const sorterFunctions = [sortByTag, sortByIndexTerms, sortAlphabetically, sortByRelatorTerm, sortBySubfield6, preferFenniKeep, sortByFieldLinkAndSequenceNumber];
+  const sorterFunctions = [sortByTag, sortByIndexTerms, sortAlphabetically, sortByRelatorTerm, sortBySubfield6, preferFenniKeep, sortByFieldLinkAndSequenceNumber, sortByHacks];
   //const sorterFunctions = [sortByIndexTerms, sortByRelatorTerm, sortByOccurrenceNumber, preferFenniKeep, sortByFieldLinkAndSequenceNumber];
 
   return globalFieldOrderComparator(fieldA, fieldB, sorterFunctions);
@@ -390,6 +390,25 @@ function sortByFieldLinkAndSequenceNumber(fieldA, fieldB) { // Sort by subfield 
   return -1;
 }
 
+function sortByHacks(fieldA, fieldB) {
+  // Place for various hackier rules
+
+  if (fieldA.tag === fieldB.tag) {
+    if (fieldA.tag === '041') {
+      // If we have multiple f041, we want to put the $2-less first; Values from $2 whatever can not be copied to 008/35-37. (See sync-language.js.)
+      const a2 = fieldA.subfields.some(sf => sf.code === '2');
+      const b2 = fieldB.subfields.some(sf => sf.code === '2');
+      if (a2 && !b2) {
+        return 1;
+      }
+      if (b2 && !a2) {
+        return -1;
+      }
+    }
+
+  }
+  return 0;
+}
 
 function sortBySubfield6(fieldA, fieldB) { // Sort by subfield $6, ex-sortByOccurrenceNumber...
   if (fieldA.tag !== '880' || fieldB.tag !== '880') {

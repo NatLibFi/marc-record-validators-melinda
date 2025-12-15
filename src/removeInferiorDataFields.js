@@ -1,7 +1,7 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import {fieldToChain, sameField} from './removeDuplicateDataFields.js';
 import {fieldGetOccurrenceNumberPairs, fieldHasValidSubfield6, fieldSevenToOneOccurrenceNumber, fieldsToNormalizedString} from './subfield6Utils.js';
-import {fieldHasSubfield, fieldsToString, fieldToString, nvdebug, uniqArray} from './utils.js';
+import {fieldHasSubfield, fieldsToString, fieldToString, /*nvdebug,*/ uniqArray} from './utils.js';
 import {fieldHasValidSubfield8} from './subfield8Utils.js';
 import {encodingLevelIsBetterThanPrepublication, fieldRefersToKoneellisestiTuotettuTietue, getEncodingLevel} from './prepublicationUtils.js';
 import {cloneAndNormalizeFieldForComparison} from './normalizeFieldForComparison.js';
@@ -12,7 +12,7 @@ import {fixComposition, precomposeFinnishLetters} from './normalize-utf8-diacrit
 // NB! This validator handles only full fields, and does not support subfield $8 removal.
 // Also, having multiple $8 subfields in same fields is not supported.
 // If this functionality is needed, see removeDuplicateDatafields.js for examples of subfield-only stuff.
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:removeInferiorDataFields');
+// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:removeInferiorDataFields');
 
 export default function () {
   return {
@@ -21,7 +21,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug('Fix record: remove inferior (eg. subset) data fields', debug);
+    //nvdebug('Fix record: remove inferior (eg. subset) data fields', debug);
     const res = {message: [], fix: [], valid: true};
     removeInferiorDatafields(record, true);
     // This can not really fail...
@@ -30,7 +30,7 @@ export default function () {
 
   function validate(record) {
     // Check max, and check number of different indexes
-    nvdebug('Validate record: remove inferior (eg. subset) data fields', debug);
+    //nvdebug('Validate record: remove inferior (eg. subset) data fields', debug);
 
     const duplicates = removeInferiorDatafields(record, false);
 
@@ -444,8 +444,8 @@ export function removeInferiorDatafields(record, fix = true) {
   const removables6 = removeInferiorChains(record, fix); // Lone subfield $6 chains
   // HOW TO HANDLE $6+$8 combos? Skipping is relatively OK.
 
-  nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`, debug);
-  nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`, debug);
+  //nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`, debug);
+  //nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`, debug);
 
   const removablesAll = removables.concat(removables6); //.concat(removables8);
 

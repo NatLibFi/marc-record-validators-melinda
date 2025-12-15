@@ -1,0 +1,5 @@
+{
+  "description": "Validate 008/35-37: 'swe' -> 'fin' (based on 041$a)",
+  "fix": false,
+  "only": false
+}

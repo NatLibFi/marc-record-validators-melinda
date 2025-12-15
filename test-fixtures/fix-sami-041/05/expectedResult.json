@@ -1,0 +1,10 @@
+{
+  "_validationOptions": {},
+  "leader": "",
+  "fields": [
+    { "tag": "008", "value": "01234567890123456789012345678901234swe89" },
+    { "tag": "041", "ind1": " ", "ind2": " ",
+      "subfields": [ { "code": "a", "value": "swe" }, { "code": "a", "value": "smi" }, { "code": "a", "value": "sme" }, { "code": "a", "value": "sma" }, { "code": "h", "value": "sma" } ]
+    }
+  ]
+}

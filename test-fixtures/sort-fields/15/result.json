@@ -1,0 +1,10 @@
+{
+  "leader": "12345crm a22002417i 4500",
+  "fields":
+  [
+    {"tag": "041", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "fin"}]},
+    {"tag": "041", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "swe"}]},
+    {"tag": "041", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "xyz"}, {"code": "2", "value": "iso-639-666"}]}
+  ],
+  "_validationOptions": {}
+}

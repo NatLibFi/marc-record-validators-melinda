@@ -8,6 +8,29 @@ const fakeTerms = {
             ]
         },
         {
+            uri: 'http://www.yso.fi/onto/yso/p444',
+            prefLabel: [
+                { lang: 'fi', value: 'marxismi' },
+                { lang: 'sv', value: 'marxism'}
+            ]
+        },
+        {
+            uri: 'http://www.yso.fi/onto/yso/p500',
+            prefLabel: [
+                { lang: 'fi', value: 'ravihevoset' },
+                { lang: 'sv', value: 'travhästar'}
+            ],
+            altLabel: [
+                { lang: 'fi', value: 'ravurit' }
+            ]
+        },
+        {
+            uri: 'http://www.yso.fi/onto/yso/p666',
+            prefLabel: [
+                { lang: 'fi', value: 'ruotsinnukseton valetermi, joka toimii vain mockina' },
+            ]
+        },
+        {
             uri: 'http://www.yso.fi/onto/yso/p111739',
             prefLabel: [
                 { lang: 'fi', value: 'Ivalo (Inari)' },

@@ -1,0 +1,6 @@
+{
+  "description": "02: Drop some bad terms (validation)",
+  "fix": false,
+  "skip": false,
+  "only": true
+}

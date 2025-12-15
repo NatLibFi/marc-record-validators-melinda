@@ -136,7 +136,9 @@ function getSubfieldSortOrder(field) {
     debugDev(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
     return entry[0].sortOrder;
   }
-  nvdebug(`WARNING!\tNo subfield order found for ${field.tag}.`);
+  if (!['300'].includes(field.tag)) { // Lis tags which use normal $a...$z order here!
+    nvdebug(`WARNING!\tNo subfield order found for ${field.tag}.`);
+  }
   return [];
 }
 

@@ -4,7 +4,7 @@ import validatorFactory from './merge-fields/index.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import createDebugLogger from 'debug';
-import { nvdebug } from './utils.js';
+
 
 generateTests({
   callback,
@@ -30,13 +30,8 @@ async function testValidatorFactory() {
   assert.equal(typeof validator.validate, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = false, tagPattern = false}) {
-  if (enabled === false) {
-    debug('TEST SKIPPED!');
-    return;
-  }
-
-  nvdebug(`TAG PATTERN: ${tagPattern}`);
+async function callback({getFixture, fix = false, tagPattern = false}) {
+  debug(`Run test using tag pattern ${tagPattern}`);
 
   const validator = await validatorFactory(tagPattern);
   const record = new MarcRecord(getFixture('record.json'));

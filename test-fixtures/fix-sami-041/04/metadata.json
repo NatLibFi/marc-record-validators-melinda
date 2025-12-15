@@ -1,0 +1,4 @@
+{
+  "description": "Validate sami 041: fails, same as test 01, but with field 008 added",
+  "fix": false
+}
