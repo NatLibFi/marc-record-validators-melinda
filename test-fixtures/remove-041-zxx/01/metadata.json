@@ -1,0 +1,5 @@
+{
+  "description": "01: Validate field 041 language codes: no deletable 'zxx' values",
+  "fix": false,
+  "only": false
+}

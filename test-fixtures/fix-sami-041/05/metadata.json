@@ -1,0 +1,6 @@
+{
+  "description": "Fix field 041. Test that smi is added only once to for $a",
+  "comment #1": "There are two sami language codes, 'sme' and 'sma', 'smi' is added before the first of them.",
+  "comment #2": "Neither 'sme' nor 'sma' is the first language code for $a, thus 008/35-37 is not changed",
+  "fix": true
+}

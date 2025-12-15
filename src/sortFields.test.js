@@ -3,7 +3,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './sortFields.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 
 generateTests({
   callback,
@@ -19,7 +19,7 @@ generateTests({
     }
   }
 });
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sortFields:test');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sortFields:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
@@ -29,12 +29,7 @@ async function testValidatorFactory() {
   assert.equal(typeof validator.validate, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = true}) {
-  if (enabled === false) {
-    debug('TEST SKIPPED!');
-    return;
-  }
-
+async function callback({getFixture, fix = true}) {
   const validator = await validatorFactory();
   const record = new MarcRecord(getFixture('input.json'));
   const expectedResult = getFixture('result.json');

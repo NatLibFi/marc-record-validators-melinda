@@ -1,0 +1,5 @@
+{
+  "description": "12: Remove subfields with 'zxx' and delete field if needed",
+  "fix": true,
+  "only": false
+}

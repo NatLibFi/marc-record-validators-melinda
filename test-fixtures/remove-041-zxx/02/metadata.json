@@ -1,0 +1,5 @@
+{
+  "description": "02: Validate 041: deletable $[a-z] zxx subfields",
+  "fix": false,
+  "only": false
+}

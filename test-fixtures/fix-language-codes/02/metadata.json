@@ -1,5 +1,5 @@
 {
-  "description": "Validate 008/15-17: azu -> xxu",
+  "description": "Validate: fix needed both in 008/35-37 and 041$a",
   "fix": false,
   "only": false
 }

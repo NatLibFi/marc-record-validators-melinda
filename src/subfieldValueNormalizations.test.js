@@ -3,7 +3,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './subfieldValueNormalizations.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 
 generateTests({
   callback,
@@ -20,7 +20,7 @@ generateTests({
   }
 });
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/subfieldValueNormalizations:test');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/subfieldValueNormalizations:test');
 
 async function testValidatorFactory() {
   const validator = await validatorFactory();
@@ -30,12 +30,7 @@ async function testValidatorFactory() {
   assert.equal(typeof validator, 'function');
 }
 
-async function callback({getFixture, enabled = true, fix = false}) {
-  if (enabled === false) {
-    debug('TEST SKIPPED!');
-    return;
-  }
-
+async function callback({getFixture, fix = false}) {
   const validator = await validatorFactory();
 
   const recordFixture = getFixture('record.json');

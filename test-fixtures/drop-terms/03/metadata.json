@@ -1,0 +1,18 @@
+{
+  "description": "03: Drop incorrect $0 from a bad term 'saiturit' (using non-default config, otherwise the whole field would be removed)",
+  "fix": false,
+  "skip": false,
+  "only": true,
+
+  "config": {
+    "constraints": [
+
+      {"tag": "650", "lex": "yso/fin"},
+      {"tag": "650", "lex": "yso/swe"}
+    ],
+    "keep invalid label": true,
+    "keep invalid url": false,
+    "remove 0-less": false
+  },
+  "comment": "True 'keep invalid label' means that field is not removed, however 'keep invalid url' will remove $0 from it"
+}

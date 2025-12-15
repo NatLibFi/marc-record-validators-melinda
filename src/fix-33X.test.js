@@ -22,7 +22,7 @@ generateTests({
 async function testValidatorFactory() {
   const validator = await validatorFactory();
 
-  assert.equal(typeof validator, 'objecr');
+  assert.equal(typeof validator, 'object');
   assert.equal(typeof validator.description, 'string');
   assert.equal(typeof validator.validate, 'function');
   assert.equal(typeof validator.fix, 'function');

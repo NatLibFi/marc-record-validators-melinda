@@ -2,5 +2,5 @@
   "description": "MELKEHITYS-3277: don't merge AI field",
   "fix": true,
   "tagPattern": "^(650|773)$",
-  "only": true
+  "only": false
 }
