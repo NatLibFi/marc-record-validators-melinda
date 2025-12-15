@@ -1,4 +1,4 @@
 {
-  "description": "10: certain value have ind1=8 as per MELKEHITYS-2579",
+  "description": "11: Fix 041 ind1 is the field looks like a translation",
   "fix": true
 }
