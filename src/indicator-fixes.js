@@ -245,7 +245,7 @@ function translated041Indicator1(field){
   if (field.tag !== '041' || !field.subfields) {
     return;
   }
-  if (field.ind1 !== '1' && field.subfields.some(sf => sf.code === 'h')) {
+  if (field.ind1 !== '1' && field.subfields.some(sf => ['h', 'k', 'm', 'n'].includes(sf.code))) {
     field.ind1 = '1';
     return;
   }

@@ -43,7 +43,7 @@ async function callback({getFixture, fix = false}) {
     const result = await validator.validate(record);
     assert.deepEqual(result, expectedResult);
     const originalRecord = new MarcRecord(getFixture('record.json'));
-    assert.deepEqual(record, originalRecord); // The record should now change in validation-only
+    assert.deepEqual(record, originalRecord); // Validation should not change the record
     return;
   }
 

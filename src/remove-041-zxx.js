@@ -13,7 +13,7 @@ import clone from 'clone';
 
 import {fieldToString} from './utils.js';
 
-// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-sami-041');
+// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:remove-041-zxx');
 
 
 
@@ -21,7 +21,7 @@ import {fieldToString} from './utils.js';
 export default function () {
 
   return {
-    description: 'Sync 008/35-37 and 041$a/$d',
+    description: "Remove 'zxx' from f041",
     validate, fix
   };
 
