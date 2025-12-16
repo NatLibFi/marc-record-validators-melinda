@@ -7,6 +7,7 @@
 
 const defaultNonMergableFields = [
   '066', // 066 - Character sets present (NR)
+  '361',
   '382', // 382: merging would be madness due to $n position etc...
   // However, this will miss cases, where only $5 or $9 differs... Such is!
   // 59X: always copy, never merge. NB! No specs exist!
@@ -52,6 +53,7 @@ const defaultNonMergableFields = [
   '854',
   '855',
   // '856' is mergable, but a pain in the ass
+  '857',
   '863',
   '864',
   '865',
