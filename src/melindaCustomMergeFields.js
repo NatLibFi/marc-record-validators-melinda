@@ -4337,6 +4337,37 @@ export const melindaFieldSpecs = {'fields':
         {'code': '8', 'repeatable': true}
       ]
     },
+        {
+      'tag': '857',
+      'repeatable': true,
+      'fieldType': 'dataField',
+      'indicators': {'ind1': [' ', '1', '4', '7'], 'ind2': [' ', '0', '1', '2', '3', '4', '8']},
+      'subfields': [
+        {'code': 'b', 'repeatable': false},
+        {'code': 'c', 'repeatable': false},
+        {'code': 'd', 'repeatable': false},
+        {'code': 'e', 'repeatable': true},
+        {'code': 'f', 'repeatable': false},
+        {'code': 'g', 'repeatable': true},
+        {'code': 'h', 'repeatable': true},
+        {'code': 'l', 'repeatable': true},
+        {'code': 'm', 'repeatable': true},
+        {'code': 'n', 'repeatable': true},
+        {'code': 'q', 'repeatable': true},
+        {'code': 'r', 'repeatable': true},
+        {'code': 's', 'repeatable': true},
+        {'code': 't', 'repeatable': true},
+        {'code': 'u', 'repeatable': true},
+        {'code': 'x', 'repeatable': true},
+        {'code': 'y', 'repeatable': true},
+        {'code': 'z', 'repeatable': true},
+        {'code': '2', 'repeatable': false},
+        {'code': '3', 'repeatable': false},
+        {'code': '6', 'repeatable': false},
+        {'code': '7', 'repeatable': false},
+        {'code': '8', 'repeatable': true}
+      ]
+    },
     {
       'tag': '863',
       'repeatable': true,
