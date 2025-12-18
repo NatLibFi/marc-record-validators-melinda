@@ -12,6 +12,7 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-sa
 export default function () {
   /* 'sma': eteläsaame, 'sme': pohjoissaame, 'smj': luulajansaame, 'smn': inarinsaame, 'sms': koltansaame */
   const samiLanguages = ['sma', 'sme', 'smj', 'smn', 'sms'];
+  const subfieldCodesUsingSmi = ['a', 'd'];
 
   return {
     description: 'Add corresponding \'smi\' subfield before a specific sami language subfields and update 008/35-37, if needed',
@@ -111,7 +112,8 @@ export default function () {
     }
 
     function isRelevantSamiSubfield(sf, otherSubfields) {
-      if (!relevantSubfieldCodes.includes(sf.code) || !samiLanguages.includes(sf.value)) {
+      // NB! preceding 'smi' is added to all $a and $d fields, regardless of the LDR/06 value! (However, copying 041$a/d -> 008/35-37 depends on LDR/06)
+      if (!subfieldCodesUsingSmi.includes(sf.code) || !samiLanguages.includes(sf.value)) {
         return false;
       }
       if (otherSubfields.some(sf2 => sf2.code === sf.code && sf2.value === 'smi')) { // fail if 'smi' already exists
