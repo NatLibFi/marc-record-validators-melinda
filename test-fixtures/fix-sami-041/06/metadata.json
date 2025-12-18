@@ -1,0 +1,4 @@
+{
+  "description": "06: Add $a 'smi' to f041, but don't touch 008/35-37 as subfield code is $a as LDR/06 is 'i'",
+  "fix": true
+}
