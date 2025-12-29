@@ -1,28 +1,46 @@
 // Author(s): Nicholas Volk
 
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import clone from 'clone';
 
 import {fieldToString} from './utils.js';
 
-// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-sami-041');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-sami-041');
 
 
 
 export default function () {
   /* 'sma': eteläsaame, 'sme': pohjoissaame, 'smj': luulajansaame, 'smn': inarinsaame, 'sms': koltansaame */
   const samiLanguages = ['sma', 'sme', 'smj', 'smn', 'sms'];
-  const relevantSubfieldCodes = ['a', 'd']; // Subfield codes that should also have 'smi' if a sami langauge is used. Confirmed by A.R. via Slack 2025-12-05
+  const subfieldCodesUsingSmi = ['a', 'd'];
 
   return {
-    description: 'Add corresponing \'smi\' subfield before a specific sami language subfields, if needed',
+    description: 'Add corresponding \'smi\' subfield before a specific sami language subfields and update 008/35-37, if needed',
     validate, fix
   };
 
+  function getRelevantSubfieldCodes(record) { // Maybe this should be an exportable utility function...
+    if (record && record.leader && record.leader[6]) {
+      debug(` LDR/06 is '${record.leader[6]}'`);
+      // We should test this properly...
+      if (['i', 'j'].includes(record.leader[6])) { // Check type of record: sound recordings use 'd'
+        return ['d'];
+      }
+      return ['a'];
+    }
+
+    return ['a', 'd']; // Både-och
+  }
+
+
   function fix(record, validateMode = false) {
-    const relevantFields = record.fields.filter(f => isRelevantField(f, validateMode)).map(f => validateMode ? clone(f) : f); // NV! relevant fields are cloned in validation mode!
+    debug(`Start ${validateMode ? 'validator' : 'fixer'}`);
+    const relevantSubfieldCodes = getRelevantSubfieldCodes(record);
+    debug(` Relevant subfield codes are '${relevantSubfieldCodes.join("', '")}'`);
+    const relevantFields = record.fields.filter(f => isRelevantField(f, relevantSubfieldCodes)).map(f => validateMode ? clone(f) : f); // NV! relevant fields are cloned in validation mode!
     // Nothing to do:
     if (relevantFields.length === 0) {
+      debug(` No relevant f041 fields found`);
       if (validateMode) {
         return {message: [], valid: true};
       }
@@ -31,7 +49,7 @@ export default function () {
 
     const relevantFieldsAsStrings = relevantFields.map(f => fieldToString(f)); // get original values
 
-    relevantFields.forEach(f => processField(f));
+    relevantFields.forEach(f => processField(f, relevantSubfieldCodes));
     const modFieldsAsStrings = relevantFields.map(f => fieldToString(f));
     const report = [...updateAndReport008(), ...createReport(relevantFieldsAsStrings, modFieldsAsStrings)];
 
@@ -41,22 +59,68 @@ export default function () {
 
     return {message: [], fix: report, valid: true};
 
-    function updateAndReport008() {
+    function updateAndReport008() { // Update 008/35-37 if necessary + report it
       const [f008] = record.get('008').map(f => validateMode ? clone(f) : f);
 
       if (!f008) {
+        debug(' WARNING: no f008 found');
         return [];
       }
       const currLang = f008.value.substr(35, 3);
       if (!samiLanguages.includes(currLang)) { // NB! If original 008/35-37 was not a sami language, we don't change anything!
+        debug(` Existing 008/35-37 '${currLang}' is not a sami language. No need to update 008/35-37`);
         return [];
       }
       const origValue = f008.value;
-      const firstRelevantSubfield = relevantFields[0].subfields.find(sf => sf.code === 'a' || sf.code === 'd'); // NB! don't use relevantSubfieldCodes here!
-      if (firstRelevantSubfield.value === 'smi') { // First relevant subfield is 
-        f008.value = `${f008.value.substr(0, 35)}smi${f008.value.substr(38)}`;
+      const firstRelevantSubfield = relevantFields[0].subfields.find(sf => relevantSubfieldCodes.includes(sf.code));
+      if (firstRelevantSubfield.value !== 'smi') {
+         debug(` First relevant subfield is '\$${firstRelevantSubfield.code} ${firstRelevantSubfield.value}'. No need to update 008/35-37`);
+        return [];
       }
+      f008.value = `${f008.value.substr(0, 35)}smi${f008.value.substr(38)}`;
+      debug(` Update 008/35-37: '${currLang}' => 'smi'`);
       return createReport([origValue], [f008.value]);
+    }
+
+    function processField(f) {
+      f.subfields = processSubfields(f.subfields, []);
+    }
+
+    function processSubfields(incomingSubfields, outgoingSubfields = []) {
+      const [currSubfield, ...otherSubfields] = incomingSubfields;
+      if (!currSubfield) {
+        return outgoingSubfields;
+      }
+      if (!isRelevantSamiSubfield(currSubfield, [...outgoingSubfields, ...otherSubfields])) {
+        return processSubfields(otherSubfields, [...outgoingSubfields, currSubfield]);
+      }
+
+      const smiSubfield = {
+        code: currSubfield.code,
+        value: 'smi'
+      };
+      debug(` f041: Add '\$${currSubfield.code} smi' before '${currSubfield.value}'`);
+
+      return processSubfields(otherSubfields, [...outgoingSubfields, smiSubfield, currSubfield]);
+    }
+
+    function isRelevantField(f) {
+      if (f.tag !== '041' || !f.subfields || f.subfields.some(sf => sf.code === '2')) {
+        return false;
+      }
+      return f.subfields.some(sf => isRelevantSamiSubfield(sf, f.subfields)); // it's ok to pass sf in f.subfields also
+    }
+
+    function isRelevantSamiSubfield(sf, otherSubfields) {
+      // NB! preceding 'smi' is added to all $a and $d fields, regardless of the LDR/06 value! (However, copying 041$a/d -> 008/35-37 depends on LDR/06)
+      if (!subfieldCodesUsingSmi.includes(sf.code) || !samiLanguages.includes(sf.value)) {
+        return false;
+      }
+      if (otherSubfields.some(sf2 => sf2.code === sf.code && sf2.value === 'smi')) { // fail if 'smi' already exists
+        return false;
+      }
+      //debug(` '\${sf.code} ${sf.value}' requires preceding 'smi'`);
+      return true;
     }
   }
 
@@ -72,42 +136,10 @@ export default function () {
     return fix(record, true);
   }
 
-  function processField(f) {
-    f.subfields = prosessSubfields(f.subfields);
-    return f;
-  }
 
-  function prosessSubfields(incomingSubfields, outgoingSubfields = []) {
-    const [currSubfield, ...otherSubfields] = incomingSubfields;
-    if (!currSubfield) {
-      return outgoingSubfields;
-    }
-    if (!isRelevantSamiSubfield(currSubfield, [...outgoingSubfields, ...otherSubfields])) {
-      return prosessSubfields(otherSubfields, [...outgoingSubfields, currSubfield]);
-    }
 
-    const smiSubfield = {
-      code: currSubfield.code,
-      value: 'smi'
-    };
-    return prosessSubfields(otherSubfields, [...outgoingSubfields, smiSubfield, currSubfield]);
-  }
 
-  function isRelevantField(f) {
-    if (f.tag !== '041' || !f.subfields || f.subfields.some(sf => sf.code === '2')) {
-      return false;
-    }
-    return f.subfields.some(sf => isRelevantSamiSubfield(sf, f.subfields)); // it's ok to pass sf in f.subfields also
-  }
 
-  function isRelevantSamiSubfield(sf, otherSubfields) {
-    if (!relevantSubfieldCodes.includes(sf.code) || !samiLanguages.includes(sf.value)) {
-      return false;
-    }
-    if (otherSubfields.some(sf2 => sf2.code === sf.code && sf2.value === 'smi')) {
-      return false;
-    }
-    return true;
-  }
+
 }
 
