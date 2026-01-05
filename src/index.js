@@ -75,7 +75,7 @@ import {getSubfield8LinkingNumber, isValidSubfield8, recordGetAllSubfield8Linkin
 import {recordFixRelatorTerms} from './fixRelatorTerms.js';
 import {fieldTrimSubfieldValues} from './normalizeFieldForComparison.js';
 import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, encodingLevelIsBetterThanPrepublication, getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from './prepublicationUtils.js';
-import {melindaFieldSpecs} from '@natlibfi/marc-record-validators-melinda/dist/melindaCustomMergeFields.js';
+import {melindaFieldSpecs} from './melindaCustomMergeFields.js';
 
 import {cloneAndRemovePunctuation} from './normalizeFieldForComparison.js';
 import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
