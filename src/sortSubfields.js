@@ -79,7 +79,11 @@ const subfieldSortOrder = [
   {'tag': '028', 'sortOrder': ['b', 'a', 'q']}, // National convention
   //{'tag': '031', 'sortOrder': ['a', 'b', 'c', 'm', 'e', 'd']}, // utter guesswork
   {'tag': '040', 'sortOrder': ['8', 'a', 'b', 'e', 'c', 'd', 'x']},
-  {'tag': '041', 'sortOrder': ['8', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
+  // rda mus: 041: k < h < e < n < g < m < j (I think h<e is bad)
+  // rda: g < h, j < p < h, i < j, k < h
+  // loc: b < j, $m follows $b or $g
+  // NV: $a 
+  {'tag': '041', 'sortOrder': ['8', 'a', 'd', 'e', 'b', 'f',  'i', 'j', 'p', 'k', 'h', 'n', 'g', 'm']}, // guesswork
   {'tag': '048', 'sortOrder': ['8', 'b', 'a']},
   {'tag': '100', 'sortOrder': sortOrderForX00},
   {'tag': '110', 'sortOrder': sortOrderForX10},
