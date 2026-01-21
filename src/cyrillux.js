@@ -122,6 +122,11 @@ export default function (config = {}) {
   }
 
   function tagCanBeTransliterated(tag) {
+    // Use this to filter out "(0..)" etc
+    if (config.tagPattern && !tag.match(config.tagPattern)) {
+      return false;
+    }
+    // These are hard-coded, and will fail anyway:
     return !['336', '337', '338', '880'].includes(tag);
   }
 

@@ -1,0 +1,11 @@
+{
+  "description": "Fix: only f100 as f245 is not included in the tag pattern",
+  "comment": "Test f02 with a tag pattern.",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": true,
+    "doSFS4900Transliteration": false,
+    "tagPattern": "^1..$"
+  }
+}
