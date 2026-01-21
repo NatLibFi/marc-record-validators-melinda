@@ -65,9 +65,9 @@ import {getCounterpart} from './merge-fields/counterpartField.js';
 
 import {postprocessRecords} from './merge-fields/mergeOrAddPostprocess.js';
 import {mergeField} from './merge-fields/mergeField.js';
-import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, fieldToNormalizedString, fieldsToNormalizedString, get6s,
-  isValidSubfield6, recordGetMaxSubfield6OccurrenceNumberAsInteger,
-  intToOccurrenceNumberString, resetSubfield6Tag, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumber,
+import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, fieldHasValidSubfield6, fieldToNormalizedString, fieldsToNormalizedString, get6s,
+  isSubfield6Pair, isValidSubfield6, intToOccurrenceNumberString,
+  recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumber,
   subfield6GetOccurrenceNumberAsInteger} from './subfield6Utils.js';
 
 import {getSubfield8LinkingNumber, isValidSubfield8, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from './subfield8Utils.js';
@@ -82,7 +82,7 @@ import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepubli
 import {fieldFixPunctuation} from './punctuation2.js';
 import {recordResetSubfield6OccurrenceNumbers} from './reindexSubfield6OccurenceNumbers.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
-import {fieldsToString} from './utils.js';
+import {fieldHasSubfield, fieldToString, fieldsToString} from './utils.js';
 
 export {
   AccessRights,
@@ -153,10 +153,12 @@ export {
   // 1. generic low level stuff
   getEncodingLevel,
 
-  // 2. text normalizations (eg. for similarity comparisons, field merge)
+  // 2. text normalizations + other generic utils (eg. for similarity comparisons, field merge)
   cloneAndRemovePunctuation,
   fieldFixPunctuation,
+  fieldHasSubfield,
   fieldToNormalizedString,
+  fieldToString,
   fieldTrimSubfieldValues,
   fieldsToNormalizedString,
   fieldsToString,
@@ -176,7 +178,9 @@ export {
   fieldGetOccurrenceNumberPairs,
   get6s,
   fieldGetUnambiguousOccurrenceNumber,
+  fieldHasValidSubfield6,
   intToOccurrenceNumberString,
+  isSubfield6Pair,
   isValidSubfield6,
   recordGetMaxSubfield6OccurrenceNumberAsInteger,
   recordResetSubfield6OccurrenceNumbers,
