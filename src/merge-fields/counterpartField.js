@@ -11,13 +11,13 @@ import {controlSubfieldsPermitMerge} from './controlSubfields.js';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator.js';
 import {partsAgree} from '../normalizeSubfieldValueForComparison.js';
 import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge.js';
-import { provenanceSubfieldsPermitMerge } from './dataProvenance.js';
+import {provenanceSubfieldsPermitMerge} from './dataProvenance.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeField:counterpart');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-const irrelevantSubfieldsInNameAndTitlePartComparison = '5689';
+//const irrelevantSubfieldsInNameAndTitlePartComparison = '5689';
 
 const counterpartRegexps = { // NB! tag is from source!
   // Note that in the normal case, all source 1XX fields have been converted to 7XX fields.
@@ -448,6 +448,7 @@ function pairableAsteriIDs(baseField, sourceField) {
 
 
 function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
+  // 700$s?
   if (field.tag === '260' || field.tag === '264') {
     return ['a', 'b', 'c', 'e', 'f', 'g'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
   }
@@ -499,32 +500,30 @@ function pairableName(baseField, sourceField) {
   nvdebug(`     '${fieldToString(reducedField2)}'`, debugDev);
   return false;
 
+  /*
   function fieldToNamePart(field) {
     const index = namePartThreshold(field);
     const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
 
     const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
 
-    /*
-    if (index > -1) {
-      debugDev(`Name subset: ${fieldToString(subsetField)}`);
-    }
-    */
-
-    // Ummm... Sometimes $0 comes after $t but belongs to name part
+    // NB! Sometimes $0 comes after $t but belongs to name part
 
     return subsetField;
   }
+  */
 }
 
 
 function semanticallyMergablePair(baseField, sourceField) {
+  /*
   // On rare occasions a field contains also a title part. For these name part (= normally everything) and title part
   // must be checked separately:
   if (!titlePartsMatch(baseField, sourceField)) {
     nvdebug(` ${baseField.tag} is unmergable: Title part mismatch.`, debugDev);
     return false;
   }
+  */
 
   // Hmm... we should check lifespan here, $d YYYY
 
@@ -538,7 +537,7 @@ function semanticallyMergablePair(baseField, sourceField) {
   return true;
 }
 
-
+/*
 function namePartThreshold(field) {
   // Threshold is only applicaple to some tags..
   if (!(/[10]0$/u).test(field.tag)) {
@@ -554,7 +553,9 @@ function namePartThreshold(field) {
   }
   return t > u ? u : t;
 }
+*/
 
+/*
 function getTitlePartIndex(field) {
   // Take everything after 1st subfield $t...
   const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
@@ -563,16 +564,20 @@ function getTitlePartIndex(field) {
   }
   return field.subfields.findIndex(currSubfield => currSubfield.code === 'k');
 }
+*/
 
+/*
 function containsTitlePart(field) {
-  return false;
   return fieldCanHaveTitlePart(field) && getTitlePartIndex(field) > -1;
 
   function fieldCanHaveTitlePart(field) {
     return ['100', '110', '111', '700', '710', '711'].includes(field.tag);
   }
 }
+*/
 
+
+/*
 function titlePartsMatch(field1, field2) {
   if (!containsTitlePart(field1)) {
     return !containsTitlePart(field2);
@@ -600,7 +605,7 @@ function titlePartsMatch(field1, field2) {
     return subsetField;
   }
 }
-
+*/
 
 function getAlternativeNamesFrom9XX(record, field) {
   // Should we support 6XX and 8XX as well? Prolly not...
