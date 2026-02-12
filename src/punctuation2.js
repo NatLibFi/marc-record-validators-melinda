@@ -123,7 +123,7 @@ const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /
 // 390, 800, 810, 830...
 const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context': puncIsProbablyPunc, 'remove': / *[.,:;]$/u};
 
-const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
+const addX00aComma = {'add': ',', 'code': 'abcqejt', 'followedBy': 'cdegnr', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'context': needsPuncAfterAlphanumeric};
@@ -132,7 +132,7 @@ const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abc
 
 const addX10iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2};
 const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter2};
-const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter2};
+const addX10eComma = {'add': ',', 'code': 'abet', 'followedBy': 'en', 'context': defaultNeedsPuncAfter2};
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': needsPuncAfterAlphanumeric};
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
 
@@ -223,7 +223,7 @@ const cleanCrappyPunctuationRules = {
   '946': crappy24X
 };
 
-const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
+const cleanLegalX00Comma = {'code': 'abcdetn', 'followedBy': 'cdegjnr', 'context': /.,$/u, 'remove': /,$/u};
 // Accept upper case letters in X00$b, since they are probably Roman numerals.
 const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
 const cleanLegalX00iColon = {'code': 'i', 'followedBy': 'a', 'remove': / *:$/u}; // NB! context is not needed
