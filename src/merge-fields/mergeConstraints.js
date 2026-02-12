@@ -213,8 +213,8 @@ const mergeConstraints = [
   {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
   {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
   {'tag': '688', 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': 'tk', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100
-  {'tag': '710', 'required': 'a', 'paired': 'btk', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '700', 'required': 'a', 'paired': 'kst', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
+  {'tag': '710', 'required': 'a', 'paired': 'bkst', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '711', 'required': 'a', 'paired': 'cdefklnst', 'key': keyX11}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
