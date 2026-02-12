@@ -12,10 +12,10 @@ const debugDev = debug.extend('dev');
 
 // NB! not all X00 fields have, say, $x subfield. However, we can still share them...
 // $h is non-1XX?, $i is 7XX only, $w is 8XX only...
-const keyX00 = 'abcjkloqrtuwx'; // Shared: $abcdefg...
-const keyX10 = 'abcdfghklnoprstuwx';
-const keyX11 = 'acdefghklnpqstuwx';
-const keyX30 = 'adfghklmnoprstvwxyz';
+const keyX00 = 'abcjkoqrtuwx'; // Shared: $abcdefg...
+const keyX10 = 'abcdfghknoprstuwx';
+const keyX11 = 'acdefghknpqstuwx';
+const keyX30 = 'adfghkmnoprstvwxyz';
 
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
