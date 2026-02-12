@@ -227,7 +227,7 @@ const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /
 // Accept upper case letters in X00$b, since they are probably Roman numerals.
 const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
 const cleanLegalX00iColon = {'code': 'i', 'followedBy': 'a', 'remove': / *:$/u}; // NB! context is not needed
-const cleanLegalX00Dot = {'code': 'abcdetvl', 'followedBy': 'tu#', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+const cleanLegalX00Dot = {'code': 'abcdetkvl', 'followedBy': 'tklu#', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 const cleanDotBeforeLanguageSubfieldL = {'name': 'pre-language-$l dot', 'followedBy': 'l', 'context': /.\.$/u, 'remove': /\.$/u};
 
 const legalEntryField = [cleanDotBeforeLanguageSubfieldL];
