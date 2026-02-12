@@ -12,9 +12,9 @@ const debugDev = debug.extend('dev');
 
 // NB! not all X00 fields have, say, $x subfield. However, we can still share them...
 // $h is non-1XX?, $i is 7XX only, $w is 8XX only...
-const keyX00 = 'abcjloqrtuwx'; // Shared: $abcdefg...
-const keyX10 = 'abcdfghlnoprstuwx';
-const keyX11 = 'acdefghlnpqstuwx';
+const keyX00 = 'abcjkloqrtuwx'; // Shared: $abcdefg...
+const keyX10 = 'abcdfghklnoprstuwx';
+const keyX11 = 'acdefghklnpqstuwx';
 const keyX30 = 'adfghklmnoprstvwxyz';
 
 const mergeConstraints = [
@@ -195,8 +195,8 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': 'tvxyz', 'key': keyX00},
-  {'tag': '610', 'required': 'a', 'paired': 'btvxyz', 'key': keyX10},
+  {'tag': '600', 'required': 'a', 'paired': 'tklvxyz', 'key': keyX00},
+  {'tag': '610', 'required': 'a', 'paired': 'btklvxyz', 'key': keyX10},
   {'tag': '611', 'required': 'a', 'paired': 'tvxyz', 'key': keyX11},
   {'tag': '630', 'required': 'a', 'paired': 'atvxyz', 'key': keyX30},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
@@ -212,9 +212,9 @@ const mergeConstraints = [
   {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
   {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
   {'tag': '688', 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': 't', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100
-  {'tag': '710', 'required': 'a', 'paired': 'bt', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
-  {'tag': '711', 'required': 'a', 'paired': 'cdeflns', 'key': keyX11}, // h/i/s/x are missing from 711
+  {'tag': '700', 'required': 'a', 'paired': 'tkl', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100
+  {'tag': '710', 'required': 'a', 'paired': 'btkl', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '711', 'required': 'a', 'paired': 'cdefklnst', 'key': keyX11}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
   {'tag': '730', 'required': 'a', 'key': keyX30}, // NB: 130->730 magic subfields might not agree...
