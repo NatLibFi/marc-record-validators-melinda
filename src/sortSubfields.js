@@ -8,8 +8,8 @@ const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:sortSu
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-const defaultSortOrderStringFinns = '8673abcdefghijklmnopqrstuvwxyz420159'; // NB! We Finns like $2 before $0 in 6XX...
-const defaultSortOrderStringOthers = '8673abcdefghijklmnopqrstuvwxyz402159';
+const defaultSortOrderStringFinns = '863abcdefghijklmnopqrstuvwxyz4201759'; // NB! We Finns like $2 before $0 in 6XX...
+const defaultSortOrderStringOthers = '863abcdefghijklmnopqrstuvwxyz4021759'; // NB 760-788 have '7' in different position...
 
 const defaultSortOrderFinns = defaultSortOrderStringFinns.split('');
 const defaultSortOrderOthers = defaultSortOrderStringOthers.split('');
@@ -70,7 +70,7 @@ export default function (defaultTagPattern) {
 const sortOrderForX00 = ['i', 'a', 'b', 'q', 'c', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '1', '5', '9']; // skip $g. Can't remember why, though...
 const sortOrderForX10 = ['i', 'a', 'b', 't', 'n', 'c', 'e', 'v', 'w', 'x', 'y', 'z', '0', '1', '5', '9']; // somewhat iffy
 const sortOrderForX11 = ['a', 'n', 'd', 'c', 'e', 'g', 'j', '0', '1', '5', '9'];
-const sortOrderFor7XX = ['8', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
+const sortOrderFor7XX = ['8', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w', '0', '1', 'l', '9', '5'];
 const sortOrderFor246 = ['i', 'a', 'b', 'n', 'p', 'f', '5', '9']; // Used by field 946 as well
 
 // List *only* exceptional order here. Otherwise default order is used.
