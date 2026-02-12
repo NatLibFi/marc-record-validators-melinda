@@ -17,6 +17,7 @@ const keyX00 =    'abcjklnoqrstuwx'; // Shared: $abcdefg...
 const keyX10 = 'abcdfghklnoprstuwx';
 const keyX11 = 'acdefghklnpqstuwx';
 const keyX30 = 'adfghklmnoprstvwxyz';
+const pairedTitleSubfields = 'kmnoprst'
 
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
@@ -70,11 +71,11 @@ const mergeConstraints = [
   {'tag': '086', 'required': '', 'paired': 'a', 'key': 'a'},
   {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
-  {'tag': '100', 'required': 'a', 'paired': 't', 'key': keyX00},
-  {'tag': '110', 'required': 'a', 'paired': 'bt', 'key': keyX10},
-  {'tag': '111', 'required': 'a', 'paired': 't', 'key': keyX11},
+  {'tag': '100', 'required': 'a', 'paired': pairedTitleSubfields, 'key': keyX00},
+  {'tag': '110', 'required': 'a', 'paired': `b${pairedTitleSubfields}`, 'key': keyX10},
+  {'tag': '111', 'required': 'a', 'paired': pairedTitleSubfields, 'key': keyX11},
   // NB! 130 has no name part, key is used for title part
-  {'tag': '130', 'required': 'a', 'key': keyX30},
+  {'tag': '130', 'required': 'a', paired: pairedTitleSubfields, 'key': keyX30},
   {'tag': '210', 'required': 'a', 'key': 'ab'},
   {'tag': '222', 'required': 'a', 'key': 'ab'},
   {'tag': '240', 'required': 'a', 'key': 'adfghklmnoprs'},
@@ -196,10 +197,10 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': 'tklvxyz', 'key': keyX00},
-  {'tag': '610', 'required': 'a', 'paired': 'btklvxyz', 'key': keyX10},
-  {'tag': '611', 'required': 'a', 'paired': 'tvxyz', 'key': keyX11},
-  {'tag': '630', 'required': 'a', 'paired': 'atvxyz', 'key': keyX30},
+  {'tag': '600', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX00},
+  {'tag': '610', 'required': 'a', 'paired': `b${pairedTitleSubfields}vxyz`, 'key': keyX10},
+  {'tag': '611', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX11},
+  {'tag': '630', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX30},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'paired': 'avxyz', 'key': 'acdgvxyz02'},
   {'tag': '648', 'required': 'a', 'paired': 'avxyz', 'key': 'avxyz02'},
@@ -213,12 +214,12 @@ const mergeConstraints = [
   {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
   {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
   {'tag': '688', 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': 'kst', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
-  {'tag': '710', 'required': 'a', 'paired': 'bkst', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
-  {'tag': '711', 'required': 'a', 'paired': 'cdefklnst', 'key': keyX11}, // h/i/s/x are missing from 711
+  {'tag': '700', 'required': 'a', 'paired': `${pairedTitleSubfields}x`, 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
+  {'tag': '710', 'required': 'a', 'paired': `b${pairedTitleSubfields}x`, 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '711', 'required': 'a', 'paired': `cdef${pairedTitleSubfields}x`, 'key': keyX11}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
-  {'tag': '730', 'required': 'a', 'key': keyX30}, // NB: 130->730 magic subfields might not agree...
+  {'tag': '730', 'required': 'a', 'paired': `df${pairedTitleSubfields}x`, 'key': keyX30}, // NB: 130->730 magic subfields might not agree...
   {'tag': '740', 'required': 'a', 'key': 'ahnp'},
   {'tag': '751', 'required': 'a', 'key': 'a'}, // N=11, kaikissa pelkkä $a
   {'tag': '752', 'required': '', 'key': 'abcdefgh'}, // N=12234
