@@ -463,8 +463,8 @@ function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
 
 function pairableName(baseField, sourceField) {
   // 100$a$t: remove $t and everything after that
-  const reducedField1 = fieldToNamePart(baseField);
-  const reducedField2 = fieldToNamePart(sourceField);
+  const reducedField1 = baseField; // fieldToNamePart(baseField);
+  const reducedField2 = sourceField; // fieldToNamePart(sourceField);
 
   const string1 = fieldToString(reducedField1);
   const string2 = fieldToString(reducedField2);
@@ -565,6 +565,7 @@ function getTitlePartIndex(field) {
 }
 
 function containsTitlePart(field) {
+  return false;
   return fieldCanHaveTitlePart(field) && getTitlePartIndex(field) > -1;
 
   function fieldCanHaveTitlePart(field) {
@@ -720,7 +721,7 @@ export function getCounterpart(baseRecord, sourceRecord, field, config) {
 
   const normalizedField = cloneAndNormalizeFieldForComparison(field); // mainly strip punctuation here
 
-  nvdebug(`Norm to: '${fieldToString(normalizedField)}'`, debugDev);
+  nvdebug(` Normalize incoming field to: '${fieldToString(normalizedField)}'`, debugDev);
 
   const uniqueAlternativeNames = getUniqueAlernativeNames();
 
