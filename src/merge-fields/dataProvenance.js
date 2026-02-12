@@ -1,31 +1,14 @@
 // See https://www.loc.gov/marc/bibliographic/bdapndxj.html for details
 
-import {subfieldArraysContainSameData} from "../utils.js";
-
-export function tagToDataProvenanceSubfieldCode(tag) {
-    if ( ['533', '800', '810', '811', '830'].includes(tag)) {
-        return 'y';
-    }
-    if ( tag === '856' || tag === '857' ) {
-        return 'e';
-    }
-
-    if ( tag.match(/^7[678]/u) ) {
-        return 'l'
-    }
-
-    if ( tag.match(/^00/u)) {
-        return undefined;
-    }
-    return '7';
-}
-
+import {subfieldArraysContainSameData} from '../utils.js';
+import {tagToDataProvenanceSubfieldCode} from '../dataProvenanceUtils.js';
 
 export function provenanceSubfieldsPermitMerge(baseField, sourceField) {
-    const provinanceSubfieldCode = tagToDataProvenanceSubfieldCode(baseField.tag);
     if (!baseField.subfields) {
         return true;
     }
+    const provinanceSubfieldCode = tagToDataProvenanceSubfieldCode(baseField.tag);
+
     if (provinanceSubfieldCode === undefined) {
         return false;
     }

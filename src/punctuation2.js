@@ -10,7 +10,7 @@
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
 import {validateSingleField} from './ending-punctuation.js';
-import {tagToDataProvenanceSubfieldCode} from './merge-fields/dataProvenance.js';
+import {tagToDataProvenanceSubfieldCode} from './dataProvenanceUtils.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';
 //import createDebugLogger from 'debug';
 import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
