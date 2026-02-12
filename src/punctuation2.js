@@ -130,7 +130,7 @@ const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'conte
 const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuvwxyz', 'followedBy': '#', 'context': /[^.)!?-]$/u};
 
 
-const addX10iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2};
+const addXX0iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2}; // Not explicitly checking it, but this should always be followed by 'a' or 't'
 const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter2};
 const addX10eComma = {'add': ',', 'code': 'abet', 'followedBy': 'en', 'context': defaultNeedsPuncAfter2};
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': needsPuncAfterAlphanumeric};
@@ -313,8 +313,8 @@ const cleanValidPunctuationRules = {
 const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation, addEntryFieldFinalDot];
 
 
-const addX00 = [addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
-const addX10 = [addX10iColon, addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
+const addX00 = [addXX0iColon, addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
+const addX10 = [addXX0iColon, addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
 const addX11 = [...addToAllEntryFields, addX11Spacecolon];
 const addX30 = [...addToAllEntryFields];
 
