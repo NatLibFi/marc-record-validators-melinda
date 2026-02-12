@@ -1,4 +1,3 @@
-
 export function tagToDataProvenanceSubfieldCode(tag) {
     if ( ['533', '800', '810', '811', '830'].includes(tag)) {
         return 'y';
@@ -15,4 +14,8 @@ export function tagToDataProvenanceSubfieldCode(tag) {
         return undefined;
     }
     return '7';
+}
+
+export function isDataProvenanceSubfieldCode(subfieldCode, tag) {
+    return subfieldCode === tagToDataProvenanceSubfieldCode(tag);
 }

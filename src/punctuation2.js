@@ -13,7 +13,7 @@ import {validateSingleField} from './ending-punctuation.js';
 import {tagToDataProvenanceSubfieldCode} from './dataProvenanceUtils.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';
 //import createDebugLogger from 'debug';
-import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
 import clone from 'clone';
 
 //const debug = createDebugLogger('debug/punctuation2');
@@ -57,7 +57,7 @@ function isIrrelevantSubfield(subfield, tag) {
   if (subfield.code === dataProvenanceSubfieldCode) {
     return true;
   }
-  return isControlSubfieldCode(subfield.code); // Currently this contains other stuff as well ($3, $4, $7, $9...)
+  return !isContentSubfieldCode(subfield.code); // Currently this contains other stuff as well ($3, $4, $7, $9...)
 }
 
 

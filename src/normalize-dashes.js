@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -59,7 +59,7 @@ function fixDashes(field) {
   return field;
 
   function subfieldFixDashes(subfield) {
-    if (isControlSubfieldCode(subfield.code)) {
+    if (!isContentSubfieldCode(subfield.code, field.tag)) {
       return;
     }
     // Normalize dashes U+2010 ... U+2015 to '-':

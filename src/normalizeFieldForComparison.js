@@ -8,7 +8,7 @@
 */
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation2.js';
-import {fieldToString, isControlSubfieldCode} from './utils.js';
+import {fieldToString, isContentSubfieldCode} from './utils.js';
 
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from './normalize-identifiers.js';
 import createDebugLogger from 'debug';
@@ -80,7 +80,7 @@ function skipAllSubfieldNormalizations(value, subfieldCode, tag) {
     return true;
   }
 
-  if (isControlSubfieldCode(subfieldCode)) {
+  if (!isContentSubfieldCode(subfieldCode, tag)) {
     return true;
   }
   return false;

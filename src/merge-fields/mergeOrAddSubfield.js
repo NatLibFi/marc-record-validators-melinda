@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {cloneAndNormalizeFieldForComparison, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison.js';
 import {normalizeAs, normalizeControlSubfieldValue} from '../normalize-identifiers.js';
-import {fieldHasSubfield, fieldToString, isControlSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from '../utils.js';
+import {fieldHasSubfield, fieldToString, isContentSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from '../utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
 import {sortAdjacentSubfields} from '../sortSubfields.js';
 
@@ -126,7 +126,7 @@ function addSubfield(targetField, candSubfield) {
 }
 
 function setPunctuationFlag(field, addedSubfield) {
-  if (isControlSubfieldCode(addedSubfield.code)) { // These are never punctuation related
+  if (!isContentSubfieldCode(addedSubfield.code, field.tag)) { // These are never punctuation related
     return;
   }
   field.useExternalEndPunctuation = 1;

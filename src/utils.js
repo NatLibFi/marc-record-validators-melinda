@@ -1,13 +1,12 @@
 import createDebugLogger from 'debug';
-
-//import fs from 'fs';
-//import path from 'path';
+import {melindaFieldSpecs} from './melindaCustomMergeFields.js';
+import {isDataProvenanceSubfieldCode} from './dataProvenanceUtils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-import {melindaFieldSpecs} from './melindaCustomMergeFields.js';
+
 
 //JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'melindaCustomMergeFields.json'), 'utf8'));
 
@@ -102,18 +101,37 @@ export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
   fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
 }
 
-export function isControlSubfieldCode(subfieldCode) {
+function isControlSubfieldCode(subfieldCode, tag = undefined) {
   // NB! Only $w, $0, $1, $5, $6 and $8 are really control subfields. In Finland $9 is oft a control subfield
-  // $3 material (part of the whole thing)
-  // $4 means 'relationship' (similar to relator terms at least in X00 and similar)
-  // $7 is usually provinance subfield. However, it can be stored in other subfields as well. See merge-fields/dataProvenance.js for details
-  // However, change this only if needed. Maybe all provinance subfields should return true?
-  // This may become relevant when AI starts to create stuff...
-  if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'w'].includes(subfieldCode)) {
+  if (['0', '1', '2', '5', '6', '8', 'w'].includes(subfieldCode)) {
     return true;
+  }
+  // Subfield '7' is control subfield for some tags:
+  if (tag && subfieldCode === '7') {
+    if ( tag.match(/^7[678]/u) || ['800', '810', '811', '830'].includes(tag) ) {
+      return true;
+    }
   }
   return false;
 }
+
+export function isContentSubfieldCode(subfieldCode, tag = undefined) {
+  if (isControlSubfieldCode(subfieldCode, tag)) { // 'w', '0', '1', '5', '6' and '8'. (Also '7' for ....)
+    return false;
+  }
+  if (tag && isDataProvenanceSubfieldCode(subfieldCode, tag)) { // Note that default '7' is handled below
+    return false;
+  }
+  // $7 contains typically data provenance, sometimes it's a control field, and for f533, f856 ja f857 it's something else, but it's never content!
+  if (['2', '3', '4', '7', '9'].includes(subfieldCode)) {
+    return false;
+  }
+
+
+  return true;
+}
+
+
 
 export function getCatalogingLanguage(record, defaultCatalogingLanguage = undefined) {
   const [field040] = record.get(/^040$/u);
