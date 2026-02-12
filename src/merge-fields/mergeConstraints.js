@@ -7,15 +7,16 @@ const debugDev = debug.extend('dev');
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
 // "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined.
+// Thus paired is more st
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 
 // NB! not all X00 fields have, say, $x subfield. However, we can still share them...
 // $h is non-1XX?, $i is 7XX only, $w is 8XX only...
-const keyX00 = 'abcjkoqrtuwx'; // Shared: $abcdefg...
-const keyX10 = 'abcdfghknoprstuwx';
-const keyX11 = 'acdefghknpqstuwx';
-const keyX30 = 'adfghkmnoprstvwxyz';
+const keyX00 = 'abcjkloqrtuwx'; // Shared: $abcdefg...
+const keyX10 = 'abcdfghklnoprstuwx';
+const keyX11 = 'acdefghklnpqstuwx';
+const keyX30 = 'adfghklmnoprstvwxyz';
 
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
@@ -212,8 +213,8 @@ const mergeConstraints = [
   {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
   {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
   {'tag': '688', 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': 'tkl', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100
-  {'tag': '710', 'required': 'a', 'paired': 'btkl', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '700', 'required': 'a', 'paired': 'tk', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100
+  {'tag': '710', 'required': 'a', 'paired': 'btk', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '711', 'required': 'a', 'paired': 'cdefklnst', 'key': keyX11}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
