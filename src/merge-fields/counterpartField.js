@@ -586,7 +586,9 @@ function titlePartsMatch(field1, field2) {
   const subset1 = fieldToTitlePart(field1);
   const subset2 = fieldToTitlePart(field2);
   // Easter Egg, ffs. Hardcoded exception
-  return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
+  //return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
+  return true;
+  //return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
 
   function fieldToTitlePart(field) {
     // Take everything after 1st subfield $t...
@@ -656,7 +658,6 @@ function getCounterpartIndex(field, counterpartCands, altNames, config) {
 
 
 function field264Exception(baseField, sourceRecord, sourceField, config) {
-  nvdebug('Field 264 exception as per MET-456', debugDev);
   if (baseField.tag !== '264') {
     return false;
   }
