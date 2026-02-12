@@ -498,6 +498,23 @@ function pairableName(baseField, sourceField) {
   nvdebug(`     '${fieldToString(reducedField1)}' vs`, debugDev);
   nvdebug(`     '${fieldToString(reducedField2)}'`, debugDev);
   return false;
+
+  function fieldToNamePart(field) {
+    const index = namePartThreshold(field);
+    const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
+
+    const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
+
+    /*
+    if (index > -1) {
+      debugDev(`Name subset: ${fieldToString(subsetField)}`);
+    }
+    */
+
+    // Ummm... Sometimes $0 comes after $t but belongs to name part
+
+    return subsetField;
+  }
 }
 
 
@@ -527,7 +544,7 @@ function namePartThreshold(field) {
   if (!(/[10]0$/u).test(field.tag)) {
     return -1;
   }
-  const t = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
+  const t = getTitlePartIndex(field);
   const u = t; // field.subfields.findIndex(currSubfield => currSubfield.code === 'u');
   if (t === -1) {
     return u;
@@ -538,34 +555,17 @@ function namePartThreshold(field) {
   return t > u ? u : t;
 }
 
-function fieldToNamePart(field) {
-  const index = namePartThreshold(field);
-  const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
-
-  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
-
-  /*
-  if (index > -1) {
-    debugDev(`Name subset: ${fieldToString(subsetField)}`);
-  }
-  */
-
-  // Ummm... Sometimes $0 comes after $t but belongs to name part
-
-  return subsetField;
-}
-
-function fieldToTitlePart(field) {
+function getTitlePartIndex(field) {
   // Take everything after 1st subfield $t...
   const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
-  const relevantSubfields = field.subfields.filter((sf, i) => i >= index).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
-  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
-  debugDev(`Title subset: ${fieldToString(subsetField)}`);
-  return subsetField;
+  if (index > -1) {
+    return index;
+  }
+  return field.subfields.findIndex(currSubfield => currSubfield.code === 'k');
 }
 
 function containsTitlePart(field) {
-  return fieldCanHaveTitlePart(field) && fieldHasSubfield(field, 't');
+  return fieldCanHaveTitlePart(field) && getTitlePartIndex(field) > -1;
 
   function fieldCanHaveTitlePart(field) {
     return ['100', '110', '111', '700', '710', '711'].includes(field.tag);
@@ -587,6 +587,15 @@ function titlePartsMatch(field1, field2) {
   const subset2 = fieldToTitlePart(field2);
   // Easter Egg, ffs. Hardcoded exception
   return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
+
+  function fieldToTitlePart(field) {
+    // Take everything after 1st subfield $t...
+    const index = getTitlePartIndex(field);
+    const relevantSubfields = field.subfields.filter((sf, i) => i >= index && index !== -1).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
+    const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
+    debugDev(`Title subset: ${fieldToString(subsetField)}`);
+    return subsetField;
+  }
 }
 
 
