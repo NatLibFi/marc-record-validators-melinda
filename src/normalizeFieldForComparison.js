@@ -13,20 +13,11 @@ import {fieldToString, isContentSubfieldCode} from './utils.js';
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from './normalize-identifiers.js';
 import createDebugLogger from 'debug';
 import {normalizePartData, subfieldContainsPartData} from './normalizeSubfieldValueForComparison.js';
+import {isEnnakkotietoSubfield} from './prepublicationUtils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeFieldForComparison');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
-
-export function isEnnakkotietoSubfieldG(subfield) {
-  if (valuelessSubfield(subfield)) {
-    return false;
-  }
-  if (subfield.code !== 'g') {
-    return false;
-  }
-  return subfield.value.match(/^ENNAKKOTIETO\.?$/gui);
-}
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
@@ -72,7 +63,7 @@ function containsCorporateName(tag = '???', subfieldCode = undefined) {
 
 function skipAllSubfieldNormalizations(value, subfieldCode, tag) {
 
-  if (isEnnakkotietoSubfieldG({'code': subfieldCode, value})) {
+  if (isEnnakkotietoSubfield({'code': subfieldCode, value})) {
     return true;
   }
 
