@@ -359,12 +359,13 @@ function deriveIndividualDeletables(record) {
   }
 
   function getPrepublicationTerms(fieldAsString) {
+    const subfield7Prepub = `${fieldAsString} ‡7 Ennakkotieto`
     if (fieldAsString.match(/^653./u)) {
       // MET-528 (extented by MET-575)
-      return [`${fieldAsString} ‡g ENNAKKOTIETO`, `${fieldAsString} ‡g Ennakkotieto`, `${fieldAsString} ‡g ennakkotieto`, `${fieldAsString} ‡g ENNAKKOTIETO.`, `${fieldAsString} ‡g Ennakkotieto.`, `${fieldAsString} ‡g ennakkotieto.`];
+      return [subfield7Prepub, `${fieldAsString} ‡g ENNAKKOTIETO`, `${fieldAsString} ‡g Ennakkotieto`, `${fieldAsString} ‡g ennakkotieto`, `${fieldAsString} ‡g ENNAKKOTIETO.`, `${fieldAsString} ‡g Ennakkotieto.`, `${fieldAsString} ‡g ennakkotieto.`];
     }
 
-    return [];
+    return [subfield7Prepub];
   }
 
 }

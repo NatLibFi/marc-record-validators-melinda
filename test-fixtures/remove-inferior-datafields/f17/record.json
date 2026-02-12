@@ -1,0 +1,15 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f17" },
+    { "tag": "666", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "taikasana"}
+    ]},
+    { "tag": "666", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "taikasana"},
+      { "code": "7", "value": "Ennakkotieto"}
+    ]}
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}
