@@ -519,27 +519,28 @@ function getRelevantSubfieldValues(field, subfieldCode) {
   return field.subfields.filter(sf => sf.code === subfieldCode).map(sf => sf.value);
 }
 
-function tightSubfieldMatch(field1, field2, subfieldCode) {
+function tightSubfieldMatch(field1, field2, subfieldCode, mustHave = false) {
+  nvdebug(`${subfieldCode} F1: ${fieldToString(field1)}`);
+  nvdebug(`${subfieldCode} F2: ${fieldToString(field2)}`);
   const values1 = getRelevantSubfieldValues(field1, subfieldCode);
   const values2 = getRelevantSubfieldValues(field2, subfieldCode);
   if (values1.length !== values2.length) {
     return false;
   }
-  if (!values1.every(v => values2.includes(v)) || !values2.every(v => values1.includes(v))) {
-    return false
+  if(!mustHave && values1.length == 0) {
+    return true;
   }
-  return true;
-
-
+  nvdebug(`Compare \$${subfieldCode} contents:\n  '${values1.join("'\n  '")}'\nvs\n  '${values2.join("'\n  '")}'`);
+  return values1.every(v => values2.includes(v)) && values2.every(v => values1.includes(v));
 }
 
 function looseSubfieldMatch(field1, field2, subfieldCode) {
-  const values1 = getRelevantSubfieldValues(field1);
-  const values2 = getRelevantSubfieldValues(field2);
+  const values1 = getRelevantSubfieldValues(field1, subfieldCode);
+  const values2 = getRelevantSubfieldValues(field2, subfieldCode);
   if (values1.length === 0 || values2.length === 0) {
     return true;
   }
-  return tightSubfieldMatch(field1, field2, subfieldCode);
+  return tightSubfieldMatch(field1, field2, subfieldCode, false);
 }
 
 function semanticallyMergablePair(baseField, sourceField) {
@@ -549,7 +550,7 @@ function semanticallyMergablePair(baseField, sourceField) {
   const string1 = fieldToString(field1);
   const string2 = fieldToString(field2);
 
-  //nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`, debugDev);
+  nvdebug(`IN ${baseField.tag}: pairableName():\n '${string1}' vs\n '${string2}'`, debugDev);
   if (string1 === string2) {
     return true;
   }
@@ -561,20 +562,23 @@ function semanticallyMergablePair(baseField, sourceField) {
   }
 
   const required = getMergeConstraintsForTag(field1.tag, 'required') || '';
-  if (!required.split('').every(c => tightSubfieldMatch(field1, field2, c))) {
+  nvdebug(`WP1: '${required}'`);
+  if (!required.split('').every(c => tightSubfieldMatch(field1, field2, c, true))) {
     return false;
   }
 
   const paired = getMergeConstraintsForTag(field1.tag, 'paired') || '';
-  if (!paired.split('').every(c => tightSubfieldMatch(field1, field2, c))) {
+  nvdebug(`WP2: '${paired}'`);
+  if (!paired.split('').every(c => tightSubfieldMatch(field1, field2, c, false))) {
     return false;
   }
 
-  const keys = getMergeConstraintsForTag(field1.tag, 'keys') || '';
-  if (!paired.split('').every(c => looseSubfieldMatch(field1, field2, c))) {
+  const keys = getMergeConstraintsForTag(field1.tag, 'key') || '';
+  nvdebug(`WP3: keys='${keys}'`);
+  if (!keys.split('').every(c => looseSubfieldMatch(field1, field2, c))) {
     return false;
   }
-
+ nvdebug('WP4');
   // required/paired/keys checks did not fail. Now check that did they really succeed
   if (required.length > 0) {
     return true;
