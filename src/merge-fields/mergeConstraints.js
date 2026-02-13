@@ -71,9 +71,9 @@ const mergeConstraints = [
   {'tag': '086', 'required': '', 'paired': 'a', 'key': 'a'},
   {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
-  {'tag': '100', 'required': 'a', 'paired': `${pairedTitleSubfields}u`, 'key': keyX00},
-  {'tag': '110', 'required': 'a', 'paired': `b${pairedTitleSubfields}u`, 'key': keyX10},
-  {'tag': '111', 'required': 'a', 'paired': `${pairedTitleSubfields}u`, 'key': keyX11},
+  {'tag': '100', 'required': 'a', 'paired': pairedTitleSubfields, 'key': keyX00},
+  {'tag': '110', 'required': 'a', 'paired': `b${pairedTitleSubfields}`, 'key': keyX10},
+  {'tag': '111', 'required': 'a', 'paired': pairedTitleSubfields, 'key': keyX11},
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', paired: pairedTitleSubfields, 'key': keyX30},
   {'tag': '210', 'required': 'a', 'key': 'ab'},
@@ -197,9 +197,9 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': `${pairedTitleSubfields}uvxyz`, 'key': keyX00},
-  {'tag': '610', 'required': 'a', 'paired': `b${pairedTitleSubfields}uvxyz`, 'key': keyX10},
-  {'tag': '611', 'required': 'a', 'paired': `${pairedTitleSubfields}uvxyz`, 'key': keyX11},
+  {'tag': '600', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX00},
+  {'tag': '610', 'required': 'a', 'paired': `b${pairedTitleSubfields}vxyz`, 'key': keyX10},
+  {'tag': '611', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX11},
   {'tag': '630', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX30},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'paired': 'avxyz', 'key': 'acdgvxyz02'},
@@ -214,9 +214,9 @@ const mergeConstraints = [
   {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
   {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
   {'tag': '688', 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': `${pairedTitleSubfields}ux`, 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
-  {'tag': '710', 'required': 'a', 'paired': `b${pairedTitleSubfields}ux`, 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
-  {'tag': '711', 'required': 'a', 'paired': `cdef${pairedTitleSubfields}ux`, 'key': keyX11}, // h/i/s/x are missing from 711
+  {'tag': '700', 'required': 'a', 'paired': `${pairedTitleSubfields}x`, 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
+  {'tag': '710', 'required': 'a', 'paired': `b${pairedTitleSubfields}x`, 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '711', 'required': 'a', 'paired': `cdef${pairedTitleSubfields}x`, 'key': keyX11}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
   {'tag': '730', 'required': 'a', 'paired': `df${pairedTitleSubfields}x`, 'key': keyX30}, // NB: 130->730 magic subfields might not agree...
