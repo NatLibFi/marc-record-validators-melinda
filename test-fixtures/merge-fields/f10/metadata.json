@@ -1,0 +1,6 @@
+{
+  "description": "f09: 700$u",
+  "fix": true,
+  "tagPattern": "^(700)$",
+  "only": true
+}

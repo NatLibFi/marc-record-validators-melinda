@@ -1,0 +1,7 @@
+{
+  "description": "08: 040",
+  "fix": true,
+  "tagPattern": "^(040)$",
+  "comment": "Not the best example. Note that source record's f040$a => f040$d is done in preprocessing, and not handled here. As merging is ok (no contraints apply), and 040$a is a (NR), the öatter 040$a get's dropped",
+  "only": true
+}
