@@ -7,7 +7,19 @@
         { "code": "u", "value": "Helsingin yliopisto" },
         { "code": "g", "value": "(orgn)1901" }
       ]
-    }
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Saurola, Pertti," },
+        { "code": "e", "value": "kirjoittaja." },
+        {
+          "code": "u",
+          "value": "Foobar yliopisto"
+        },
+        {
+          "code": "g",
+          "value": "(orgn)9999"
+        }
+    ]}
   ],
   "_validationOptions": {}
 }
