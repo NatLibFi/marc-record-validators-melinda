@@ -1,7 +1,7 @@
 // For each incoming field that
 
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright} from '../utils.js';
+import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright, subfieldIsRepeatable, tagIsRepeatable} from '../utils.js';
 import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '../normalizeFieldForComparison.js';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '../normalize-identifiers.js';
@@ -213,21 +213,38 @@ function getPairAndKey(tag) {
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   // NB #1! Actually 100/700 and 260/264 might have slightly different subfield, but those combos should have failed by now because of other rules (knock knock)
   // NB #2! paired stuff also belongs to the key!
-  const keySubfieldsAsString = forcedKeyString || getPairAndKey(baseField.tag);
+
+
+  const required = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'required') || '';
+  const paired = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'paired') || '';
+  const keys = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'keys') || '';
+
 
   //return mandatorySubfieldComparison(baseField, sourceField, keySubfieldsAsString);
-  return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
+  return optionalSubfieldComparison(baseField, sourceField, keys, paired);
+}
+
+function hasCommonNominator(field1, field2, subfieldCode) {
+  //nvdebug(`hasCommonNominator(${subfieldCode})? '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`, debugDev);
+
+  // If base has $a and source has $b, there's no common nominator, thus fail...
+  const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
+  const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field2.tag, subfield.code, subfield.value));
+
+  return subfields1.length > 0 && subfields2.length > 0;
 }
 
 
-function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
+function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString, pairSubfieldsAsString) {
+  const both = `${keySubfieldsAsString}${pairSubfieldsAsString}`;
+
   // Here "optional subfield" means a subfield, that needs not to be present, but if present, it must be identical...
   // (Think of a better name...)
   // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeFieldForComparison(originalBaseField);
   const field2 = cloneAndNormalizeFieldForComparison(originalSourceField);
 
-  if (keySubfieldsAsString === null) { // does not currently happen
+  if ( both === '') { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
     // (NB! Here order matters. We should probably make it matter everywhere.)
@@ -235,7 +252,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     // NB! substring(6) skips "TAG II" (I=indicator. Thus we skip indicators)
     return fieldToString(field1).substring(6) === fieldToString(field2).substring(6);
   }
-  const subfieldArray = keySubfieldsAsString.split('');
+  const subfieldArray = both.split('');
 
   // Long forgotten, but my educated guess about this: if 'key' is defined in merge constraints
   // for this field, then at least one of the subfield codes in 'key' must be present in both fields.
@@ -244,19 +261,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     return false;
   }
 
-
   return subfieldArray.every(subfieldCode => testOptionalSubfield(originalBaseField.tag, subfieldCode));
-
-
-  function hasCommonNominator(subfieldCode) {
-    //nvdebug(`hasCommonNominator(${subfieldCode})? '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`, debugDev);
-
-    // If base has $a and source has $b, there's no common nominator, thus fail...
-    const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
-    const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field2.tag, subfield.code, subfield.value));
-
-    return subfields1.length > 0 && subfields2.length > 0;
-  }
 
   function testOptionalSubfield(tag, subfieldCode) {
     // NB! Don't compare non-meaningful subfields
@@ -419,6 +424,7 @@ function mergablePair(baseField, sourceField, config) {
 }
 
 
+/*
 function semanticCheckForAuthorizedName(baseField, sourceField) {
   const keys = getKeys();
   if (keys === undefined) { // No check needed -> this is fine
@@ -444,6 +450,7 @@ function semanticCheckForAuthorizedName(baseField, sourceField) {
     return string.split('').filter(c => !removableChars.includes(c)).join('');
   }
 }
+*/
 
 
 function pairableFIN11(baseField, sourceField) {
@@ -508,10 +515,39 @@ function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
   return false;
 }
 
+function getRelevantSubfieldValues(field, subfieldCode) {
+  return field.subfields.filter(sf => sf.code === subfieldCode).map(sf => sf.value);
+}
+
+function tightSubfieldMatch(field1, field2, subfieldCode) {
+  const values1 = getRelevantSubfieldValues(field1, subfieldCode);
+  const values2 = getRelevantSubfieldValues(field2, subfieldCode);
+  if (values1.length !== values2.length) {
+    return false;
+  }
+  if (!values1.every(v => values2.includes(v)) || !values2.every(v => values1.includes(v))) {
+    return false
+  }
+  return true;
+
+
+}
+
+function looseSubfieldMatch(field1, field2, subfieldCode) {
+  const values1 = getRelevantSubfieldValues(field1);
+  const values2 = getRelevantSubfieldValues(field2);
+  if (values1.length === 0 || values2.length === 0) {
+    return true;
+  }
+  return tightSubfieldMatch(field1, field2, subfieldCode);
+}
 
 function semanticallyMergablePair(baseField, sourceField) {
-  const string1 = fieldToString(baseField);
-  const string2 = fieldToString(sourceField);
+  const field1 = cloneAndNormalizeFieldForComparison(baseField);
+  const field2 = cloneAndNormalizeFieldForComparison(sourceField);
+
+  const string1 = fieldToString(field1);
+  const string2 = fieldToString(field2);
 
   //nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`, debugDev);
   if (string1 === string2) {
@@ -519,19 +555,49 @@ function semanticallyMergablePair(baseField, sourceField) {
   }
 
   // Essentially these are too hard to handle with field-merge (eg. multi-505$g)
-  if (hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(baseField) || hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(sourceField)) {
+  if (hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field1) || hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field2)) {
     nvdebug(`Unmergable: data is too complex to be automatically safely merged`, debugDev);
     return false;
   }
 
-  const keys = getPairAndKey(baseField.tag);
-  if (keys === '') { // No semantical constraints to check
+  const required = getMergeConstraintsForTag(field1.tag, 'required') || '';
+  if (!required.split('').every(c => tightSubfieldMatch(field1, field2, c))) {
+    return false;
+  }
+
+  const paired = getMergeConstraintsForTag(field1.tag, 'paired') || '';
+  if (!paired.split('').every(c => tightSubfieldMatch(field1, field2, c))) {
+    return false;
+  }
+
+  const keys = getMergeConstraintsForTag(field1.tag, 'keys') || '';
+  if (!paired.split('').every(c => looseSubfieldMatch(field1, field2, c))) {
+    return false;
+  }
+
+  // required/paired/keys checks did not fail. Now check that did they really succeed
+  if (required.length > 0) {
     return true;
   }
+
+  if (paired.length > 0 && field1.subfields.some(sf => paired.includes(sf.code))) {
+    return true;
+  }
+
+  if(!tagIsRepeatable(field1.tag) || keys.length == 0) {
+    return true;
+  }
+
+  if (keys.length > 0) {
+    if (field1.subfields.some(sf => keys.includes(sf.code)) || field2.subfields.some(sf => keys.includes(sf.code))) { // 
+      return keys.split('').some(code => hasCommonNominator(field1, field2, code));
+    }
+  }
+
   // Compare the remaining subsets...
   // First check that name matches...
-  if (uniqueKeyMatches(baseField, sourceField)) {
-    nvdebug(`    name match: '${fieldToString(baseField)}'`, debugDev);
+  if (0 && uniqueKeyMatches(field1, field2)) {
+    nvdebug(`    name match: '${fieldToString(field1)}'`, debugDev);
     return true;
   }
 
@@ -539,7 +605,7 @@ function semanticallyMergablePair(baseField, sourceField) {
   // 2023-01-24 Disable this. Caretaker can fix these later on. Not a job for merge. We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
   // 2023-03-07: Enable this again!
   // 2026-02-13: Uh! what happens when unique key mismatch is some place else?
-  if (pairableFIN11(baseField, sourceField)) {
+  if (0 && pairableFIN11(field1, field2)) {
     nvdebug(`    fields match based on ASTERI $0'`, debugDev);
     return true;
   }
