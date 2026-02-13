@@ -266,3 +266,12 @@ export function subfieldArraysContainSameData(arr1, arr2) {
 
   return arr2.every(sf2 => arr1.some(sf => subfieldsAreIdentical(sf, sf2)));
 }
+
+export function tagIsRepeatable(tag) {
+  const fieldSpecs = melindaFieldSpecs.fields.filter(field => field.tag === tag);
+  if (fieldSpecs.length !== 1) {
+    debugDev(` WARNING! Getting field ${tag} data failed! Default to repeatable field.`);
+    return true;
+  }
+  return fieldSpecs[0].repeatable;
+}

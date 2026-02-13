@@ -82,7 +82,7 @@ import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepubli
 import {fieldFixPunctuation} from './punctuation2.js';
 import {recordResetSubfield6OccurrenceNumbers} from './reindexSubfield6OccurenceNumbers.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
-import {fieldHasSubfield, fieldToString, fieldsToString, isContentSubfieldCode} from './utils.js';
+import {fieldHasSubfield, fieldToString, fieldsToString, isContentSubfieldCode, tagIsRepeatable} from './utils.js';
 
 export {
   AccessRights,
@@ -165,6 +165,7 @@ export {
   isContentSubfieldCode,
   recordFixRelatorTerms,
   sortAdjacentSubfields,
+  tagIsRepeatable,
 
   // 3. prepublication stuff
   baseHasEqualOrHigherEncodingLevel,
