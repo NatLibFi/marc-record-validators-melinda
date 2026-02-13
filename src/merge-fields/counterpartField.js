@@ -57,7 +57,7 @@ export function splitToNameAndQualifier(value) {
   return [value, undefined];
 }
 
-export function splitToNameAndQualifierAndProcessName(name) {
+function splitToNameAndQualifierAndProcessName(name) {
   //const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus| Kustannus Oy|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
   const [qualifierlessName, qualifier] = splitToNameAndQualifier(name);
 
@@ -101,7 +101,7 @@ export function splitToNameAndQualifierAndProcessName(name) {
 }
 
 export function canContainOptionalQualifier(tag, subfieldCode) {
-  // We have made 300$a NON-repeatable (against specs), as we newer want there to repeat (probably near-duplicates)
+  // We have made 300$a NON-repeatable (against specs), as we never want them to be repeated (probably near-duplicates)
   if (tag === '300' && subfieldCode === 'a') {
     return true;
   }
@@ -205,11 +205,16 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   return value;
 }
 
+
+function getPairAndKey(tag) {
+  return `${getMergeConstraintsForTag(tag, 'paired')}${getMergeConstraintsForTag(tag, 'key')}`;
+}
+
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
-  // NB! Assume that field1 and field2 have same relevant subfields.
-  // What to do if if base
-  // const keySubfieldsAsString = forcedKeyString || getUniqueKeyFields(field1);
-  const keySubfieldsAsString = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'key');
+  // NB #1! Actually 100/700 and 260/264 might have slightly different subfield, but those combos should have failed by now because of other rules (knock knock)
+  // NB #2! paired stuff also belongs to the key!
+  const keySubfieldsAsString = forcedKeyString || getPairAndKey(baseField.tag);
+
   //return mandatorySubfieldComparison(baseField, sourceField, keySubfieldsAsString);
   return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
 }
@@ -414,9 +419,44 @@ function mergablePair(baseField, sourceField, config) {
 }
 
 
-function pairableAsteriIDs(baseField, sourceField) {
+function semanticCheckForAuthorizedName(baseField, sourceField) {
+  const keys = getKeys();
+  if (keys === undefined) { // No check needed -> this is fine
+    return true;
+  }
+  return uniqueKeyMatches(baseField, sourceField, keys);
+
+  function getKeys() {
+    if (['100', '600', '700', '800'].includes(baseField.tag)) {
+      const keys = removeCharsFromString(getPairAndKey(tag), 'abcdq');
+    }
+    if (['110', '610', '710', '810'].includes(baseField.tag)) {
+      const keys = removeCharsFromString(getPairAndKey(tag), 'abcdn');
+    }
+    if (['111', '611', '711', '811'].includes(baseField.tag)) {
+      const keys = removeCharsFromString(getPairAndKey(tag), 'acden');
+    }
+    return undefined;
+  }
+
+  function removeCharsFromString(string, removableCharsAsString) {
+    const removableChars = removableCharsAsString.split('');
+    return string.split('').filter(c => !removableChars.includes(c)).join('');
+  }
+}
+
+
+function pairableFIN11(baseField, sourceField) {
+  // Semantic check has failed. Possibly because of subfield content differences in name.
+  // If this is an authorized FIN11 ame, we could ignore the subfield containing the name data, and compare only the other fields.
+  // (We could do FIN13 as well?)
+  return false; // Nääh, don't bother...
+
   //nvdebug(`ASTERI1 ${fieldToString(baseField)}`, debugDev); // eslint-disable-line
   //nvdebug(`ASTERI2 ${fieldToString(sourceField)}`, debugDev); // eslint-disable-line
+
+  // What about FIN13?
+  // FIN11: we whould check we non-abcdq-fields, they might still cause a failure!
 
   // Check that relevant control subfield(s) exist in both records (as controlSubfieldsPermitMerge() doesn't check it):
   const fin11a = getAsteriIDs(baseField);
@@ -432,9 +472,15 @@ function pairableAsteriIDs(baseField, sourceField) {
   // Check that found control subfields agree. Use pre-existing generic function to reduce code.
   // (NB! We could optimize and just return true here, as control subfield check is done elsewhere as well.
   // However, explicitly checking them here makes the code more robust.)
+  // (This was probably added because of some test...)
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
     return false;
   }
+
+  if (semanticCheckForAuthorizedName(baseField, sourceField)) {
+    return true;
+  }
+
   //console.log(`ASTERI PAIR ${fieldToString(sourceField)}`); // eslint-disable-line
   return true;
 
@@ -462,13 +508,10 @@ function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
   return false;
 }
 
-function pairableName(baseField, sourceField) {
-  // 100$a$t: remove $t and everything after that
-  const reducedField1 = baseField; // fieldToNamePart(baseField);
-  const reducedField2 = sourceField; // fieldToNamePart(sourceField);
 
-  const string1 = fieldToString(reducedField1);
-  const string2 = fieldToString(reducedField2);
+function semanticallyMergablePair(baseField, sourceField) {
+  const string1 = fieldToString(baseField);
+  const string2 = fieldToString(sourceField);
 
   //nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`, debugDev);
   if (string1 === string2) {
@@ -476,136 +519,34 @@ function pairableName(baseField, sourceField) {
   }
 
   // Essentially these are too hard to handle with field-merge (eg. multi-505$g)
-  if (hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(reducedField1) || hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(reducedField2)) {
+  if (hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(baseField) || hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(sourceField)) {
+    nvdebug(`Unmergable: data is too complex to be automatically safely merged`, debugDev);
     return false;
   }
 
   // Compare the remaining subsets...
   // First check that name matches...
-  if (uniqueKeyMatches(reducedField1, reducedField2)) {
-    nvdebug(`    name match: '${fieldToString(reducedField1)}'`, debugDev);
+  if (uniqueKeyMatches(baseField, sourceField)) {
+    nvdebug(`    name match: '${fieldToString(baseField)}'`, debugDev);
     return true;
   }
 
   // However, name mismatch is not critical! If Asteri ID matches, it's still a match! *NOT* sure whether this a good idea.
   // 2023-01-24 Disable this. Caretaker can fix these later on. Not a job for merge. We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
   // 2023-03-07: Enable this again!
-  if (pairableAsteriIDs(baseField, sourceField)) {
-    //nvdebug(`    name match based on ASTERI $0'`, debugDev);
+  // 2026-02-13: Uh! what happens when unique key mismatch is some place else?
+  if (pairableFIN11(baseField, sourceField)) {
+    nvdebug(`    fields match based on ASTERI $0'`, debugDev);
     return true;
   }
 
   nvdebug(`    name mismatch:`, debugDev);
-  nvdebug(`     '${fieldToString(reducedField1)}' vs`, debugDev);
-  nvdebug(`     '${fieldToString(reducedField2)}'`, debugDev);
+  nvdebug(`     '${fieldToString(baseField)}' vs`, debugDev);
+  nvdebug(`     '${fieldToString(sourceField)}'`, debugDev);
   return false;
-
-  /*
-  function fieldToNamePart(field) {
-    const index = namePartThreshold(field);
-    const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
-
-    const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
-
-    // NB! Sometimes $0 comes after $t but belongs to name part
-
-    return subsetField;
-  }
-  */
 }
 
 
-function semanticallyMergablePair(baseField, sourceField) {
-  /*
-  // On rare occasions a field contains also a title part. For these name part (= normally everything) and title part
-  // must be checked separately:
-  if (!titlePartsMatch(baseField, sourceField)) {
-    nvdebug(` ${baseField.tag} is unmergable: Title part mismatch.`, debugDev);
-    return false;
-  }
-  */
-
-  // Hmm... we should check lifespan here, $d YYYY
-
-  // Handle the field specific "unique key" (=set of fields that make the field unique
-  if (!pairableName(baseField, sourceField)) {
-    nvdebug('Unmergable: Name part mismatch', debugDev);
-    return false;
-  }
-  //debug(' Semantic checks passed! We are MERGABLE!');
-
-  return true;
-}
-
-/*
-function namePartThreshold(field) {
-  // Threshold is only applicaple to some tags..
-  if (!(/[10]0$/u).test(field.tag)) {
-    return -1;
-  }
-  const t = getTitlePartIndex(field);
-  const u = t; // field.subfields.findIndex(currSubfield => currSubfield.code === 'u');
-  if (t === -1) {
-    return u;
-  }
-  if (u === -1) {
-    return t;
-  }
-  return t > u ? u : t;
-}
-*/
-
-/*
-function getTitlePartIndex(field) {
-  // Take everything after 1st subfield $t...
-  const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
-  if (index > -1) {
-    return index;
-  }
-  return field.subfields.findIndex(currSubfield => currSubfield.code === 'k');
-}
-*/
-
-/*
-function containsTitlePart(field) {
-  return fieldCanHaveTitlePart(field) && getTitlePartIndex(field) > -1;
-
-  function fieldCanHaveTitlePart(field) {
-    return ['100', '110', '111', '700', '710', '711'].includes(field.tag);
-  }
-}
-*/
-
-
-/*
-function titlePartsMatch(field1, field2) {
-  if (!containsTitlePart(field1)) {
-    return !containsTitlePart(field2);
-  }
-  if (!containsTitlePart(field2)) {
-    return false;
-  }
-
-  debugDev(`TITLE PARTS NEED TO BE COMPARED`);
-
-  // 100$a$t: remove $t and everything after that
-  const subset1 = fieldToTitlePart(field1);
-  const subset2 = fieldToTitlePart(field2);
-  // Easter Egg, ffs. Hardcoded exception
-  //return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
-  return true;
-  //return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
-
-  function fieldToTitlePart(field) {
-    // Take everything after 1st subfield $t...
-    const index = getTitlePartIndex(field);
-    const relevantSubfields = field.subfields.filter((sf, i) => i >= index && index !== -1).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
-    const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
-    debugDev(`Title subset: ${fieldToString(subsetField)}`);
-    return subsetField;
-  }
-}
-*/
 
 function getAlternativeNamesFrom9XX(record, field) {
   // Should we support 6XX and 8XX as well? Prolly not...
@@ -691,6 +632,7 @@ function getCounterpartCandidates(field, record) {
   function isCopyrightField264(field) {
     return field.tag === '264' && field.ind2 === '4';
   }
+
   function isNotCopyrightYear(field) {
     if (field.tag === '264') {
       return !isCopyrightField264(field);
