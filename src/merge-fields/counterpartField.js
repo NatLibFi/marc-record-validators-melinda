@@ -207,7 +207,7 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
 
 
 function getPairAndKey(tag) {
-  return `${getMergeConstraintsForTag(tag, 'paired')}${getMergeConstraintsForTag(tag, 'key')}`;
+  return `${getMergeConstraintsForTag(tag, 'paired') || ''}${getMergeConstraintsForTag(tag, 'key') || ''}`;
 }
 
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
@@ -450,7 +450,7 @@ function pairableFIN11(baseField, sourceField) {
   // Semantic check has failed. Possibly because of subfield content differences in name.
   // If this is an authorized FIN11 ame, we could ignore the subfield containing the name data, and compare only the other fields.
   // (We could do FIN13 as well?)
-  return false; // Nääh, don't bother...
+  return false; // Nääh, don't bother... It would be a mess to decide how to merge differing stuff, eg. $c  whatever...
 
   //nvdebug(`ASTERI1 ${fieldToString(baseField)}`, debugDev); // eslint-disable-line
   //nvdebug(`ASTERI2 ${fieldToString(sourceField)}`, debugDev); // eslint-disable-line
@@ -524,6 +524,10 @@ function semanticallyMergablePair(baseField, sourceField) {
     return false;
   }
 
+  const keys = getPairAndKey(baseField.tag);
+  if (keys === '') { // No semantical constraints to check
+    return true;
+  }
   // Compare the remaining subsets...
   // First check that name matches...
   if (uniqueKeyMatches(baseField, sourceField)) {
@@ -540,7 +544,7 @@ function semanticallyMergablePair(baseField, sourceField) {
     return true;
   }
 
-  nvdebug(`    name mismatch:`, debugDev);
+  nvdebug(`    name mismatch (${keys}):`, debugDev);
   nvdebug(`     '${fieldToString(baseField)}' vs`, debugDev);
   nvdebug(`     '${fieldToString(sourceField)}'`, debugDev);
   return false;
