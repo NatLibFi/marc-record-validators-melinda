@@ -1,9 +1,8 @@
 // For each incoming field that
 
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright, subfieldIsRepeatable, tagIsRepeatable} from '../utils.js';
+import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright, tagIsRepeatable} from '../utils.js';
 import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '../normalizeFieldForComparison.js';
-// This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '../normalize-identifiers.js';
 
 import {getMergeConstraintsForTag} from './mergeConstraints.js';
@@ -13,13 +12,13 @@ import {partsAgree} from '../normalizeSubfieldValueForComparison.js';
 import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge.js';
 import {provenanceSubfieldsPermitMerge} from './dataProvenance.js';
 
-// NB! FIN11 $0 pairing is handled in this code. We might want to support others, esp. FIN13 as well.
+// NB! We are using internal prefix '(FIN11)' instead of global (FI-ASTERI-N) here. The latter would be better but would require some work and testing.
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeField:counterpart');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-//const irrelevantSubfieldsInNameAndTitlePartComparison = '5689';
+// NB! FIN11 $0 pairing is handled in this code. We might want to support others, esp. FIN13 as well.
 
 const counterpartRegexps = { // NB! tag is from source!
   // Note that in the normal case, all source 1XX fields have been converted to 7XX fields.
@@ -38,17 +37,6 @@ const counterpartRegexpsSingle = {
   '940': /^[29]40$/u, '973': /^[79]73$/u
 };
 
-/*
-function differentPublisherSubfields(field1, field2) {
-  if (field1.tag === '260' && field2.tag === '264' && field2.ind2 === '3') {
-    return true;
-  }
-  if (field1.tag === '264' && field1.ind2 === '3' && field2.tag === '260') {
-    return true;
-  }
-  return false;
-}
-*/
 
 export function splitToNameAndQualifier(value) {
   if (value.match(/^.* \([^()]+\)$/u)) {
@@ -115,6 +103,7 @@ export function canContainOptionalQualifier(tag, subfieldCode) {
 }
 
 function withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode) {
+  // Split value to name and qualifier parts. Names must be equal, and qualifiers must be equal, iff both values contain them.
   if (!canContainOptionalQualifier(tag, subfieldCode)) {
     return false;
   }
@@ -135,10 +124,7 @@ function withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode) {
   }
 
   return false;
-
-
 }
-
 
 function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   if (subfieldCode !== 'a' || !['110', '610', '710', '810'].includes(tag)) {
@@ -160,22 +146,9 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   // Currently all prefixes and suffixes are publisher information, so there's no point comparing them any further...
 
   return true;
-
-  /*
-  function isKustantaja(nameData) {
-    if (nameData.suffix.match(/^(?:Kustannus|Kustannus oy|kustannusosakeyhtiö)$/iu)) {
-      return true;
-    }
-    if (nameData.prefix.match(/^Kustannus Oy$/i)) {
-      return true;
-    }
-    return false;
-  }
-  */
 }
 
 function counterpartExtraNormalize(tag, subfieldCode, value) {
-
   // Remove trailing punctuation:
   value = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;| =| \/)$/u, '$1');
   // Remove brackets:
@@ -240,7 +213,7 @@ function getUnbalancedPairedSubfieldCode(field1, field2) {
   // If the two fields share the FIN11 ID (WE SHOULD SUPPORT FIN13 AS WELL) there's no need to check the 'paired' constraint regarding related subfields.
   // Meaning that it this is FIN11 match we should not bother checking whether something like 100$b/c/d/q is there. (NB! Note that 'required' check is not alleviated in this way)
   // (I'm not saying that 100$b/c/d/q  are in 'paired' contraint, I'm just illustrating the issue here)
-  const pairable = pairableFin11(field1, field2);
+  const pairable = pairableIdentifier(field1, field2, '(FIN11)');
   const subfieldString = pairable ? removeNameRelatedSubfieldCodes(fullSubfieldString, field1.tag) : fullSubfieldString;
   debug(`CHECK ${pairable ? 'PAIRABLE ' : ''}${field1.tag} PAIRS: '${fullSubfieldString}' => '${subfieldString}'`);
 
@@ -308,12 +281,9 @@ function mergablePair(baseField, sourceField, config) {
   return true;
 }
 
-
-
-
-
 function removeNameRelatedSubfieldCodes(codestring, tag) {
-  const removables = getNameRelatedSubfieldCodes(tag);
+  // If we have $0 (FIN11) match, we are not interested in the core name subfields. Remove them from the subfield codes string.
+  const removables = getNameRelatedSubfieldCodes(tag); // These are different for X00, X10 and X11...
   return removeCharsFromString(codestring, removables);
 
   function removeCharsFromString(string, removableCharsAsString) {
@@ -335,22 +305,26 @@ function removeNameRelatedSubfieldCodes(codestring, tag) {
   }
 }
 
-function pairableFin11(baseField, sourceField) {
-  const fin11a = getAsteriIDs(baseField);
-  if (fin11a.length !== 1) {
+function pairableIdentifier(field1, field2, prefix) {
+  const normalizedPrefix = normalizeForSamenessCheck(field1.tag, '0', prefix);
+  nvdebug(`PREF '${prefix}' => '${normalizedPrefix}'`);
+
+  const prefixLength = normalizedPrefix.length;
+  const identifiers1 = getIdentifiers(field1);
+  if (identifiers1.length !== 1) {
     return false;
   }
-  const fin11b = getAsteriIDs(sourceField);
-  if (fin11b.length !== 1) {
+  const identifiers2 = getIdentifiers(field2);
+  if (identifiers2.length !== 1) {
     return false;
   }
 
-  return fin11a[0] === fin11b[0];
+  return identifiers1[0] === identifiers2[0];
 
-  function getAsteriIDs(field) {
+  function getIdentifiers(field) {
     return field.subfields.filter(sf => sf.code === '0')
       .map(sf => normalizeControlSubfieldValue(sf.value))
-      .filter(val => val.substring(0, 7) === '(FIN11)');
+      .filter(val => val.substring(0, prefixLength) === normalizedPrefix);
   }
 }
 
@@ -459,32 +433,32 @@ function semanticallyMergablePair(baseField, sourceField) {
     return false;
   }
 
-  const asteriMatch = pairableFin11(field1, field2); // If there's a match, there's no need to check the name (Caretaker will handle these.)
+  const asteriMatch = pairableIdentifier(field1, field2, '(FIN11)'); // If there's a match, there's no need to check the name (Caretaker will handle these.)
   // WE COULD REMOVE THESE FIELDS IN MERGE, SO THAT WE WON'T GET FUNNY NAMES).
 
   // NB! Currently we should get only one mergeContraint. However, should we support multiple merge contraints (= multiple profiles)?
   const allRequired = mergeConstraints[0].required || ''; // getMergeConstraintsForTag(field1.tag, 'required') || '';
   const reallyRequired = asteriMatch ? removeNameRelatedSubfieldCodes(allRequired, field1.tag) : allRequired;
 
-  nvdebug(`WP1: '${allRequired}' => ${reallyRequired}`);
+  //nvdebug(`WP1: '${allRequired}' => ${reallyRequired}`);
   if (!reallyRequired.split('').every(c => tightSubfieldMatch(field1, field2, c, true))) {
     return false;
   }
 
   const allPaired = mergeConstraints[0].paired || ''; // getMergeConstraintsForTag(field1.tag, 'paired') || '';
   const reallyPaired = asteriMatch ? removeNameRelatedSubfieldCodes(allPaired, field1.tag) : allPaired;
-  nvdebug(`WP2: '${allPaired}' => ${reallyPaired}`);
+  //nvdebug(`WP2: '${allPaired}' => ${reallyPaired}`);
   if (!reallyPaired.split('').every(c => tightSubfieldMatch(field1, field2, c, false))) {
     return false;
   }
 
   const allKeys = mergeConstraints[0].key || ''; // getMergeConstraintsForTag(field1.tag, 'key') || '';
   const relevantKeys = asteriMatch ? removeNameRelatedSubfieldCodes(allKeys, field1.tag) : allKeys
-  nvdebug(`WP3: keys='${allKeys}' => ${relevantKeys}`);
+  //nvdebug(`WP3: keys='${allKeys}' => ${relevantKeys}`);
   if (!relevantKeys.split('').every(c => looseSubfieldMatch(field1, field2, c))) {
     return false;
   }
-  nvdebug('WP4');
+  //nvdebug('WP4');
 
   // required/paired/keys checks did not fail. Now check that did they really succeed
   if (allRequired.length > 0) { // I think we should use all here
@@ -513,8 +487,6 @@ function semanticallyMergablePair(baseField, sourceField) {
   nvdebug(`     '${fieldToString(sourceField)}'`, debugDev);
   return false;
 }
-
-
 
 function getAlternativeNamesFrom9XX(record, field) {
   // Should we support 6XX and 8XX as well? Prolly not...
