@@ -1,0 +1,40 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Foo Bar" },
+        { "code": "b", "value": "II," },
+        { "code": "c", "value": "vasenkätinen." },
+        { "code": "0", "value": "(FIN11)012345678" }
+      ]
+    },
+
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Foo Bar" },
+        { "code": "b", "value": "III." }
+      ]
+    },
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Foo Bar," },
+        { "code": "c", "value": "oikeakätinen." }
+      ]
+    },
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Merge and Drop 2nd $b" },
+        { "code": "b", "value": "II." },
+        { "code": "0", "value": "(FIN11)011111111" }
+      ]
+    },
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Stays Separate" },
+        { "code": "b", "value": "IV." }
+      ]
+    },
+    { "tag": "700", "ind1": "0", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Stays Separate" },
+        { "code": "b", "value": "V." }
+      ]
+    }
+  ],
+  "_validationOptions": {}
+}
