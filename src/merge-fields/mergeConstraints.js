@@ -97,7 +97,7 @@ const mergeConstraints = [
   //{'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc'}, // NB "S.l." normalizations?" not implemented
   {'tag': '264', 'required': '', 'key': 'abc'}, // NB "S.l." normalizations?" not implemented
   // SKIP TAG 270 ON PURPOSE! Melinda's N=43.
-  {'tag': '300', 'required': 'a', 'key': 'abcefg'},
+  {'tag': '300', 'required': '', 'key': 'abcefg'},
   {'tag': '306', 'required': 'a', 'key': 'a'},
   // SKIP TAG 307 ON PURPOSE! N=0
   {'tag': '310', 'required': 'a', 'key': 'ab'},
