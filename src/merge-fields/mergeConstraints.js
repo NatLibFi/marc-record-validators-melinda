@@ -134,7 +134,7 @@ const mergeConstraints = [
   {'tag': '385', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
   {'tag': '386', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
   {'tag': '388', 'required': 'a', 'key': 'a'},
-  {'tag': '490', 'required': 'a', 'key': 'axvl'},
+  {'tag': '490', 'required': '', 'key': 'axvl'},
   {'tag': '500', 'required': 'a', 'key': 'a'},
   {'tag': '501', 'required': 'a', 'key': 'a'},
   {'tag': '502', 'required': 'a', 'key': 'abcdgo'},
