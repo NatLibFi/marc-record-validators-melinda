@@ -449,7 +449,7 @@ function semanticallyMergablePair(baseField, sourceField) {
   }
 
   const mergeConstraints = getMergeConstraintsForTag(field1.tag); // The tag doe
-  if (!mergeConstraints) { // We have no constraints defined for this tag -> fail
+  if (mergeConstraints.length === 0) { // We have no constraints defined for this tag -> fail
     return false;
   }
 
