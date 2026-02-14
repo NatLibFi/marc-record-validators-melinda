@@ -44,7 +44,7 @@ const mergeConstraints = [
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
   {'tag': '041', 'required': '', 'paired': '2', 'key': ''}, // Don't put $2 in 'key'! hasCommonNominator() would get into trouble with it...
-  {'tag': '042', 'required': '', 'key': 'a'}, // NB: preprocessor hacks applied
+  {'tag': '042', 'required': '', 'key': ''}, // Contents (supposedly $a subfields) can be anything, and still merge... (042 $a foo + 042 $b bar is perfectly mergeable)
   {'tag': '043', 'required': 'a', 'key': 'abc'},
   {'tag': '044', 'required': '', 'key': 'abc', 'paired': 'abc'},
   {'tag': '045', 'required': '', 'key': 'abc', 'paired': 'abc'}, // (ET) // 045 is problematic either-$a or $b or $c...
