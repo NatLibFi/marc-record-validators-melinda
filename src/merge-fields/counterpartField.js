@@ -215,7 +215,7 @@ function tagToRegexp(tag, internalMerge = false) {
 }
 
 function areRequiredSubfieldsPresent(field) {
-  const subfieldString = getMergeConstraintsForTag(field.tag, 'required');
+  const subfieldString = getMergeConstraintsForTag(field.tag, 'required').join('');
   if (subfieldString === null) {
     return true;
   } // nothing is required
@@ -231,7 +231,7 @@ function areRequiredSubfieldsPresent(field) {
 }
 
 function getUnbalancedPairedSubfieldCode(field1, field2) {
-  const fullSubfieldString = getMergeConstraintsForTag(field1.tag, 'paired') || '';
+  const fullSubfieldString = getMergeConstraintsForTag(field1.tag, 'paired').join('') || '';
 
   if (fullSubfieldString === '') {
     return false;
@@ -448,6 +448,11 @@ function semanticallyMergablePair(baseField, sourceField) {
     return true;
   }
 
+  const mergeConstraints = getMergeConstraintsForTag(field1.tag); // The tag doe
+  if (!mergeConstraints) { // We have no constraints defined for this tag -> fail
+    return false;
+  }
+
   // Essentially these are too hard to handle with field-merge (eg. multi-505$g)
   if (hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field1) || hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field2)) {
     nvdebug(`Unmergable: data is too complex to be automatically safely merged`, debugDev);
@@ -457,7 +462,8 @@ function semanticallyMergablePair(baseField, sourceField) {
   const asteriMatch = pairableFin11(field1, field2); // If there's a match, there's no need to check the name (Caretaker will handle these.)
   // WE COULD REMOVE THESE FIELDS IN MERGE, SO THAT WE WON'T GET FUNNY NAMES).
 
-  const allRequired = getMergeConstraintsForTag(field1.tag, 'required') || '';
+  // NB! Currently we should get only one mergeContraint. However, should we support multiple merge contraints (= multiple profiles)?
+  const allRequired = mergeConstraints[0].required || ''; // getMergeConstraintsForTag(field1.tag, 'required') || '';
   const reallyRequired = asteriMatch ? removeNameRelatedSubfieldCodes(allRequired, field1.tag) : allRequired;
 
   nvdebug(`WP1: '${allRequired}' => ${reallyRequired}`);
@@ -465,20 +471,21 @@ function semanticallyMergablePair(baseField, sourceField) {
     return false;
   }
 
-  const allPaired = getMergeConstraintsForTag(field1.tag, 'paired') || '';
+  const allPaired = mergeConstraints[0].paired || ''; // getMergeConstraintsForTag(field1.tag, 'paired') || '';
   const reallyPaired = asteriMatch ? removeNameRelatedSubfieldCodes(allPaired, field1.tag) : allPaired;
   nvdebug(`WP2: '${allPaired}' => ${reallyPaired}`);
   if (!reallyPaired.split('').every(c => tightSubfieldMatch(field1, field2, c, false))) {
     return false;
   }
 
-  const allKeys = getMergeConstraintsForTag(field1.tag, 'key') || '';
+  const allKeys = mergeConstraints[0].key || ''; // getMergeConstraintsForTag(field1.tag, 'key') || '';
   const relevantKeys = asteriMatch ? removeNameRelatedSubfieldCodes(allKeys, field1.tag) : allKeys
   nvdebug(`WP3: keys='${allKeys}' => ${relevantKeys}`);
   if (!relevantKeys.split('').every(c => looseSubfieldMatch(field1, field2, c))) {
     return false;
   }
   nvdebug('WP4');
+
   // required/paired/keys checks did not fail. Now check that did they really succeed
   if (allRequired.length > 0) { // I think we should use all here
     return true;

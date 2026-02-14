@@ -291,22 +291,26 @@ const mergeConstraints = [
   {'tag': 'SID', 'required': ''}
 ];
 
-function constraintToValue(tagsConstraints, constraintName) {
-  if (constraintName in tagsConstraints) {
-    return tagsConstraints[constraintName];
-  }
-  return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
-}
 
-export function getMergeConstraintsForTag(tag, constraintName) {
+export function getMergeConstraintsForTag(tag, constraintName = undefined) {
   const tagsConstraintsArray = mergeConstraints.filter(entry => tag === entry.tag);
   if (tagsConstraintsArray.length === 0) {
-    debugDev(`WARNING\tNo key found for ${tag}. Returning NULL!`);
-    return null;
+    debugDev(`WARNING\tNo key found for ${tag}!`);
+  }
+  if (!constraintName) {
+    return tagsConstraintsArray;
   }
   // NB! should we support multiple contains for a field? Eg. 505$a vs 505($tg)+
   if (tagsConstraintsArray.length > 1) {
     debugDev(`WARNING\tMultiple values for '${constraintName}' (N=${tagsConstraintsArray.length}) found in ${tag}. Using first values.`);
   }
-  return constraintToValue(tagsConstraintsArray[0], constraintName);
+  //return constraintToValue(tagsConstraintsArray[0], constraintName);
+  return tagsConstraintsArray.map(c => constraintToValue(c, constraintName));
+
+  function constraintToValue(tagsConstraints, constraintName) {
+    if (constraintName in tagsConstraints) {
+      return tagsConstraints[constraintName];
+    }
+    return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
+  }
 }
