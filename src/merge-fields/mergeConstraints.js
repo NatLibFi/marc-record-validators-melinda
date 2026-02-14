@@ -71,7 +71,7 @@ const mergeConstraints = [
   {'tag': '086', 'required': '', 'paired': 'a', 'key': 'a'},
   {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
-  {'tag': '100', 'required': 'a', 'paired': pairedTitleSubfields, 'key': keyX00},
+  {'tag': '100', 'required': 'a', 'paired': `b${pairedTitleSubfields}`, 'key': keyX00},
   {'tag': '110', 'required': 'a', 'paired': `b${pairedTitleSubfields}`, 'key': keyX10},
   {'tag': '111', 'required': 'a', 'paired': pairedTitleSubfields, 'key': keyX11},
   // NB! 130 has no name part, key is used for title part
@@ -197,7 +197,7 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX00},
+  {'tag': '600', 'required': 'a', 'paired': `b${pairedTitleSubfields}vxyz`, 'key': keyX00},
   {'tag': '610', 'required': 'a', 'paired': `b${pairedTitleSubfields}vxyz`, 'key': keyX10},
   {'tag': '611', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX11},
   {'tag': '630', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX30},
@@ -214,7 +214,7 @@ const mergeConstraints = [
   {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
   {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
   {'tag': '688', 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': `${pairedTitleSubfields}x`, 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
+  {'tag': '700', 'required': 'a', 'paired': `b${pairedTitleSubfields}x`, 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
   {'tag': '710', 'required': 'a', 'paired': `b${pairedTitleSubfields}x`, 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '711', 'required': 'a', 'paired': `cdef${pairedTitleSubfields}x`, 'key': keyX11}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
@@ -244,7 +244,7 @@ const mergeConstraints = [
   {'tag': '786', 'required': '', 'paired': 'abcrstuxyz', 'key': 'abcdhijmprstuxyz4'},
   {'tag': '787', 'required': '', 'paired': 'abcdhmstuxyz4'},
   {'tag': '788', 'required': '', 'paired': 'stx', 'key': 'abdestx'},
-  {'tag': '800', 'required': 'a', 'paired': 't', 'key': keyX00},
+  {'tag': '800', 'required': 'a', 'paired': 'bt', 'key': keyX00},
   {'tag': '810', 'required': 'a', 'paired': 'bt', 'key': keyX10},
   {'tag': '811', 'required': 'a', 'paired': 't', 'key': keyX11},
   {'tag': '830', 'required': 'a', 'key': keyX30},
