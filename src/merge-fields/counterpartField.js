@@ -377,19 +377,26 @@ function getRelevantSubfieldValues(field, subfieldCode) {
 }
 
 function pairableValue(tag, subfieldCode, value1, value2) {
-  // DEPRECATED CODE THAT CONTAINS USEFUL STUFF!
+  if (value1 === value2) {
+    return true;
+  }
+
   // This function could just return true or false.
   // I thought of preference when I wrote this, but preference implemented *here* (modularity). mergeFields.js should handle preference.
   if (withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode)) {
     // 300$a "whatever" and "whatever (123 sivua)"
-    return value1;
+    return true;
   }
   if (partsAgree(value1, value2, tag, subfieldCode) || corporateNamesAgree(value1, value2, tag, subfieldCode)) {
     // Pure baseness: here we assume that base's value1 is better than source's value2.
-    return value1;
+    return true;
   }
 
-  return undefined;
+  return false;
+}
+
+function pairableValueInArray(tag, subfieldCode, val, arr) {
+  return arr.some(val2 => pairableValue(tag, subfieldCode, val, val2));
 }
 
 
@@ -410,7 +417,7 @@ function tightSubfieldMatch(field1, field2, subfieldCode, mustHave = false) {
   }
 
   nvdebug(`Compare \$${subfieldCode} contents:\n  '${values1.join("'\n  '")}'\nvs\n  '${values2.join("'\n  '")}'`);
-  return values1.every(v => values2.includes(v)) && values2.every(v => values1.includes(v));
+  return values1.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values2)) && values2.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values1));
 }
 
 function looseSubfieldMatch(field1, field2, subfieldCode) {
@@ -420,10 +427,10 @@ function looseSubfieldMatch(field1, field2, subfieldCode) {
     return true;
   }
   // Subsets are fine:
-  if (values1.every(v => values2.includes(v))) {
+  if (values1.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values2))) {
     return true;
   }
-  if (values2.every(v => values1.includes(v))) {
+  if (values2.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values1))) {
     return true;
   }
   return false;
