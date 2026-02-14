@@ -1,0 +1,6 @@
+{
+  "description": "f300/01: don't merge f300 as they don't share anything",
+  "fix": true,
+  "tagPattern": "^300$",
+  "only": true
+}
