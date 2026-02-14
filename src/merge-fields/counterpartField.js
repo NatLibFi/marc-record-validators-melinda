@@ -174,23 +174,6 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   */
 }
 
-
-function pairableValue(tag, subfieldCode, value1, value2) {
-  // This function could just return true or false.
-  // I thought of preference when I wrote this, but preference implemented *here* (modularity). mergeFields.js should handle preference.
-  if (withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode)) {
-    // 300$a "whatever" and "whatever (123 sivua)"
-    return value1;
-  }
-  if (partsAgree(value1, value2, tag, subfieldCode) || corporateNamesAgree(value1, value2, tag, subfieldCode)) {
-    // Pure baseness: here we assume that base's value1 is better than source's value2.
-    return value1;
-  }
-
-  return undefined;
-}
-
-
 function counterpartExtraNormalize(tag, subfieldCode, value) {
 
   // Remove trailing punctuation:
@@ -208,21 +191,6 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   return value;
 }
 
-
-function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
-  // NB #1! Actually 100/700 and 260/264 might have slightly different subfield, but those combos should have failed by now because of other rules (knock knock)
-  // NB #2! paired stuff also belongs to the key!
-
-
-  const required = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'required') || '';
-  const paired = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'paired') || '';
-  const keys = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'keys') || '';
-
-
-  //return mandatorySubfieldComparison(baseField, sourceField, keySubfieldsAsString);
-  return optionalSubfieldComparison(baseField, sourceField, keys, paired);
-}
-
 function hasCommonNominator(field1, field2, subfieldCode) {
   //nvdebug(`hasCommonNominator(${subfieldCode})? '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`, debugDev);
 
@@ -232,37 +200,6 @@ function hasCommonNominator(field1, field2, subfieldCode) {
 
   return subfields1.length > 0 && subfields2.length > 0;
 }
-
-
-/* // various optimizations still usable from here...
-function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString, pairSubfieldsAsString) {
-  // Here "optional subfield" means a subfield, that needs not to be present, but if present, it must be identical...
-  // (Think of a better name...)
-  // We use clones here, since these changes done below are not intented to appear on the actual records.
-  const field1 = cloneAndNormalizeFieldForComparison(originalBaseField);
-  const field2 = cloneAndNormalizeFieldForComparison(originalSourceField);
-
-  const subfieldArray = both.split('');
-
-  return subfieldArray.every(subfieldCode => testOptionalSubfield(originalBaseField.tag, subfieldCode));
-
-  /
-  function testOptionalSubfield(tag, subfieldCode) {
-    // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
-    if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
-      return true;
-    }
-
-    if (subfieldValues1.length === 1 && subfieldValues2.length === 1) {
-      return pairableValue(field1.tag, subfieldCode, subfieldValues1[0], subfieldValues2[0]) !== undefined;
-    }
-
-    return false;
-
-  }
-}
-  */
-
 
 function tagToRegexp(tag, internalMerge = false) {
   if (internalMerge && tag in counterpartRegexpsSingle) {
@@ -439,17 +376,39 @@ function getRelevantSubfieldValues(field, subfieldCode) {
   return values.filter(v => valueCarriesMeaning(field.tag, subfieldCode, v));
 }
 
+function pairableValue(tag, subfieldCode, value1, value2) {
+  // DEPRECATED CODE THAT CONTAINS USEFUL STUFF!
+  // This function could just return true or false.
+  // I thought of preference when I wrote this, but preference implemented *here* (modularity). mergeFields.js should handle preference.
+  if (withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode)) {
+    // 300$a "whatever" and "whatever (123 sivua)"
+    return value1;
+  }
+  if (partsAgree(value1, value2, tag, subfieldCode) || corporateNamesAgree(value1, value2, tag, subfieldCode)) {
+    // Pure baseness: here we assume that base's value1 is better than source's value2.
+    return value1;
+  }
+
+  return undefined;
+}
+
+
 function tightSubfieldMatch(field1, field2, subfieldCode, mustHave = false) {
   nvdebug(`${subfieldCode} F1: ${fieldToString(field1)}`);
   nvdebug(`${subfieldCode} F2: ${fieldToString(field2)}`);
   const values1 = getRelevantSubfieldValues(field1, subfieldCode);
   const values2 = getRelevantSubfieldValues(field2, subfieldCode);
+
+  if(!mustHave) {
+    if (values1.length === 0 || values2.length === 0) {
+      return true;
+    }
+  }
+
   if (values1.length !== values2.length) {
     return false;
   }
-  if(!mustHave && values1.length == 0) {
-    return true;
-  }
+
   nvdebug(`Compare \$${subfieldCode} contents:\n  '${values1.join("'\n  '")}'\nvs\n  '${values2.join("'\n  '")}'`);
   return values1.every(v => values2.includes(v)) && values2.every(v => values1.includes(v));
 }
@@ -460,7 +419,14 @@ function looseSubfieldMatch(field1, field2, subfieldCode) {
   if (values1.length === 0 || values2.length === 0) {
     return true;
   }
-  return tightSubfieldMatch(field1, field2, subfieldCode, false);
+  // Subsets are fine:
+  if (values1.every(v => values2.includes(v))) {
+    return true;
+  }
+  if (values2.every(v => values1.includes(v))) {
+    return true;
+  }
+  return false;
 }
 
 function semanticallyMergablePair(baseField, sourceField) {
@@ -515,33 +481,17 @@ function semanticallyMergablePair(baseField, sourceField) {
     return true;
   }
 
-  if(!tagIsRepeatable(field1.tag) || keys.length == 0) {
+  if(!tagIsRepeatable(field1.tag) || relevantKeys.length == 0) {
     return true;
   }
 
-  // Raison D'etre is long forgotten, but my educated guess about this: if 'key' is defined in merge constraints
+  // Raison d'être is long forgotten, but my educated guess about this: if 'key' is defined in merge constraints
   // for this field, then at least one of the subfield codes in 'key' must be present in both fields.
   // However, this is not necessarily right.
   if (relevantKeys.length > 0) {
-    if (field1.subfields.some(sf => relevantKeys.includes(sf.code)) || field2.subfields.some(sf => keys.includes(sf.code))) { 
+    if (field1.subfields.some(sf => relevantKeys.includes(sf.code)) || field2.subfields.some(sf => relevantKeys.includes(sf.code))) { 
       return relevantKeys.split('').some(code => hasCommonNominator(field1, field2, code));
     }
-  }
-
-  // Compare the remaining subsets...
-  // First check that name matches...
-  if (0 && uniqueKeyMatches(field1, field2)) {
-    nvdebug(`    name match: '${fieldToString(field1)}'`, debugDev);
-    return true;
-  }
-
-  // However, name mismatch is not critical! If Asteri ID matches, it's still a match! *NOT* sure whether this a good idea.
-  // 2023-01-24 Disable this. Caretaker can fix these later on. Not a job for merge. We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
-  // 2023-03-07: Enable this again!
-  // 2026-02-13: Uh! what happens when unique key mismatch is some place else?
-  if (0 && pairableFIN11(field1, field2)) {
-    nvdebug(`    fields match based on ASTERI $0'`, debugDev);
-    return true;
   }
 
   nvdebug(`    name mismatch (${keys}):`, debugDev);
