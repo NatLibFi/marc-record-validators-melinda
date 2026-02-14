@@ -2,5 +2,5 @@
   "description": "f300/2: merge f300 as they share a key subfield ($a)",
   "fix": true,
   "tagPattern": "^300$",
-  "only": true
+  "only": false
 }

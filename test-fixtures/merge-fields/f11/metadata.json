@@ -3,5 +3,5 @@
   "comment": "It is now caretaker's problem to fix the possibly erronous values.",
   "fix": true,
   "tagPattern": "^(700)$",
-  "only": true
+  "only": false
 }
