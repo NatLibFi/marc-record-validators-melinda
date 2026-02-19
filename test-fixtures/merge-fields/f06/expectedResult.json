@@ -1,6 +1,14 @@
 {
   "_validationOptions": {},
   "fields": [
+        { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Wuolijoki, Hella." },
+        { "code": "t", "value": "Heta Niskavuori." },
+        { "code": "k", "value": "Valikoima." },
+        { "code": "0", "value": "(FIN11)000063570"
+        }
+      ]
+    },
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
         { "code": "a", "value": "Wuolijoki, Hella." },
         { "code": "t", "value": "Heta Niskavuori." },

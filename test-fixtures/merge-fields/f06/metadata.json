@@ -1,5 +1,5 @@
 {
-  "description": "Merge name-title with missing language, but don't merge different languages",
+  "description": "Don't merge name-title with missing language, and don't merge different languages",
   "fix": true,
   "tagPattern": "^(700)$",
   "only": false
