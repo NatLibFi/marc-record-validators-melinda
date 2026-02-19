@@ -1,5 +1,5 @@
 {
-  "description": "f10 700$u",
+  "description": "f10 700$u - do not merge agent fields with different affiliation",
   "fix": true,
   "tagPattern": "^(700)$",
   "only": false
