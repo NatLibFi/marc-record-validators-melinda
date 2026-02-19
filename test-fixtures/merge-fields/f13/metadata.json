@@ -1,0 +1,6 @@
+{
+  "description": "Merge based on $i and $l semantic similarities",
+  "fix": true,
+  "tagPattern": "^(700)$",
+  "only": false
+}
