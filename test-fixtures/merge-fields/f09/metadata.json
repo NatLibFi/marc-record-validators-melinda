@@ -1,7 +1,6 @@
 {
-  "description": "08: 040",
+  "description": "f09: two 041 fields don't merge as there's no common denominator",
   "fix": true,
-  "tagPattern": "^(040)$",
-  "comment": "Not the best example. Note that source record's f040$a => f040$d is done in preprocessing, and not handled here. As merging is ok (no contraints apply), and 040$a is a (NR), the öatter 040$a get's dropped",
+  "tagPattern": "^(041)$",
   "only": false
 }
