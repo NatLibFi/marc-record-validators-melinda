@@ -3,17 +3,16 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:me
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-// Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
-
-// "key" is an unique key that must match (be absent or exist+be identical) in both.
-// "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined.
-// Thus paired is more st
+// "required": both fields bust have the subfield and the value must be same.
+// "paired": subfield bust either exists (with value match) or not exist in both fields (negative XOR). Sort of an optional version of 'required'
+// "key": one or both fields lack the subfield OR both fields have it and theor values match.
+// There are typically NR subfields but the system should support multival repeatable subfields. However, (R) support is considered experimental.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 
 // NB! not all X00 fields have, say, $x subfield. However, we can still share them...
 // $h is non-1XX?, $i is 7XX only, $w is 8XX only...
-const keyX00 =    'abcjklnoqrstuwx'; // Shared: $abcdefg...
+const keyX00 = 'abcjklnoqrstuwx'; // Shared: $abcdefg...
 const keyX10 = 'abcdfghklnoprstuwx';
 const keyX11 = 'acdefghklnpqstuwx';
 const keyX30 = 'adfghklmnoprstvwxyz';
@@ -43,7 +42,7 @@ const mergeConstraints = [
   {'tag': '037', 'required': 'b', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
-  {'tag': '041', 'required': '', 'paired': '2', 'key': ''}, // Don't put $2 in 'key'! hasCommonNominator() would get into trouble with it...
+  {'tag': '041', 'required': '', 'paired': '2', 'key': 'ad'}, // Don't put $2 in 'key'! hasCommonNominator() would get into trouble with it...
   {'tag': '042', 'required': '', 'key': ''}, // Contents (supposedly $a subfields) can be anything, and still merge... (042 $a foo + 042 $b bar is perfectly mergeable)
   {'tag': '043', 'required': 'a', 'key': 'abc'},
   {'tag': '044', 'required': '', 'key': 'abc', 'paired': 'abc'},
