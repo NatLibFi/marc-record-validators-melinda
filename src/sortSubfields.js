@@ -70,7 +70,7 @@ export default function (defaultTagPattern) {
 const sortOrderForX00 = ['i', 'a', 'b', 'q', 'c', 'd', 'e', 't', 'u', 'l', 'f', 'x', 'y', 'z', '0', '1', '5', '9']; // skip $g. Can't remember why, though...
 const sortOrderForX10 = ['i', 'a', 'b', 't', 'n', 'c', 'e', 'v', 'w', 'x', 'y', 'z', '0', '1', '5', '9']; // somewhat iffy
 const sortOrderForX11 = ['a', 'n', 'd', 'c', 'e', 'g', 'j', '0', '1', '5', '9'];
-const sortOrderFor7XX = ['8', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w', '0', '1', 'l', '9', '5'];
+const sortOrderFor7XXLinkingEntries = ['8', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w', '0', '1', 'l', '9', '5'];
 const sortOrderFor246 = ['i', 'a', 'b', 'n', 'p', 'f', '5', '9']; // Used by field 946 as well
 
 // List *only* exceptional order here. Otherwise default order is used.
@@ -107,22 +107,22 @@ const subfieldSortOrder = [
   {'tag': '700', 'sortOrder': sortOrderForX00},
   {'tag': '710', 'sortOrder': sortOrderForX10},
   {'tag': '711', 'sortOrder': sortOrderForX11},
-  {'tag': '760', 'sortOrder': sortOrderFor7XX},
-  {'tag': '762', 'sortOrder': sortOrderFor7XX},
-  {'tag': '765', 'sortOrder': sortOrderFor7XX},
-  {'tag': '767', 'sortOrder': sortOrderFor7XX},
-  {'tag': '770', 'sortOrder': sortOrderFor7XX},
-  {'tag': '772', 'sortOrder': sortOrderFor7XX},
-  {'tag': '773', 'sortOrder': sortOrderFor7XX},
-  {'tag': '774', 'sortOrder': sortOrderFor7XX},
-  {'tag': '775', 'sortOrder': sortOrderFor7XX},
-  {'tag': '776', 'sortOrder': sortOrderFor7XX},
-  {'tag': '777', 'sortOrder': sortOrderFor7XX},
-  {'tag': '780', 'sortOrder': sortOrderFor7XX},
-  {'tag': '785', 'sortOrder': sortOrderFor7XX},
-  {'tag': '786', 'sortOrder': sortOrderFor7XX},
-  {'tag': '787', 'sortOrder': sortOrderFor7XX},
-  {'tag': '788', 'sortOrder': sortOrderFor7XX},
+  {'tag': '760', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '762', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '765', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '767', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '770', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '772', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '773', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '774', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '775', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '776', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '777', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '780', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '785', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '786', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '787', 'sortOrder': sortOrderFor7XXLinkingEntries},
+  {'tag': '788', 'sortOrder': sortOrderFor7XXLinkingEntries},
   {'tag': '800', 'sortOrder': sortOrderForX00},
   {'tag': '810', 'sortOrder': sortOrderForX10},
   {'tag': '811', 'sortOrder': sortOrderForX11},
