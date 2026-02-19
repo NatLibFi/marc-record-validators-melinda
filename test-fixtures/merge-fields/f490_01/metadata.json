@@ -2,5 +2,5 @@
   "description": "f490/01: merge f490",
   "fix": true,
   "tagPattern": "^490$",
-  "only": true
+  "only": false
 }
