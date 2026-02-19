@@ -219,7 +219,7 @@ export function fieldGetOccurrenceNumberPairs(field, candFields) {
   //nvdebug(`  Trying to finds pair for ${fieldToString(field)} in ${candFields.length} fields`);
   const pairs = candFields.filter(otherField => isSubfield6Pair(field, otherField));
   if (pairs.length === 0) {
-    nvdebug(`NO PAIRS FOUND FOR '${fieldToString(field)}'`);
+    //nvdebug(`NO PAIRS FOUND FOR '${fieldToString(field)}'`);
     return pairs;
   }
   //nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`);
