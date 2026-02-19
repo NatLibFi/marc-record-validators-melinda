@@ -9,7 +9,7 @@ import {getMergeConstraintsForTag} from './mergeConstraints.js';
 import {controlSubfieldsPermitMerge} from './controlSubfields.js';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator.js';
 import {partsAgree} from '../normalizeSubfieldValueForComparison.js';
-import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge.js';
+import {getSynonym, normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge.js';
 import {provenanceSubfieldsPermitMerge} from './dataProvenance.js';
 
 // NB! We are using internal prefix '(FIN11)' instead of global (FI-ASTERI-N) here. The latter would be better but would require some work and testing.
@@ -159,7 +159,7 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
     value = removeCopyright(value);
   }
   value = value.replace(/http:\/\//ug, 'https://'); // MET-501: http vs https
-  value = normalizeForSamenessCheck(tag, subfieldCode, value);
+  value = getSynonym(tag, subfieldCode, value);
 
   return value;
 }
@@ -259,7 +259,7 @@ function syntacticallyMergablePair(baseField, sourceField, config) {
   // Stuff of Hacks! Eg. require that both fields either have or have not X00$t:
   const subfieldCodeThatFailsToPair = getUnbalancedPairedSubfieldCode(baseField, sourceField);
   if (subfieldCodeThatFailsToPair) {
-    nvdebug(`required subfield pair check failed (code: '${subfieldCodeThatFailsToPair}).`, debugDev);
+    nvdebug(`non-mergable (reason: required subfield pair check failed for code: '${subfieldCodeThatFailsToPair}')`, debugDev);
     return false;
   }
 
@@ -268,6 +268,7 @@ function syntacticallyMergablePair(baseField, sourceField, config) {
 
 function mergablePair(baseField, sourceField, config) {
   if (!syntacticallyMergablePair(baseField, sourceField, config)) {
+    nvdebug('non-mergable (reason: syntax)', debugDev);
     return false;
   }
 
@@ -390,7 +391,7 @@ function tightSubfieldMatch(field1, field2, subfieldCode, mustHave = false) {
     return false;
   }
 
-  nvdebug(`Compare \$${subfieldCode} contents:\n  '${values1.join("'\n  '")}'\nvs\n  '${values2.join("'\n  '")}'`);
+  nvdebug(`Compare \$${subfieldCode} contents:\n  '${values1.join("'\n  '")}' vs\n  '${values2.join("'\n  '")}'`);
   return values1.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values2)) && values2.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values1));
 }
 
