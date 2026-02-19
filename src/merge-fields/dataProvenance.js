@@ -7,18 +7,18 @@ export function provenanceSubfieldsPermitMerge(baseField, sourceField) {
     if (!baseField.subfields) {
         return true;
     }
-    const provinanceSubfieldCode = tagToDataProvenanceSubfieldCode(baseField.tag);
+    const provenanceSubfieldCode = tagToDataProvenanceSubfieldCode(baseField.tag);
 
-    if (provinanceSubfieldCode === undefined) {
+    if (provenanceSubfieldCode === undefined) {
         return false;
     }
 
-    const baseProvinanceSubfields = baseField.subfields.filter(sf => sf.code === provinanceSubfieldCode);
-    const sourceProvinanceSubfields = sourceField.subfields.filter(sf => sf.code === provinanceSubfieldCode);
+    const baseProvenanceSubfields = baseField.subfields.filter(sf => sf.code === provenanceSubfieldCode);
+    const sourceProvenanceSubfields = sourceField.subfields.filter(sf => sf.code === provenanceSubfieldCode);
 
     // Currently we just compare two arrays. Later on we might do something more sophisticated with specific $7 data provenance category/relationship codes,
     // or actual values.
 
-    return subfieldArraysContainSameData(baseProvinanceSubfields, sourceProvinanceSubfields);
+    return subfieldArraysContainSameData(baseProvenanceSubfields, sourceProvenanceSubfields);
 
 }
