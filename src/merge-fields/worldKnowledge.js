@@ -49,7 +49,7 @@ export function getSynonyms(term, tag = undefined, subfieldCode = undefined, pre
   const matchingSynonyms = synonymsWithTagAndCode.filter(s => termAndLangMatch(s));
 
   if (preferredLanguage && matchingSynonyms.length > 0) {
-    console.log(`USING PREFERRED LANG '${preferredLanguage}' for TERM '${term}':\n${JSON.stringify(matchingSynonyms)}`);
+    //console.log(`USING PREFERRED LANG '${preferredLanguage}' for TERM '${term}':\n${JSON.stringify(matchingSynonyms)}`);
     return matchingSynonyms.map(s => s[preferredLanguage]);
   }
   return matchingSynonyms;
