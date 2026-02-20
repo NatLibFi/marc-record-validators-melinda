@@ -49,7 +49,7 @@ export default function (defaultTagPattern = undefined) {
   }
 
   function fix(record, config = undefined) {
-    const config2 = config || defaultConfig;
+    const config2 = config || defaultConfig.mergeConfiguration;
     record.internalMerge = true;
     mergeFieldsWithinRecord(record, config2);
     delete record.internalMerge;
