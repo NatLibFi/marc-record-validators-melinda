@@ -30,9 +30,10 @@ export const mergeConfig = {
       '246': {'0': 1, '1': 1, '2': 1, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1, '8': 1, ' ': 2},
       '363': {'0': 1, '1': 1, ' ': 2},
       '382': {'0': 1, '1': 1, ' ': 2},
-      '730': ['2', ' ']
+      '730': ['2', ' '] // If this is ok, it ok for 700, 710 and 711 as well...
     },
     'comment #4': 'List indicators that do not block merge here. Non-filing indicators do not prevent field merge (their support is hard-coded). They are mainly listed here as an example.',
+    // Actually I wouldn't want to ignore X00ind1=3 vs other values such as IND1=1... However, this is not currently supported.
     'ignoreIndicator1': ['100', '110', '111', '130', '210', '242', '245', '246', '247', '307', '490', '505', '506', '510', '511', '516', '520', '521', '522', '524', '526', '583', '586', '600', '610', '630', '650', '651', '655', '700', '710', '730', '740', '760', '762', '765', '767', '770', '772', '773', '774', '775', '776', '777', '780', '785', '786', '787', '788', '800', '810'],
     'ignoreIndicator2': ['017', '222', '240', '242', '243', '245', '760', '762', '765', '767', '770', '773', '774', '775', '776', '777', '786', '787', '788', '830'],
     'comment #5': 'If one indicator has value, and the other has not, it does not necessarily mean mismatch',
