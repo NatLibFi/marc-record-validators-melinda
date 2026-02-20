@@ -160,6 +160,8 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   }
   value = value.replace(/http:\/\//ug, 'https://'); // MET-501: http vs https
   value = getSynonym(tag, subfieldCode, value);
+  value = normalizeForSamenessCheck(tag, subfieldCode, value); // Better to remove trailing punctuation before calling this...
+
 
   return value;
 }
@@ -307,7 +309,7 @@ function removeNameRelatedSubfieldCodes(codestring, tag) {
 }
 
 function pairableIdentifier(field1, field2, prefix) {
-  const normalizedPrefix = normalizeForSamenessCheck(field1.tag, '0', prefix);
+  const normalizedPrefix = prefix;
   nvdebug(`PREF '${prefix}' => '${normalizedPrefix}'`);
 
   const prefixLength = normalizedPrefix.length;
@@ -391,7 +393,7 @@ function tightSubfieldMatch(field1, field2, subfieldCode, mustHave = false) {
     return false;
   }
 
-  nvdebug(`Compare \$${subfieldCode} contents:\n  '${values1.join("'\n  '")}' vs\n  '${values2.join("'\n  '")}'`);
+  nvdebug(`Compare $${subfieldCode} contents:\n  '${values1.join("'\n  '")}' vs\n  '${values2.join("'\n  '")}'`);
   return values1.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values2)) && values2.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values1));
 }
 
