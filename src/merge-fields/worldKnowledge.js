@@ -1,4 +1,4 @@
-import {nvdebug} from '../utils.js';
+//import {nvdebug} from '../utils.js';
 
 // NB! This file (or at least synonyms) should eventually be moved away from merge to '..'.
 
@@ -79,7 +79,7 @@ export function getSynonyms(term, tag = undefined, subfieldCode = undefined, pre
 export function getSynonym(tag, subfieldCode, originalValue) {
   const finnishForm = getSynonyms(originalValue, tag, subfieldCode, 'fin');
   if (finnishForm.length === 1) {
-    nvdebug(`FINNISH FORM FOR ${tag}$${subfieldCode}: '${finnishForm[0]}'`);
+    //nvdebug(`FINNISH FORM FOR ${tag}$${subfieldCode}: '${finnishForm[0]}'`);
     return finnishForm[0];
   }
   return originalValue;
@@ -90,7 +90,7 @@ export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
   // Repeatable subfields are currently handled in mergeSubfields.js. Only non-repeatable subfields block field merge,
   // (This split is suboptiomal... Minimum fix: make this distinction cleaner...)
 
-  nvdebug(`TRYING TO DO ${tag}$${subfieldCode} '${originalValue}'`);
+  //nvdebug(`TRYING TO DO ${tag}$${subfieldCode} '${originalValue}'`);
   originalValue = getSynonym(tag, subfieldCode, originalValue);
 
   if (subfieldCode === 'a' && ['100', '600', '700', '800'].includes(tag)) { // "Etunimi Sukunimi"...
