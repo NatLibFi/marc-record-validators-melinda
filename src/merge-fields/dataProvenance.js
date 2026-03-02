@@ -1,41 +1,24 @@
 // See https://www.loc.gov/marc/bibliographic/bdapndxj.html for details
 
-import {subfieldArraysContainSameData} from "../utils.js";
-
-export function tagToDataProvenanceSubfieldCode(tag) {
-    if ( ['533', '800', '810', '811', '830'].includes(tag)) {
-        return 'y';
-    }
-    if ( tag === '856' || tag === '857' ) {
-        return 'e';
-    }
-
-    if ( tag.match(/^7[678]/u) ) {
-        return 'l'
-    }
-
-    if ( tag.match(/^00/u)) {
-        return undefined;
-    }
-    return '7';
-}
-
+import {subfieldArraysContainSameData} from '../utils.js';
+import {tagToDataProvenanceSubfieldCode} from '../dataProvenanceUtils.js';
 
 export function provenanceSubfieldsPermitMerge(baseField, sourceField) {
-    const provinanceSubfieldCode = tagToDataProvenanceSubfieldCode(baseField.tag);
     if (!baseField.subfields) {
         return true;
     }
-    if (provinanceSubfieldCode === undefined) {
+    const provenanceSubfieldCode = tagToDataProvenanceSubfieldCode(baseField.tag);
+
+    if (provenanceSubfieldCode === undefined) {
         return false;
     }
 
-    const baseProvinanceSubfields = baseField.subfields.filter(sf => sf.code === provinanceSubfieldCode);
-    const sourceProvinanceSubfields = sourceField.subfields.filter(sf => sf.code === provinanceSubfieldCode);
+    const baseProvenanceSubfields = baseField.subfields.filter(sf => sf.code === provenanceSubfieldCode);
+    const sourceProvenanceSubfields = sourceField.subfields.filter(sf => sf.code === provenanceSubfieldCode);
 
     // Currently we just compare two arrays. Later on we might do something more sophisticated with specific $7 data provenance category/relationship codes,
     // or actual values.
 
-    return subfieldArraysContainSameData(baseProvinanceSubfields, sourceProvinanceSubfields);
+    return subfieldArraysContainSameData(baseProvenanceSubfields, sourceProvenanceSubfields);
 
 }

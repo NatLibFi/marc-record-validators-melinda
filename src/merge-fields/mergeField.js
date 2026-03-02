@@ -2,18 +2,15 @@
 import createDebugLogger from 'debug';
 import {fieldToString, fieldsToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from '../utils.js';
 import {fieldGetOccurrenceNumberPairs} from '../subfield6Utils.js';
-import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison.js';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '../normalizeFieldForComparison.js';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield.js';
 import {mergeIndicators} from './mergeIndicator.js';
 import {mergableTag} from './mergableTag.js';
 import {getCounterpart} from './counterpartField.js';
+import {isEnnakkotietoSubfield} from '../prepublicationUtils.js';
 //import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 //import {postprocessRecords} from './mergeOrAddPostprocess.js';
 //import {preprocessBeforeAdd} from './processFilter.js';
-
-//import fs from 'fs';
-//import path from 'path';
-
 
 //const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
@@ -25,7 +22,7 @@ const debugDev = debug.extend('dev');
 
 // NB! Can we do this via config.json?
 function removeEnnakkotieto(field) {
-  const tmp = field.subfields.filter(subfield => !isEnnakkotietoSubfieldG(subfield));
+  const tmp = field.subfields.filter(subfield => !isEnnakkotietoSubfield(subfield));
   // remove only iff some other subfield remains
   if (tmp.length > 0) {
     field.subfields = tmp;
@@ -59,7 +56,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
   // (If our prepub normalizations are ok, this should not be needed.
   //  However, it's simple and works well enough, so let's keep it here.)
-  if (baseField.subfields?.find(sf => isEnnakkotietoSubfieldG(sf)) && !sourceField.subfields?.find(sf => isEnnakkotietoSubfieldG(sf))) {
+  if (baseField.subfields?.find(sf => isEnnakkotietoSubfield(sf)) && !sourceField.subfields?.find(sf => isEnnakkotietoSubfield(sf))) {
     removeEnnakkotieto(baseField);
     baseField.merged = 1;
   }

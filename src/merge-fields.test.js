@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './merge-fields/index.js';
 import {READERS} from '@natlibfi/fixura';
@@ -46,5 +46,5 @@ async function callback({getFixture, fix = false, tagPattern = false}) {
   }
 
   await validator.fix(record);
-  assert.deepEqual(record, expectedResult);
+  assert.deepEqual(record, new MarcRecord(expectedResult));
 }

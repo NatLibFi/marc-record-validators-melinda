@@ -3,7 +3,7 @@ import clone from 'clone';
 import XRegExp from 'xregexp';
 import * as iso9 from '@natlibfi/iso9-1995';
 import * as sfs4900 from '@natlibfi/sfs-4900';
-import {fieldHasSubfield, fieldToString, fieldsToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldHasSubfield, fieldToString, fieldsToString, isContentSubfieldCode, nvdebug} from './utils.js';
 import {fieldGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, recordGetMaxSubfield6OccurrenceNumberAsInteger, resetSubfield6Tag} from './subfield6Utils.js';
 import {default as sortFields} from './sortFields.js';
 import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers.js';
@@ -111,11 +111,11 @@ export default function (config = {}) {
   }
 
   function fieldContainsCyrillicCharacters(field) { // based on melinda-ui-cyrillux
-    return field.subfields && field.subfields.some(sf => subfieldRequiresTransliteration(sf));
+    return field.subfields && field.subfields.some(sf => subfieldRequiresTransliteration(sf, field.tag));
   }
 
-  function subfieldRequiresTransliteration(subfield) {
-    if (isControlSubfieldCode(subfield.code)) {
+  function subfieldRequiresTransliteration(subfield, tag = undefined) {
+    if (!isContentSubfieldCode(subfield.code, tag)) {
       return false;
     }
     return containsCyrillicCharacters(subfield.value);
@@ -158,8 +158,8 @@ export default function (config = {}) {
   }
 
 
-  function mapSubfieldToIso9(subfield) {
-    if (!subfieldRequiresTransliteration(subfield)) {
+  function mapSubfieldToIso9(subfield, tag) {
+    if (!subfieldRequiresTransliteration(subfield, tag)) {
       return {code: subfield.code, value: subfield.value}; // just clone
     }
 
@@ -168,9 +168,9 @@ export default function (config = {}) {
     return {code: subfield.code, value: conversionResult.result};
   }
 
-  function mapSubfieldToSfs4900(subfield, lang = 'rus') {
+  function mapSubfieldToSfs4900(subfield, tag, lang = 'rus') {
     const inputLang = lang === 'ukr' ? 'ukr' : 'rus'; // Support 'ukr' and 'rus', default to 'rus'
-    if (!subfieldRequiresTransliteration(subfield)) {
+    if (!subfieldRequiresTransliteration(subfield, tag)) {
       return {code: subfield.code, value: subfield.value};
     }
     const conversionResult = sfs4900.convertToLatin(subfield.value, inputLang);
@@ -190,7 +190,7 @@ export default function (config = {}) {
     const transliterationFunc = iso9 ? mapSubfieldToIso9 : mapSubfieldToSfs4900;
 
     // NB! iso9 won't use lang
-    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => transliterationFunc(sf, lang));
+    const subfields = field.subfields.filter(sf => sf.code !== '6').map(sf => transliterationFunc(sf, field.tag, lang));
 
     const newField = {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [subfield6, ...subfields, ...subfield9]};
 
@@ -216,7 +216,7 @@ export default function (config = {}) {
     }
     // Just converts the field to ISO-9 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
     if (!config.retainCyrillic && !config.preferSFS4900) {
-      const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf));
+      const subfields = field.subfields.map(sf => mapSubfieldToIso9(sf, field.tag));
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 
@@ -230,7 +230,7 @@ export default function (config = {}) {
     }
     // Just converts the field to SFS-4900 latinitsa, does not create any field-880s, so don't bother with $6 or $9 either
     if (!config.retainCyrillic && config.preferSFS4900) {
-      const subfields = field.subfields.map(sf => mapSubfieldToSfs4900(sf, lang));
+      const subfields = field.subfields.map(sf => mapSubfieldToSfs4900(sf, field.tag, lang));
       return {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields};
     }
 

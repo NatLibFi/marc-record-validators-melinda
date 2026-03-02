@@ -3,19 +3,20 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:me
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-// Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
-
-// "key" is an unique key that must match (be absent or exist+be identical) in both.
-// "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined.
+// "required": both fields bust have the subfield and the value must be same.
+// "paired": subfield bust either exists (with value match) or not exist in both fields (negative XOR). Sort of an optional version of 'required'
+// "key": one or both fields lack the subfield OR both fields have it and theor values match.
+// There are typically NR subfields but the system should support multival repeatable subfields. However, (R) support is considered experimental.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 
 // NB! not all X00 fields have, say, $x subfield. However, we can still share them...
 // $h is non-1XX?, $i is 7XX only, $w is 8XX only...
-const keyX00 = 'abcjloqrtuwx'; // Shared: $abcdefg...
-const keyX10 = 'abcdfghlnoprstuwx';
-const keyX11 = 'acdefghlnpqstuwx';
+const keyX00 = 'abcjklnoqrstuwx'; // Shared: $abcdefg...
+const keyX10 = 'abcdfghklnoprstuwx';
+const keyX11 = 'acdefghklnpqstuwx';
 const keyX30 = 'adfghklmnoprstvwxyz';
+const pairedTitleSubfields = 'iklmnoprst'
 
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
@@ -41,8 +42,8 @@ const mergeConstraints = [
   {'tag': '037', 'required': 'b', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
-  {'tag': '041', 'required': '', 'paired': '2', 'key': ''}, // Don't put $2 in 'key'! hasCommonNominator() would get into trouble with it...
-  {'tag': '042', 'required': 'a', 'key': ''}, // NB: preprocessor hacks applied
+  {'tag': '041', 'required': '', 'paired': '2', 'key': 'ad'}, // Don't put $2 in 'key'! hasCommonNominator() would get into trouble with it...
+  {'tag': '042', 'required': '', 'key': ''}, // Contents (supposedly $a subfields) can be anything, and still merge... (042 $a foo + 042 $b bar is perfectly mergeable)
   {'tag': '043', 'required': 'a', 'key': 'abc'},
   {'tag': '044', 'required': '', 'key': 'abc', 'paired': 'abc'},
   {'tag': '045', 'required': '', 'key': 'abc', 'paired': 'abc'}, // (ET) // 045 is problematic either-$a or $b or $c...
@@ -69,11 +70,11 @@ const mergeConstraints = [
   {'tag': '086', 'required': '', 'paired': 'a', 'key': 'a'},
   {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
-  {'tag': '100', 'required': 'a', 'paired': 't', 'key': keyX00},
-  {'tag': '110', 'required': 'a', 'paired': 'bt', 'key': keyX10},
-  {'tag': '111', 'required': 'a', 'paired': 't', 'key': keyX11},
+  {'tag': '100', 'required': 'a', 'paired': `b${pairedTitleSubfields}`, 'key': keyX00},
+  {'tag': '110', 'required': 'a', 'paired': `b${pairedTitleSubfields}`, 'key': keyX10},
+  {'tag': '111', 'required': 'a', 'paired': pairedTitleSubfields, 'key': keyX11},
   // NB! 130 has no name part, key is used for title part
-  {'tag': '130', 'required': 'a', 'key': keyX30},
+  {'tag': '130', 'required': 'a', paired: pairedTitleSubfields, 'key': keyX30},
   {'tag': '210', 'required': 'a', 'key': 'ab'},
   {'tag': '222', 'required': 'a', 'key': 'ab'},
   {'tag': '240', 'required': 'a', 'key': 'adfghklmnoprs'},
@@ -95,7 +96,7 @@ const mergeConstraints = [
   //{'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc'}, // NB "S.l." normalizations?" not implemented
   {'tag': '264', 'required': '', 'key': 'abc'}, // NB "S.l." normalizations?" not implemented
   // SKIP TAG 270 ON PURPOSE! Melinda's N=43.
-  {'tag': '300', 'required': 'a', 'key': 'abcefg'},
+  {'tag': '300', 'required': '', 'key': 'abcefg'},
   {'tag': '306', 'required': 'a', 'key': 'a'},
   // SKIP TAG 307 ON PURPOSE! N=0
   {'tag': '310', 'required': 'a', 'key': 'ab'},
@@ -132,7 +133,7 @@ const mergeConstraints = [
   {'tag': '385', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
   {'tag': '386', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
   {'tag': '388', 'required': 'a', 'key': 'a'},
-  {'tag': '490', 'required': 'a', 'key': 'axvl'},
+  {'tag': '490', 'required': '', 'key': 'axvl'},
   {'tag': '500', 'required': 'a', 'key': 'a'},
   {'tag': '501', 'required': 'a', 'key': 'a'},
   {'tag': '502', 'required': 'a', 'key': 'abcdgo'},
@@ -195,10 +196,10 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': 'tvxyz', 'key': keyX00},
-  {'tag': '610', 'required': 'a', 'paired': 'btvxyz', 'key': keyX10},
-  {'tag': '611', 'required': 'a', 'paired': 'tvxyz', 'key': keyX11},
-  {'tag': '630', 'required': 'a', 'paired': 'atvxyz', 'key': keyX30},
+  {'tag': '600', 'required': 'a', 'paired': `b${pairedTitleSubfields}vxyz`, 'key': keyX00},
+  {'tag': '610', 'required': 'a', 'paired': `b${pairedTitleSubfields}vxyz`, 'key': keyX10},
+  {'tag': '611', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX11},
+  {'tag': '630', 'required': 'a', 'paired': `${pairedTitleSubfields}vxyz`, 'key': keyX30},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'paired': 'avxyz', 'key': 'acdgvxyz02'},
   {'tag': '648', 'required': 'a', 'paired': 'avxyz', 'key': 'avxyz02'},
@@ -212,12 +213,12 @@ const mergeConstraints = [
   {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
   {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
   {'tag': '688', 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': 't', 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100
-  {'tag': '710', 'required': 'a', 'paired': 'bt', 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
-  {'tag': '711', 'required': 'a', 'paired': 'cdeflns', 'key': keyX11}, // h/i/s/x are missing from 711
+  {'tag': '700', 'required': 'a', 'paired': `b${pairedTitleSubfields}x`, 'key': keyX00}, // h/i/m/o/r/s/x are missing from 100, NB! 's' is repeatable, but we are not merging them here!
+  {'tag': '710', 'required': 'a', 'paired': `b${pairedTitleSubfields}x`, 'key': keyX10}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '711', 'required': 'a', 'paired': `cdef${pairedTitleSubfields}x`, 'key': keyX11}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
-  {'tag': '730', 'required': 'a', 'key': keyX30}, // NB: 130->730 magic subfields might not agree...
+  {'tag': '730', 'required': 'a', 'paired': `df${pairedTitleSubfields}x`, 'key': keyX30}, // NB: 130->730 magic subfields might not agree...
   {'tag': '740', 'required': 'a', 'key': 'ahnp'},
   {'tag': '751', 'required': 'a', 'key': 'a'}, // N=11, kaikissa pelkkä $a
   {'tag': '752', 'required': '', 'key': 'abcdefgh'}, // N=12234
@@ -242,7 +243,7 @@ const mergeConstraints = [
   {'tag': '786', 'required': '', 'paired': 'abcrstuxyz', 'key': 'abcdhijmprstuxyz4'},
   {'tag': '787', 'required': '', 'paired': 'abcdhmstuxyz4'},
   {'tag': '788', 'required': '', 'paired': 'stx', 'key': 'abdestx'},
-  {'tag': '800', 'required': 'a', 'paired': 't', 'key': keyX00},
+  {'tag': '800', 'required': 'a', 'paired': 'bt', 'key': keyX00},
   {'tag': '810', 'required': 'a', 'paired': 'bt', 'key': keyX10},
   {'tag': '811', 'required': 'a', 'paired': 't', 'key': keyX11},
   {'tag': '830', 'required': 'a', 'key': keyX30},
@@ -289,22 +290,26 @@ const mergeConstraints = [
   {'tag': 'SID', 'required': ''}
 ];
 
-function constraintToValue(tagsConstraints, constraintName) {
-  if (constraintName in tagsConstraints) {
-    return tagsConstraints[constraintName];
-  }
-  return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
-}
 
-export function getMergeConstraintsForTag(tag, constraintName) {
+export function getMergeConstraintsForTag(tag, constraintName = undefined) {
   const tagsConstraintsArray = mergeConstraints.filter(entry => tag === entry.tag);
   if (tagsConstraintsArray.length === 0) {
-    debugDev(`WARNING\tNo key found for ${tag}. Returning NULL!`);
-    return null;
+    debugDev(`WARNING\tNo key found for ${tag}!`);
+  }
+  if (!constraintName) {
+    return tagsConstraintsArray;
   }
   // NB! should we support multiple contains for a field? Eg. 505$a vs 505($tg)+
   if (tagsConstraintsArray.length > 1) {
     debugDev(`WARNING\tMultiple values for '${constraintName}' (N=${tagsConstraintsArray.length}) found in ${tag}. Using first values.`);
   }
-  return constraintToValue(tagsConstraintsArray[0], constraintName);
+  //return constraintToValue(tagsConstraintsArray[0], constraintName);
+  return tagsConstraintsArray.map(c => constraintToValue(c, constraintName));
+
+  function constraintToValue(tagsConstraints, constraintName) {
+    if (constraintName in tagsConstraints) {
+      return tagsConstraints[constraintName];
+    }
+    return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
+  }
 }

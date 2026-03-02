@@ -1,0 +1,12 @@
+{
+  "_validationOptions": {},
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "010", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "testing" } ] },
+
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "FI-WHATEVER" },
+      { "code": "d", "value": "FI-NAL" }
+    ] }
+  ]
+}

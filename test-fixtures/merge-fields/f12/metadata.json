@@ -1,0 +1,6 @@
+{
+  "description": "Merge based on corresponding $i semantics",
+  "fix": true,
+  "tagPattern": "^(700)$",
+  "only": false
+}

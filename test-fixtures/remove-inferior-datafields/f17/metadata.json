@@ -1,0 +1,5 @@
+{
+  "description": "f17: handle new $7 province ennakkotieto",
+  "fix": true,
+  "only": false
+}

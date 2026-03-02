@@ -1,0 +1,6 @@
+{
+  "description": "Name-title: test problematic case",
+  "fix": true,
+  "tagPattern": "^(700)$",
+  "only": false
+}

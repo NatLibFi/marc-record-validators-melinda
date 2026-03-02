@@ -1,0 +1,25 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "swe" } ] },
+
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "i", "value": "Sisältää:" },
+        { "code": "a", "value": "Wuolijoki, Hella." },
+        { "code": "t", "value": "Eri $i ei yhdisty." },
+        { "code": "0", "value": "(FIN11)000063570"
+        }
+      ]
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "i", "value": "Sisältää (teos):" },
+        { "code": "a", "value": "Wuolijoki, Hella." },
+        { "code": "t", "value": "Eri $i ei yhdisty." },
+        { "code": "0", "value": "(FIN11)000063570"
+        }
+      ]
+    }
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}

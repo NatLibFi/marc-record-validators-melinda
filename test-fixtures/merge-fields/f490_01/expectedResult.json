@@ -1,0 +1,13 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "490", "ind1": "0", "ind2": "a", "subfields": [
+      { "code": "a", "value": "[Jesse-sarja] ;" },
+      { "code": "a", "value": "Jesse ;" },
+      { "code": "a", "value": "[Jesse-sarja]" },
+      { "code": "v", "value": "[31]" }
+    ] }
+  ],
+
+  "_validationOptions": {}
+}
