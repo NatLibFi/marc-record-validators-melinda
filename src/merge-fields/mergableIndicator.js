@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from '../utils.js';
+import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value} from '../utils.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
@@ -20,7 +20,6 @@ function marc21NoNeedToCheckInd1(tag) {
 
 function marc21NoNeedToCheckInd2(tag) {
   const cands = marc21GetTagsLegalInd2Value(tag);
-  nvdebug(`CHECK IND2 ${typeof cands} FOR ${tag}`, debugDev);
   if (typeof cands === 'string') { // single cand
     return true;
   }

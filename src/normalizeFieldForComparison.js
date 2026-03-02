@@ -8,25 +8,17 @@
 */
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation2.js';
-import {fieldToString, isControlSubfieldCode} from './utils.js';
+import {fieldToString, isContentSubfieldCode} from './utils.js';
 
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from './normalize-identifiers.js';
 import createDebugLogger from 'debug';
 import {normalizePartData, subfieldContainsPartData} from './normalizeSubfieldValueForComparison.js';
+import {isEnnakkotietoSubfield} from './prepublicationUtils.js';
+import {getSynonym} from './merge-fields/worldKnowledge.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeFieldForComparison');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
-
-export function isEnnakkotietoSubfieldG(subfield) {
-  if (valuelessSubfield(subfield)) {
-    return false;
-  }
-  if (subfield.code !== 'g') {
-    return false;
-  }
-  return subfield.value.match(/^ENNAKKOTIETO\.?$/gui);
-}
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
@@ -60,7 +52,7 @@ function containsHumanName(tag = '???', subfieldCode = undefined) {
 }
 
 function containsCorporateName(tag = '???', subfieldCode = undefined) {
-  // NB! This set is for bibs! Auth has 400... What else...
+  // NB! This set is for bibs! Auth has 410... What else...
   if (['110', '610', '710', '810'].includes(tag)) {
     if (subfieldCode === undefined || subfieldCode === 'a') {
       return true;
@@ -72,15 +64,15 @@ function containsCorporateName(tag = '???', subfieldCode = undefined) {
 
 function skipAllSubfieldNormalizations(value, subfieldCode, tag) {
 
-  if (isEnnakkotietoSubfieldG({'code': subfieldCode, value})) {
+  if (isEnnakkotietoSubfield({'code': subfieldCode, value})) {
     return true;
   }
 
-  if (tag === '035' && ['a', 'z'].includes(subfieldCode)) { // A
+  if (tag === '035' && ['a', 'z'].includes(subfieldCode)) {
     return true;
   }
 
-  if (isControlSubfieldCode(subfieldCode)) {
+  if (!isContentSubfieldCode(subfieldCode, tag)) {
     return true;
   }
   return false;
@@ -244,17 +236,20 @@ function removeDecomposedDiacritics(value = '') {
 
 function normalizeSubfieldValue(value, subfieldCode, tag) {
   // NB! For comparison of values only
-  /* eslint-disable */
+  /* beslint-disable */
+  value = removeCharsThatDontCarryMeaning(value, tag, subfieldCode);
+  value = getSynonym(tag, subfieldCode, value); // Must be done before punc stripping and lowercasing...
   value = subfieldValueLowercase(value, subfieldCode, tag);
+
 
   // Normalize: s. = sivut = pp.
   value = normalizePartData(value, subfieldCode, tag);
-  value = value.replace(/^\[([^[\]]+)\]/gu, '$1'); // eslint-disable-line functional/immutable-data
+  value = value.replace(/^\[([^[\]]+)\]/gu, '$1');
 
   if (['130', '730'].includes(tag) && subfieldCode === 'a') {
     value = value.replace(' : ', ', '); // "Halloween ends (elokuva, 2022)" vs "Halloween ends (elokuva : 2023)"
   }
-  /* eslint-enable */
+  /* beslint-enable */
 
   // Not going to do these in the foreseeable future, but keeping them here for discussion:
   // Possible normalizations include but are not limited to:
@@ -311,7 +306,8 @@ function normalizeField(field) {
 export function cloneAndNormalizeFieldForComparison(field) {
   // NB! This new field is for comparison purposes only.
   // Some of the normalizations might be considered a bit overkill for other purposes.
-  const clonedField = clone(field);
+  const clonedField = cloneAndRemovePunctuation(field); // was only clone(field)
+
   if (fieldSkipNormalization(field)) {
     return clonedField;
   }
@@ -319,8 +315,11 @@ export function cloneAndNormalizeFieldForComparison(field) {
     if (valuelessSubfield(sf)) {
       return;
     }
+
     sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag);
-    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);
+    //sf.value = normalizeForSamenessCheck(field.tag, sf.code, sf.value);
+
+
   });
 
   normalizeField(clonedField);

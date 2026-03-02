@@ -1,0 +1,6 @@
+{
+  "description": "f042/01: merge f042, rare case where we don't need a pair of any kind",
+  "fix": true,
+  "tagPattern": "^042$",
+  "only": false
+}

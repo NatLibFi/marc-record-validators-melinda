@@ -1,0 +1,8 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "kuvitettu" } ] },
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [ { "code": "c", "value": "20 cm" } ] }
+  ],
+  "_validationOptions": {}
+}

@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {partsAgree, subfieldContainsPartData} from '../normalizeSubfieldValueForComparison.js';
-import {valueCarriesMeaning} from './worldKnowledge.js';
+import {getSynonyms, valueCarriesMeaning} from './worldKnowledge.js';
 import {nvdebug} from '../utils.js';
 import {tagAndSubfieldCodeReferToIsbn} from '../normalizeFieldForComparison.js';
 import {canContainOptionalQualifier, splitToNameAndQualifier} from './counterpartField.js';
@@ -88,7 +88,7 @@ function isPehmeakantinen(value) {
   return ['mjuka pärmar', 'paperback', 'pehmeäkantinen', 'softcover'].includes(value);
 }
 
-function isItsenainenJatkoOsa(value) {
+function isItsenainenJatkoOsa(value) { // Probably movable to synonyms...
   if (value.match(/^Fristående fortsättning på verket[^a-z]*$/ui)) {
     return true;
   }
@@ -142,6 +142,15 @@ function pairHttpAndHttps(candSubfield, relevantSubfields) {
 }
 
 function isSynonym(field, candSubfield, relevantSubfields) {
+
+  const finnishForm = getSynonyms(candSubfield.value, field.tag, candSubfield.code, 'fin');
+  if (finnishForm && finnishForm === relevantSubfields.some(sf => finnishForm === getSynonyms(sf.value, field.tag, candSubfield.code, 'fin'))) {
+    // NB! There's currently no intelligence (such as checking cat language from 040$b): the preferred value is the one in base.
+    // We might later on create a separate translation validator/fixer...
+    return true;
+  }
+
+
   if (candSubfield.code === 'q' && ['015', '020', '024', '028'].includes(field.tag)) {
     return coverTypesMatch(candSubfield, relevantSubfields);
   }

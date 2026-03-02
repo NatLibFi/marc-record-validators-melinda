@@ -1,12 +1,13 @@
 import createDebugLogger from 'debug';
-import {cloneAndNormalizeFieldForComparison, isEnnakkotietoSubfieldG} from '../normalizeFieldForComparison.js';
+import {cloneAndNormalizeFieldForComparison} from '../normalizeFieldForComparison.js';
 import {normalizeAs, normalizeControlSubfieldValue} from '../normalize-identifiers.js';
-import {fieldHasSubfield, fieldToString, isControlSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from '../utils.js';
+import {fieldHasSubfield, fieldToString, isContentSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from '../utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
 import {sortAdjacentSubfields} from '../sortSubfields.js';
 
 import {valueCarriesMeaning} from './worldKnowledge.js';
 import {resetSubfield6Tag} from '../subfield6Utils.js';
+import {isEnnakkotietoSubfield} from '../prepublicationUtils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeOrAddSubfield');
 //const debugData = debug.extend('data');
@@ -25,11 +26,11 @@ function catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTa
   return false;
 }
 
-function ennakkotietoInSubfieldG(candSubfieldData) {
-  if (isEnnakkotietoSubfieldG({'code': candSubfieldData.code, 'value': candSubfieldData.originalValue})) {
+function dataContainsPrepublicationSubfield(candSubfieldData) {
+  if (isEnnakkotietoSubfield({'code': candSubfieldData.code, 'value': candSubfieldData.originalValue})) {
     // Skip just ‡g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe even more from ennakkotieto.
-    debugDev(`Skip '‡g ${candSubfieldData.originalValue}'`);
+    debugDev(`Skip '‡${candSubfieldData.code} ${candSubfieldData.originalValue}'`);
     return true;
   }
   return false;
@@ -75,7 +76,7 @@ function skipNormalizedComparison(tag, subfieldCode, subfieldValue) {
 }
 
 function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
-  if (catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTargetField(targetField, candSubfieldData) || ennakkotietoInSubfieldG(candSubfieldData)) {
+  if (catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTargetField(targetField, candSubfieldData) || dataContainsPrepublicationSubfield(candSubfieldData)) {
     return true;
   }
 
@@ -126,7 +127,7 @@ function addSubfield(targetField, candSubfield) {
 }
 
 function setPunctuationFlag(field, addedSubfield) {
-  if (isControlSubfieldCode(addedSubfield.code)) { // These are never punctuation related
+  if (!isContentSubfieldCode(addedSubfield.code, field.tag)) { // These are never punctuation related
     return;
   }
   field.useExternalEndPunctuation = 1;

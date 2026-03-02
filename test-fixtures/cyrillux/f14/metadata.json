@@ -1,0 +1,10 @@
+{
+  "description": "14: transliteration(SFS-4900 only) does not apply the provenance subfield $l",
+  "comment": "The point in this test is that 776$l is not transliterated as it is \"untouchable\" provenance subfield, while 240$l is transliterated.",
+  "only": false,
+  "fix": true,
+  "config": {
+    "doISO9Transliteration": false,
+    "doSFS4900Transliteration": true
+  }
+}

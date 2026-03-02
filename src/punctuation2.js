@@ -10,10 +10,10 @@
 *          (They are jumped over when looking for next (non-controlfield subfield)
 */
 import {validateSingleField} from './ending-punctuation.js';
-import {tagToDataProvenanceSubfieldCode} from './merge-fields/dataProvenance.js';
+import {tagToDataProvenanceSubfieldCode} from './dataProvenanceUtils.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';
 //import createDebugLogger from 'debug';
-import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
 import clone from 'clone';
 
 //const debug = createDebugLogger('debug/punctuation2');
@@ -57,7 +57,7 @@ function isIrrelevantSubfield(subfield, tag) {
   if (subfield.code === dataProvenanceSubfieldCode) {
     return true;
   }
-  return isControlSubfieldCode(subfield.code); // Currently this contains other stuff as well ($3, $4, $7, $9...)
+  return !isContentSubfieldCode(subfield.code); // Currently this contains other stuff as well ($3, $4, $7, $9...)
 }
 
 
@@ -123,16 +123,16 @@ const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /
 // 390, 800, 810, 830...
 const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context': puncIsProbablyPunc, 'remove': / *[.,:;]$/u};
 
-const addX00aComma = {'add': ',', 'code': 'abcqej', 'followedBy': 'cdeg', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
+const addX00aComma = {'add': ',', 'code': 'abcqejt', 'followedBy': 'cdegnr', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'context': needsPuncAfterAlphanumeric};
 const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuvwxyz', 'followedBy': '#', 'context': /[^.)!?-]$/u};
 
 
-const addX10iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2};
+const addXX0iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2}; // Not explicitly checking it, but this should always be followed by 'a' or 't'
 const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter2};
-const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter2};
+const addX10Comma = {'add': ',', 'code': 'abet', 'followedBy': 'en', 'context': defaultNeedsPuncAfter2};
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abet', 'followedBy': 'tu#', 'context': needsPuncAfterAlphanumeric};
 const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': defaultNeedsPuncAfter2};
 
@@ -223,11 +223,11 @@ const cleanCrappyPunctuationRules = {
   '946': crappy24X
 };
 
-const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
+const cleanLegalX00Comma = {'code': 'abcdetn', 'followedBy': 'cdegjnr', 'context': /.,$/u, 'remove': /,$/u};
 // Accept upper case letters in X00$b, since they are probably Roman numerals.
 const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
 const cleanLegalX00iColon = {'code': 'i', 'followedBy': 'a', 'remove': / *:$/u}; // NB! context is not needed
-const cleanLegalX00Dot = {'code': 'abcdetvl', 'followedBy': 'tu#', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+const cleanLegalX00Dot = {'code': 'abcdetkvl', 'followedBy': 'tklu#', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 const cleanDotBeforeLanguageSubfieldL = {'name': 'pre-language-$l dot', 'followedBy': 'l', 'context': /.\.$/u, 'remove': /\.$/u};
 
 const legalEntryField = [cleanDotBeforeLanguageSubfieldL];
@@ -313,8 +313,8 @@ const cleanValidPunctuationRules = {
 const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation, addEntryFieldFinalDot];
 
 
-const addX00 = [addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
-const addX10 = [addX10iColon, addX10bDot, addX10eComma, addX10Dot, ...addToAllEntryFields];
+const addX00 = [addXX0iColon, addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
+const addX10 = [addXX0iColon, addX10bDot, addX10Comma, addX10Dot, ...addToAllEntryFields];
 const addX11 = [...addToAllEntryFields, addX11Spacecolon];
 const addX30 = [...addToAllEntryFields];
 

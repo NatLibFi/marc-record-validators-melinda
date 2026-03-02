@@ -2,7 +2,6 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, nvdebug, nvdebugSubfieldArray, subfieldIsRepeatable, subfieldsAreIdentical} from '../utils.js';
 
-//import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeControlSubfieldValue} from '../normalize-identifiers.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:merge-fields:controlSubfields');

@@ -1,4 +1,7 @@
-//import {nvdebug} from '../utils';
+//import {nvdebug} from '../utils.js';
+
+// NB! This file (or at least synonyms) should eventually be moved away from merge to '..'.
+
 
 export function valueCarriesMeaning(tag, subfieldCode, value) {
   // Some data is pretty meaningless and as meaningless is pretty close to nothing, this meaningless data should no prevent merge.
@@ -20,11 +23,77 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
   return true;
 }
 
+const synonyms = [
+  {tags: ['700', '710', '711', '730'], code: 'i', 'fin': 'Sisältää (ekspressio)', 'swe': 'Innehåller (uttryck)'},
+  {tags: ['700', '710', '711', '730'], code: 'i', 'fin': 'Sisältää (teos)', 'swe': 'Innehåller (verk)'},
+  {tags: ['700', '710', '711', '730'], code: 'l', 'fin': 'Englanti', 'swe': 'Engelska'},
+  {tags: ['700', '710', '711', '730'], code: 'l', 'fin': 'Ruotsi', 'swe': 'Svenska'},
+  {tags: ['700', '710', '711', '730'], code: 'l', 'fin': 'Suomi', 'swe': 'Finska'}
+  // There might eventually be need for a list of terms is given language (eg. engl. paperback and softcover)
+];
+
+export function getSynonyms(term, tag = undefined, subfieldCode = undefined, preferredLanguage = undefined, ignoreCase = true, relevantLanguagesString = 'fin swe',) {
+  if (!term) {
+    return [];
+  }
+  //nvdebug(`WP1 CANDS: ${synonyms.length} FOR '${term}'`);
+  const relevantLanguges = relevantLanguagesString.split(/\s+/u);
+  const normalizedTerm = ignoreCase ? term.toLowerCase() : term;
+  const synonymsWithTag = tag ? synonyms.filter(s => s.tags.includes(tag)) : synonyms;
+  if (synonymsWithTag.length === 0) {
+    return [];
+  }
+  //nvdebug(`WP2 (FILTER ${tag}) CANDS: ${synonymsWithTag.length}`);
+  const synonymsWithTagAndCode = subfieldCode ? synonymsWithTag.filter(s => s.code === subfieldCode) : synonymsWithTag;
+  //nvdebug(`WP3 (FILTER $${subfieldCode}) CANDS: ${synonymsWithTagAndCode.length}:\n${JSON.stringify(synonymsWithTagAndCode)}`);
+  const matchingSynonyms = synonymsWithTagAndCode.filter(s => termAndLangMatch(s));
+
+  if (preferredLanguage && matchingSynonyms.length > 0) {
+    //console.log(`USING PREFERRED LANG '${preferredLanguage}' for TERM '${term}':\n${JSON.stringify(matchingSynonyms)}`);
+    return matchingSynonyms.map(s => s[preferredLanguage]);
+  }
+  return matchingSynonyms;
+
+  function termAndLangMatch(synonym) {
+    if (relevantLanguges.includes('fin')) {
+      if (ignoreCase && synonym.fin.toLowerCase() === normalizedTerm ) {
+        return true;
+      }
+      if (!ignoreCase && synonym.fin === term) {
+        return true;
+      }
+    }
+
+    if (relevantLanguges.includes('swe')) {
+      if (ignoreCase && synonym.swe.toLowerCase() === normalizedTerm ) {
+        return true;
+      }
+      if (!ignoreCase && synonym.swe === term) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+export function getSynonym(tag, subfieldCode, originalValue) {
+  const finnishForm = getSynonyms(originalValue, tag, subfieldCode, 'fin');
+  if (finnishForm.length === 1) {
+    //nvdebug(`FINNISH FORM FOR ${tag}$${subfieldCode}: '${finnishForm[0]}'`);
+    return finnishForm[0];
+  }
+  return originalValue;
+}
+
 export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
   // NB! These work only for non-repeatable subfields!
   // Repeatable subfields are currently handled in mergeSubfields.js. Only non-repeatable subfields block field merge,
-  // (This split is suboptiomal... Minimum fix: make this disctinction cleaner...)
-  if (subfieldCode === 'a' && ['100', '600', '700', '800'].includes(tag)) {
+  // (This split is suboptiomal... Minimum fix: make this distinction cleaner...)
+
+  //nvdebug(`TRYING TO DO ${tag}$${subfieldCode} '${originalValue}'`);
+  originalValue = getSynonym(tag, subfieldCode, originalValue);
+
+  if (subfieldCode === 'a' && ['100', '600', '700', '800'].includes(tag)) { // "Etunimi Sukunimi"...
     return normalizePersonalName(originalValue);
   }
 

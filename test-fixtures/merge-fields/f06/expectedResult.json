@@ -1,0 +1,42 @@
+{
+  "_validationOptions": {},
+  "fields": [
+        { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Wuolijoki, Hella." },
+        { "code": "t", "value": "Heta Niskavuori." },
+        { "code": "k", "value": "Valikoima." },
+        { "code": "0", "value": "(FIN11)000063570"
+        }
+      ]
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Wuolijoki, Hella." },
+        { "code": "t", "value": "Heta Niskavuori." },
+        { "code": "k", "value": "Valikoima." },
+        { "code": "l", "value": "Ruotsi." },
+        { "code": "0", "value": "(FIN11)000063570"
+        }
+      ]
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Nuolijoki, Nella." },
+        { "code": "t", "value": "Beta Tiskivuori." },
+        { "code": "l", "value": "Suomi." },
+        { "code": "0", "value": "(FIN11)900063570"
+        }
+      ]
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Nuolijoki, Nella." },
+        { "code": "t", "value": "Beta Tiskivuori." },
+        { "code": "k", "value": "Valikoima." },
+        { "code": "l", "value": "Ruotsi." },
+        { "code": "0", "value": "(FIN11)900063570"
+        }
+      ]
+    }
+
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}

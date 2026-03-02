@@ -203,7 +203,7 @@ export function removeWorsePrepubField594s(record) {
 
 
 export function isEnnakkotietoSubfield(subfield) {
-  if (subfield.code !== '9' && subfield.code !== 'g') {
+  if (!['g', '9', '7'].includes(subfield.code)) {
     return false;
   }
   // Length <= 13 allows punctuation, but does not require it:

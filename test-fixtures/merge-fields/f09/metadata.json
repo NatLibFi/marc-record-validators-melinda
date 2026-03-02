@@ -1,0 +1,6 @@
+{
+  "description": "f09: two 041 fields don't merge as there's no common denominator",
+  "fix": true,
+  "tagPattern": "^(041)$",
+  "only": false
+}
