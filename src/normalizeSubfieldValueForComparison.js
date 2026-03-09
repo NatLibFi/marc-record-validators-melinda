@@ -105,8 +105,8 @@ export function partsAgree(value1, value2, tag, subfieldCode) {
   }
   const [partType1, partYear1, partNumber1] = splitAndNormalizePartData(value1);
   const [partType2, partYear2, partNumber2] = splitAndNormalizePartData(value2);
-  //nvdebug(`P1: ${partType1} | ${partYear1} | ${partNumber1}`);
-  //nvdebug(`P2: ${partType2} | ${partYear2} | ${partNumber2}`);
+  //nvdebug(`P1: ${partType1} | ${partYear1} | ${partNumber1}`, debugDev);
+  //nvdebug(`P2: ${partType2} | ${partYear2} | ${partNumber2}`, debugDev);
   if (partNumber1 !== partNumber2) {
     return false;
   }

@@ -1,7 +1,9 @@
 //import createDebugLogger from 'debug';
-import {fieldToString} from './utils.js';
+import {fieldToString /*, nvdebug*/} from './utils.js';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/update-field-540');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -54,7 +56,7 @@ function validLicenseInSubfieldC(subfieldC, license) {
   if (subfieldC.code !== 'c') {
     return false;
   }
-  //nvdebug(`Compare ${subfieldC.value} vs ${license.license}`);
+  //nvdebug(`Compare ${subfieldC.value} vs ${license.license}`, debugDev);
   return license.license === subfieldC.value;
 }
 
@@ -62,7 +64,7 @@ function validUrlInSubfieldU(subfieldU, license) {
   if (subfieldU.code !== 'u') {
     return false;
   }
-  //nvdebug(`Compare ${subfieldU.value} vs ${license.url}`);
+  //nvdebug(`Compare ${subfieldU.value} vs ${license.url}`, debugDev);
   return license.url === subfieldU.value;
 }
 
@@ -78,12 +80,12 @@ function fieldHasOldCcLicense(field, fix) {
   if (field.tag !== '540') {
     return false;
   }
-  //nvdebug(`NORM 540: ${fieldToString(field)}`);
+  //nvdebug(`NORM 540: ${fieldToString(field)}`, debugDev);
   const validLicense = licences.find(license => field.subfields.some(sf => validLicenseInSubfieldC(sf, license)) && field.subfields.some(sf => validUrlInSubfieldU(sf, license)));
   if (!validLicense) {
     return false;
   }
-  //nvdebug(` Found valid license`);
+  //nvdebug(` Found valid license`, debugDev);
   if (fix) {
     const subfieldsC = field.subfields.filter(sf => validLicenseInSubfieldC(sf, validLicense));
     subfieldsC.forEach(c => fixC(field, c));

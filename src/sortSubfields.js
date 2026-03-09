@@ -141,7 +141,7 @@ function getSubfieldSortOrder(field) {
     return entry[0].sortOrder;
   }
   if (!['300'].includes(field.tag)) { // Lis tags which use normal $a...$z order here!
-    nvdebug(`WARNING!\tNo subfield order found for ${field.tag}.`);
+    nvdebug(`WARNING!\tNo subfield order found for ${field.tag}.`, debugDev);
   }
   return [];
 }
@@ -230,15 +230,15 @@ export function sortAdjacentSubfields(field, externalSortOrder = []) {
   swapSubfields(field, controlSubfieldOrder);
 
   const sortOrderForField = externalSortOrder.length > 0 ? externalSortOrder : getSubfieldSortOrder(field);
-  //nvdebug(`INTERMEDIATE SUBFIELD ORDER FOR ${field.tag}: ${sortOrderForField.join(', ')}`);
+  //nvdebug(`INTERMEDIATE SUBFIELD ORDER FOR ${field.tag}: ${sortOrderForField.join(', ')}`, debugDev);
 
   const defaultSortOrder = finnishWay ? defaultSortOrderFinns : defaultSortOrderOthers; // $2 vs $0
   const subfieldOrder = sortOrderForField.length > 0 ? sortOrderForField : defaultSortOrder;
-  //nvdebug(`FINAL SUBFIELD ORDER (FINNISH=${finnishWay}) FOR ${field.tag}: ${subfieldOrder.join(', ')}`);
+  //nvdebug(`FINAL SUBFIELD ORDER (FINNISH=${finnishWay}) FOR ${field.tag}: ${subfieldOrder.join(', ')}`, debugDev);
   //if (sortOrder === null) { return field; } //// Currently always sort..
-  //nvdebug(`IN:  ${fieldToString(field)}`);
+  //nvdebug(`IN:  ${fieldToString(field)}`, debugDev);
   swapSubfields(field, subfieldOrder);
-  //nvdebug(`OUT: ${fieldToString(field)}`);
+  //nvdebug(`OUT: ${fieldToString(field)}`, debugDev);
 
   return field;
 }

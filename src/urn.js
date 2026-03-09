@@ -1,14 +1,17 @@
 //import fetch from 'node-fetch';
-import {isElectronicMaterial} from './utils.js';
+import {isElectronicMaterial, nvdebug} from './utils.js';
 import createDebugLogger from 'debug';
 
 const URN_GENERATOR_URL = 'https://generator.urn.fi/cgi-bin/urn_generator.cgi?type=nbn';
 
+// eslint-disable-next-line max-lines-per-function
 export default function (isLegalDeposit = false, useMelindaTemp = true) {
   const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:urn');
   const debugData = debug.extend('data');
+  const debugDev = debug.extend('dev');
 
-  //console.log(`IS LEGAL DEPOSIT? ${isLegalDeposit ? 'YES' : 'NO'}`); // eslint-disable-line no-console
+
+  //nvdebug(`IS LEGAL DEPOSIT? ${isLegalDeposit ? 'YES' : 'NO'}`, debugDev); // eslint-disable-line no-console
 
   // We should check that the f856 with URN has second indicator '0' (Resource), ' ' (No information provided) or '8' (No display constant generated)
   // - if second indicator is '1' (Version of resource) or '2' (Related resource) the URN in f856 is not correct for the resource described in the record
@@ -35,12 +38,13 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
     fix
   };
 
+  // eslint-disable-next-line max-lines-per-function
   async function fix(record) {
     const f856sUrn = record.fields.filter(hasLegalDepositURN);
-    debugData(`f856sUrn: ${JSON.stringify(f856sUrn)}`);
+    nvdebug(`f856sUrn: ${JSON.stringify(f856sUrn)}`, debugDev);
 
     const ldSubfields = isLegalDeposit ? createLDSubfields() : [];
-    debugData(`IsLegalDeposit: ${isLegalDeposit}, LegalDepositSubfields: ${JSON.stringify(ldSubfields)}`);
+    nvdebug(`IsLegalDeposit: ${isLegalDeposit}, LegalDepositSubfields: ${JSON.stringify(ldSubfields)}`, debugDev);
 
     // We add the URN even if we're not getting the legalDeposit - where does this URN resolve?
     // We probably should not do these additions
@@ -111,7 +115,7 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
         return acc;
       }, undefined);
 
-      debugData(`isbns: ${isbn}`);
+      nvdebug(`isbns: ${isbn}`, debugDev);
 
       const {generated, value} = await createURN(isbn);
       return {code: 'u', value, generated};
@@ -161,12 +165,12 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
   }
 
   function validateLD(f856sUrn) {
-    debug(`Validating the existence of legal deposit subfields`);
+    nvdebug(`Validating the existence of legal deposit subfields`, debugDev);
     const ldSubfields = createLDSubfields();
     const f856sUrnWithLdSubfields = f856sUrn.filter(field => fieldHasLDSubfields(field, ldSubfields));
     if (f856sUrnWithLdSubfields.length > 0) {
-      debug(`Record has ${f856sUrnWithLdSubfields.length} URN fields with all necessary legal deposit subfields`);
-      debugData(`f856sUrnWithLdSubfields: ${JSON.stringify(f856sUrnWithLdSubfields)}`);
+      nvdebug(`Record has ${f856sUrnWithLdSubfields.length} URN fields with all necessary legal deposit subfields`, debugDev);
+      nvdebug(`f856sUrnWithLdSubfields: ${JSON.stringify(f856sUrnWithLdSubfields)}`, debugData);
       return true;
     }
     return false;
@@ -175,22 +179,22 @@ export default function (isLegalDeposit = false, useMelindaTemp = true) {
   function validate(record) {
     // if not electronic skip this validator
     if (!isElectronicMaterial(record)) {
-      debug(`Record is not electronic - no need to validate legal deposit URNs`);
+      nvdebug(`Record is not electronic - no need to validate legal deposit URNs`, debugDev);
       return {valid: true};
     }
 
     const f856sUrn = record.fields.filter(hasLegalDepositURN);
 
     if (f856sUrn.length > 0) {
-      debug(`Record has ${f856sUrn.length} URN fields`);
-      debugData(`f856sUrn: ${JSON.stringify(f856sUrn)}`);
+      nvdebug(`Record has ${f856sUrn.length} URN fields`, debugDev);
+      nvdebug(`f856sUrn: ${JSON.stringify(f856sUrn)}`, debugData);
 
       if (!isLegalDeposit || validateLD(f856sUrn)) {
-        debug(`Record is valid`);
+        nvdebug(`Record is valid`, debugDev);
         return {valid: true};
       }
     }
-    debug(`No (valid) URN fields - Record is not valid`);
+    nvdebug(`No (valid) URN fields - Record is not valid`, debugDev);
     return {valid: false};
   }
 }

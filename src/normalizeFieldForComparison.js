@@ -185,7 +185,7 @@ function normalizeISBN(field) {
     return;
   }
 
-  //nvdebug(`ISBN-field? ${fieldToString(field)}`);
+  //nvdebug(`ISBN-field? ${fieldToString(field)}`, debugDev);
   const relevantSubfields = field.subfields.filter(sf => tagAndSubfieldCodeReferToIsbn(field.tag, sf.code) && looksLikeIsbn(sf.value));
   relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf));
 
@@ -193,7 +193,7 @@ function normalizeISBN(field) {
     if (valuelessSubfield(sf)) {
       return;
     }
-    //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);
+    //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`, debugDev);
     sf.value = sf.value.replace(/-/ug, '');
     sf.value = sf.value.replace(/x/u, 'X');
   }

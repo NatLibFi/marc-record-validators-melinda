@@ -9,6 +9,8 @@ import {fieldFixPunctuation} from './punctuation2.js';
 //const {default: createNatlibfiSruClient} = natlibfiSruClient;
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:disambiguateSeriesStatements');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const ELECTRONIC = 1;
 const PRINTED = 2;
@@ -16,6 +18,7 @@ const NEITHER_OR_UNKNOWN = 0;
 const SRU_API_URL = 'https://sru.api.melinda.kansalliskirjasto.fi/bib';
 
 // Author(s): Nicholas Volk
+// eslint-disable-next-line max-lines-per-function
 export default function () {
   const sruClient = createSruClient(SRU_API_URL);
 
@@ -79,7 +82,7 @@ export default function () {
     }
 
     const deletableStrings = deletableXs.map(sf => subfieldToString(sf));
-    nvdebug(`Field has removable ISSNS: '${deletableStrings.join(', ')}`, debug);
+    nvdebug(`Field has removable ISSNS: '${deletableStrings.join(', ')}`, debugDev);
 
     // fixer:
     if (reallyFix) {

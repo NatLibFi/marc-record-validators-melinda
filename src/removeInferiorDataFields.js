@@ -12,7 +12,10 @@ import {fixComposition, precomposeFinnishLetters} from './normalize-utf8-diacrit
 // NB! This validator handles only full fields, and does not support subfield $8 removal.
 // Also, having multiple $8 subfields in same fields is not supported.
 // If this functionality is needed, see removeDuplicateDatafields.js for examples of subfield-only stuff.
+
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:removeInferiorDataFields');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
 
 export default function () {
   return {
@@ -21,7 +24,7 @@ export default function () {
   };
 
   function fix(record) {
-    //nvdebug('Fix record: remove inferior (eg. subset) data fields', debug);
+    //nvdebug('Fix record: remove inferior (eg. subset) data fields', debugDev);
     const res = {message: [], fix: [], valid: true};
     removeInferiorDatafields(record, true);
     // This can not really fail...
@@ -30,7 +33,7 @@ export default function () {
 
   function validate(record) {
     // Check max, and check number of different indexes
-    //nvdebug('Validate record: remove inferior (eg. subset) data fields', debug);
+    //nvdebug('Validate record: remove inferior (eg. subset) data fields', debugDev);
 
     const duplicates = removeInferiorDatafields(record, false);
 
@@ -43,14 +46,14 @@ export default function () {
 
 
 function deriveInferiorChains(fields, record) {
-  //nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`);
+  //nvdebug(`======= GOT ${fields.length} FIELDS TO CHAINIFY`, debugDev);
   const hash = {};
 
   fields.forEach(f => fieldToChainToDeletables(f));
 
   return hash;
 
-  //nvdebug(`WP1: GOT ${todoList.length} CHAINS`);
+  //nvdebug(`WP1: GOT ${todoList.length} CHAINS`, debugDev);
 
 
   // here we map deletableStringObject[str] => field. The idea is to help debugging. We don't actually need the field object...
@@ -63,7 +66,7 @@ function deriveInferiorChains(fields, record) {
     }
     const chainAsString = fieldsToNormalizedString(chain, 0, true, true);
     const arr = deriveChainDeletables([chainAsString]);
-    //nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`);
+    //nvdebug(`GOT ${arr.length} DELETABLES FOR ${chainAsString}`, debugDev);
     arr.forEach(val => {
       if (!(val in hash)) {
         hash[val] = field;
@@ -116,16 +119,16 @@ function isRelevantChain6(field, record) {
 
 export function removeInferiorChains(record, fix = true) {
   const fields = record.fields.filter(f => isRelevantChain6(f, record));
-  //nvdebug(`WP2.0: GOT ${fields.length} chain(s)`);
+  //nvdebug(`WP2.0: GOT ${fields.length} chain(s)`, debugDev);
 
   const deletableChainsAsKeys = deriveInferiorChains(fields, record);
   const nChains = Object.keys(deletableChainsAsKeys).length;
-  //nvdebug(`WP2: GOT ${nChains} chain(s)`);
+  //nvdebug(`WP2: GOT ${nChains} chain(s)`, debugDev);
   if (nChains === 0) {
     return [];
   }
 
-  //nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`);
+  //nvdebug(`removeInferiorChains() has ${fields.length} fields-in-chain(s), and a list of ${nChains} deletable(s)`, debugDev);
 
   return innerRemoveInferiorChains(fields);
 
@@ -153,11 +156,11 @@ export function removeInferiorChains(record, fix = true) {
     if (chainContains1XX(chain)) {
       triggeringChain.forEach(f => sevenToOne(f, triggeringChain));
     }
-    //nvdebug(`iRIS6C: ${chainAsString}`);
+    //nvdebug(`iRIS6C: ${chainAsString}`, debugDev);
     const deletedString = fieldsToString(chain);
     const message = `DEL: '${deletedString}'  REASON: '${fieldsToString(triggeringChain)}'`;
     if (fix) {
-      //nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debug);
+      //nvdebug(`INFERIOR $6 CHAIN REMOVAL: ${message}}`, debugDev);
       chain.forEach(field => record.removeField(field));
     }
     return innerRemoveInferiorChains(remainingFields, [...deletedStringsArray, message]);
@@ -197,7 +200,7 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
   if (fieldAsString === undefined) {
     return deletables;
   }
-  //nvdebug(`PROCESS ${fieldAsString}`);
+  //nvdebug(`PROCESS ${fieldAsString}`, debugDev);
   if (!fieldAsString.match(/^490/u)) {
     return deriveIndividualDeletables490(stillToDo, deletables);
   }
@@ -220,13 +223,14 @@ function deriveIndividualDeletables490(todoList, deletables = []) {
 
   /*
   if (arr.length) {
-    nvdebug(`${arr.length} derivation(s) for ${fieldAsString}`);
-    nvdebug(arr.join('\n'));
+    nvdebug(`${arr.length} derivation(s) for ${fieldAsString}`, debugDev);
+    nvdebug(arr.join('\n'), debugDev);
   }
   */
   return arr;
 }
 
+// eslint-disable-next-line max-lines-per-function
 function deriveIndividualDeletables(record) {
   const todoList = record.fields.map(f => fieldToString(f));
   //const finishedRecord = encodingLevelIsBetterThanPrepublication(getEncodingLevel(record));
@@ -305,8 +309,8 @@ function deriveIndividualDeletables(record) {
       if (tmp !== currString) {
         return processTodoList([tmp, ...stillToDo, ...moreToDo], [...deletables, tmp]);
       }
-      //nvdebug(`505 ORIGINAL: '${fieldAsString}'`)
-      //nvdebug(`505 DERIVATE: '${tmp}'`)
+      //nvdebug(`505 ORIGINAL: '${fieldAsString}'`, debugDev)
+      //nvdebug(`505 DERIVATE: '${tmp}'`, debugDev)
     }
 
     if (currString.match(/^594 ## ‡a Ei vastaanotettu ‡5 FENNI$/u)) { // MELKEHITYS-3147
@@ -319,11 +323,11 @@ function deriveIndividualDeletables(record) {
     // MET-381: remove occurence number TAG-00, if TAG-NN existists
     if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
       const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00');
-      //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`);
+      //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`, debugDev);
       //deletableStringsArray.push(tmp);
       if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
         const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1');
-        //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`);
+        //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`, debugDev);
         return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp, tmp2]);
       }
       return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp]);
@@ -345,13 +349,13 @@ function deriveIndividualDeletables(record) {
   }
 
   function getAccentlessVersion(string) { // MET-527
-    //nvdebug(`START: '${string}`);
+    //nvdebug(`START: '${string}`, debugDev);
     // This is a sanity check: if precomposition does something, there's something wrong, and we don't want to proceed..
     if (string !== precomposeFinnishLetters(string)) {
       return [];
     }
     const accentless = String(fixComposition(string)).replace(/\p{Diacritic}/gu, '');
-    //nvdebug(`FROM '${string}'\n  TO '${accentless}'`);
+    //nvdebug(`FROM '${string}'\n  TO '${accentless}'`, debugDev);
     if (accentless === string) { // Don't self-destruct
       return [];
     }
@@ -408,8 +412,8 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
   const deletableFieldsAsStrings = deriveIndividualDeletables(record);
   const deletableFieldsAsNormalizedStrings = deriveIndividualNormalizedDeletables(record);
 
-  // nvdebug(`Deletables:\n ${deletableFieldsAsStrings.join('\n ')}`);
-  // nvdebug(`Normalized deletables:\n ${deletableFieldsAsNormalizedStrings.join('\n ')}`);
+  // nvdebug(`Deletables:\n ${deletableFieldsAsStrings.join('\n ')}`, debugDev);
+  // nvdebug(`Normalized deletables:\n ${deletableFieldsAsNormalizedStrings.join('\n ')}`, debugDev);
 
   const hits = record.fields.filter(field => isDeletableField(field));
 
@@ -417,7 +421,7 @@ export function removeIndividualInferiorDatafields(record, fix = true) { // No $
 
   if (fix) {
     hits.forEach(field => {
-      //nvdebug(`Remove inferior field: ${fieldToString(field)}`, debug);
+      //nvdebug(`Remove inferior field: ${fieldToString(field)}`, debugDev);
       record.removeField(field);
     });
   }
@@ -445,8 +449,8 @@ export function removeInferiorDatafields(record, fix = true) {
   const removables6 = removeInferiorChains(record, fix); // Lone subfield $6 chains
   // HOW TO HANDLE $6+$8 combos? Skipping is relatively OK.
 
-  //nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`, debug);
-  //nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`, debug);
+  //nvdebug(`REMOVABLES:\n  ${removables.join('\n  ')}`, debugDev);
+  //nvdebug(`REMOVABLES 6:\n  ${removables6.join('\n  ')}`, debugDev);
 
   const removablesAll = removables.concat(removables6); //.concat(removables8);
 

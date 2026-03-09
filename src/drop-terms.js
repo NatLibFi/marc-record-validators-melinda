@@ -6,7 +6,8 @@ import {fieldToString, nvdebug} from './utils.js';
 import {getLexiconAndLanguage, getTermData, isLabel, isValidSubfield0} from './translate-terms.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:drop-terms');
-
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const defaultConfig = {
   'constraints': [
@@ -25,6 +26,7 @@ const defaultConfig = {
   'remove 0-less': true
 };
 
+// eslint-disable-next-line max-lines-per-function
 export default function (config = defaultConfig) {
 
   return {
@@ -112,7 +114,7 @@ export default function (config = defaultConfig) {
   }
 
   async function isRemovableField(field) {
-    // nvdebug(`FOO===== ${fieldToString(field)}`);
+    // nvdebug(`FOO===== ${fieldToString(field)}`, debugDev);
 
 
     // $0-less field:
@@ -132,15 +134,15 @@ export default function (config = defaultConfig) {
 
         // $a is the pref label. All is fine!
         if (isLabel(data.prefLabel, subfieldA.value, lexData.lang)) {
-          debug(`altLabel found: ${subfieldA.value}`);
+          nvdebug(`altLabel found: ${subfieldA.value}`, debugDev);
           return false;
         }
         if (isLabel(data.altLabel, subfieldA.value, lexData.lang)) {
-          debug(`altLabel found: ${subfieldA.value}`);
+          nvdebug(`altLabel found: ${subfieldA.value}`, debugDev);
           // Oddly enough this could remove altLabel but keep totally invalid labels...
           return config['remove altLabel'];
         }
-        debug(`a-2-0 mismatch: ${fieldToString(field)}`);
+        nvdebug(`a-2-0 mismatch: ${fieldToString(field)}`, debugDev);
       }
     }
 
@@ -148,7 +150,7 @@ export default function (config = defaultConfig) {
     if (config['keep invalid label']) {
       // We keep the label $a. However, we can get rid of $0 if we want to (semantic reasons)
       if (!config['keep invalid url']) {
-        nvdebug(`=============== 0-removal`);
+        nvdebug(`=============== 0-removal`, debugDev);
         field.subfields = field.subfields.filter(sf => sf.code !== '0');
       }
       return false;

@@ -3,7 +3,7 @@
   "comment": "Uses a very unlikely config, used mainly for tests",
   "fix": false,
   "skip": false,
-  "only": true,
+  "only": false,
 
   "config": {
     "constraints": [

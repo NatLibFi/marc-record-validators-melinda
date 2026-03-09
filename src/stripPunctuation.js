@@ -8,9 +8,11 @@
 import {fieldGetFixedString, fieldNeedsModification, fieldStripPunctuation} from './punctuation2.js';
 import createDebugLogger from 'debug';
 
-import {fieldToString} from './utils.js';
+import {fieldToString, nvdebug} from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const description =  'Strip punctuation in data fields';
 
@@ -21,14 +23,14 @@ export default function () {
   };
 
   function fix(record) {
-    debug(`${description}: fixer`);
+    nvdebug(`${description}: fixer`, debugDev);
     const res = {message: [], fix: [], valid: true};
     record.fields.forEach(f => fieldStripPunctuation(f));
     return res;
   }
 
   function validate(record) {
-    debug(`${description}: validate`);
+    nvdebug(`${description}: validate`, debugDev);
 
     const fieldsNeedingModification = record.fields.filter(f => fieldNeedsModification(f, false));
 

@@ -1,10 +1,15 @@
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
 import {getFormOfItem, map338CodeToTerm} from './field33XUtils.js';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:addMissingField338');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // Based mostly on USEMARCON-RDA. However, many things have been rethought, modernized etc.
 const description = 'Add missing 338 field(s)';
 
+// eslint-disable-next-line max-lines-per-function
 export default function () {
 
   return {
@@ -12,7 +17,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug(`FIX ${description}...`);
+    nvdebug(`FIX ${description}...`, debugDev);
     const newField = getMissing338(record);
     const res = {message: [], fix: [], valid: true};
 
@@ -25,7 +30,7 @@ export default function () {
   }
 
   function validate(record) {
-    nvdebug(`VALIDATE ${description}...`);
+    nvdebug(`VALIDATE ${description}...`, debugDev);
     const newField = getMissing338(record);
     if (!newField) {
       return {message: [], valid: true};
@@ -57,7 +62,7 @@ export default function () {
     if (!extent) {
       return undefined;
     }
-    nvdebug(`AUDIO EXTENT: '${extent}`);
+    nvdebug(`AUDIO EXTENT: '${extent}`, debugDev);
     if (extent.match(/^(?:audio discs?|[^ ]*ljudskiva|[^ ]*ljudskivor|LP-levy|LP-levyä|LP-skiva|LP-skivor|[^ ]*äänilevy)$/iu)) {
       return 'sd';
     }
@@ -173,7 +178,7 @@ export default function () {
   }
 
   function extentToCarrierType(record) {
-    nvdebug(`EXTENT2CARRIERTYPE`);
+    nvdebug(`EXTENT2CARRIERTYPE`, debugDev);
     return extentToAudioCarrierType(record) ||
       extentToComputerCarrierType(record) ||
       extentToMicroformCarrierType(record) ||
@@ -288,7 +293,7 @@ export default function () {
   }
 
   function audioToField338(record) {
-    nvdebug('AUDIO-TO-338');
+    nvdebug('AUDIO-TO-338', debugDev);
     const typeOfRecord = record.getTypeOfRecord(record);
     if (typeOfRecord !== 'i' && typeOfRecord !== 'j') {
       return undefined;

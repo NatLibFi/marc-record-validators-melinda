@@ -1,12 +1,10 @@
-//import createDebugLogger from 'debug';
-// const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield6Utils');
-
+import createDebugLogger from 'debug';
 import {add8s, fieldsGetAllSubfield8LinkingNumbers, getSubfield8LinkingNumber, isValidSubfield8} from './subfield8Utils.js';
 import {fieldHasSubfield, fieldToString, /* fieldsToString, */ nvdebug, subfieldToString} from './utils.js';
 
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
 //const debugData = debug.extend('data');
-//const debugDev = debug.extend('dev');
+const debugDev = debug.extend('dev');
 
 // NB! Subfield 6 is non-repeatable and it should always comes first!
 // NB! Index size should always be 2 (preceding 0 required for 01..09) However, support for 100+ was added on 2023-02-27.
@@ -41,7 +39,7 @@ export function subfield6GetOccurrenceNumberAsInteger(subfield) {
     return 0;
   }
   const result = parseInt(index, 10);
-  //nvdebug(`SF6: ${subfield.value} => ${index} => ${result}`, debug);
+  //nvdebug(`SF6: ${subfield.value} => ${index} => ${result}`, debugDev, debugDev);
   return result;
 }
 
@@ -52,7 +50,7 @@ export function subfield6ResetOccurrenceNumber(subfield, occurrenceNumber) {
   const occurrenceNumberAsString = typeof occurrenceNumber === 'number' ? intToOccurrenceNumberString(occurrenceNumber) : occurrenceNumber;
 
   const newValue = subfield.value.substring(0, 4) + occurrenceNumberAsString + subfield6GetTail(subfield);
-  //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
+  //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
   subfield.value = newValue;
 }
 
@@ -71,7 +69,7 @@ export function subfield6HasWantedTagAndOccurrenceNumber(subfield, tagAndOccurre
   }
   // We could also use generic code and go getTag()+'-'+getIndex() instead of regexp...
   const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1');
-  //nvdebug(` Compare '${key}' vs '${tagAndOccurrenceNumber}'`);
+  //nvdebug(` Compare '${key}' vs '${tagAndOccurrenceNumber}'`, debugDev);
   return key === tagAndOccurrenceNumber;
 }
 
@@ -94,7 +92,7 @@ export function fieldGetUnambiguousOccurrenceNumber(field) {
 }
 
 export function fieldHasOccurrenceNumber(field, occurrenceNumber) {
-  //nvdebug(`${occurrenceNumber} vs ${fieldToString(field)}`);
+  //nvdebug(`${occurrenceNumber} vs ${fieldToString(field)}`, debugDev);
   return field.subfields && field.subfields.some(sf => subfield6GetOccurrenceNumber(sf) === occurrenceNumber);
 }
 
@@ -119,13 +117,13 @@ export function intToOccurrenceNumberString(i) {
 
 export function fieldGetMaxSubfield6OccurrenceNumberAsInteger(field) {
   // used by reducer!
-  //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
+  //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`, debugDev);
   const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
   if (sf6s.length === 0) {
     return 0;
   }
   // There should always be one, but here we check every subfield.
-  //nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`, debug);
+  //nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`, debugDev);
   const vals = sf6s.map(sf => subfield6GetOccurrenceNumberAsInteger(sf));
   return Math.max(...vals);
 }
@@ -155,20 +153,20 @@ export function fieldHasValidSubfield6(field) {
 
 export function isSubfield6Pair(field, otherField) {
   // No need to log this:
-  //nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`);
+  //nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debugDev);
   if (!fieldHasValidSubfield6(field) || !fieldHasValidSubfield6(otherField)) {
     return false;
   }
 
   if (!tagsArePairable6(field.tag, otherField.tag)) {
-    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
+    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`, debugDev);
     return false;
   }
 
 
   const fieldIndex = fieldGetUnambiguousOccurrenceNumber(field);
   if (fieldIndex === undefined || fieldIndex === '00') {
-    //nvdebug(` FAILED. REASON: NO INDEX FOUND`);
+    //nvdebug(` FAILED. REASON: NO INDEX FOUND`, debugDev);
     return false;
   }
 
@@ -176,12 +174,12 @@ export function isSubfield6Pair(field, otherField) {
 
 
   if (fieldIndex !== otherFieldIndex) {
-    //nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
+    //nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`, debugDev);
     return false;
   }
 
   if (fieldGetUnambiguousTag(field) !== otherField.tag || field.tag !== fieldGetUnambiguousTag(otherField)) {
-    //nvdebug(` FAILURE: TAG vs $6 TAG`);
+    //nvdebug(` FAILURE: TAG vs $6 TAG`, debugDev);
     return false;
   }
   return true;
@@ -219,11 +217,11 @@ export function fieldGetOccurrenceNumberPairs(field, candFields) {
   //nvdebug(`  Trying to finds pair for ${fieldToString(field)} in ${candFields.length} fields`);
   const pairs = candFields.filter(otherField => isSubfield6Pair(field, otherField));
   if (pairs.length === 0) {
-    //nvdebug(`NO PAIRS FOUND FOR '${fieldToString(field)}'`);
+    //nvdebug(`NO PAIRS FOUND FOR '${fieldToString(field)}'`, debugDev);
     return pairs;
   }
-  //nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`);
-  pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`));
+  //nvdebug(`${pairs.length} PAIR(S) FOUND FOR '${fieldToString(field)}'`, debugDev);
+  pairs.forEach(pairedField => nvdebug(`  '${fieldToString(pairedField)}'`, debugDev));
   return pairs;
 }
 
@@ -268,7 +266,7 @@ export function fieldGetSubfield6Pair(field, record) {
     return undefined;
   }
   // NB! It is theoretically possible to have multiple pairable 880 fields (one for each encoding)
-  nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedFields[0])}`);
+  nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedFields[0])}`, debugDev);
   return pairedFields[0];
 }
 */
@@ -357,7 +355,7 @@ function guessTargetLinkingNumber(fields, defaultTargetLinkingNumber) {
 export function fieldsToNormalizedString(fields, defaultTargetLinkingNumber = 0, normalizeOccurrenceNumber = false, normalizeEntryTag = false) {
   const targetLinkingNumber = guessTargetLinkingNumber(fields, defaultTargetLinkingNumber);
 
-  //nvdebug(`fieldsToNormalizedString: OCC: ${normalizeOccurrenceNumber}`);
+  //nvdebug(`fieldsToNormalizedString: OCC: ${normalizeOccurrenceNumber}`, debugDev);
   const strings = fields.map(field => fieldToNormalizedString(field, targetLinkingNumber, normalizeOccurrenceNumber, normalizeEntryTag));
   strings.sort();
   return strings.join('\t__SEPARATOR__\t');
@@ -369,32 +367,32 @@ export function fieldsToNormalizedString(fields, defaultTargetLinkingNumber = 0,
 export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairField = fieldGetSubfield6Pair(field, record);
   const asString = pairField ? fieldsToNormalizedString([field, pairField]) : fieldToNormalizedString(field);
-  nvdebug(`SOURCE: ${asString} -- REALITY: ${fieldToString(field)}`);
+  nvdebug(`SOURCE: ${asString} -- REALITY: ${fieldToString(field)}`, debugDev);
   const tmp = pairField ? fieldToString(pairField) : 'HUTI';
-  nvdebug(`PAIR: ${tmp}`);
-  nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`);
+  nvdebug(`PAIR: ${tmp}`, debugDev);
+  nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`, debugDev);
   if (!fieldsAsString.includes(asString)) {
     return;
   }
-  nvdebug(`Duplicate $6 removal: ${fieldToString(field)}`);
+  nvdebug(`Duplicate $6 removal: ${fieldToString(field)}`, debugDev);
   record.removeField(field);
 
   if (pairField === undefined) {
     return;
   }
-  nvdebug(`Duplicate $6 removal (pair): ${fieldToString(pairField)}`);
+  nvdebug(`Duplicate $6 removal (pair): ${fieldToString(pairField)}`, debugDev);
   record.removeField(pairField);
 }
 */
 
 function getFirstField(record, fields) {
   const fieldsAsStrings = fields.map(field => fieldToString(field));
-  //record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`));
-  //nvdebug(`getFirstField: ${fieldsAsStrings.join('\t')}`);
+  //record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`, debugDev));
+  //nvdebug(`getFirstField: ${fieldsAsStrings.join('\t')}`, debugDev);
   const i = record.fields.findIndex(field => fieldsAsStrings.includes(fieldToString(field)));
   if (i > -1) {
     const field = record.fields[i];
-    //nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`);
+    //nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`, debugDev);
     return field;
   }
   return undefined;
@@ -445,7 +443,7 @@ export function isFirstLinkedSubfield6Field(field, record) {
   }
   const chain = getAllLinkedSubfield6Fields(field, record);
   if (!isRelevantSubfield6Chain(chain)) {
-    //nvdebug(`Rejected 6: ${fieldsToString(chain)}`);
+    //nvdebug(`Rejected 6: ${fieldsToString(chain)}`, debugDev);
     return false;
   }
 
@@ -472,13 +470,13 @@ export function get6s(field, candidateFields) { // NB! Convert field to fields!!
   if (sixes.length === 0) {
     return [field];
   }
-  //nvdebug(`SIXES: ${sixes.length}`);
+  //nvdebug(`SIXES: ${sixes.length}`, debugDev);
   const occurrenceNumbers = sixes.map(sf => subfield6GetOccurrenceNumber(sf)).filter(value => value !== undefined && value !== '00');
-  //nvdebug(occurrenceNumbers.join(' -- '));
+  //nvdebug(occurrenceNumbers.join(' -- '), debugDev);
 
   const relevantFields = candidateFields.filter(f => occurrenceNumbers.some(o => fieldHasOccurrenceNumber(f, o)));
-  //nvdebug(`${fieldToString(field)}: $6-RELFIELDS FOUND: ${relevantFields.length}...`);
-  //relevantFields.forEach(f => nvdebug(fieldToString(f)));
+  //nvdebug(`${fieldToString(field)}: $6-RELFIELDS FOUND: ${relevantFields.length}...`, debugDev);
+  //relevantFields.forEach(f => nvdebug(fieldToString(f), debugDev));
   return relevantFields;
 }
 
@@ -488,6 +486,6 @@ export function resetSubfield6Tag(subfield, tag) {
   }
   // NB! mainly for 1XX<->7XX transfers
   const newValue = `${tag}-${subfield.value.substring(4)}`;
-  //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
+  //nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDevDev);
   subfield.value = newValue;
 }

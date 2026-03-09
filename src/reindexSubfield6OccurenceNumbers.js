@@ -7,6 +7,8 @@ import {fieldGetOccurrenceNumberPairs, fieldGetUnambiguousOccurrenceNumber, fiel
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:reindexSubfield6OccurrenceNumbers');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 
 // NB! This validator/fixer has two functionalities:
@@ -20,7 +22,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug('Fix SF6 occurrence numbers', debug);
+    nvdebug('Fix SF6 occurrence numbers', debugDev);
     const res = {message: [], fix: [], valid: true};
     //message.fix = [];
 
@@ -36,13 +38,13 @@ export default function () {
   function validate(record) {
     const res = {message: []};
 
-    nvdebug('Validate SF6 occurrence number multiuses', debug);
+    nvdebug('Validate SF6 occurrence number multiuses', debugDev);
     if (recordGetSharedOccurrenceNumbers(record).length) {
       res.message.push(`Multi-use of occurrence number(s) detected`);
     }
 
     // Check max, and check number of different indexes
-    nvdebug('Validate SF6 occurrence number (max vs n instances)', debug);
+    nvdebug('Validate SF6 occurrence number (max vs n instances)', debugDev);
     const max = recordGetMaxSubfield6OccurrenceNumberAsInteger(record);
     const size = recordGetNumberOfUniqueSubfield6OccurrenceNumbers(record);
 
@@ -90,7 +92,7 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
   if (sharedOccurrenceNumberFields.length < 2) {
     return;
   }
-  nvdebug(`Disambiguate occurrence numbers (N=${sharedOccurrenceNumberFields.length}) in...`, debug);
+  nvdebug(`Disambiguate occurrence numbers (N=${sharedOccurrenceNumberFields.length}) in...`, debugDev);
   sharedOccurrenceNumberFields.forEach(field => disambiguateOccurrenceNumber(field));
 
   function disambiguateable(field) {
@@ -98,20 +100,20 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
       return false;
     }
     const occurrenceNumber = fieldGetUnambiguousOccurrenceNumber(field);
-    nvdebug(` Trying to disambiguate ${occurrenceNumber} in '${fieldToString(field)}`);
+    nvdebug(` Trying to disambiguate ${occurrenceNumber} in '${fieldToString(field)}`, debugDev);
     if (occurrenceNumber === undefined) {
       return false;
     }
     const allRelevantFields = getPotentialSharedOccurrenceNumberFields(occurrenceNumber, sharedOccurrenceNumberFields);
     if (allRelevantFields.length < 2) {
-      nvdebug(` Currently only ${allRelevantFields.length} field(s) use occurrence number ${occurrenceNumber}. No action required.`);
+      nvdebug(` Currently only ${allRelevantFields.length} field(s) use occurrence number ${occurrenceNumber}. No action required.`, debugDev);
       return false;
     }
-    nvdebug(` Currently ${allRelevantFields.length} field(s) use occurrence number ${occurrenceNumber}. ACTION REQUIRED!`);
+    nvdebug(` Currently ${allRelevantFields.length} field(s) use occurrence number ${occurrenceNumber}. ACTION REQUIRED!`, debugDev);
     const relevantFieldsWithCurrFieldTag = allRelevantFields.filter(candField => field.tag === candField.tag);
 
     if (relevantFieldsWithCurrFieldTag.length !== 1) {
-      nvdebug(` Number of them using tag ${field.tag} is ${relevantFieldsWithCurrFieldTag.length}. Can not disambiguate!`);
+      nvdebug(` Number of them using tag ${field.tag} is ${relevantFieldsWithCurrFieldTag.length}. Can not disambiguate!`, debugDev);
       return false;
     }
 
@@ -128,7 +130,7 @@ function recordDisambiguateSharedSubfield6OccurrenceNumbers(record) {
     const newOccurrenceNumber = intToOccurrenceNumberString(newOccurrenceNumberAsInt);
     const pairedFields = fieldGetOccurrenceNumberPairs(field, record.fields);
 
-    nvdebug(` Reindex '${fieldToString(field)}' occurrence number and it's ${pairedFields.length} pair(s) using '${newOccurrenceNumber}'`, debug);
+    nvdebug(` Reindex '${fieldToString(field)}' occurrence number and it's ${pairedFields.length} pair(s) using '${newOccurrenceNumber}'`, debugDev);
 
     fieldResetOccurrenceNumber(field, newOccurrenceNumber, occurrenceNumber);
     pairedFields.forEach(pairedField => fieldResetOccurrenceNumber(pairedField, newOccurrenceNumber, occurrenceNumber));
@@ -172,7 +174,7 @@ export function recordResetSubfield6OccurrenceNumbers(record) { // Remove gaps
   record.fields.forEach(field => fieldResetSubfield6(field));
 
   function fieldResetSubfield6(field) {
-    nvdebug(`fieldResetSubfield6(${fieldToString(field)}), CURR:${currentInt}`, debug);
+    nvdebug(`fieldResetSubfield6(${fieldToString(field)}), CURR:${currentInt}`, debugDev);
     if (!field.subfields) {
       return;
     }
@@ -189,7 +191,7 @@ export function recordResetSubfield6OccurrenceNumbers(record) { // Remove gaps
     }
 
     const newIndex = mapCurrIndexToNewIndex(currIndex);
-    //nvdebug(`subfieldReset6(${subfieldToString(subfield)}): ${newIndex}`, debug);
+    //nvdebug(`subfieldReset6(${subfieldToString(subfield)}): ${newIndex}`, debugDev);
     subfield6ResetOccurrenceNumber(subfield, newIndex);
   }
 

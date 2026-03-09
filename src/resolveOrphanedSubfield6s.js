@@ -5,6 +5,8 @@ import {fieldHasWantedTagAndOccurrenceNumber, isValidSubfield6, subfield6GetOccu
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:resolveOrphanedSubfield6s');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default function () {
   return {
@@ -13,7 +15,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug('Fix SF6 orphaned occurrence numbers');
+    nvdebug('Fix SF6 orphaned occurrence numbers', debugDev);
     const res = {message: [], fix: [], valid: true};
     //message.fix = [];
 
@@ -26,7 +28,7 @@ export default function () {
 
   function validate(record) {
     // Check max, and check number of different indexes
-    nvdebug('Validate SF6 orphaned occurrence numbers', debug);
+    nvdebug('Validate SF6 orphaned occurrence numbers', debugDev);
     const fieldsContainingSubfield6 = record.fields.filter(field => fieldHasSubfield(field, '6'));
 
     const orphanedFields = getOrphanedFields(fieldsContainingSubfield6);
@@ -77,7 +79,7 @@ function findPairForSubfield6OccurrenceNumber(subfield6, myTag, candPairFields) 
   if (!isValidSubfield6(subfield6)) {
     return undefined;
   }
-  //nvdebug(`LOOKING FOR PAIR: ${myTag} ${subfieldToString(subfield6)}`);
+  //nvdebug(`LOOKING FOR PAIR: ${myTag} ${subfieldToString(subfield6)}`, debugDev);
   candPairFields.forEach(field => fieldToString(field));
 
   // Only valid $6 value that fails to map to another field is iffy...
@@ -88,7 +90,7 @@ function findPairForSubfield6OccurrenceNumber(subfield6, myTag, candPairFields) 
     return undefined;
   }
   const tagAndOccurrenceNumber = `${myTag}-${occurrenceNumber}`;
-  //nvdebug(`Try to find occurrence number ${tagAndOccurrenceNumber} in field ${referredTag}...`);
+  //nvdebug(`Try to find occurrence number ${tagAndOccurrenceNumber} in field ${referredTag}...`, debugDev);
   //const relevantFields = fields.filter(field => field.tag === referredTag && field.subfields.some(sf => subfield6GetOccurrenceNumber(sf) === occurrenceNumber));
   const relevantFields = candPairFields.filter(field => field.tag === referredTag && fieldHasWantedTagAndOccurrenceNumber(field, tagAndOccurrenceNumber));
   if (relevantFields.length === 0) {

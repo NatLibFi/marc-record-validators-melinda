@@ -1,10 +1,13 @@
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import clone from 'clone';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
 import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './field33XUtils.js';
 
-const description = 'Fix non-RDA 33X field(s)';
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-33X');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
+const description = 'Fix non-RDA 33X field(s)';
 
 const map336 = {
   'Bild (kartografisk ; att vidra)': 'crt',
@@ -366,6 +369,7 @@ const map338 = {
 
 // const multimediaRegexp = /multimedia/ui;
 
+// eslint-disable-next-line max-lines-per-function
 export default function () {
 
   return {
@@ -373,11 +377,11 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug(`FIX ${description}...`);
+    nvdebug(`FIX ${description}...`, debugDev);
     const catLang = getCatalogingLanguage(record) || 'fin';
     const fields = getRelevantFields(record);
     fields.forEach(f => fixField(f, catLang));
-    nvdebug(` GOT ${fields.length}...`);
+    nvdebug(` GOT ${fields.length}...`, debugDev);
     // FFS: we actually need newFields array here! Videogame, for example, might be
     // 336 ## ‡a kaksiulotteinen liikkuva kuva ‡b tdi ‡2 rdacontent
     // 336 ## ‡a tietokoneohjelma ‡b cop ‡2 rdacontent
@@ -387,7 +391,7 @@ export default function () {
   }
 
   function validate(record) {
-    nvdebug(`VALIDATE ${description}...`); // NOT READY YET
+    nvdebug(`VALIDATE ${description}...`, debugDev); // NOT READY YET
     const catLang = getCatalogingLanguage(record) || 'fin';
     const fields = getRelevantFields(record);
     if (fields.length === 0) {
@@ -414,7 +418,7 @@ export default function () {
 
 
   function mapTermToCode(term, tag) {
-    nvdebug(`TERM/${tag}: '${term}'`);
+    nvdebug(`TERM/${tag}: '${term}'`, debugDev);
     if (tag === '336' && term in map336) {
       return map336[term];
     }

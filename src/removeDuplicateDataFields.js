@@ -11,6 +11,8 @@ const LINKED_NOT_PROCESSED = 1;
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:removeDuplicateDataFields');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default function () {
   return {
@@ -19,7 +21,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug('Remove duplicate data fields');
+    nvdebug('Remove duplicate data fields', debugDev);
     const res = {message: [], fix: [], valid: true};
     removeDuplicateDatafields(record, true);
     // This can not really fail...
@@ -28,7 +30,7 @@ export default function () {
 
   function validate(record) {
     // Check max, and check number of different indexes
-    nvdebug('Validate record: duplicate data fields cause (t)error', debug);
+    nvdebug('Validate record: duplicate data fields cause (t)error', debugDev);
 
     const duplicates = removeDuplicateDatafields(record, false);
 
@@ -49,7 +51,7 @@ export default function () {
 
 /*
 function numberOfLinkageSubfields(field) {
-  nvdebug(`N of Linkage Subs(${fieldToString(field)})`);
+  nvdebug(`N of Linkage Subs(${fieldToString(field)})`, debugDev);
   const subfields = field.subfields.filter(sf => sf.code === '6' || sf.code === '8');
   return subfields.length;
 }
@@ -139,21 +141,21 @@ export function removeDuplicateSubfield8Chains(record, fix = true) {
 
   let removables = []; // for validation
 
-  //nvdebug("CHAIN-8");
+  //nvdebug("CHAIN-8", debugDev);
   const seenLinkingNumbers = recordGetAllSubfield8LinkingNumbers(record);
   if (seenLinkingNumbers.length === 0) {
     return removables;
   }
 
-  //nvdebug(`seen linking numbers ($8): ${seenLinkingNumbers.join(', ')}`, debug);
+  //nvdebug(`seen linking numbers ($8): ${seenLinkingNumbers.join(', ')}`, debugDev);
 
   seenLinkingNumbers.forEach(currLinkingNumber => {
     const linkedFields = recordGetFieldsWithSubfield8LinkingNumber(record, currLinkingNumber) //getFieldsWithSubfield8Index(base, baseIndex);
     // As/If there's just one occurrence number it should be fine to use normalizeOccurrenceNumber = true
     const normalizeOccurrenceNumber = true;
     const linkedFieldsAsString = fieldsToNormalizedString(linkedFields, currLinkingNumber, normalizeOccurrenceNumber, true);
-    //nvdebug(`Results for LINKING NUMBER ${currLinkingNumber}:`, debug);
-    //nvdebug(`${linkedFieldsAsString}`, debug);
+    //nvdebug(`Results for LINKING NUMBER ${currLinkingNumber}:`, debugDev);
+    //nvdebug(`${linkedFieldsAsString}`, debugDev);
 
     if (linkedFieldsAsString in seen)  {
       if (!removables.includes(linkedFieldsAsString)) {
@@ -161,15 +163,15 @@ export function removeDuplicateSubfield8Chains(record, fix = true) {
       }
 
       if (fix) {
-        //nvdebug(`$8 CHAIN FIX: REMOVE $8 GROUP: ${fieldsToString(linkedFields)}`, debug);
+        //nvdebug(`$8 CHAIN FIX: REMOVE $8 GROUP: ${fieldsToString(linkedFields)}`, debugDev);
         linkedFields.forEach(field => recordRemoveFieldOrSubfield8(record, field, currLinkingNumber));
         return;
       }
 
-      //nvdebug(`$8 VALIDATION: DUPLICATE DETECTED ${linkedFieldsAsString}`, debug);
+      //nvdebug(`$8 VALIDATION: DUPLICATE DETECTED ${linkedFieldsAsString}`, debugDev);
       return;
     }
-    //nvdebug(`$8 DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${linkedFieldsAsString}`, debug);
+    //nvdebug(`$8 DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${linkedFieldsAsString}`, debugDev);
     seen[linkedFieldsAsString] = 1;
     return;
   });
@@ -190,28 +192,28 @@ export function handleDuplicateSubfield8Chains(record, fix) {
 
   let seen = {};
 
-  //nvdebug("CHAIN-8");
+  //nvdebug("CHAIN-8", debugDev);
   const seenLinkingNumbers = recordGetAllSubfield8LinkingNumbers(record);
   if (seenLinkingNumbers.length === 0) {
     return;
   }
 
-  //nvdebug(`seen linking numbers ($8): ${seenLinkingNumbers.join(', ')}`, debug);
+  //nvdebug(`seen linking numbers ($8): ${seenLinkingNumbers.join(', ')}`, debugDev);
 
   seenLinkingNumbers.forEach(currLinkingNumber => {
     const linkedFields = recordGetFieldsWithSubfield8LinkingNumber(record, currLinkingNumber) //getFieldsWithSubfield8Index(base, baseIndex);
     // As/If there's just one occurrence number it should be fine to use normalizeOccurrenceNumber = true
     const normalizeOccurrenceNumber = false; //true;
     const linkedFieldsAsString = fieldsToNormalizedString(linkedFields, currLinkingNumber, normalizeOccurrenceNumber, true);
-    //nvdebug(`Results for LINKING NUMBER ${currLinkingNumber}:`, debug);
-    //nvdebug(`${linkedFieldsAsString}`, debug);
+    //nvdebug(`Results for LINKING NUMBER ${currLinkingNumber}:`, debugDev);
+    //nvdebug(`${linkedFieldsAsString}`, debugDev);
 
     if (linkedFieldsAsString in seen)  {
-      //nvdebug(`$8 CHAIN FIX: REMOVE $8 GROUP: ${fieldsToString(linkedFields)}`, debug);
+      //nvdebug(`$8 CHAIN FIX: REMOVE $8 GROUP: ${fieldsToString(linkedFields)}`, debugDev);
       linkedFields.forEach(field => newRecordRemoveFieldOrSubfield8(record, field, currLinkingNumber, fix));
       return;
     }
-    //nvdebug(`$8 DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${linkedFieldsAsString}`, debug);
+    //nvdebug(`$8 DOUBLE REMOVAL OR VALIDATION: ADD2SEEN ${linkedFieldsAsString}`, debugDev);
     seen[linkedFieldsAsString] = 1;
     return;
   });
@@ -223,12 +225,12 @@ function markIdenticalSubfield6Chains(chain, record) {
   const normalizeTag = chain.some(field => field.tag.substring(0, 1) === '1'); // 1XX can delete 7XX as well!
   const chainAsString = fieldsToNormalizedString(chain, 0, normalizeOccurrenceNumber, normalizeTag);
 
-  //nvdebug(`markIdenticalSubfield6Chains: ${chainAsString}`);
+  //nvdebug(`markIdenticalSubfield6Chains: ${chainAsString}`, debugDev);
   record.fields.forEach(f => compareWithChain(f));
 
 
   function compareWithChain(f) {
-    //nvdebug(`FIELD2CHAIN ${fieldToString(f)}`);
+    //nvdebug(`FIELD2CHAIN ${fieldToString(f)}`, debugDev);
     const otherChain = fieldToChain(f, record);
     // Not a lone field or chain (head) or ... or is-same-chain
     if (otherChain.length === 0 || sameField(chain[0], otherChain[0])) {
@@ -239,7 +241,7 @@ function markIdenticalSubfield6Chains(chain, record) {
     // Mark other chain as deleted:
     if (chainAsString === otherChainAsString) {
       otherChain.forEach(f => {
-        //nvdebug(` mark ${fieldToString(f)} as deleted ($6-chain)...`);
+        //nvdebug(` mark ${fieldToString(f)} as deleted ($6-chain)...`, debugDev);
         f.deleted = 1;
       });
       return;
@@ -260,7 +262,7 @@ function markIdenticalLoneFieldsAsDeletable(field, record) {
 
   // Mark fields as deleted:
   identicalLoneFields.forEach(f => {
-    //nvdebug(` mark ${fieldToString(f)} as deleted (lone field)...`);
+    //nvdebug(` mark ${fieldToString(f)} as deleted (lone field)...`, debugDev);
     f.deleted = 1;
   });
 
@@ -300,7 +302,7 @@ function acceptFieldsWithSubfield8(fieldsWithSubfield8, requireSingleTag = false
 
   // If linking number
   function anomaly8(linkingNumber) {
-    //nvdebug(`  Looking for anomalies in linkin number ${linkingNumber}`);
+    //nvdebug(`  Looking for anomalies in linkin number ${linkingNumber}`, debugDev);
     const relevantFields = fieldsWithSubfield8.filter(f => fieldHasLinkingNumber(f, linkingNumber));
     if (requireSingleTag) {
       return !isSingleTagLinkingNumber(linkingNumber, relevantFields, relevantFields[0].tag);
@@ -332,7 +334,7 @@ export function fieldToChain(field, record) {
   }
   const chain = newGetAllLinkedFields(field, record, true, true);
 
-  // nvdebug(` Chain contains ${chain.length} field(s)`);
+  // nvdebug(` Chain contains ${chain.length} field(s)`, debugDev);
   if (!isChainHead(field, chain)) { // newGetAllLinkedFields() marks relevant record.fields!
     return [];
   }
@@ -357,7 +359,7 @@ export function fieldToChain(field, record) {
     return [];
   }
 
-  //nvdebug(`Proceed with ${fieldsToString(chain)}`);
+  //nvdebug(`Proceed with ${fieldsToString(chain)}`, debugDev);
 
 
   return chain;
@@ -366,7 +368,7 @@ export function fieldToChain(field, record) {
 
 function fieldHandleDuplicateDatafields(field, record) {
   const chain = fieldToChain(field, record);
-  //nvdebug(` TRY TO HANDLE DUPLICATES OF '${fieldsToString(chain)}'`);
+  //nvdebug(` TRY TO HANDLE DUPLICATES OF '${fieldsToString(chain)}'`, debugDev);
 
   if (chain.length === 0) {
     return;
@@ -383,7 +385,7 @@ function fieldHandleDuplicateDatafields(field, record) {
   if (fieldsWithSubfield6.length === 0) {
 
     if (fieldsWithSubfield8.length === 0) { // chain.length === 1?
-      //nvdebug(` Trying to find duplicates of single field '${fieldToString(chain[0])}'`);
+      //nvdebug(` Trying to find duplicates of single field '${fieldToString(chain[0])}'`, debugDev);
       markIdenticalLoneFieldsAsDeletable(chain[0], record);
       return;
     }
@@ -401,8 +403,8 @@ function fieldHandleDuplicateDatafields(field, record) {
   }
 
 
-  //nvdebug(` NO HANDLER FOUND FOR '${fieldsToString(chain)}'`);
-  //nvdebug(`  N8s: ${fieldsWithSubfield6.length}`);
+  //nvdebug(` NO HANDLER FOUND FOR '${fieldsToString(chain)}'`, debugDev);
+  //nvdebug(`  N8s: ${fieldsWithSubfield6.length}`, debugDev);
 
 }
 

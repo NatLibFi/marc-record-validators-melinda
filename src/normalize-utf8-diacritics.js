@@ -1,12 +1,15 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
 import {convert as nongenericNormalization} from './unicode-decomposition.js';
-import {fieldToString} from './utils.js';
+import {fieldToString /*, nvdebug */} from './utils.js';
 
 // Note that https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js contains
 // similar functionalities. It's less generic and lacks diacritic removal but has it advantages as well.
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/normalize-utf-diacritics');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
+
 
 // See also https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js .
 // It uses a list of convertable characters whilst this uses a generic stuff as well.
@@ -111,13 +114,13 @@ export function fieldFixComposition(field) {
     return field;
   }
   //const originalValue = fieldToString(field);
-  //nvdebug(`fFC: '${originalValue}'`, debug);
+  //nvdebug(`fFC: '${originalValue}'`, debugDev);
   field.subfields.forEach((subfield, index) => {
     field.subfields[index].value = fixComposition(subfield.value);
   });
   //const newValue = fieldToString(field);
   //if (originalValue !== newValue) {
-  //  debug(`FIXCOMP: '${originalValue}' => '${newValue}'`);
+  //  nvdebug(`FIXCOMP: '${originalValue}' => '${newValue}'`, debugDev);
   //}
   return field;
 }
