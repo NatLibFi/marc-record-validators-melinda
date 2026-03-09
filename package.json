@@ -35,8 +35,8 @@
     "dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test"
   },
   "dependencies": {
-    "@natlibfi/iso9-1995": "^1.1.0",
-    "@natlibfi/issn-verify": "^2.0.1",
+    "@natlibfi/iso9-1995": "^1.1.1",
+    "@natlibfi/issn-verify": "^2.0.2",
     "@natlibfi/marc-record": "^10.0.1",
     "@natlibfi/marc-record-serializers": "^11.0.1",
     "@natlibfi/marc-record-validate": "^9.0.0",
@@ -46,7 +46,7 @@
     "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
     "debug": "^4.4.3",
-    "isbn3": "^2.0.5",
+    "isbn3": "^2.0.6",
     "langs": "^2.0.0",
     "xml2js": "^0.6.2",
     "xregexp": "^5.1.2"
@@ -55,11 +55,11 @@
     "@natlibfi/marc-record-validate": "^9.0.0"
   },
   "devDependencies": {
-    "@natlibfi/fixugen": "^3.0.0",
-    "@natlibfi/fixura": "^4.0.0",
+    "@natlibfi/fixugen": "^3.0.1",
+    "@natlibfi/fixura": "^4.0.1",
     "cross-env": "^10.1.0",
     "esbuild": "^0.27.3",
-    "eslint": "^10.0.0",
+    "eslint": "^10.0.3",
     "fetch-mock": "^12.6.0"
   },
   "overrides": {
