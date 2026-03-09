@@ -1,6 +1,12 @@
-//import createDebugLogger from 'debug';
 import clone from 'clone';
 import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
+
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normaliza-dashes');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
+
 
 // Author(s): Nicholas Volk
 export default function () {
@@ -11,7 +17,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug(`FIX ME`);
+    nvdebug(`FIX ME`, debugDev);
     record.fields.forEach(field => {
       fixDashes(field);
     });
@@ -23,7 +29,7 @@ export default function () {
   function validate(record) {
     const res = {message: []};
 
-    nvdebug(`VALIDATE ME`);
+    nvdebug(`VALIDATE ME`, debugDev);
     record.fields?.forEach(field => {
       validateField(field, res);
     });
@@ -34,7 +40,7 @@ export default function () {
 
   function validateField(field, res) {
     const orig = fieldToString(field);
-    nvdebug(` VALIDATE FIELD '${orig}'`);
+    nvdebug(` VALIDATE FIELD '${orig}'`, debugDev);
 
     const normalizedField = fixDashes(clone(field));
     const mod = fieldToString(normalizedField);
@@ -52,7 +58,7 @@ function fixDashes(field) {
     return field;
   }
 
-  nvdebug(`Dashing ${fieldToString(field)}`);
+  nvdebug(`Dashing ${fieldToString(field)}`, debugDev);
 
   field.subfields.forEach(sf => subfieldFixDashes(sf));
 

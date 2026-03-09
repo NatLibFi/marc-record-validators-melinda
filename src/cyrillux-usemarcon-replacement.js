@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /*
 *  cyrillux-usemarcon-replacement.js -- implement and improve https://github.com/NatLibFi/USEMARCON-Cyrillux/tree/master
 *
@@ -6,6 +8,7 @@
 */
 
 import clone from 'clone';
+import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {default as fix33X} from './fix-33X.js';
 import {default as add041} from './addMissingField041.js';
@@ -19,11 +22,11 @@ import {default as fixIndicators} from './indicator-fixes.js';
 import {default as fixPunctuation} from './punctuation2.js';
 import {default as fixQualifyingInformation} from './normalize-qualifying-information.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
-
-// import createDebugLogger from 'debug';
 import {fieldHasSubfield, nvdebug, recordRemoveValuelessSubfields, recordToString, removeSubfield} from './utils.js';
 
-// const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/punctuation2');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/cyrillux-usermarcon-replacement');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const description = 'Replacement for Cyrillux usemarcon rules';
 
@@ -32,13 +35,14 @@ const description = 'Replacement for Cyrillux usemarcon rules';
 const dropTags = ['001', '003', '010', '012', '014', '015', '016', '017', '019', '025', '029', '032', '035', '036', '037', '038', '042', '044', '049', '051', '061', '068', '071', '074', '079', '090', '091', '092', '094', '095', '096', '097', '099', '249', '261', '262', '350', '400', '411', '541', '561', '562', '574', '575', '577', '578', '583', '584', '589', '590', '591', '592', '593', '594', '595', '596', '597', '598', '599', '653', '698', '741', '742', '744', '751', '761', '790', '841', '842', '843', '844', '845', '850', '852', '853', '854', '855', '858', '859', '863', '864', '865', '866', '867', '868', '876', '877', '878', '882', '886', '887', '888', '890', '899'];
 
 
+// eslint-disable-next-line max-lines-per-function
 export default function () {
   return {
     description, fix, validate
   };
 
   function fix(record) {
-    nvdebug(`${description}: fix`);
+    nvdebug(`${description}: fix`, debugDev);
     realFix(record);
     const res = {message: [], fix: [], valid: true};
     return res;
@@ -156,7 +160,7 @@ export default function () {
 
   // Validation is currently done in subparts
   function validate(record) {
-    nvdebug(`${description}: validate`);
+    nvdebug(`${description}: validate`, debugDev);
     const originalString = recordToString(record);
     const clonedRecord = new MarcRecord(record, {subfieldValues: false});
     realFix(clonedRecord);

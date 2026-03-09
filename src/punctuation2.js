@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /*
 * punctuation.js -- try and fix a marc field punctuation
 *
@@ -12,11 +13,13 @@
 import {validateSingleField} from './ending-punctuation.js';
 import {tagToDataProvenanceSubfieldCode} from './dataProvenanceUtils.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
 import clone from 'clone';
 
-//const debug = createDebugLogger('debug/punctuation2');
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:punctuation2');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const descriptionString = 'Remove invalid and add valid punctuation to data fields';
 export default function () {
@@ -26,14 +29,14 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug(`${descriptionString}: fixer`);
+    nvdebug(`${descriptionString}: fixer`, debugDev);
     const res = {message: [], fix: [], valid: true};
     record.fields.forEach(f => fieldFixPunctuation(f));
     return res;
   }
 
   function validate(record) {
-    nvdebug(`${descriptionString}: validate`);
+    nvdebug(`${descriptionString}: validate`, debugDev);
 
     const fieldsNeedingModification = record.fields.filter(f => fieldNeedsModification(f, true));
 
@@ -396,19 +399,19 @@ const addPairedPunctuationRules = {
 
 /*
 function debugRule(rule) {
-  //nvdebug('');
-  nvdebug(`NAME ${rule.name ? rule.name : '<unnamed>'}`);
-  nvdebug(`SUBFIELD CODE '${rule.code}' FOLLOWED BY SUBFIELD CODE '${rule.followedBy}'`);
+  //nvdebug('', debugDev);
+  nvdebug(`NAME ${rule.name ? rule.name : '<unnamed>'}`, debugDev);
+  nvdebug(`SUBFIELD CODE '${rule.code}' FOLLOWED BY SUBFIELD CODE '${rule.followedBy}'`, debugDev);
   if ('add' in rule) {
-    nvdebug(`ADD '${rule.add}'`);
+    nvdebug(`ADD '${rule.add}'`, debugDev);
   }
   if ('remove' in rule) {
-    nvdebug(`REMOVE '${rule.remove}'`);
+    nvdebug(`REMOVE '${rule.remove}'`, debugDev);
   }
   if ('context' in rule) {
-    nvdebug(`CONTEXT '${rule.context.toString()}'`);
+    nvdebug(`CONTEXT '${rule.context.toString()}'`, debugDev);
   }
-  //nvdebug('');
+  //nvdebug('', debugDev);
 }
 */
 
@@ -440,19 +443,19 @@ function ruleAppliesToField(rule, field) {
 
 
 function ruleAppliesToCurrentSubfield(rule, subfield) {
-  //nvdebug(`  Apply rule on LHS?`);
+  //nvdebug(`  Apply rule on LHS?`, debugDev);
   if (!ruleAppliesToSubfieldCode(rule.code, subfield.code)) {
-    //nvdebug(`  Reject rule!`);
+    //nvdebug(`  Reject rule!`, debugDev);
     return false;
   }
   if ('context' in rule) {
-    //nvdebug(`  Check '${subfield.value}' versus '${rule.context.toString()}'`);
+    //nvdebug(`  Check '${subfield.value}' versus '${rule.context.toString()}'`, debugDev);
     if (!subfield.value.match(rule.context)) { // njsscan-ignore: regex_injection_dos
-      //nvdebug(`  Reject rule!`);
+      //nvdebug(`  Reject rule!`, debugDev);
       return false;
     }
   }
-  //nvdebug(`  Apply rule!`);
+  //nvdebug(`  Apply rule!`, debugDev);
   return true;
 }
 
@@ -480,23 +483,24 @@ function ruleAppliesToNextSubfield(rule, nextSubfield) {
 
 function checkRule(rule, field, subfield1, subfield2) {
   if (!ruleAppliesToField(rule, field)) {
-    //nvdebug(`FAIL ON WHOLE FIELD: '${fieldToString(field)}`);
+    //nvdebug(`FAIL ON WHOLE FIELD: '${fieldToString(field)}`, debugDev);
     return false;
   }
   //const name = rule.name || 'UNNAMED';
   if (!ruleAppliesToCurrentSubfield(rule, subfield1)) {
-    //nvdebug(`${name}: FAIL ON LHS SUBFIELD: '$${subfield1.code} ${subfield1.value}', SF=${rule.code}`, debug);
+    //nvdebug(`${name}: FAIL ON LHS SUBFIELD: '$${subfield1.code} ${subfield1.value}', SF=${rule.code}`, debugDev);
     return false;
   }
 
   // NB! This is not a perfect solution. We might have $e$0$e where $e$0 punctuation should actually be based on $e$e rules
   if (!ruleAppliesToNextSubfield(rule, subfield2)) {
     //const msg = subfield2 ? `${name}: FAIL ON RHS SUBFIELD '${subfield2.code}' not in [${rule.followedBy}]` : `${name}: FAIL ON RHS FIELD`;
-    //nvdebug(msg, debug);
+    //nvdebug(msg, debugDev);
     return false;
   }
 
-  //nvdebug(`${rule.name ? rule.name : '<unnamed>'}: ACCEPT ${rule.code} (${subfield1.code}), SF2=${rule.followedBy} (${subfield2 ? subfield2.code : '#'})`, debug);
+   
+  //nvdebug(`${rule.name ? rule.name : '<unnamed>'}: ACCEPT ${rule.code} (${subfield1.code}), SF2=${rule.followedBy} (${subfield2 ? subfield2.code : '#'})`, debugDev);
   return true;
 }
 
@@ -513,9 +517,9 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
     return;
   }
 
-  //nvdebug(`PUNCTUATE ${field.tag}/${tag2} '${subfieldToString(subfield1)}' XXX '${subfield2 ? subfieldToString(subfield2) : '#'} }`);
+  //nvdebug(`PUNCTUATE ${field.tag}/${tag2} '${subfieldToString(subfield1)}' XXX '${subfield2 ? subfieldToString(subfield2) : '#'} }`, debugDev);
 
-  //nvdebug(`OP=${operation} ${tag2}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`);
+  //nvdebug(`OP=${operation} ${tag2}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debugDev);
   const candRules = ruleArray[tag2];
   candRules.every(rule => { // uses "every", not "forEach", so that only one rule is applies to the given subfields
     //debugRule(rule);
@@ -525,20 +529,20 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
 
     //const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) {
-      //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
+      //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debugDev);
       subfield1.value = subfield1.value.replace(rule.remove, '');
-      //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`);
+      //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`, debugDev);
       return false;
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) {
       subfield1.value += rule.add;
-      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}' USING RULE ${rule.name}`);
+      //nvdebug(`    ADDED '${rule.add}' TO FORM '${subfield1.value}' USING RULE ${rule.name}`, debugDev);
       return false;
     }
 
     /*
     if (subfield1.value !== originalValue) {
-      nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug);
+      nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debugDev);
     }
     */
 
@@ -552,11 +556,11 @@ function subfieldFixPunctuation(field, subfield1, subfield2) {
 }
 
 function subfieldStripPunctuation(field, subfield1, subfield2) {
-  //nvdebug(`FSP1: '${subfield1.value}'`);
+  //nvdebug(`FSP1: '${subfield1.value}'`, debugDev);
   applyPunctuationRules(field, subfield1, subfield2, cleanValidPunctuationRules, REMOVE);
-  //nvdebug(`FSP2: '${subfield1.value}'`);
+  //nvdebug(`FSP2: '${subfield1.value}'`, debugDev);
   applyPunctuationRules(field, subfield1, subfield2, cleanCrappyPunctuationRules, REMOVE);
-  //nvdebug(`FSP3: '${subfield1.value}'`);
+  //nvdebug(`FSP3: '${subfield1.value}'`, debugDev);
 
 }
 
@@ -578,7 +582,7 @@ export function fieldFixPunctuation(field) {
   if (!field.subfields) {
     return field;
   }
-  //nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`);
+  //nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`, debugDev);
 
   field.subfields.forEach((sf, i) => {
     // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!

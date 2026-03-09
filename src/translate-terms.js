@@ -4,6 +4,9 @@ import {fieldHasSubfield, fieldToString, nvdebug} from './utils.js';
 
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:translate-terms');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
+
 const defaultTags = ['648', '650', '651', '655'];
 
 const swapLanguageCode = {'fin': 'swe', 'fi': 'sv', 'sv': 'fi', 'swe': 'fin'};
@@ -12,6 +15,7 @@ const changeAbbrHash = {'fi': 'fin', 'fin': 'fi', 'sv': 'swe', 'swe': 'sv'};
 const termCache = {};
 
 // Author(s): Nicholas Volk
+// eslint-disable-next-line max-lines-per-function
 export default function () {
 
 
@@ -23,7 +27,7 @@ export default function () {
   async function fix(record) {
     const newFields = await getFields(record, defaultTags, []);
 
-    newFields.forEach(nf => nvdebug(`Add new field '${fieldToString(nf)}'`, debug));
+    newFields.forEach(nf => nvdebug(`Add new field '${fieldToString(nf)}'`, debugDev));
 
     newFields.forEach(nf => record.insertField(nf));
 
@@ -65,7 +69,7 @@ export default function () {
     const finnishOnly = getMisses(finnishFields, swedishFields);
     const swedishOnly = getMisses(swedishFields, finnishFields);
 
-    //console.log(` Looking at ${finnishOnly.length} + ${swedishOnly.length} fields`); // eslint-disable-line no-console
+    //nvdebug(` Looking at ${finnishOnly.length} + ${swedishOnly.length} fields`, debugDev);
     return [...finnishOnly, ...swedishOnly].filter(f => tagAndFieldAgree(f));
 
     function tagAndFieldAgree(field) {
@@ -93,12 +97,12 @@ export default function () {
     if (!prefLabels) {
       return undefined;
     }
-    //console.log(`pairField() WP 1: ${fieldToString(field)}`); // eslint-disable-line no-console
+    //nvdebug(`pairField() WP 1: ${fieldToString(field)}`, debugDev);
     const lexAndLang = getLexiconAndLanguage(field);
-    //console.log(`pairField() WP 2: ${JSON.stringify(lexAndLang)}`); // eslint-disable-line no-console
+    //nvdebug(`pairField() WP 2: ${JSON.stringify(lexAndLang)}`, debugDev);
     const twoLetterOtherLang = swapLanguageCodeBetweenLanguages(changeAbbr(lexAndLang.lang));
     const prefLabel = prefLabels.find(l => l.lang === twoLetterOtherLang);
-    //console.log(`pairField() WP 4: ${JSON.stringify(prefLabel)}`); // eslint-disable-line no-console
+    //nvdebug(`pairField() WP 4: ${JSON.stringify(prefLabel)}`, debugDev);
     const sfA = {'code': 'a', 'value': prefLabel.value}; // field.subfields.field(sf => sf.code === 'a');
     const sf0 = clone(field.subfields.find(sf => sf.code === '0'));
     const sf2 = {'code': '2', 'value': `${lexAndLang.lex}/${lexAndLang.lang === 'fin' ? 'swe' : 'fin'}`}; // swap fin <=> swe
@@ -118,7 +122,7 @@ export default function () {
     const data = await getTermData(uri);
 
     if (!data) { // Sanity check. Miss caused by illegal id etc.
-      nvdebug(`No labels found for ${uri}`, debug);
+      nvdebug(`No labels found for ${uri}`, debugDev);
       return undefined;
     }
 
@@ -223,9 +227,9 @@ function mapTagToLex(tag) {
 }
 
 export async function getTermData(uri) {
-  nvdebug(`getTermData(${uri})`);
+  nvdebug(`getTermData(${uri})`, debugDev);
   if (termCache[uri]) { // Don't think current implementation uses the cache any more.
-    //console.log(`CACHED ${uri}`); // eslint-disable-line no-console
+    //nvdebug(`CACHED ${uri}`, debugDev);
     return termCache[uri];
   }
   const tmp = await getTermDataFromFinto(uri);
@@ -252,7 +256,7 @@ async function getTermDataFromFinto(uri) {
       prefLabel: processLabel(hit?.prefLabel || undefined),
       altLabel: processLabel(hit?.altLabel || undefined)
     };
-    //console.log(`NEW JSON: ${JSON.stringify(hit)}`); // eslint-disable-line no-console
+    //nvdebug(`NEW JSON: ${JSON.stringify(hit)}`, debugDev);
 
     return subset;
 

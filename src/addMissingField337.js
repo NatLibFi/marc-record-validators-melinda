@@ -1,6 +1,10 @@
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
 import {getFormOfItem, map337CodeToTerm} from './field33XUtils.js';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:addMissingField337');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const description = 'Add missing 337 field(s)';
 
@@ -27,7 +31,7 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug(`FIX ${description}...`);
+    nvdebug(`FIX ${description}...`, debugDev);
     const newField = getMissing337(record);
     const res = {message: [], fix: [], valid: true};
     if (newField) {
@@ -39,7 +43,7 @@ export default function () {
   }
 
   function validate(record) {
-    nvdebug(`VALIDATE ${description}....`);
+    nvdebug(`VALIDATE ${description}....`, debugDev);
     const newField = getMissing337(record);
     if (!newField) {
       return {message: [], valid: true};
@@ -101,7 +105,7 @@ export default function () {
   function getMissing337(record) {
     const [f337] = record.get('337');
     if (f337) {
-      // nvdebug(fieldToString(f337));
+      // nvdebug(fieldToString(f337), debugDev);
       return undefined;
     }
 
@@ -122,7 +126,7 @@ export default function () {
 }
 
 function mapFormOfItemToField337B(formOfItem) {
-  nvdebug(`mapping ${formOfItem} to 337$b`);
+  nvdebug(`mapping ${formOfItem} to 337$b`, debugDev);
 
   const [result] = mappings337B.filter(row => row.formOfItem === formOfItem);
   if (result) {

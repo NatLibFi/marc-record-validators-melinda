@@ -1,7 +1,10 @@
 // import createDebugLogger from 'debug';
-// const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield8Utils');
-
 // import {fieldToString, nvdebug} from './utils.js';
+
+// const debug = createDebugLogger('@natlibfi/marc-record-validator-melinda/subfield8Utils');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
+
 
 const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u;
 
@@ -10,9 +13,9 @@ export function isValidSubfield8(subfield) {
     return false;
   }
 
-  //nvdebug(`   IS VALID $8? '${subfieldToString(subfield)}'`);
+  //nvdebug(`   IS VALID $8? '${subfieldToString(subfield)}'`, debugDev);
   const match = subfield.value.match(sf8Regexp);
-  //nvdebug(`   IS VALID $8? '${subfieldToString(subfield)}' vs ${match.length}}`);
+  //nvdebug(`   IS VALID $8? '${subfieldToString(subfield)}' vs ${match.length}}`, debugDev);
   return match && match.length > 0;
 }
 
@@ -56,7 +59,7 @@ export function fieldsGetAllSubfield8LinkingNumbers(fields) {
     field.subfields.forEach(sf => {
       const linkingNumber = getSubfield8LinkingNumber(sf);
       if (linkingNumber > 0 && !subfield8LinkingNumbers.includes(linkingNumber)) {
-        //nvdebug(` LINK8: Add subfield \$8 ${linkingNumber} to seen values list`);
+        //nvdebug(` LINK8: Add subfield \$8 ${linkingNumber} to seen values list`, debugDev);
         subfield8LinkingNumbers.push(linkingNumber);
       }
     });
@@ -76,10 +79,10 @@ export function add8s(fields, record) {
     return fields;
   }
 
-  //nvdebug(`Linking number(s): ${linkingNumbers.join(', ')}`);
+  //nvdebug(`Linking number(s): ${linkingNumbers.join(', ')}`, debugDev);
   linkingNumbers.forEach(number => collectLinkingNumberFields(number));
 
-  //fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`));
+  //fields.forEach(f => nvdebug(`AFTER ADDING 8s: '${fieldToString(f)}'`, debugDev));
 
   return fields;
 
@@ -88,7 +91,7 @@ export function add8s(fields, record) {
     fields = fields.filter(f => !fieldHasLinkingNumber(f, linkingNumber));
     // Add them and their "sisters" back:
     const addableFields = record.fields.filter(f => fieldHasLinkingNumber(f, linkingNumber));
-    //addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`));
+    //addableFields.forEach(f => nvdebug(`(RE-?)ADD ${fieldToString(f)}`, debugDev));
     fields = fields.concat(addableFields);
 
   }

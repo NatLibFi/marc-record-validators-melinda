@@ -1,9 +1,12 @@
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
-//import createDebugLogger from 'debug';
-//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalizeIdentifiers');
 
-import {fieldToString} from './utils.js';
+import createDebugLogger from 'debug';
+import {fieldToString, nvdebug} from './utils.js';
 
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:indicator-fixes');
+const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
 
 export default function () {
 
@@ -31,7 +34,7 @@ export default function () {
 
 
   function validateRecord(record, res) {
-    //nvdebug(record);
+    nvdebug(record, debugData);
     const clonedFields = JSON.parse(JSON.stringify(record.fields));
     recordNormalizeIndicators(record);
 
@@ -41,11 +44,11 @@ export default function () {
       const origFieldAsString = fieldToString(clonedFields[index]);
       //const clonedFieldAsString = fieldToString(field);
       if (clonedFields[index].ind1 !== field.ind1) {
-        //nvdebug(`FIX IND1: '${clonedFields[index].ind1}' => '${field.ind1}': ${clonedFieldAsString}`);
+        //nvdebug(`FIX IND1: '${clonedFields[index].ind1}' => '${field.ind1}': ${clonedFieldAsString}`, debugDev);
         res.message.push(`Expected IND1 for '${origFieldAsString}' is '${field.ind1}'`);
       }
       if (clonedFields[index].ind2 !== field.ind2) {
-        //nvdebug(`FIX IND2: '${clonedFields[index].ind2}' => '${field.ind2}': ${clonedFieldAsString}`);
+        //nvdebug(`FIX IND2: '${clonedFields[index].ind2}' => '${field.ind2}': ${clonedFieldAsString}`, debugDev);
         res.message.push(`Expected IND2 for '${origFieldAsString}' is '${field.ind2}'`);
       }
     }
@@ -79,7 +82,7 @@ function valueBeginsWithDeterminer(value, cands) {
 function determineNonFilingIndicatorValue(field, languages = undefined) {
   const subfieldA = field.subfields.find(sf => sf.code === 'a');
   if (!subfieldA) {
-    // nvdebug(' Subfield $a miss!');
+    // nvdebug(' Subfield $a miss!', debugDev);
     return;
   }
 

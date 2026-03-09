@@ -217,7 +217,7 @@ function getUnbalancedPairedSubfieldCode(field1, field2) {
   // (I'm not saying that 100$b/c/d/q  are in 'paired' contraint, I'm just illustrating the issue here)
   const pairable = pairableIdentifier(field1, field2, '(FIN11)');
   const subfieldString = pairable ? removeNameRelatedSubfieldCodes(fullSubfieldString, field1.tag) : fullSubfieldString;
-  debug(`CHECK ${pairable ? 'PAIRABLE ' : ''}${field1.tag} PAIRS: '${fullSubfieldString}' => '${subfieldString}'`);
+  nvdebug(`CHECK ${pairable ? 'PAIRABLE ' : ''}${field1.tag} PAIRS: '${fullSubfieldString}' => '${subfieldString}'`, debugDev);
 
   if (subfieldString === '') {
     return false;
@@ -229,7 +229,7 @@ function getUnbalancedPairedSubfieldCode(field1, field2) {
 
 function syntacticallyMergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
-  nvdebug("CHECK SYNTAX");
+  nvdebug("CHECK SYNTAX", debugDev);
   if (!mergableIndicator1(baseField, sourceField, config)) {
     nvdebug(`non-mergable (reason: indicator1): ${JSON.stringify(config)}`, debugDev);
     return false;
@@ -310,7 +310,7 @@ function removeNameRelatedSubfieldCodes(codestring, tag) {
 
 function pairableIdentifier(field1, field2, prefix) {
   const normalizedPrefix = prefix;
-  nvdebug(`PREF '${prefix}' => '${normalizedPrefix}'`);
+  nvdebug(`PREF '${prefix}' => '${normalizedPrefix}'`, debugDev);
 
   const prefixLength = normalizedPrefix.length;
   const identifiers1 = getIdentifiers(field1);
@@ -378,8 +378,8 @@ function pairableValueInArray(tag, subfieldCode, val, arr) {
 
 
 function tightSubfieldMatch(field1, field2, subfieldCode, mustHave = false) {
-  nvdebug(`${subfieldCode} F1: ${fieldToString(field1)}`);
-  nvdebug(`${subfieldCode} F2: ${fieldToString(field2)}`);
+  nvdebug(`${subfieldCode} F1: ${fieldToString(field1)}`, debugDev);
+  nvdebug(`${subfieldCode} F2: ${fieldToString(field2)}`, debugDev);
   const values1 = getRelevantSubfieldValues(field1, subfieldCode);
   const values2 = getRelevantSubfieldValues(field2, subfieldCode);
 
@@ -393,7 +393,7 @@ function tightSubfieldMatch(field1, field2, subfieldCode, mustHave = false) {
     return false;
   }
 
-  nvdebug(`Compare $${subfieldCode} contents:\n  '${values1.join("'\n  '")}' vs\n  '${values2.join("'\n  '")}'`);
+  nvdebug(`Compare $${subfieldCode} contents:\n  '${values1.join("'\n  '")}' vs\n  '${values2.join("'\n  '")}'`, debugDev);
   return values1.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values2)) && values2.every(v => pairableValueInArray(field1.tag, subfieldCode, v, values1));
 }
 
@@ -443,25 +443,25 @@ function semanticallyMergablePair(baseField, sourceField) {
   const allRequired = mergeConstraints[0].required || ''; // getMergeConstraintsForTag(field1.tag, 'required') || '';
   const reallyRequired = asteriMatch ? removeNameRelatedSubfieldCodes(allRequired, field1.tag) : allRequired;
 
-  //nvdebug(`WP1: '${allRequired}' => ${reallyRequired}`);
+  //nvdebug(`WP1: '${allRequired}' => ${reallyRequired}`, debugDev);
   if (!reallyRequired.split('').every(c => tightSubfieldMatch(field1, field2, c, true))) {
     return false;
   }
 
   const allPaired = mergeConstraints[0].paired || ''; // getMergeConstraintsForTag(field1.tag, 'paired') || '';
   const reallyPaired = asteriMatch ? removeNameRelatedSubfieldCodes(allPaired, field1.tag) : allPaired;
-  //nvdebug(`WP2: '${allPaired}' => ${reallyPaired}`);
+  //nvdebug(`WP2: '${allPaired}' => ${reallyPaired}`, debugDev);
   if (!reallyPaired.split('').every(c => tightSubfieldMatch(field1, field2, c, false))) {
     return false;
   }
 
   const allKeys = mergeConstraints[0].key || ''; // getMergeConstraintsForTag(field1.tag, 'key') || '';
   const relevantKeys = asteriMatch ? removeNameRelatedSubfieldCodes(allKeys, field1.tag) : allKeys
-  //nvdebug(`WP3: keys='${allKeys}' => ${relevantKeys}`);
+  //nvdebug(`WP3: keys='${allKeys}' => ${relevantKeys}`, debugDev);
   if (!relevantKeys.split('').every(c => looseSubfieldMatch(field1, field2, c))) {
     return false;
   }
-  //nvdebug('WP4');
+  //nvdebug('WP4', debugDev);
 
   // required/paired/keys checks did not fail. Now check that did they really succeed
   if (allRequired.length > 0) { // I think we should use all here

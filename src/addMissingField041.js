@@ -1,5 +1,9 @@
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils.js';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:addMissingField041');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const description = 'Add missing 041 field based on 008/35-37';
 
@@ -12,7 +16,7 @@ export default function () {
   };
 
   function isRealLanguageCode(languageCode = '|||') {
-    nvdebug(`Language code 008/35-37: ${languageCode}`);
+    nvdebug(`Language code 008/35-37: ${languageCode}`, debugDev);
     if (!languageCode.match(/^[a-z]{3}$/u) || ['mul', 'und', 'zxx'].includes(languageCode)) {
       return false;
     }
@@ -43,7 +47,7 @@ export default function () {
   }
 
   function fix(record) {
-    nvdebug(`FIX ${description}...`);
+    nvdebug(`FIX ${description}...`, debugDev);
     const data = generateContent(record);
     const res = {message: [], fix: [], valid: true};
     if (data) {
@@ -54,7 +58,7 @@ export default function () {
   }
 
   function validate(record) {
-    nvdebug(`VALIDATE ${description}...`);
+    nvdebug(`VALIDATE ${description}...`, debugDev);
     const data = generateContent(record);
     if (!data) {
       return {message: [], valid: true};

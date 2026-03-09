@@ -1,11 +1,11 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value} from '../utils.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
-const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:merge-fields:mergableIndicator');
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:merge-fields:mergableIndicator');
 //const debugData = debug.extend('data');
-const debugDev = debug.extend('dev');
+//const debugDev = debug.extend('dev');
 
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];

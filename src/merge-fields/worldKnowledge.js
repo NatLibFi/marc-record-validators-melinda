@@ -1,6 +1,11 @@
 //import {nvdebug} from '../utils.js';
+//import createDebugLogger from 'debug';
 
 // NB! This file (or at least synonyms) should eventually be moved away from merge to '..'.
+
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:worldKnowledge');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
 
 
 export function valueCarriesMeaning(tag, subfieldCode, value) {
@@ -36,20 +41,20 @@ export function getSynonyms(term, tag = undefined, subfieldCode = undefined, pre
   if (!term) {
     return [];
   }
-  //nvdebug(`WP1 CANDS: ${synonyms.length} FOR '${term}'`);
+  //nvdebug(`WP1 CANDS: ${synonyms.length} FOR '${term}'`, debugDev);
   const relevantLanguges = relevantLanguagesString.split(/\s+/u);
   const normalizedTerm = ignoreCase ? term.toLowerCase() : term;
   const synonymsWithTag = tag ? synonyms.filter(s => s.tags.includes(tag)) : synonyms;
   if (synonymsWithTag.length === 0) {
     return [];
   }
-  //nvdebug(`WP2 (FILTER ${tag}) CANDS: ${synonymsWithTag.length}`);
+  //nvdebug(`WP2 (FILTER ${tag}) CANDS: ${synonymsWithTag.length}`, debugDev);
   const synonymsWithTagAndCode = subfieldCode ? synonymsWithTag.filter(s => s.code === subfieldCode) : synonymsWithTag;
-  //nvdebug(`WP3 (FILTER $${subfieldCode}) CANDS: ${synonymsWithTagAndCode.length}:\n${JSON.stringify(synonymsWithTagAndCode)}`);
+  //nvdebug(`WP3 (FILTER $${subfieldCode}) CANDS: ${synonymsWithTagAndCode.length}:\n${JSON.stringify(synonymsWithTagAndCode)}`, debugDev);
   const matchingSynonyms = synonymsWithTagAndCode.filter(s => termAndLangMatch(s));
 
   if (preferredLanguage && matchingSynonyms.length > 0) {
-    //console.log(`USING PREFERRED LANG '${preferredLanguage}' for TERM '${term}':\n${JSON.stringify(matchingSynonyms)}`);
+    //console.log(`USING PREFERRED LANG '${preferredLanguage}' for TERM '${term}':\n${JSON.stringify(matchingSynonyms)}`, debugDev);
     return matchingSynonyms.map(s => s[preferredLanguage]);
   }
   return matchingSynonyms;
@@ -79,7 +84,7 @@ export function getSynonyms(term, tag = undefined, subfieldCode = undefined, pre
 export function getSynonym(tag, subfieldCode, originalValue) {
   const finnishForm = getSynonyms(originalValue, tag, subfieldCode, 'fin');
   if (finnishForm.length === 1) {
-    //nvdebug(`FINNISH FORM FOR ${tag}$${subfieldCode}: '${finnishForm[0]}'`);
+    //nvdebug(`FINNISH FORM FOR ${tag}$${subfieldCode}: '${finnishForm[0]}'`, debugDev);
     return finnishForm[0];
   }
   return originalValue;
@@ -90,7 +95,7 @@ export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
   // Repeatable subfields are currently handled in mergeSubfields.js. Only non-repeatable subfields block field merge,
   // (This split is suboptiomal... Minimum fix: make this distinction cleaner...)
 
-  //nvdebug(`TRYING TO DO ${tag}$${subfieldCode} '${originalValue}'`);
+  //nvdebug(`TRYING TO DO ${tag}$${subfieldCode} '${originalValue}'`, debugDev);
   originalValue = getSynonym(tag, subfieldCode, originalValue);
 
   if (subfieldCode === 'a' && ['100', '600', '700', '800'].includes(tag)) { // "Etunimi Sukunimi"...
