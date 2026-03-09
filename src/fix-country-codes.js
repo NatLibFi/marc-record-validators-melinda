@@ -4,8 +4,12 @@
 //
 // Author(s): Nicholas Volk
 
-//import createDebugLogger from 'debug';
-//import {fieldToString, nvdebug} from './utils.js';
+import createDebugLogger from 'debug';
+import {nvdebug} from './utils.js';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-country-codes');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 
 export default function () {
@@ -16,7 +20,7 @@ export default function () {
   };
 
   function fix(record) {
-    //nvdebug(`FIX ME`);
+    nvdebug(`FIX ME:`, debugDev);
     const res = {message: [], fix: [], valid: true};
 
     const [field008] = record.get('008');

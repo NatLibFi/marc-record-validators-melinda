@@ -1,20 +1,24 @@
 import clone from 'clone';
-import {fieldToString} from './utils.js';
+import {fieldToString, nvdebug} from './utils.js';
+import createDebugLogger from 'debug';
+
 // Fix language codes in 008/35-37 and 041 (does not sync them)
 //
 // Author(s): Nicholas Volk
 
-//import createDebugLogger from 'debug';
-//import {fieldToString, nvdebug} from './utils.js';
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-language-codes');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const description = 'Fix language codes';
 
+// eslint-disable-next-line max-lines-per-function
 export default function () {
 
   return {description, validate, fix};
 
   function fix(record) {
-    //nvdebug(`FIX ME`);
+    nvdebug(`FIX ME`, debugDev);
     const res = {message: [], fix: [], valid: true};
 
     const [field008] = record.get('008');

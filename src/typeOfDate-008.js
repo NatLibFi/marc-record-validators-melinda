@@ -1,6 +1,9 @@
 import createDebugLogger from 'debug';
+import { nvdebug } from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/typeOfDate-008');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default function () {
   return {
@@ -15,7 +18,7 @@ export default function () {
     const c1114 = f008.value.substring(11, 15);
     // if 008 06 = s, and 11-14 = #### (not year/digits)
     if (c06 === 't' && !(/[0-9u]{4}/u).test(c1114)) {
-      debug('is t and not valid 1114');
+      nvdebug('is t and not valid 1114', debugDev);
       return {valid: false, message: 'Invalid 008 06'};
     }
 

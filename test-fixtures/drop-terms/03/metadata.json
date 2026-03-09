@@ -2,7 +2,7 @@
   "description": "03: Drop incorrect $0 from a bad term 'saiturit' (using non-default config, otherwise the whole field would be removed)",
   "fix": false,
   "skip": false,
-  "only": true,
+  "only": false,
 
   "config": {
     "constraints": [

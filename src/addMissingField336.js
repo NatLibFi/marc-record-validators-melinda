@@ -1,11 +1,16 @@
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
 import {getFormOfItem, map336CodeToTerm} from './field33XUtils.js';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:addMissingField336');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const description = 'Add missing 336 field(s)';
 
 // const multimediaRegexp = /multimedia/ui;
 
+// eslint-disable-next-line max-lines-per-function
 export default function () {
 
   return {
@@ -13,9 +18,9 @@ export default function () {
   };
 
   function fix(record) {
-    nvdebug(`FIX ${description}...`);
+    nvdebug(`FIX ${description}...`, debugDev);
     const newFields = getMissing336s(record);
-    nvdebug(` GOT ${newFields.length}...`);
+    nvdebug(` GOT ${newFields.length}...`, debugDev);
     // FFS: we actually need newFields array here! Videogame, for example, might be
     // 336 ## ‡a kaksiulotteinen liikkuva kuva ‡b tdi ‡2 rdacontent
     // 336 ## ‡a tietokoneohjelma ‡b cop ‡2 rdacontent
@@ -28,7 +33,7 @@ export default function () {
   }
 
   function validate(record) {
-    nvdebug(`VALIDATE ${description}...`);
+    nvdebug(`VALIDATE ${description}...`, debugDev);
     const newFields = getMissing336s(record);
     if (newFields.length === 0) {
       return {message: [], valid: true};
@@ -251,7 +256,7 @@ export default function () {
     }
 
     const bees = guessMissing336Bs(record); // bees = b-subfields
-    nvdebug(` WE HAVE ${bees.length} BEES: ${bees.join(', ')}`);
+    nvdebug(` WE HAVE ${bees.length} BEES: ${bees.join(', ')}`, debugDev);
 
 
     return bees.map(b => codeToField(b, getCatalogingLanguage(record, 'fin')));

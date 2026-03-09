@@ -1,17 +1,10 @@
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
-//import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils.js';
-//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalize-identifiers');
+import {fieldToString, /*nvdebug*/} from './utils.js';
 
-/*
-function nvdebug(message, func) {
-  if (func) {
-    func(message);
-  }
-  console.info(message); // eslint-disable-line no-console
-}
-*/
+//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalize-identifiers');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
 
 export default function () {
 
@@ -32,9 +25,9 @@ export default function () {
       }
       */
 
-    //nvdebug(`NORMALIZE CONTROL NUMBER FIX`, debug);
+    //nvdebug(`NORMALIZE CONTROL NUMBER FIX`, debugDev);
     record.fields.forEach(field => {
-      //nvdebug(` NORMALIZE CONTROL NUMBER FIX ${fieldToString(field)}`, debug);
+      //nvdebug(` NORMALIZE CONTROL NUMBER FIX ${fieldToString(field)}`, debugDev);
 
       fieldNormalizeControlNumbers(field);
       //validateField(field, true, message);
@@ -46,7 +39,7 @@ export default function () {
 
   function validate(record) {
     const res = {message: []};
-    //nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debug);
+    //nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debugDev);
     // Actual parsing of all fields
     /*
       if (!record.fields) {
@@ -55,7 +48,7 @@ export default function () {
       */
 
     record.fields.forEach(field => {
-      //nvdebug(` NORMALIZE CONTROL NUMBER VALIDATE ${fieldToString(field)}`, debug);
+      //nvdebug(` NORMALIZE CONTROL NUMBER VALIDATE ${fieldToString(field)}`, debugDev);
       validateField(field, res);
     });
 
@@ -126,8 +119,8 @@ function normalizeNineDigitIDs(value, targetFormat = 'ALEPH_INTERNAL') {
   const currPrefix = value.slice(0, -9);
 
   if (currPrefix in mappings) {
-    //nvdebug(`${currPrefix}, TF:${targetFormat}...`);
-    //nvdebug(`${JSON.stringify(mappings[currPrefix])}`);
+    //nvdebug(`${currPrefix}, TF:${targetFormat}...`, debugDev);
+    //nvdebug(`${JSON.stringify(mappings[currPrefix])}`, debugDev);
     return `${mappings[currPrefix][targetFormat]}${nineDigitTail}`;
   }
   return value;
@@ -167,7 +160,7 @@ export function normalizeControlSubfieldValue(value = '', targetFormat = 'ALEPH_
 
 //export function normalizableSubfieldPrefix(tag, sf) {
 export function normalizeAs(tag, subfieldCode) {
-  //nvdebug(`nAs ${tag}, ${subfieldCode}`);
+  //nvdebug(`nAs ${tag}, ${subfieldCode}`, debugDev);
   if (subfieldCode === '0' || subfieldCode === '1' || subfieldCode === 'w') {
     return 'ALEPH_INTERNAL';
   }
@@ -189,7 +182,7 @@ export function fieldNormalizeControlNumbers(field) {
   field.subfields.forEach(sf => {
     const targetFormat = normalizeAs(field.tag, sf.code);
     if (targetFormat !== undefined) {
-      //nvdebug(`NORMALIZE SUBFIELD $${sf.code} IN FIELD: '${fieldToString(field)}' TO ${targetFormat}`);
+      //nvdebug(`NORMALIZE SUBFIELD $${sf.code} IN FIELD: '${fieldToString(field)}' TO ${targetFormat}`, debugDev);
       sf.value = normalizeControlSubfieldValue(sf.value, targetFormat);
       return;
     }

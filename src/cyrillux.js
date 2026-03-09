@@ -9,11 +9,17 @@ import {default as sortFields} from './sortFields.js';
 import {default as reindexSubfield6OccurenceNumbers} from './reindexSubfield6OccurenceNumbers.js';
 import {fieldStripPunctuation} from './punctuation2.js';
 import {getLanguageCode} from './addMissingField041.js';
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/cyrillux');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const iso9Trans = 'ISO9 <TRANS>';
 const cyrillicTrans = 'CYRILLIC <TRANS>';
 const sfs4900Trans = 'SFS4900 <TRANS>';
 
+// eslint-disable-next-line max-lines-per-function
 export default function (config = {}) {
   // console.log(`CONFIG=${JSON.stringify(config)}`); // eslint-disable-line no-console
 
@@ -135,7 +141,7 @@ export default function (config = {}) {
     // Discussion: We should probably also skip others like 05X-08X, 648, 650, 651, and 655, but this needs thinking...
     // Also I'd like to convert do CYRILLIC->ISO-9 in field 300 (and others?) without 880 mappings... (<- not implemented)
 
-    // nvdebug(`fieldCanBeTransliterated('${fieldToString(field)}') in...`);
+    // nvdebug(`fieldCanBeTransliterated('${fieldToString(field)}') in...`, debugDev);
     if (!tagCanBeTransliterated(field.tag)) {
       return false;
     }
@@ -175,10 +181,10 @@ export default function (config = {}) {
     }
     const conversionResult = sfs4900.convertToLatin(subfield.value, inputLang);
 
-    console.log(JSON.stringify(conversionResult));
+    nvdebug(`${JSON.stringify(conversionResult)}`, debugDev);
     const result = conversionResult.result;
-    console.log(JSON.stringify(result));
-    //console.log(`VAL: ${subfield.value} => ${value} using ${lang}`); // eslint-disable-line no-console
+    nvdebug(`${JSON.stringify(result)}`, debugDev);
+    //nvdebug(`VAL: ${subfield.value} => ${value} using ${lang}`, debugDev);
     return {code: subfield.code, value: result};
   }
 
@@ -256,7 +262,7 @@ export default function (config = {}) {
     if (!config.retainCyrillic) {
       return undefined;
     }
-    nvdebug(`Derive CYR 880 from ${fieldToString(field)}`);
+    nvdebug(`Derive CYR 880 from ${fieldToString(field)}`, debugDev);
     const newSubfield6 = deriveSubfield6(field.tag, field.subfields, occurrenceNumber);
     const newSubfield9 = fieldHasSubfield(field, '9', cyrillicTrans) ? [] : [{code: '9', value: cyrillicTrans}];
     const subfields = [
@@ -266,7 +272,7 @@ export default function (config = {}) {
     ];
 
     const newField = {tag: '880', ind1: field.ind1, ind2: field.ind2, subfields};
-    nvdebug(`   New CYR 880      ${fieldToString(newField)}`);
+    nvdebug(`   New CYR 880      ${fieldToString(newField)}`, debugDev);
     return newField;
   }
 
@@ -317,8 +323,8 @@ export default function (config = {}) {
 
     // Paired field: $9 CYRILLIC <TRANS> is the only legal <TRANS>
     const [pairedField] = existingPairedFields;
-    nvdebug(`LOOKING FOR SFS4900 PAIR: ${fieldToString(field)}`);
-    nvdebug(`     HAVING PAIRED FIELD: ${fieldToString(pairedField)}`);
+    nvdebug(`LOOKING FOR SFS4900 PAIR: ${fieldToString(field)}`, debugDev);
+    nvdebug(`     HAVING PAIRED FIELD: ${fieldToString(pairedField)}`, debugDev);
     if (!fieldContainsCyrillicCharacters(pairedField)) {
       return false;
     }
@@ -332,7 +338,7 @@ export default function (config = {}) {
     const languageCode = getLanguageCode(record);
     const field2 = fieldToString(createFieldForSfs4900Comparison(mapFieldToSfs4900(pairedField, occurrenceNumberAsString, languageCode), field.tag));
     const field1 = fieldToString(createFieldForSfs4900Comparison(field, field.tag));
-    nvdebug(`COMPARE CONTENTS:\n  '${field1}' vs\n  '${field2}': ${field1 === field2 ? 'OK' : 'FAIL'}`);
+    nvdebug(`COMPARE CONTENTS:\n  '${field1}' vs\n  '${field2}': ${field1 === field2 ? 'OK' : 'FAIL'}`, debugDev);
     return field1 === field2;
   }
 
@@ -377,17 +383,17 @@ export default function (config = {}) {
       return [originalField];
     }
 
-    // nvdebug(`PROCESSING: ${fieldToString(originalField)}`);
+    // nvdebug(`PROCESSING: ${fieldToString(originalField)}`, debugDev);
 
     const newOccurrenceNumberAsInt = getNewOccurrenceNumber(originalField, record, maxCreatedOccurrenceNumber);
     const newOccurrenceNumberAsString = intToOccurrenceNumberString(newOccurrenceNumberAsInt);
     const languageCode = getLanguageCode(record);
 
-    // nvdebug(`NEW OCCURRENCE NUMBER: '${newOccurrenceNumberAsString}'`);
+    // nvdebug(`NEW OCCURRENCE NUMBER: '${newOccurrenceNumberAsString}'`, debugDev);
 
     const existingPairedFields = fieldGetOccurrenceNumberPairs(originalField, record.get('880'));
 
-    // nvdebug(`NUMBER OF PAIRED 880 FIELDS: ${existingPairedFields.length}`);
+    // nvdebug(`NUMBER OF PAIRED 880 FIELDS: ${existingPairedFields.length}`, debugDev);
 
     const newMainField = mapFieldToIso9(originalField, newOccurrenceNumberAsString); // ISO-9
     const newCyrillicField = retainCyrillic(existingPairedFields) ? mapFieldToCyrillicField880(originalField, newOccurrenceNumberAsString) : undefined; // CYRILLIC

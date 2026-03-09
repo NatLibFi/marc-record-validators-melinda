@@ -3,12 +3,14 @@
 import createDebugLogger from 'debug';
 import clone from 'clone';
 
-import {fieldToString} from './utils.js';
+import {fieldToString, nvdebug} from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:fix-sami-041');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 
-
+// eslint-disable-next-line max-lines-per-function
 export default function () {
   /* 'sma': eteläsaame, 'sme': pohjoissaame, 'smj': luulajansaame, 'smn': inarinsaame, 'sms': koltansaame */
   const samiLanguages = ['sma', 'sme', 'smj', 'smn', 'sms'];
@@ -21,7 +23,7 @@ export default function () {
 
   function getRelevantSubfieldCodes(record) { // Maybe this should be an exportable utility function...
     if (record && record.leader && record.leader[6]) {
-      debug(` LDR/06 is '${record.leader[6]}'`);
+     nvdebug(` LDR/06 is '${record.leader[6]}'`, debugDev);
       // We should test this properly...
       if (['i', 'j'].includes(record.leader[6])) { // Check type of record: sound recordings use 'd'
         return ['d'];
@@ -34,13 +36,13 @@ export default function () {
 
 
   function fix(record, validateMode = false) {
-    debug(`Start ${validateMode ? 'validator' : 'fixer'}`);
+   nvdebug(`Start ${validateMode ? 'validator' : 'fixer'}`, debugDev);
     const relevantSubfieldCodes = getRelevantSubfieldCodes(record);
-    debug(` Relevant subfield codes are '${relevantSubfieldCodes.join("', '")}'`);
+   nvdebug(` Relevant subfield codes are '${relevantSubfieldCodes.join("', '")}'`, debugDev);
     const relevantFields = record.fields.filter(f => isRelevantField(f, relevantSubfieldCodes)).map(f => validateMode ? clone(f) : f); // NV! relevant fields are cloned in validation mode!
     // Nothing to do:
     if (relevantFields.length === 0) {
-      debug(` No relevant f041 fields found`);
+     nvdebug(` No relevant f041 fields found`, debugDev);
       if (validateMode) {
         return {message: [], valid: true};
       }
@@ -63,22 +65,22 @@ export default function () {
       const [f008] = record.get('008').map(f => validateMode ? clone(f) : f);
 
       if (!f008) {
-        debug(' WARNING: no f008 found');
+       nvdebug(' WARNING: no f008 found'), debugDev;
         return [];
       }
       const currLang = f008.value.substr(35, 3);
       if (!samiLanguages.includes(currLang)) { // NB! If original 008/35-37 was not a sami language, we don't change anything!
-        debug(` Existing 008/35-37 '${currLang}' is not a sami language. No need to update 008/35-37`);
+       nvdebug(` Existing 008/35-37 '${currLang}' is not a sami language. No need to update 008/35-37`, debugDev);
         return [];
       }
       const origValue = f008.value;
       const firstRelevantSubfield = relevantFields[0].subfields.find(sf => relevantSubfieldCodes.includes(sf.code));
       if (firstRelevantSubfield.value !== 'smi') {
-         debug(` First relevant subfield is '\$${firstRelevantSubfield.code} ${firstRelevantSubfield.value}'. No need to update 008/35-37`);
+        nvdebug(` First relevant subfield is '\$${firstRelevantSubfield.code} ${firstRelevantSubfield.value}'. No need to update 008/35-37`, debugDev);
         return [];
       }
       f008.value = `${f008.value.substr(0, 35)}smi${f008.value.substr(38)}`;
-      debug(` Update 008/35-37: '${currLang}' => 'smi'`);
+     nvdebug(` Update 008/35-37: '${currLang}' => 'smi'`, debugDev);
       return createReport([origValue], [f008.value]);
     }
 
@@ -99,7 +101,7 @@ export default function () {
         code: currSubfield.code,
         value: 'smi'
       };
-      debug(` f041: Add '\$${currSubfield.code} smi' before '${currSubfield.value}'`);
+     nvdebug(` f041: Add '\$${currSubfield.code} smi' before '${currSubfield.value}'`, debugDev);
 
       return processSubfields(otherSubfields, [...outgoingSubfields, smiSubfield, currSubfield]);
     }

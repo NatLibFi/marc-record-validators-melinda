@@ -11,11 +11,12 @@ import {fieldFixPunctuation, fieldStripPunctuation} from './punctuation2.js';
 import {fieldToString, nvdebug} from './utils.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
 import {sortAdjacentRelatorTerms, tagToRelatorTermSubfieldCode} from './sortRelatorTerms.js';
-//import createDebugLogger from 'debug';
-/*
-//const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeRelatorTermFields');
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:mergeRelatorTermFields');
 //const debugData = debug.extend('data');
-*/
+const debugDev = debug.extend('dev');
+
 
 export default function () {
 
@@ -80,31 +81,31 @@ function copyRelatorSubfields(fromField, toField) {
 
 function mergeRelatorTermFields(record, fix = false) {
   // NV: 111/711, 751 and 752 where so rare that I did not add them here. Can't remember why I skipped 6XX and 8XX...
-  let fields = record.get('(?:[17][01]0|720)'); 
+  let fields = record.get('(?:[17][01]0|720)');
   let result = [];
   const comparisonFieldsAsString = fields.map(f => fieldToString(createNormalizedCloneWithoutRelatorTerms(f)));
 
-  nvdebug(`mergeRelatorTermFields(): ${fields.length} cand field(s) found`);
+  nvdebug(`mergeRelatorTermFields(): ${fields.length} cand field(s) found`, debugDev);
   for(let i=0; i < fields.length-1; i++) {
     let currField = fields[i];
     if (currField.deleted) {
       continue;
     }
-    nvdebug(`RT: Trying to pair ${comparisonFieldsAsString[i]}/${i}`);
+    nvdebug(`RT: Trying to pair ${comparisonFieldsAsString[i]}/${i}`, debugDev);
     for (let j=i+1; j < fields.length; j++) {
-      nvdebug(` Compare with ${comparisonFieldsAsString[j]}/${j}`);
+      nvdebug(` Compare with ${comparisonFieldsAsString[j]}/${j}`, debugDev);
       let mergableField = fields[j];
       // Skip 1/7 from 1XX/7XX for similarity check:
       if ( comparisonFieldsAsString[i].substring(1) !== comparisonFieldsAsString[j].substring(1)) {
-        nvdebug("  NOT PAIR");
+        nvdebug("  NOT PAIR", debugDev);
         continue;
       }
       if (mergableField.deleted) {
-        nvdebug("  DELETED");
+        nvdebug("  DELETED", debugDev);
         continue;
       }
       const str = `MERGE RELATOR TERM FIELD: ${fieldToString(mergableField)}`;
-      nvdebug(str);
+      nvdebug(str, debugDev);
 
       if(!result.includes(str)) {
         result.push(str)
