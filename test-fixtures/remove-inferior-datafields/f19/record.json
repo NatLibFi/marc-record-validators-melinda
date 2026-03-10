@@ -1,0 +1,18 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f19" },
+    { "tag": "341", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "auditory"},
+      { "code": "2", "value": "sapdv"}
+    ]},
+    { "tag": "341", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "a", "value": "textual"},
+      { "code": "b", "value": "structuralNavigation"},
+      { "code": "b", "value": "readingOrder"},
+      { "code": "2", "value": "sapdv"}
+    ]}
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}
