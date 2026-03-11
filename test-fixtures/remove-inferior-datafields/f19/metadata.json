@@ -1,0 +1,5 @@
+{
+  "description": "f19: MET-783 don't delete non-matching $a",
+  "fix": true,
+  "only": false
+}

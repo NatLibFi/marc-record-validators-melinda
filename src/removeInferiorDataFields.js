@@ -278,28 +278,6 @@ function deriveIndividualDeletables(record) {
       }
     }
 
-    if (currString.match(/^500 ## ‡a Lisäpainokset: Lisäpainos /u)) { // MET-569
-      const tmp1 = currString.replace(' Lisäpainos ', ' [Lisäpainos] ');
-      const tmp2 = currString.replace(' Lisäpainos ', ' ');
-      if (tmp1 !== currString && tmp2 !== currString) {
-        return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp1, tmp2]);
-      }
-    }
-
-    if (currString.match(/^500 ## ‡a Lisäpainokset: \[Lisäpainos\] /u)) { // MET-569
-      const tmp = currString.replace(' [Lisäpainos] ', ' ');
-      if (tmp !== currString) {
-        return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp]);
-      }
-    }
-
-    if (currString.match(/^500 ## ‡a Ei vastaanotettu\.$/u)) { // MELKEHITYS-3147
-      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '500 ## ‡a EI VASTAANOTETTU.']);
-    }
-    if (currString.match(/^500 ## ‡a Ei ilmesty\.$/u)) { // MELKEHITYS-3147
-      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '500 ## ‡a EI ILMESTY.']);
-    }
-
     if (currString.match(/^505 .0.*-- ‡t/u)) { // MRA-413-ish
       const tmp = currString.replace(/ -- ‡t /gu, ' -- '). // remove non-initial $t subfields
         replace(/ ‡[rg] /gu, ' '). // remove $r and $g subfields
@@ -313,41 +291,80 @@ function deriveIndividualDeletables(record) {
       //nvdebug(`505 DERIVATE: '${tmp}'`, debugDev)
     }
 
-    if (currString.match(/^594 ## ‡a Ei vastaanotettu ‡5 FENNI$/u)) { // MELKEHITYS-3147
-      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '594 ## ‡a EI VASTAANOTETTU ‡5 FENNI']);
-    }
-    if (currString.match(/^594 ## ‡a Ei ilmesty ‡5 FENNI$/u)) { // MELKEHITYS-3147
-      return processTodoList([...stillToDo, ...moreToDo], [...deletables, '594 ## ‡a EI ILMESTY ‡5 FENNI']);
-    }
+    const inferiorFunctions = [ getPrepublicationTerms, getInferior341, getAiBased, getMelkehitys3147, getMet831, getMet569 ];
 
-    // MET-381: remove occurence number TAG-00, if TAG-NN existists
-    if (currString.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
-      const tmp = currString.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00');
-      //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`, debugDev);
-      //deletableStringsArray.push(tmp);
-      if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
-        const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1');
-        //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`, debugDev);
-        return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp, tmp2]);
-      }
-      return processTodoList([...stillToDo, ...moreToDo], [...deletables, tmp]);
-    }
+    const inferiorTerms = getInferiorTerms(inferiorFunctions); //getPrepublicationTerms(currString);
 
-    // MET-575 (merge: applies in postprocessing)
-    const inferiorTerms = getPrepublicationTerms(currString);
-
-    // MELKEHITYS-3277-ish: non-AI is better than AI (a rare case where longer version is inferior):
-    const aiBased = `${currString} ‡7 (dpenmw)AI`;
-
-    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...inferiorTerms, aiBased];
-
-    if (subsets.length) {
-      return processTodoList([...stillToDo, ...moreToDo], newDeletables);
-    }
+    const newDeletables = [...deletables, ...subsets, ...accentless, ...d490, ...inferiorTerms];
 
     return processTodoList([...stillToDo, ...moreToDo], newDeletables);
+
+    function getInferiorTerms(functions, results = []) {
+      const [currFunction, ...remainingFunctions] = functions;
+      if (!currFunction) {
+        return results
+      }
+      const newDeletables = currFunction(currString);
+      return getInferiorTerms(remainingFunctions, [...results, ...newDeletables]);
+    }
+
+    function getMet569(string) {
+      if (string.match(/^500 ## ‡a Lisäpainokset: Lisäpainos /u)) { // MET-569
+        const tmp1 = string.replace(' Lisäpainos ', ' [Lisäpainos] ');
+        const tmp2 = string.replace(' Lisäpainos ', ' ');
+        if (tmp1 !== string && tmp2 !== string) { // Should not happen, just a sanity check
+          return [tmp1, tmp2];
+        }
+      }
+
+      if (string.match(/^500 ## ‡a Lisäpainokset: \[Lisäpainos\] /u)) { // MET-569
+        const tmp = string.replace(' [Lisäpainos] ', ' ');
+        if (tmp !== string) { // Should not happen, just a sanity check
+          return [tmp];
+        }
+      }
+      return [];
+    }
+
+    function getMet831(string) { // MET-381
+      // MET-381: remove occurence number TAG-00, if TAG-NN existists
+      if (string.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
+        const tmp = string.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00');
+        //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`, debugDev);
+        //deletableStringsArray.push(tmp);
+        if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
+          const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1');
+          //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`, debugDev);
+          return [tmp, tmp2];
+        }
+        return [tmp];
+      }
+      return [];
+    }
+
+    function getMelkehitys3147(string) {
+      if (string.match(/^500 ## ‡a Ei vastaanotettu\.$/u)) { // MELKEHITYS-3147
+        return ['500 ## ‡a EI VASTAANOTETTU.'];
+      }
+      if (string.match(/^500 ## ‡a Ei ilmesty\.$/u)) { // MELKEHITYS-3147
+        return ['500 ## ‡a EI ILMESTY.'];
+      }
+
+      if (string.match(/^594 ## ‡a Ei vastaanotettu ‡5 FENNI$/u)) { // MELKEHITYS-3147
+        return ['594 ## ‡a EI VASTAANOTETTU ‡5 FENNI'];
+      }
+      if (string.match(/^594 ## ‡a Ei ilmesty ‡5 FENNI$/u)) { // MELKEHITYS-3147
+        return ['594 ## ‡a EI ILMESTY ‡5 FENNI'];
+      }
+      return [];
+    }
+
   }
 
+  function getAiBased(string) { // MELKEHITYS-3277-ish: non-AI is better than AI (a rare case where longer version is inferior):
+    return [`${string} ‡7 (dpenmw)AI`];
+  }
+  
   function getAccentlessVersion(string) { // MET-527
     //nvdebug(`START: '${string}`, debugDev);
     // This is a sanity check: if precomposition does something, there's something wrong, and we don't want to proceed..
@@ -370,6 +387,16 @@ function deriveIndividualDeletables(record) {
     }
 
     return [subfield7Prepub];
+  }
+
+  function getInferior341(fieldAsString) { // MET-783
+    if (fieldAsString.match(/^341 .. ‡a textual ‡[bcdef].* ‡2 sapdv(?:$| ‡)/u)) {
+      return ['341 ## ‡a textual ‡2 sapdv', '341 1# ‡a textual ‡2 sapdv', '341 0# ‡a textual ‡2 sapdv'];
+    }
+    if (fieldAsString.match(/^341 .. ‡a auditory ‡[bcdef].* ‡2 sapdv(?:$| ‡)/u)) {
+      return ['341 ## ‡a auditory ‡2 sapdv', '341 1# ‡a auditory ‡2 sapdv', '341 0# ‡a auditory ‡2 sapdv'];
+    }
+    return [];
   }
 
 }
