@@ -25,7 +25,7 @@ const mergeConstraints = [
   {'tag': '016', 'required': 'a', 'key': 'a2'},
   {'tag': '017', 'required': 'a', 'key': 'a'},
   {'tag': '018', 'required': 'a', 'key': 'a'},
-  {'tag': '020', 'required': '', 'paired': 'a', 'key': 'a'}, // NB! how to handle $z-only cases? 'required-fallback'='z'?
+  {'tag': '020', 'required': '', 'paired': 'a', 'key': 'az'}, // NB! $a foo $z lorum and $a foo $z ipsum would not merge! Due to common denominator and f020$z onlies this is the best we can done. This could be handled if 020 would have multiple merge constrains: one for f020$a, and one for f020$z...
   {'tag': '022', 'required': '', 'paired': 'a', 'key': 'alz'},
   {'tag': '024', 'required': '', 'paired': 'a', 'key': 'ad'},
   {'tag': '025', 'required': 'a', 'key': 'a'},
