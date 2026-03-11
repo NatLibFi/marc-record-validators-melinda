@@ -485,7 +485,7 @@ function semanticallyMergablePair(baseField, sourceField) {
     }
   }
 
-  nvdebug(`    name mismatch (${keys}):`, debugDev);
+  nvdebug(`    name mismatch (${allKeys}):`, debugDev);
   nvdebug(`     '${fieldToString(baseField)}' vs`, debugDev);
   nvdebug(`     '${fieldToString(sourceField)}'`, debugDev);
   return false;
