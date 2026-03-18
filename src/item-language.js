@@ -95,6 +95,11 @@ export default async function (tagPattern, threshold = 0.9) {
     const text = getText(record);
     const langCode = getLanguageCode(record);
 
+    // We don't want to change these no matter what the abstract says.
+    if (['mul', 'sgn', 'und', 'zxx'].includes(langCode)) {
+      return {failed: true, currentCode: langCode};
+    }
+
     if (text.length === 0) {
       return {failed: true, currentCode: langCode};
     }
@@ -137,7 +142,7 @@ export default async function (tagPattern, threshold = 0.9) {
       if (!(/^[a-z][a-z][a-z]$/u).test(code)) {
         return false;
       }
-      return !['mul', 'sgn', 'und', 'zxx', '|||', '   '].includes(code);
+      return true;
     }
 
     function getLanguageCode(record) {
