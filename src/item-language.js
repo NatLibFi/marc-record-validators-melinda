@@ -1,10 +1,12 @@
-import {loadModule as loadCLD} from 'cld3-asm';
-import LanguageCodes from 'langs';
-import createDebugLogger from 'debug';
+import {francAll} from 'franc';
 
-export default async function (tagPattern, treshold = 0.9) {
+import createDebugLogger from 'debug';
+import {nvdebug} from './utils.js';
+
+// NB! Should we support 041$d? (Audio books use it, don't they?)
+
+export default async function (tagPattern, threshold = 0.9) {
   const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/item-language');
-  const cldFactory = await loadCLD();
 
   if (tagPattern instanceof RegExp) {
     return {
@@ -17,8 +19,8 @@ export default async function (tagPattern, treshold = 0.9) {
 
   throw new Error('No tagPattern provided');
 
-  async function validate(record) {
-    const results = await checkLanguage(record);
+  function validate(record) {
+    const results = checkLanguage(record);
 
     if (results.failed) {
       return {valid: Boolean(results.currentCode), messages: ['Language detection failed']};
@@ -37,8 +39,8 @@ export default async function (tagPattern, treshold = 0.9) {
     }
   }
 
-  async function fix(record) {
-    const results = await checkLanguage(record);
+  function fix(record) {
+    const results = checkLanguage(record);
 
     if (results.suggested && results.currentCode) {
       return;
@@ -89,47 +91,39 @@ export default async function (tagPattern, treshold = 0.9) {
     }
   }
 
-  async function checkLanguage(record) {
+  function checkLanguage(record) {
     const text = getText(record);
     const langCode = getLanguageCode(record);
 
-    const Identifier = cldFactory.create();
-
     if (text.length === 0) {
-      Identifier.dispose();
       return {failed: true, currentCode: langCode};
     }
 
-    try {
-      const results = await Identifier.findLanguage(text);
-      Identifier.dispose();
+    const results = francAll(text);
 
-      if (results.is_reliable) {
-        if (results.probability >= treshold) {
-          return {
-            detected: get2TLangCode(results.language),
-            currentCode: langCode
-          };
-        }
+    const [francLang, probability] = results[0];
 
-        return {
-          currentCode: langCode,
-          suggested: [get2TLangCode(results.language)]
-        };
-      }
+    nvdebug(`FRANC ${langCode}/${threshold} vs ${francLang}/${probability}`, debug);
 
+    if (francLang === 'und') { // franc returns ['und', 1.0] for failure!
       return {failed: true, currentCode: langCode};
-    } catch (err) {
-      /* istanbul ignore next: How to cause errors? */
-      try {
-        Identifier.dispose();
-      } catch (err2) {
-        debug(`Got error disposing identifier: ${err2 instanceof Error ? err2.stack : err2}`);
-      }
-
-      /* istanbul ignore next: How to cause errors? */
-      throw err instanceof Error ? err : new Error(err.message);
     }
+
+    if (probability >= threshold) {
+      return {
+        detected: francLang,
+        currentCode: langCode
+      };
+    }
+
+    if (probability > 0.0) {
+      return {
+        currentCode: langCode,
+        suggested: [francLang]
+      };
+    }
+
+    return {failed: true, currentCode: langCode};
 
     function getText(record) {
       return record.get(tagPattern).reduce((acc, field) => {
@@ -138,12 +132,20 @@ export default async function (tagPattern, treshold = 0.9) {
       }, '');
     }
 
+
+    function isValidLanguageCode(code) {
+      if (!(/^[a-z][a-z][a-z]$/u).test(code)) {
+        return false;
+      }
+      return !['mul', 'sgn', 'und', 'zxx', '|||', '   '].includes(code);
+    }
+
     function getLanguageCode(record) {
       const [f008] = record.get(/^008$/u);
 
       if (f008) {
         const code = f008.value.slice(35, 38);
-        if ((/^[a-z][a-z][a-z]$/u).test(code) && code !== 'zxx') {
+        if(isValidLanguageCode(code)) {
           return code;
         }
       }
@@ -151,13 +153,13 @@ export default async function (tagPattern, treshold = 0.9) {
       const [f041] = record.get(/^041$/u);
 
       if (f041) {
-        const code = f041.subfields.find(sf => sf.code === 'a').value;
-        return code;
+        const subfield = f041.subfields.find(sf => ['a'].includes(sf.code) && isValidLanguageCode(sf.value)); // sami languages are not supported by franc, so don't worry about smi/sme logic.
+        if (!subfield) {
+          return undefined;
+        }
+        return subfield.value;
       }
-    }
-
-    function get2TLangCode(code) {
-      return LanguageCodes.where('1', code)['2T'];
+      return undefined;
     }
   }
 }
