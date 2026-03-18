@@ -104,8 +104,8 @@ describe('item-language', () => {
       assert.deepEqual(result, {valid: false, messages: ['Item language code is invalid. Correct language code: eng']});
     });
 
-    it('Finds the record invalid (Probability doesn\'t meet treshold)', async () => {
-      const validator = await validatorFactory(/^520$/u, 1);
+    it('Finds the record invalid (Probability doesn\'t meet threshold)', async () => {
+      const validator = await validatorFactory(/^520$/u, 1.1); // franc (unlike cld3) returns 1.0 for this, so I use threshold 1.1 to make test fail...
       const record = new MarcRecord({
         fields: [
           {
@@ -152,7 +152,7 @@ describe('item-language', () => {
           }
         ]
       });
-      const result = await validator.validate(record);
+      const result = validator.validate(record);
 
       assert.deepEqual(result, {valid: true, messages: ['Language detection failed']});
     });
