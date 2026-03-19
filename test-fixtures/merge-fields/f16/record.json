@@ -1,0 +1,13 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "341", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "textual" }, { "code": "2", "value": "sapdv"} ] },
+    { "tag": "341", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "2", "value": "sapdv" },
+      { "code": "a", "value": "textual" },
+      { "code": "b", "value": "displayTransformability" }
+      ] }
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}
