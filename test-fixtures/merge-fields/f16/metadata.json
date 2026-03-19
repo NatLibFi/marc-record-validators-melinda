@@ -1,0 +1,7 @@
+{
+  "description": "f16: merge 341",
+  "ref": "https://kansalliskirjasto.slack.com/archives/C0519JARQV6/p1773905735148649?thread_ts=1773648181.514179&cid=C0519JARQV6",
+  "fix": true,
+  "only": true,
+  "tagPattern": "^341$"
+}
