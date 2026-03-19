@@ -106,7 +106,7 @@ const mergeConstraints = [
   {'tag': '337', 'required': 'b2', 'key': 'ab2'}, // MET-88: don't merge different $a subfields
   {'tag': '338', 'required': 'b2', 'key': 'ab2'}, // / MET-88: don't merge different $a subfields
   {'tag': '340', 'required': '', 'paired': 'abcdefghijkmnop', 'key': 'abcdefghijkmnop'},
-  {'tag': '341', 'required': '', 'paired': 'abcde', 'key': 'abcde'}, // NEW! Starting to appear!
+  {'tag': '341', 'required': '', 'paired': 'a2', 'key': 'abcde2'}, // NEW! Starting to appear!
   {'tag': '342', 'required': '', 'paired': 'abcdefghijklmnopqrstuvw', 'key': 'abcdefghijklmnopqrstuvw'}, // SKIP 342. NOT SEEN!
   {'tag': '343', 'required': '', 'paired': 'abcdefghi', 'key': 'abcdefghi'}, // SKIP 343.
   {'tag': '344', 'required': '', 'paired': 'abcdefgh', 'key': 'abcdefgh'},

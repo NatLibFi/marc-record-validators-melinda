@@ -43,11 +43,10 @@
     "@natlibfi/melinda-commons": "^14.0.2",
     "@natlibfi/sfs-4900": "^2.0.0",
     "@natlibfi/sru-client": "^7.0.1",
-    "cld3-asm": "^4.0.0",
     "clone": "^2.1.2",
     "debug": "^4.4.3",
+    "franc": "^6.2.0",
     "isbn3": "^2.0.6",
-    "langs": "^2.0.0",
     "xml2js": "^0.6.2",
     "xregexp": "^5.1.2"
   },
@@ -58,12 +57,8 @@
     "@natlibfi/fixugen": "^3.0.1",
     "@natlibfi/fixura": "^4.0.1",
     "cross-env": "^10.1.0",
-    "esbuild": "^0.27.3",
+    "esbuild": "^0.27.4",
     "eslint": "^10.0.3",
     "fetch-mock": "^12.6.0"
-  },
-  "overrides": {
-    "nanoid": "^3.3.8"
-  },
-  "nvolkComment": "cld3-asm 4.0.0 uses emscripten-wasm-loader ^3.0.3 which uses problematic, non-secure nanoid version 2.X.X."
+  }
 }
