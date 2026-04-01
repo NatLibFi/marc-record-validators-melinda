@@ -35,10 +35,10 @@
     "dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test"
   },
   "dependencies": {
-    "@natlibfi/iso9-1995": "^1.1.1",
+    "@natlibfi/iso9-1995": "^1.1.2",
     "@natlibfi/issn-verify": "^2.0.2",
     "@natlibfi/marc-record": "^10.0.1",
-    "@natlibfi/marc-record-serializers": "^11.0.1",
+    "@natlibfi/marc-record-serializers": "^11.0.2",
     "@natlibfi/marc-record-validate": "^9.0.0",
     "@natlibfi/melinda-commons": "^14.0.2",
     "@natlibfi/sfs-4900": "^2.0.0",
@@ -58,7 +58,7 @@
     "@natlibfi/fixura": "^4.0.1",
     "cross-env": "^10.1.0",
     "esbuild": "^0.27.4",
-    "eslint": "^10.0.3",
+    "eslint": "^10.1.0",
     "fetch-mock": "^12.6.0"
   }
 }
