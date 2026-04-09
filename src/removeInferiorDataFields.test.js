@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import {MarcRecord} from '@natlibfi/marc-record';
 import validatorFactory from './removeInferiorDataFields.js';
 import {READERS} from '@natlibfi/fixura';
@@ -39,9 +39,11 @@ async function callback({getFixture, fix = false}) {
   if (!fix) {
     const result = await validator.validate(record);
     assert.deepEqual(result, expectedResult);
+    const originalRecord = new MarcRecord(getFixture('record.json'));
+    assert.deepEqual(record, originalRecord); // The record should now change in validation-only
     return;
   }
 
   await validator.fix(record);
-  assert.deepEqual(record, expectedResult);
+  assert.deepEqual(record, new MarcRecord(expectedResult));
 }

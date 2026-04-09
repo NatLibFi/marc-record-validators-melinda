@@ -1,0 +1,29 @@
+{
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "f20" },
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Väitöskirja--Oulun yliopisto, 2025."}
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Väitöskirja :"},
+      { "code": "c", "value": "Oulun yliopisto,"},
+      { "code": "d", "value": "2025."}
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Väitöskirja :"},
+      { "code": "c", "value": "Oulun yliopisto, Joku random tiedekunta,"},
+      { "code": "d", "value": "2025."}
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Väitöskirja :"},
+      { "code": "c", "value": "Oulun yliopisto."}
+    ]},
+    { "tag": "502", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Väitöskirja."}
+    ]}
+
+  ],
+  "leader": "01331cam a22003498i 4500"
+
+}
