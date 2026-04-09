@@ -1,0 +1,5 @@
+{
+  "description": "f20: MET-801-ish: Remove inferior fields.",
+  "fix": true,
+  "only": true
+}
