@@ -331,12 +331,12 @@ function deriveIndividualDeletables(record) {
         return results;
       }
 
-      // 502 ## $a Väitösöskirja : $c Opinahjo, $d 1234. => 502 ## $a Väitösöskirja : $c Opinahjo.
+      // 502 ## $a Väitöskirja : $c Opinahjo, $d 1234. => 502 ## $a Väitöskirja : $c Opinahjo.
       let tmp = string.replace(/, ‡d [^‡]+\.($| ‡)/u, '.$1');
       if (tmp !== string) {
         return getCorrespondingDeprecated502s(tmp, [...results, tmp]);
       }
-      // 502 ## $a Väitösöskirja : $c Opinahjo. => 502 ## $a Väitösöskirja.
+      // 502 ## $a Väitöskirja : $c Opinahjo. => 502 ## $a Väitöskirja.
       tmp = string.replace(/ : ‡c [^‡]+\.($| ‡)/u, '.');
       if (tmp !== string) {
         return getCorrespondingDeprecated502s(tmp, [...results, tmp]);
