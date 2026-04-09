@@ -291,7 +291,7 @@ function deriveIndividualDeletables(record) {
       //nvdebug(`505 DERIVATE: '${tmp}'`, debugDev)
     }
 
-    const inferiorFunctions = [ getPrepublicationTerms, getInferior341, getAiBased, getMelkehitys3147, getMet831, getMet569 ];
+    const inferiorFunctions = [ getPrepublicationTerms, getInferior341, getAiBased, getMelkehitys3147, getMet831, getMet569, getCorrespondingDeprecated502s ];
 
     const inferiorTerms = getInferiorTerms(inferiorFunctions); //getPrepublicationTerms(currString);
 
@@ -326,15 +326,38 @@ function deriveIndividualDeletables(record) {
       return [];
     }
 
+    function getCorrespondingDeprecated502s(string, results = []) { // MET-801-ish
+      if (!string.match(/^502/u)) {
+        return results;
+      }
+
+      // 502 ## $a Väitöskirja : $c Opinahjo, $d 1234. => 502 ## $a Väitöskirja : $c Opinahjo.
+      let tmp = string.replace(/, ‡d [^‡]+\.($| ‡)/u, '.$1');
+      if (tmp !== string) {
+        return getCorrespondingDeprecated502s(tmp, [...results, tmp]);
+      }
+      // 502 ## $a Väitöskirja : $c Opinahjo. => 502 ## $a Väitöskirja.
+      tmp = string.replace(/ : ‡c [^‡]+\.($| ‡)/u, '.');
+      if (tmp !== string) {
+        return getCorrespondingDeprecated502s(tmp, [...results, tmp]);
+      }
+
+      // 502 ## $a Väitöskirja--Opinahjo, YYYY. => 502 ## $a Väitöskirja : $c Opinahjo, $d YYYY.
+      if (string.match(/^502 ## ‡a [^‡]+--[^‡]+\.$/u)) {
+        tmp = string
+          .replace(/--(.*,) ([12][0-9][0-9][0-9]\.)$/u, ' : ‡c $1 ‡d $2')
+          .replace(/--/u, ': ‡c ');
+        return getCorrespondingDeprecated502s(tmp, [...results, tmp]);
+      }
+      return results;
+    }
+
     function getMet831(string) { // MET-381
       // MET-381: remove occurence number TAG-00, if TAG-NN existists
       if (string.match(/^880.* ‡6 [0-9][0-9][0-9]-(?:[1-9][0-9]|0[1-9])/u)) {
         const tmp = string.replace(/( ‡6 [0-9][0-9][0-9])-[0-9]+/u, '$1-00');
-        //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp}'`, debugDev);
-        //deletableStringsArray.push(tmp);
         if (tmp.match(/ ‡6 [0-9][0-9][0-9]-00\/[^ ]+ /u)) {
           const tmp2 = tmp.replace(/( ‡6 [0-9][0-9][0-9]-00)[^ ]+/u, '$1');
-          //nvdebug(`MET-381: ADD TO DELETABLES: '${tmp2}'`, debugDev);
           return [tmp, tmp2];
         }
         return [tmp];
