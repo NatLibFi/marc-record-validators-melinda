@@ -137,6 +137,23 @@ function fieldLowercase(field) {
   }
 }
 
+function normalize300SubfieldA(field) {
+  if (field.tag !== '300') {
+    return;
+  }
+  field.subfields.forEach(sf => normalizePages(sf));
+
+  function normalizePages(subfield) {
+    if (valuelessSubfield(subfield)) {
+      return;
+    }
+
+    if (subfield.code !== 'a') {
+      return;
+    }
+    subfield.value = subfield.value.replace(/(?:\b(?:pages?|pp\.|Seite|sida|sidor|sivu|sivua)\b|\bs$)/g, 's.');
+  }
+}
 
 function hack490SubfieldA(field) {
   if (field.tag !== '490') {
@@ -202,6 +219,7 @@ function normalizeISBN(field) {
 
 function fieldSpecificHacks(field) {
   normalizeISBN(field); // 020$a, not $z!
+  normalize300SubfieldA(field);
   hack490SubfieldA(field);
 }
 
