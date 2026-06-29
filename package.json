@@ -35,30 +35,27 @@
     "dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test"
   },
   "dependencies": {
-    "@natlibfi/iso9-1995": "^1.1.2",
-    "@natlibfi/issn-verify": "^2.0.2",
-    "@natlibfi/marc-record": "^10.0.1",
-    "@natlibfi/marc-record-serializers": "^11.0.2",
-    "@natlibfi/marc-record-validate": "^9.0.0",
+    "@natlibfi/iso9-1995": "^1.1.4",
+    "@natlibfi/issn-verify": "^2.0.3",
+    "@natlibfi/marc-record": "^10.0.2",
+    "@natlibfi/marc-record-serializers": "^11.0.3",
+    "@natlibfi/marc-record-validate": "^9.0.1",
     "@natlibfi/melinda-commons": "^14.0.2",
     "@natlibfi/sfs-4900": "^2.0.0",
-    "@natlibfi/sru-client": "^7.0.1",
+    "@natlibfi/sru-client": "^7.0.2",
     "clone": "^2.1.2",
     "debug": "^4.4.3",
     "franc": "^6.2.0",
-    "isbn3": "^2.0.6",
+    "isbn3": "^2.0.8",
     "xml2js": "^0.6.2",
     "xregexp": "^5.1.2"
-  },
-  "peerDependencies": {
-    "@natlibfi/marc-record-validate": "^9.0.0"
   },
   "devDependencies": {
     "@natlibfi/fixugen": "^3.0.1",
     "@natlibfi/fixura": "^4.0.1",
     "cross-env": "^10.1.0",
-    "esbuild": "^0.28.0",
-    "eslint": "^10.2.0",
+    "esbuild": "^0.28.1",
+    "eslint": "^10.6.0",
     "fetch-mock": "^12.6.0"
   }
 }
