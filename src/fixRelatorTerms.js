@@ -69,6 +69,9 @@ export default () => (base, source) => {
 // https://wiki.helsinki.fi/display/MARC21svenska/Funktions-+och+relationskoder+-+alfabetiskt+efter+funktion
 // New, better source: https://id.kb.se/find?q=relator&_sort=_sortKeyByLang.en
 
+// NOTE: There are problematic relatorterms that do not diffrentiate between agent+work vs agent+ekspression relation
+// ie. teoksen haastattelija vs haastattelija (ekspressio)
+// current solution ignores them and handles just "plain" relator terms
 
 // NB! How to handle German sex-based Verfasser/Verfasserin pairs?
 const relatorTerms = [
@@ -80,6 +83,8 @@ const relatorTerms = [
   {'code': 'drt', 'eng': 'director', 'fin': 'ohjaaja', 'swe': 'regissör'},
   {'code': 'edt', 'eng': 'editor', 'fin': 'toimittaja', 'swe': 'redaktör'},
   {'code': 'ill', 'eng': 'illustrator', 'fin': 'kuvittaja', 'swe': 'illustratör'},
+  {'code': 'ive', 'eng': 'interviewee', 'fin': 'haastateltava', 'swe': 'intervjuobjekt'},
+  {'code': 'ivr', 'eng': 'interviewer', 'fin': 'haastattelija', 'swe': 'intervjuare'},
   {'code': 'lyr', 'eng': 'lyricist', 'fin': 'sanoittaja', 'swe': 'sångtext'},
   {'code': 'nrt', 'eng': 'narrator', 'fin': 'kertoja', 'swe': 'berättare'}, // berättare/inläsare
   {'code': 'pbl', 'eng': 'publisher', 'fin': 'julkaisija', 'swe': 'utgivare'},
