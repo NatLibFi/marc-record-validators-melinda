@@ -1,5 +1,5 @@
 {
   "description": "F02: Fix relator terms: translate swedish to finnish (no 040 $b)",
   "fix": true,
-  "only": true
+  "only": false
 }

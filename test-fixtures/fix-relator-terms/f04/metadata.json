@@ -1,5 +1,5 @@
 {
   "description": "F04: Fix/translate relator terms: intervjuare, intervjuobjekt",
   "fix": true,
-  "only": true
+  "only": false
 }
