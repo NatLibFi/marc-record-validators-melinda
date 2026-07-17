@@ -6,10 +6,13 @@
     { "tag": "700", "ind1": " ", "ind2": " ",
       "subfields": [
           { "code": "a", "value": "Nimi," },
-          { "code": "e", "value": "säveltäjä,"},
-          { "code": "e", "value": "esittäjä,"},
-          { "code": "e", "value": "kuvittaja," },
-          { "code": "e", "value": "toimittaja." }
-      ] }
+          { "code": "e", "value": "kirjoittaja,"},
+          { "code": "e", "value": "haastattelija."}
+      ] },
+    { "tag": "700", "ind1": " ", "ind2": " ",
+      "subfields": [
+      { "code": "a", "value": "Nimi2," },
+      { "code": "e", "value": "haastateltava."}
+    ]}
   ]
 }
