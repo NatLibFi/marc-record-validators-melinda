@@ -14,7 +14,7 @@
     "url": "https://github.com/NatLibFi/marc-record-validators-melinda"
   },
   "license": "MIT",
-  "version": "13.0.1-alpha.1",
+  "version": "13.0.1",
   "main": "./dist/index.js",
   "publishConfig": {
     "access": "public"
