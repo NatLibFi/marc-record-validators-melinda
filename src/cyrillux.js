@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+
 import XRegExp from 'xregexp';
 import * as iso9 from '@natlibfi/iso9-1995';
 import * as sfs4900 from '@natlibfi/sfs-4900';
@@ -96,7 +96,7 @@ export default function (config = {}) {
   function validateField(field, res, record) {
     const orig = fieldToString(field);
 
-    const normalizedFields = processField(clone(field), record);
+    const normalizedFields = processField(structuredClone(field), record);
     const mod = fieldsToString(normalizedFields).replace(/\t__SEPARATOR__\t/ug, ', ').replace(/ (‡6 [0-9][0-9][0-9])-[0-9][0-9]+/gu, ' $1-NN');
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`CHANGE: ${orig} => ${mod}`);
@@ -249,7 +249,7 @@ export default function (config = {}) {
       return initialSubfield;
     }
     // Try to use existing subfield
-    const [subfield6] = subfields.filter(sf => sf.code === '6').map(sf => clone(sf));
+    const [subfield6] = subfields.filter(sf => sf.code === '6').map(sf => structuredClone(sf));
     if (subfield6) {
       resetSubfield6Tag(subfield6, tag); // Should we update occurrence number?
       return subfield6;
@@ -267,7 +267,7 @@ export default function (config = {}) {
     const newSubfield9 = fieldHasSubfield(field, '9', cyrillicTrans) ? [] : [{code: '9', value: cyrillicTrans}];
     const subfields = [
       newSubfield6,
-      ...field.subfields.filter(sf => sf.code !== '6').map(sf => clone(sf)),
+      ...field.subfields.filter(sf => sf.code !== '6').map(sf => structuredClone(sf)),
       ...newSubfield9
     ];
 
@@ -343,7 +343,7 @@ export default function (config = {}) {
   }
 
   function createFieldForSfs4900Comparison(field, tag) {
-    const clonedField = clone(field);
+    const clonedField = structuredClone(field);
     clonedField.tag = tag;
     clonedField.subfields = clonedField.subfields.filter(sf => sf.code !== '9' || sf.value !== sfs4900Trans);
     return fieldStripPunctuation(clonedField);

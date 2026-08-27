@@ -1,5 +1,5 @@
 // Relocated from melinda-marc-record-merge-reducers (and renamed)
-import clone from 'clone';
+
 import {fieldToString, /*nvdebug*/} from './utils.js';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:normalize-identifiers');
@@ -61,7 +61,7 @@ export default function () {
       return;
     }
 
-    const normalizedField = clone(field);
+    const normalizedField = structuredClone(field);
     fieldNormalizeControlNumbers(normalizedField);
 
     const orig = fieldToString(field);

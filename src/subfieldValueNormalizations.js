@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+
 import {fieldHasSubfield, fieldToString, getCatalogingLanguage} from './utils.js';
 import {fieldFixPunctuation} from './punctuation2.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';
@@ -44,7 +44,7 @@ export default function () {
     }
     const orig = fieldToString(field);
 
-    const normalizedField = normalizeSubfieldValues(clone(field), catLang);
+    const normalizedField = normalizeSubfieldValues(structuredClone(field), catLang);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`'${orig}' requires subfield internal mods/normalization`);

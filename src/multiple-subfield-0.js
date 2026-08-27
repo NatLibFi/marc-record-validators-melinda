@@ -1,5 +1,4 @@
 // import createDebugLogger from 'debug';
-// import clone from 'clone';
 // const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:multiple-subfield-0');
 
 import {fieldHasSubfield, fieldToString} from './utils.js';

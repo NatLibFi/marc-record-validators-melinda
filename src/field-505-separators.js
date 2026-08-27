@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+
 import {fieldToString} from './utils.js';
 
 // Author(s): Nicholas Volk
@@ -33,7 +33,7 @@ export default function () {
   function validateField(field, res) {
     const orig = fieldToString(field);
 
-    const normalizedField = fix505(clone(field));
+    const normalizedField = fix505(structuredClone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`'TODO: ${orig}' => '${mod}'`);

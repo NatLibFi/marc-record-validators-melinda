@@ -1,6 +1,6 @@
 // Author(s): Nicholas Volk
 
-import clone from 'clone';
+
 import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils.js';
 
@@ -50,7 +50,7 @@ export default function (defaultTagPattern) {
     const relevantFields = getRelevantFields(record, tagPattern);
 
     relevantFields.forEach(field => {
-      const clonedField = clone(field);
+      const clonedField = structuredClone(field);
       sortAdjacentSubfields(clonedField);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);

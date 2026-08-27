@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
+
 import {fieldToString} from './utils.js';
-import clone from 'clone';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
 
@@ -36,7 +36,7 @@ export default function () {
   function validateField(field, res) {
     const orig = fieldToString(field);
 
-    const normalizedField = fieldSanitizeVocabularySourceCode(clone(field));
+    const normalizedField = fieldSanitizeVocabularySourceCode(structuredClone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`FIXABLE: '${orig}' => '${mod}'`);
