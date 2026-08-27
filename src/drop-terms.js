@@ -1,7 +1,7 @@
 // Author(s): Nicholas Volk
 
-import clone from 'clone';
 import createDebugLogger from 'debug';
+
 import {fieldToString, nvdebug} from './utils.js';
 import {getLexiconAndLanguage, getTermData, isLabel, isValidSubfield0} from './translate-terms.js';
 
@@ -35,7 +35,7 @@ export default function (config = defaultConfig) {
   };
 
   async function fix(record, validateMode = false) {
-    const clonedFields = record.fields.map(f => clone(f));
+    const clonedFields = record.fields.map(f => structuredClone(f));
 
     const results = await processFields(clonedFields);
 

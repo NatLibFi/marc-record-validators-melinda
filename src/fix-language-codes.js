@@ -1,4 +1,4 @@
-import clone from 'clone';
+
 import {fieldToString, nvdebug} from './utils.js';
 import createDebugLogger from 'debug';
 
@@ -73,7 +73,7 @@ export default function () {
 
   function validateField041(field, res) {
 
-    const clonedField = clone(field);
+    const clonedField = structuredClone(field);
     fixField041(clonedField);
 
     const originalString = fieldToString(field);

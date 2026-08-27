@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+
 import {fieldToString} from './utils.js';
 // Author(s): Nicholas Volk
 // NB! CR 008/24 vs 008/25-27 is not supported yet!
@@ -40,7 +40,7 @@ export default function () {
     }
     const orig = fieldToString(field);
 
-    const normalizedField = justifyAndSortField008CharacterGroups(clone(field), typeOfMaterial);
+    const normalizedField = justifyAndSortField008CharacterGroups(structuredClone(field), typeOfMaterial);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`TODO: '${orig}' => '${mod}'`);

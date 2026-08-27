@@ -1,4 +1,4 @@
-import clone from 'clone';
+
 import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
 
 import createDebugLogger from 'debug';
@@ -42,7 +42,7 @@ export default function () {
     const orig = fieldToString(field);
     nvdebug(` VALIDATE FIELD '${orig}'`, debugDev);
 
-    const normalizedField = fixDashes(clone(field));
+    const normalizedField = fixDashes(structuredClone(field));
     const mod = fieldToString(normalizedField);
     if (orig === mod) { // Fail as the input is "broken"/"crap"/sumthing
       return;

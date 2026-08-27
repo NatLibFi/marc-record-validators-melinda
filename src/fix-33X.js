@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import clone from 'clone';
+
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
 import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './field33XUtils.js';
 
@@ -398,7 +398,7 @@ export default function () {
       return {message: [], valid: true};
     }
     const originalStrings = fields.map(f => fieldToString(f));
-    const clonedFields = fields.map(f => clone(f));
+    const clonedFields = fields.map(f => structuredClone(f));
     clonedFields.forEach(f => fixField(f, catLang));
     const modifiedStrings = clonedFields.map(f => fieldToString(f));
 

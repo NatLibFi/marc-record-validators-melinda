@@ -1,7 +1,5 @@
-import clone from 'clone';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, nvdebug} from './utils.js';
-
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:translate-terms');
 //const debugData = debug.extend('data');
@@ -104,7 +102,7 @@ export default function () {
     const prefLabel = prefLabels.find(l => l.lang === twoLetterOtherLang);
     //nvdebug(`pairField() WP 4: ${JSON.stringify(prefLabel)}`, debugDev);
     const sfA = {'code': 'a', 'value': prefLabel.value}; // field.subfields.field(sf => sf.code === 'a');
-    const sf0 = clone(field.subfields.find(sf => sf.code === '0'));
+    const sf0 = structuredClone(field.subfields.find(sf => sf.code === '0'));
     const sf2 = {'code': '2', 'value': `${lexAndLang.lex}/${lexAndLang.lang === 'fin' ? 'swe' : 'fin'}`}; // swap fin <=> swe
     const newField = {tag: field.tag, ind1: field.ind1, ind2: field.ind2, subfields: [sfA, sf2, sf0]};
     return newField;

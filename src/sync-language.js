@@ -1,7 +1,6 @@
 // Author(s): Nicholas Volk
 
 //import createDebugLogger from 'debug';
-import clone from 'clone';
 
 import {fieldToString} from './utils.js';
 
@@ -69,7 +68,7 @@ export default function () {
       // Some subfields are removed:
       if (validateMode) {
         // NB! In validation field is not really deleted, and the non-deleted field might trigger other fixes (than won't be done to a deleted field) later on
-        const clonedField = clone(field);
+        const clonedField = structuredClone(field);
         clonedField.subfields = otherSubfields;
         const modifiedString = fieldToString(clonedField);
         const message = `Modify '${originalString}' => '${modifiedString}`;
@@ -117,7 +116,7 @@ export default function () {
     }
 
     // Update 008/35-37:
-    const cloned008 = clone(f008);
+    const cloned008 = structuredClone(f008);
     cloned008.value = `${f008.value.substring(0, 35)}${firstRelevantSubfield.value}${f008.value.substring(38)}`;
 
 

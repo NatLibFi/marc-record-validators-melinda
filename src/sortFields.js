@@ -1,6 +1,6 @@
 // Taken from project marc-record-js, file marcSortFields.js as this contains more and more Melinda-specific rules.
 
-import clone from 'clone';
+
 //import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString} from './utils.js';
 import {sortByTag, sortAlphabetically, fieldOrderComparator as globalFieldOrderComparator} from '@natlibfi/marc-record/dist/marcFieldSort.js';
@@ -30,7 +30,7 @@ export default function () {
   function validate(record) {
     const res = {message: []};
 
-    const fields = record.fields.map(f => clone(f));
+    const fields = record.fields.map(f => structuredClone(f));
     fields.sort(fieldOrderComparator);
 
 
