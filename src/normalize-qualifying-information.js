@@ -1,5 +1,4 @@
 //import createDebugLogger from 'debug';
-import { clone } from '@natlibfi/melinda-commons';
 import {fieldToString} from './utils.js';
 
 // Author(s): Nicholas Volk
@@ -34,7 +33,7 @@ export default function () {
   function validateField(field, res) {
     const orig = fieldToString(field);
 
-    const normalizedField = clone(field);
+    const normalizedField = structuredClone(field);
     normalizeQualifyingInformationField(normalizedField);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing

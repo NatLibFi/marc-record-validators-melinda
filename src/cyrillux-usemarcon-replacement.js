@@ -7,7 +7,7 @@
 *
 */
 
-import {clone} from '@natlibfi/melinda-commons';
+
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {default as fix33X} from './fix-33X.js';
@@ -250,7 +250,7 @@ function field410To490And810(field, record) { // might be generic... if so, move
     return;
   }
 
-  const field810 = clone(field);
+  const field810 = structuredClone(field);
 
   field.tag = '490';
   field.ind1 = '1';
@@ -270,7 +270,7 @@ function field440To490And830(field, record) { // might be generic... if so, move
     return;
   }
 
-  const field830 = clone(field);
+  const field830 = structuredClone(field);
 
   field.tag = '490';
   field.ind1 = '1';

@@ -15,7 +15,7 @@ import {tagToDataProvenanceSubfieldCode} from './dataProvenanceUtils.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';
 import createDebugLogger from 'debug';
 import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
-import {clone} from '@natlibfi/melinda-commons';
+
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:punctuation2');
 //const debugData = debug.extend('data');
@@ -69,7 +69,7 @@ function getNextRelevantSubfield(field, currSubfieldIndex) {
 }
 
 export function fieldGetFixedString(field, add = true) {
-  const cloneField = clone(field);
+  const cloneField = structuredClone(field);
   const operation = add ? subfieldFixPunctuation : subfieldStripPunctuation;
   cloneField.subfields.forEach((sf, i) => {
     // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!

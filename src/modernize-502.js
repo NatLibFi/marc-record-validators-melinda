@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {clone} from '@natlibfi/melinda-commons';
+
 import {fieldToString} from './utils.js';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/modernize-502');
@@ -40,7 +40,7 @@ export default function () {
     }
     const orig = fieldToString(field);
 
-    const normalizedField = normalizeField502(clone(field));
+    const normalizedField = normalizeField502(structuredClone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`Fix '${orig}' => '${mod}'`);

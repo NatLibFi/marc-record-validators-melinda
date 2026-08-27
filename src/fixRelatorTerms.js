@@ -1,4 +1,4 @@
-import {clone} from '@natlibfi/melinda-commons';
+
 import {fieldFixPunctuation} from './punctuation2.js';
 import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
 import createDebugLogger from 'debug';
@@ -35,7 +35,7 @@ export default function () {
     const language = getCatalogingLanguage(record);
 
     record.fields.forEach(field => {
-      const clonedField = clone(field);
+      const clonedField = structuredClone(field);
       // Rather hackily/abnormally use language as both fromLanguage and toLanguage.
       // fromLanguage is used to expand "esitt." => "esittäjä".
       // toLanguage is used by translations (fixes "författere" to "kirjoittaja", if 040$b is "fin")

@@ -1,5 +1,4 @@
 import createDebug from 'debug';
-import {clone} from '@natlibfi/melinda-commons';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {autRules, bibRules} from './rules/index.js';
 
@@ -42,7 +41,7 @@ export default function () {
 
   function validateField(recordType = 'a') {
     return function (element) {
-      const testField = clone(element);
+      const testField = structuredClone(element);
       debug(`Original field: ${JSON.stringify(element)}`);
       const punctuated = punctuateField(testField, recordType);
       debug(`Punctuation result: ${JSON.stringify(punctuated)}`);

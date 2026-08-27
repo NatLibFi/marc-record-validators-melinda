@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {clone} from '@natlibfi/melinda-commons';
+
 import {convert as nongenericNormalization} from './unicode-decomposition.js';
 import {fieldToString /*, nvdebug */} from './utils.js';
 
@@ -68,7 +68,7 @@ export default function () {
     }
     const orig = fieldToString(field);
 
-    const normalizedField = fieldFixComposition(clone(field));
+    const normalizedField = fieldFixComposition(structuredClone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`'${orig}' requires normalization`);

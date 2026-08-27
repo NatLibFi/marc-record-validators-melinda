@@ -1,7 +1,7 @@
 // Author(s): Nicholas Volk
 
 import createDebugLogger from 'debug';
-import {clone} from '@natlibfi/melinda-commons';
+
 
 import {fieldToString, nvdebug} from './utils.js';
 
@@ -39,7 +39,7 @@ export default function () {
    nvdebug(`Start ${validateMode ? 'validator' : 'fixer'}`, debugDev);
     const relevantSubfieldCodes = getRelevantSubfieldCodes(record);
    nvdebug(` Relevant subfield codes are '${relevantSubfieldCodes.join("', '")}'`, debugDev);
-    const relevantFields = record.fields.filter(f => isRelevantField(f, relevantSubfieldCodes)).map(f => validateMode ? clone(f) : f); // NV! relevant fields are cloned in validation mode!
+    const relevantFields = record.fields.filter(f => isRelevantField(f, relevantSubfieldCodes)).map(f => validateMode ? structuredClone(f) : f); // NV! relevant fields are cloned in validation mode!
     // Nothing to do:
     if (relevantFields.length === 0) {
      nvdebug(` No relevant f041 fields found`, debugDev);
@@ -62,7 +62,7 @@ export default function () {
     return {message: [], fix: report, valid: true};
 
     function updateAndReport008() { // Update 008/35-37 if necessary + report it
-      const [f008] = record.get('008').map(f => validateMode ? clone(f) : f);
+      const [f008] = record.get('008').map(f => validateMode ? structuredClone(f) : f);
 
       if (!f008) {
        nvdebug(' WARNING: no f008 found'), debugDev;

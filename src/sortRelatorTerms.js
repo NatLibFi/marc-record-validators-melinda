@@ -2,7 +2,7 @@
 //
 // Author(s): Nicholas Volk
 
-import {clone} from '@natlibfi/melinda-commons';
+
 //import createDebugLogger from 'debug';
 import {fieldToString} from './utils.js';
 import {fieldFixPunctuation} from './punctuation2.js';
@@ -37,7 +37,7 @@ export default function () {
     const typeOfMaterial = recordToTypeOfMaterial(record);
 
     record.fields.forEach(field => {
-      const clonedField = clone(field);
+      const clonedField = structuredClone(field);
       sortAdjacentRelatorTerms(clonedField, typeOfMaterial);
       const clonedFieldAsString = fieldToString(clonedField);
       const fieldAsString = fieldToString(field);

@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {clone} from '@natlibfi/melinda-commons';
+
 import {fieldToString} from './utils.js';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
@@ -35,7 +35,7 @@ export default function () {
     }
     const orig = fieldToString(field);
 
-    const normalizedField = fixField(clone(field), record);
+    const normalizedField = fixField(structuredClone(field), record);
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`FIXABLE: '${orig}' => '${mod}'`);

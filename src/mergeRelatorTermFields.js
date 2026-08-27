@@ -6,7 +6,7 @@
 // Author(s): Nicholas Volk
 
 
-import {clone} from '@natlibfi/melinda-commons';
+
 import {fieldFixPunctuation, fieldStripPunctuation} from './punctuation2.js';
 import {fieldToString, nvdebug} from './utils.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
@@ -40,15 +40,15 @@ export default function () {
   }
 }
 
-function createNormalizedClone(field) {
-  const clonedField = clone(field);
+function createNormalizedstructuredClone(field) {
+  const clonedField = structuredClone(field);
   // Normalize
   fieldStripPunctuation(clonedField);
   return clonedField;
 }
 
 function createNormalizedCloneWithoutRelatorTerms(field) {
-  const clonedField = createNormalizedClone(field);
+  const clonedField = createNormalizedstructuredClone(field);
   // Remove relator terms $e subfi:
   clonedField.subfields = clonedField.subfields.filter(sf => sf.code !== 'e');
   return clonedField;

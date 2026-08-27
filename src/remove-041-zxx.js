@@ -9,7 +9,7 @@
 */
 
 //import createDebugLogger from 'debug';
-import {clone} from '@natlibfi/melinda-commons';
+
 
 import {fieldToString} from './utils.js';
 
@@ -55,7 +55,7 @@ export default function () {
       // Some subfields are removed:
       if (validateMode) {
         // NB! In validation field is not really deleted, and the non-deleted field might trigger other fixes (than won't be done to a deleted field) later on
-        const clonedField = clone(currField);
+        const clonedField = structuredClone(currField);
         clonedField.subfields = otherSubfields;
         const modifiedString = fieldToString(clonedField);
         const message = `Modify '${originalString}' => '${modifiedString}`;

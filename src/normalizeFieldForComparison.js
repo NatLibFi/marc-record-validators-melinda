@@ -6,7 +6,7 @@
   This is mainly used by melinda-marc-record-merge-reducers. However, also removeInferiorDataFields fixer also used this.
   Thus it is here. However, most of the testing is done via merge-reducers...
 */
-import {clone} from '@natlibfi/melinda-commons';
+
 import {fieldStripPunctuation} from './punctuation2.js';
 import {fieldToString, isContentSubfieldCode} from './utils.js';
 
@@ -284,7 +284,7 @@ function normalizeSubfieldValue(value, subfieldCode, tag) {
 }
 
 export function cloneAndRemovePunctuation(field) {
-  const clonedField = clone(field);
+  const clonedField = structuredClone(field);
   if (fieldSkipNormalization(field)) {
     return clonedField;
   }
@@ -324,7 +324,7 @@ function normalizeField(field) {
 export function cloneAndNormalizeFieldForComparison(field) {
   // NB! This new field is for comparison purposes only.
   // Some of the normalizations might be considered a bit overkill for other purposes.
-  const clonedField = cloneAndRemovePunctuation(field); // was only clone(field)
+  const clonedField = cloneAndRemovePunctuation(field); // was only structuredClone(field)
 
   if (fieldSkipNormalization(field)) {
     return clonedField;
