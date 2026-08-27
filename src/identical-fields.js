@@ -2,8 +2,6 @@
  * This validator de-duplicates identical fields in a record.
  */
 
-import {MarcRecord} from '@natlibfi/marc-record';
-
 export default function () {
   return {
     description: 'Handles identical duplicate in record fields',
@@ -28,7 +26,8 @@ export default function () {
 
   function uniqWith(fields) {
     return fields.reduce((uniq, field) => {
-      if (!uniq.some(f => MarcRecord.isEqual(f, field))) {
+      const fieldAsString = JSON.stringify(field);
+      if (!uniq.some(f => JSON.stringify(f) === fieldAsString)) {
         uniq.push(field);
       }
 
