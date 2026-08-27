@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import XRegExp from 'xregexp';
 import * as iso9 from '@natlibfi/iso9-1995';
 import * as sfs4900 from '@natlibfi/sfs-4900';

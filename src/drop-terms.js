@@ -1,7 +1,7 @@
 // Author(s): Nicholas Volk
 
-import clone from 'clone';
 import createDebugLogger from 'debug';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldToString, nvdebug} from './utils.js';
 import {getLexiconAndLanguage, getTermData, isLabel, isValidSubfield0} from './translate-terms.js';
 

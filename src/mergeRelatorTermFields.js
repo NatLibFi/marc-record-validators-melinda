@@ -6,7 +6,7 @@
 // Author(s): Nicholas Volk
 
 
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldFixPunctuation, fieldStripPunctuation} from './punctuation2.js';
 import {fieldToString, nvdebug} from './utils.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';

@@ -1,6 +1,6 @@
 // Taken from project marc-record-js, file marcSortFields.js as this contains more and more Melinda-specific rules.
 
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 //import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString} from './utils.js';
 import {sortByTag, sortAlphabetically, fieldOrderComparator as globalFieldOrderComparator} from '@natlibfi/marc-record/dist/marcFieldSort.js';

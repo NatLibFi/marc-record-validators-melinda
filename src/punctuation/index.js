@@ -1,6 +1,5 @@
 import createDebug from 'debug';
-import clone from 'clone';
-
+import {clone} from '@natlibfi/melinda-commons';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {autRules, bibRules} from './rules/index.js';
 

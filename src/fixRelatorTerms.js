@@ -1,4 +1,4 @@
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldFixPunctuation} from './punctuation2.js';
 import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
 import createDebugLogger from 'debug';

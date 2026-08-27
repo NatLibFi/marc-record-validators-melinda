@@ -15,7 +15,7 @@ import {tagToDataProvenanceSubfieldCode} from './dataProvenanceUtils.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';
 import createDebugLogger from 'debug';
 import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:punctuation2');
 //const debugData = debug.extend('data');

@@ -1,7 +1,7 @@
 // Author(s): Nicholas Volk
 
 import createDebugLogger from 'debug';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 
 import {fieldToString, nvdebug} from './utils.js';
 

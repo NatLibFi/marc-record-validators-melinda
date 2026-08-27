@@ -9,7 +9,7 @@
 */
 
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 
 import {fieldToString} from './utils.js';
 

@@ -1,6 +1,6 @@
-import clone from 'clone';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, nvdebug} from './utils.js';
+import {clone} from '@natlibfi/melinda-commons';
 
 
 const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda:translate-terms');

@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldToString} from './utils.js';
-import clone from 'clone';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/sanitize-vocabulary-source-codes);
 

@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldToString, getCatalogingLanguage, nvdebug} from './utils.js';
 import {map336CodeToTerm, map337CodeToTerm, map338CodeToTerm} from './field33XUtils.js';
 

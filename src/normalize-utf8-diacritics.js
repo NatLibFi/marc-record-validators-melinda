@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {convert as nongenericNormalization} from './unicode-decomposition.js';
 import {fieldToString /*, nvdebug */} from './utils.js';
 

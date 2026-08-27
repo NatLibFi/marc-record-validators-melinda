@@ -7,7 +7,7 @@
 *
 */
 
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {default as fix33X} from './fix-33X.js';

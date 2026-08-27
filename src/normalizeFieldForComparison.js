@@ -6,7 +6,7 @@
   This is mainly used by melinda-marc-record-merge-reducers. However, also removeInferiorDataFields fixer also used this.
   Thus it is here. However, most of the testing is done via merge-reducers...
 */
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldStripPunctuation} from './punctuation2.js';
 import {fieldToString, isContentSubfieldCode} from './utils.js';
 

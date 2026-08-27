@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldHasSubfield, fieldToString, getCatalogingLanguage} from './utils.js';
 import {fieldFixPunctuation} from './punctuation2.js';
 import {fieldGetUnambiguousTag} from './subfield6Utils.js';

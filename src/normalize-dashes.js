@@ -1,4 +1,4 @@
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldToString, isContentSubfieldCode, nvdebug} from './utils.js';
 
 import createDebugLogger from 'debug';

@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import clone from 'clone';
+import {clone} from '@natlibfi/melinda-commons';
 import {fieldToString} from './utils.js';
 
 //const debug = createDebugLogger('@natlibfi/marc-record-validators-melinda/modernize-502');
