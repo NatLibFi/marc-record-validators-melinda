@@ -1,14 +1,11 @@
-import {MarcRecord} from '@natlibfi/marc-record';
 import createDebug from 'debug';
+import clone from 'clone';
+
+import {MarcRecord} from '@natlibfi/marc-record';
 import {autRules, bibRules} from './rules/index.js';
 
-const debug = createDebug('@natlibfi/marc-record-validator-melinda/punctuation:dev');
 
-function cloneDeep(field) {
-  const r = new MarcRecord();
-  r.appendField(field);
-  return r.get(field.tag)?.[0];
-}
+const debug = createDebug('@natlibfi/marc-record-validator-melinda/punctuation:dev');
 
 export default function () {
   function readPunctuationRulesFromJSON(recordType) {
@@ -46,7 +43,7 @@ export default function () {
 
   function validateField(recordType = 'a') {
     return function (element) {
-      const testField = cloneDeep(element);
+      const testField = clone(element);
       debug(`Original field: ${JSON.stringify(element)}`);
       const punctuated = punctuateField(testField, recordType);
       debug(`Punctuation result: ${JSON.stringify(punctuated)}`);
@@ -55,7 +52,7 @@ export default function () {
         return true;
       }
 
-      if (MarcRecord.isEqual(punctuated, element)) {
+      if (JSON.stringify(punctuated) === JSON.stringify(element)) {
         debug(`Original field (element): ${JSON.stringify(element)}`);
         debug('Punctuation result equals original field');
         return true;
