@@ -20,7 +20,7 @@ function subfieldsAreEqual(field1, field2, subfieldCode) {
   // Compare $3 subfields. If everything matches, OK, else FAIL:
   const sfSet1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
   const sfSet2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
-  return MarcRecord.isEqual(sfSet1, sfSet2);
+  return JSON.stringify(sfSet1) === JSON.stringify(sfSet2);
 }
 
 function subfieldsAreEmpty(field1, field2, subfieldCode) {
@@ -37,7 +37,6 @@ function sixlessIsSubset(fieldWith6, fieldWithout6) {
   // NB! We could use punctuation-stripping here.
   const subset = fieldWithout6.subfields.filter(subfield => !['0', '1'].includes(subfield.code));
   return subset.every(sf => fieldWith6.subfields.some(sf2 => subfieldsAreIdentical(sf, sf2)));
-  //return MarcRecord.isEqual(strippedField1, strippedField2);
 }
 
 function controlSubfield6PermitsMerge(field1, field2) {
@@ -118,7 +117,7 @@ function controlSubfield9PermitsMerge(baseField, sourceField) {
     const trans1 = baseFieldSubfields9.filter(sf => subfieldHasTrans(sf));
     const trans2 = sourceFieldSubfields9.filter(sf => subfieldHasTrans(sf));
     if (trans1.length > 0 && trans2.length > 0) {
-      if (!MarcRecord.isEqual(trans1, trans2)) {
+      if (JSON.stringify(trans1) !== JSON.stringify(trans2)) {
         return true;
       }
     }
@@ -200,7 +199,7 @@ function controlSubfield9PermitsMerge(baseField, sourceField) {
 
     // $9 <KEEP> or <DROP> detected on both fields.
     // Non-keeps and non-drops must be equal, otherwise fail:
-    if (MarcRecord.isEqual(sf9lessField1, sf9lessField2)) {
+    if (JSON.stringify(sf9lessField1) === JSON.stringify(sf9lessField2)) {
       return false;
     }
     // Prevent:

@@ -49,7 +49,6 @@ import SanitizeVocabularySourceCodes from './sanitize-vocabulary-source-codes.js
 import SortFields from './sortFields.js';
 import SortRelatorTerms from './sortRelatorTerms.js';
 import SortSubfields from './sortSubfields.js';
-import SortTags from './sort-tags.js';
 // import StripPunctuation from './stripPunctuation'; // Can we add this here? Should be used very cautiosly!
 import SubfieldValueNormalizations from './subfieldValueNormalizations.js';
 import SubfieldExclusion from './subfield-exclusion.js';
@@ -135,7 +134,6 @@ export {
   SanitizeVocabularySourceCodes,
   SortRelatorTerms,
   SortSubfields,
-  SortTags,
   SubfieldExclusion,
   SubfieldValueNormalizations,
   Sync007And300,
