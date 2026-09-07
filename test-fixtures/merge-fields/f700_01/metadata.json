@@ -1,0 +1,5 @@
+{
+  "description": "F700/01: don't merge years from a non-authorized pair, but merge them from authorized",
+  "only": true,
+  "fix": true
+}
