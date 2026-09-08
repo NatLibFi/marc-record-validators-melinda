@@ -16,7 +16,7 @@ const keyX00 = 'abcjklnoqrstuwx'; // Shared: $abcdefg...
 const keyX10 = 'abcdfghklnoprstuwx';
 const keyX11 = 'acdefghklnpqstuwx';
 const keyX30 = 'adfghklmnoprstvwxyz';
-export const pairedTitleSubfields = 'iklmnoprst'
+const pairedTitleSubfields = 'iklmnoprst'
 
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
