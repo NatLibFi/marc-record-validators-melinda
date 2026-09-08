@@ -37,7 +37,7 @@ function dataContainsPrepublicationSubfield(candSubfieldData) {
 }
 
 
-function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData) {
+function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData, sourceField) {
 
   // Don't bring WHATEVER<KEEP> from source 7XX to base 1XX.
   // Exceptionally we can merge <KEEP>ed 7XX with un-<KEEP>ed 1XX as 1XX should not use <KEEP>s.
@@ -49,6 +49,29 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData
   if (!valueCarriesMeaning(targetField.tag, candSubfieldData.code, candSubfieldData.normalizedValue)) {
     return true;
   }
+
+  // Authorized fields: don't add data that in covered by authorization:
+  // (Even if, say 100$d exists and is correct, the authorized row does not want it!)
+  if (targetField.subfields.some(sf => sf.code === '0') && sourceField && !sourceField.subfields.some(sf => sf.code === '0')) {
+    // FIN13 should also remove $t etc work related subfield...
+    if (['100', '600', '700', '800'].includes(targetField.tag) && ['a', 'b', 'c', 'd', 'q'].includes(candSubfieldData.code)) {
+      return true;
+    }
+    // X10: Asteri has only $a and $b extensively: 53601 a, 10862 b, 34 d, 16 c, 10 n, 1 t
+    if (['110', '610', '710', '810'].includes(targetField.tag) && ['a', 'b'].includes(candSubfieldData.code)) {
+      return true;
+    }
+    // X11: 1388 a, 72 d, 63 c, 43 n, 11 e
+    if (['111', '611', '711', '811'].includes(targetField.tag) && ['a'].includes(candSubfieldData.code)) {
+      return true;
+    }
+
+    if (['130', '630', '730', '830'].includes(targetField.tag) && ['a', 'n', 'p'].includes(candSubfieldData.code)) {
+      return true;
+    }
+
+  }
+
 
 
   // Don't add $0 subfields that mean the same even if they look different:
@@ -75,12 +98,12 @@ function skipNormalizedComparison(tag, subfieldCode, subfieldValue) {
   return false;
 }
 
-function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
+function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData, sourceField) {
   if (catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTargetField(targetField, candSubfieldData) || dataContainsPrepublicationSubfield(candSubfieldData)) {
     return true;
   }
 
-  if (mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData)) {
+  if (mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData, sourceField)) {
     return true;
   }
 
@@ -151,12 +174,12 @@ function resetPaired880(candFieldPair880, targetField, punctlessCandSubfield) {
   resetSubfield6Tag(candFieldPair880.subfields[0], targetField.tag);
 }
 
-export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs880 = []) {
+export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs880 = [], sourceField) {
 
   const candSubfieldAsString = `${candSubfieldData.code} ${candSubfieldData.originalValue}`;
 
   nvdebug(`   Q: mergeOrAddSubfield '${candSubfieldAsString}'\n      with field '${fieldToString(targetField)}'?`, debugDev);
-  if (mergeOrAddSubfieldNotRequired(targetField, candSubfieldData)) {
+  if (mergeOrAddSubfieldNotRequired(targetField, candSubfieldData, sourceField)) {
     nvdebug(`    A: No. No need to merge nor to add the subfield '${candSubfieldAsString}'`, debugDev);
     return;
   }
