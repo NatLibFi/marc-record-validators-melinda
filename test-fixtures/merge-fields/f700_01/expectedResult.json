@@ -1,0 +1,18 @@
+{
+  "_validationOptions": {},
+  "leader": "12345cam a22123454i 4500",
+  "fields": [
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Sukunimi, A." },
+        { "code": "0", "value": "(FI-ASTERI-N)000000111" }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Sukunimi, B." },
+        { "code": "q", "value": "(Börje)," },
+        { "code": "d", "value": "1234-1299." },
+        { "code": "0", "value": "(FI-ASTERI-N)000000123" }
+    ]}
+
+
+  ]
+}

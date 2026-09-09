@@ -60,7 +60,8 @@ function isIrrelevantSubfield(subfield, tag) {
   if (subfield.code === dataProvenanceSubfieldCode) {
     return true;
   }
-  return !isContentSubfieldCode(subfield.code); // Currently this contains other stuff as well ($3, $4, $7, $9...)
+  // control subfields, data provenance subfields etc do not affect the punctuation of the previous field
+  return !isContentSubfieldCode(subfield.code);
 }
 
 
@@ -129,7 +130,7 @@ const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context':
 const addX00aComma = {'add': ',', 'code': 'abcqejt', 'followedBy': 'cdegnr', 'context': doesNotEndInPunc, 'contextRHS': allowsPuncRHS};
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
-const addX00Dot = {'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'context': needsPuncAfterAlphanumeric};
+const addX00Dot = {'name': 'addX00Dot', 'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'context': needsPuncAfterAlphanumeric};
 const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuvwxyz', 'followedBy': '#', 'context': /[^.)!?-]$/u};
 
 
@@ -144,7 +145,7 @@ const addX11Spacecolon = {name: '611 space colon(y :-)', add: ' :', code: 'nd', 
 const addDotBeforeLanguageSubfieldL = {'name': 'Add dot before $l', 'add': '.', 'code': 'abepst', 'followedBy': 'l', 'context': doesNotEndInPunc};
 
 // 490:
-const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxyz', 'followedBy': 'v', 'context': /[^;]$/u};
+const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'followedBy': 'v', 'context': /[^;]$/u};
 
 const NONE = 0;
 const ADD = 2;
@@ -245,7 +246,9 @@ const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot, cleanX00eDot, ...leg
 
 const cleanLegalSeriesTitle = [ // 490 and 830
   {'code': 'a', 'followedBy': 'a', 'remove': / =$/u},
-  {'code': 'axyz', 'followedBy': 'xyz', 'remove': /,$/u, 'context': /.,$/u},
+  {'code': 'a', 'followedBy': 'n', 'remove': /\.$/u}, // f830-only
+  {'code': 'n', 'followedBy': 'p', 'remove': /,$/u}, // f830-only
+  {'code': 'anpxyz', 'followedBy': 'xyz', 'remove': /,$/u, 'context': /.,$/u},
   {'code': 'axyz', 'followedBy': 'v', 'remove': / *;$/u}
 ];
 
@@ -299,7 +302,7 @@ const cleanValidPunctuationRules = {
   '611': legalX11Punc,
   '630': legalEntryField,
   // Experimental, MET366-ish (end punc in internationally valid, but we don't use it here in Finland):
-  '648': [{'code': 'a', 'content': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}],
+  '648': [{'code': 'a', 'context': /^[0-9]+\.$/u, 'ind2': ['4'], 'remove': /\.$/u}],
   '700': legalX00punc,
   '710': legalX10punc,
   '711': legalX11Punc,
@@ -313,13 +316,18 @@ const cleanValidPunctuationRules = {
 
 
 // Overgeneralizes a bit: eg. addColonToRelationshipInformation only applies to 700/710 but as others don't have $i, it's fine.
+// Also addSemicolonBeforeVolumeDesignation applies only to 8XX:
 const addToAllEntryFields = [addDotBeforeLanguageSubfieldL, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation, addEntryFieldFinalDot];
 
 
 const addX00 = [addXX0iColon, addX00aComma, addX00aComma2, addX00Dot, addX00dComma, ...addToAllEntryFields];
 const addX10 = [addXX0iColon, addX10bDot, addX10Comma, addX10Dot, ...addToAllEntryFields];
 const addX11 = [...addToAllEntryFields, addX11Spacecolon];
-const addX30 = [...addToAllEntryFields];
+const addX30 = [
+  ...addToAllEntryFields,
+  {'name': 'X30$a dot', 'code': 'a', 'followedBy': 'knp', 'add': '.', 'context': needsPuncAfterAlphanumeric},
+  {'name': 'X30 final dot', 'code': 'adfghklmnoprstv', 'followedBy': '#', 'add': '.', 'context': needsPuncAfterAlphanumeric}
+];
 
 const add24X = [
   {'code': 'i', 'followedBy': 'a', 'add': ':', 'context': needsPuncAfterAlphanumeric},
@@ -339,7 +347,7 @@ const add245 = [
 
 const addSeriesTitle = [ // 490 and 830
   {'code': 'a', 'followedBy': 'a', 'add': ' =', 'context': defaultNeedsPuncAfter2},
-  {'code': 'axyz', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter2},
+  {'code': 'anpxyz', 'followedBy': 'pxy', 'add': ',', 'context': defaultNeedsPuncAfter2},
   addSemicolonBeforeVolumeDesignation //  eg. 490$axyz-$v
 ];
 
@@ -521,7 +529,7 @@ function applyPunctuationRules(field, subfield1, subfield2, ruleArray = null, op
 
   //nvdebug(`OP=${operation} ${tag2}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debugDev);
   const candRules = ruleArray[tag2];
-  candRules.every(rule => { // uses "every", not "forEach", so that only one rule is applies to the given subfields
+  candRules.every(rule => { // uses "every", not "forEach", so that only one rule is applied to the given subfields
     //debugRule(rule);
     if (!checkRule(rule, field, subfield1, subfield2)) {
       return true;
@@ -578,21 +586,21 @@ export function fieldStripPunctuation(field) {
   return field;
 }
 
-export function fieldFixPunctuation(field) {
+export function fieldFixPunctuation(field, externalEndPunctuation = false) {
   if (!field.subfields) {
     return field;
   }
   //nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`, debugDev);
 
   field.subfields.forEach((sf, i) => {
-    // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
-    // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
+    // NB! instead of next subfield, we get next *non-control-subfield*!!!
+    // (In plain English: We skip $0 ... $9 at least, maybe $w as well...)
     // We'll need some magic for field 257 here, do we? (Also Finnish lexicons vs global lexicons in 65X fields)
     subfieldFixPunctuation(field, sf, getNextRelevantSubfield(field, i));
   });
 
   // Use shared code for final punctuation (sadly this does not fix intermediate punc):
-  if (field.useExternalEndPunctuation) {
+  if (externalEndPunctuation || field.useExternalEndPunctuation) {
     // addFinalPunctuation(field); // local version. use shared code instead.
     validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
   }

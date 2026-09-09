@@ -85,7 +85,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
 
     const subfieldData = {'tag': sourceField.tag, 'code': originalSubfield.code, 'originalValue': originalSubfield.value, 'normalizedValue': normalizedSubfield.value, 'punctuationlessValue': punctlessSubfield.value};
 
-    mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880); // candSubfield);
+    mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880, sourceField); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalBaseValue !== newValue) {
       nvdebug(`   SUBFIELD MERGE RESULT: '${newValue}'`, debugDev);
@@ -159,7 +159,7 @@ export function mergeField(baseRecord, sourceRecord, sourceField, config) {
     return false;
   }
 
-  nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debugDev);
+  nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debug);
   const counterpartField = getCounterpart(baseRecord, sourceRecord, sourceField, config);
 
   if (counterpartField) {
