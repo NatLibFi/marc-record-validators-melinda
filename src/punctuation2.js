@@ -60,7 +60,8 @@ function isIrrelevantSubfield(subfield, tag) {
   if (subfield.code === dataProvenanceSubfieldCode) {
     return true;
   }
-  return !isContentSubfieldCode(subfield.code); // Currently this contains other stuff as well ($3, $4, $7, $9...)
+  // control subfields, data provenance subfields etc do not affect the punctuation of the previous field
+  return !isContentSubfieldCode(subfield.code);
 }
 
 
@@ -585,21 +586,21 @@ export function fieldStripPunctuation(field) {
   return field;
 }
 
-export function fieldFixPunctuation(field) {
+export function fieldFixPunctuation(field, externalEndPunctuation = false) {
   if (!field.subfields) {
     return field;
   }
   //nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`, debugDev);
 
   field.subfields.forEach((sf, i) => {
-    // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
-    // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
+    // NB! instead of next subfield, we get next *non-control-subfield*!!!
+    // (In plain English: We skip $0 ... $9 at least, maybe $w as well...)
     // We'll need some magic for field 257 here, do we? (Also Finnish lexicons vs global lexicons in 65X fields)
     subfieldFixPunctuation(field, sf, getNextRelevantSubfield(field, i));
   });
 
   // Use shared code for final punctuation (sadly this does not fix intermediate punc):
-  if (field.useExternalEndPunctuation) {
+  if (externalEndPunctuation || field.useExternalEndPunctuation) {
     // addFinalPunctuation(field); // local version. use shared code instead.
     validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
   }
