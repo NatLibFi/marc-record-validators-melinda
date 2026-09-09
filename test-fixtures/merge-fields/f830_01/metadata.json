@@ -1,0 +1,6 @@
+{
+  "description": "f830/01: fields should not merge, as $0 vs $p blocks pairing",
+  "fix": true,
+  "only": false,
+  "tagPattern": "^830$"
+}
