@@ -131,7 +131,7 @@ const addX00aComma = {'add': ',', 'code': 'abcqejt', 'followedBy': 'cdegnr', 'co
 const addX00dComma = {'name': 'X00$d ending in "-" does not get comma', 'add': ',', 'code': 'd', 'followedBy': 'cdeg', 'context': /[^-,.!]$/u, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00Dot = {'name': 'addX00Dot', 'add': '.', 'code': 'abcdetv', 'followedBy': 'fklptu', 'context': needsPuncAfterAlphanumeric};
-const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuvwxyz', 'followedBy': '#', 'context': /[^.)!?-]$/u};
+const addEntryFieldFinalDot = {'name': 'X00 final dot', 'add': '.', 'code': 'abcdefghijklmnopqrstuv', 'followedBy': '#', 'context': /[^.)!?-]$/u};
 
 
 const addXX0iColon = {name: 'Punctuate relationship information', add: ':', code: 'i', context: defaultNeedsPuncAfter2}; // Not explicitly checking it, but this should always be followed by 'a' or 't'
@@ -326,6 +326,9 @@ const addX11 = [...addToAllEntryFields, addX11Spacecolon];
 const addX30 = [
   ...addToAllEntryFields,
   {'name': 'X30$a dot', 'code': 'a', 'followedBy': 'knp', 'add': '.', 'context': needsPuncAfterAlphanumeric},
+  {'name': 'X30 pre-$p', 'code': 'an', 'followedBy': 'p', 'add': ',', 'context': needsPuncAfterAlphanumeric}, // f830
+  {'name': 'X30 pre-$x', 'code': 'anp', 'followedBy': 'x', 'add': ',', 'context': needsPuncAfterAlphanumeric}, // f830
+  {'name': 'X30 pre-$v', 'code': 'anpx', 'followedBy': 'v', 'add': ' ;', 'context': needsPuncAfterAlphanumeric}, // f830
   {'name': 'X30 final dot', 'code': 'adfghklmnoprstv', 'followedBy': '#', 'add': '.', 'context': needsPuncAfterAlphanumeric}
 ];
 
@@ -401,7 +404,7 @@ const addPairedPunctuationRules = {
   '800': addX00,
   '810': addX10,
   '811': addX11,
-  '830': [...addX30, ...addSeriesTitle],
+  '830': [ ...addX30, ...addSeriesTitle],
   '946': [{'code': 'i', 'followedBy': 'a', 'add': ':', 'context': defaultNeedsPuncAfter2}]
 };
 

@@ -1,0 +1,19 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "_validationOptions": {},
+  "fields": [
+    { "tag": "001", "value": "000000001" },
+    { "tag": "830", "ind1": " ", "ind2": "0",
+    "subfields": [
+      { "code": "a", "value": "Julkaisusarja." },
+      { "code": "n", "value": "Sarja A," },
+      { "code": "p", "value": "Lorum Ipsum," },
+      { "code": "x", "value": "1234-5678 ;"},
+      { "code": "v", "value": "No. 666." }
+    ]},
+    { "tag": "830", "ind1": " ", "ind2": "0", "subfields": [
+      { "code": "a", "value": "ISSN ei saa loppupistettä," },
+      { "code": "x", "value": "1234-5678"}
+    ]}
+  ]
+}
